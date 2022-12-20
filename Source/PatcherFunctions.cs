@@ -373,6 +373,10 @@ public class Upatcher
         public uint PidNumber { get; set; }
         public string PidName { get; set; }
         public string ConversionFactor { get; set; }
+        public string Description { get; set; }
+        public bool Signed { get; set; }
+        public string Unit { get; set; }
+        public string Scaling { get; set; }
     }
 
     public struct SearchedAddress
@@ -429,7 +433,7 @@ public class Upatcher
     //public static List<TableData> XdfElements;
     public static List<Units> unitList;
     public static List<RichTextBox> LogReceivers;
-    public static List<PidInfo> pidNameList;
+    public static List<PidInfo> pidDescriptions;
 
     public static string tableSearchFile;
     //public static string tableSeekFile = "";
@@ -608,6 +612,7 @@ public class Upatcher
             Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
         }
     }
+
     private static void LoadSettingFiles()
     {
         DetectRules = new List<DetectRule>();
@@ -630,6 +635,11 @@ public class Upatcher
         Logger("Loading configurations... filetypes", false);
         ShowSplash("Loading configurations...");
         ShowSplash("filetypes");
+        Application.DoEvents();
+
+        Logger("Loading Pid descriptions...", false);
+        ShowSplash("Pid descriptions");
+        LoadPidDescriptions();
         Application.DoEvents();
 
         string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
@@ -720,69 +730,8 @@ public class Upatcher
         ShowSplash("OBD2 Codes");
         Application.DoEvents();
         LoadOBD2Codes();
-
-        /*
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
-
-        Logger(",stockcvn", false);
-        ShowSplash("stockcvn");
-        Application.DoEvents();
-
-        string StockCVNFile = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
-        if (File.Exists(StockCVNFile))
-        {
-            Debug.WriteLine("Loading stockcvn.xml");
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
-            System.IO.StreamReader file = new System.IO.StreamReader(StockCVNFile);
-            StockCVN = (List<CVN>)reader.Deserialize(file);
-            file.Close();
-        }
-
-        stopwatch.Stop();
-        Debug.WriteLine("Stockcvn took: " + stopwatch.ElapsedMilliseconds.ToString() + " ms");
-
-        Logger(",referencecvn", false);
-        ShowSplash("referencecvn");
-
-        loadReferenceCvn();
-        */
         Logger(" - Done");
         ShowSplash("Done");
-
-    }
-
-    public static TableValueType GetTableValueType(TableData td)
-    {
-        TableValueType retVal;
-
-        if (td.Units == null)
-            td.Units = "";
-        if (td.Values.ToLower().StartsWith("patch:") || td.Values.ToLower().StartsWith("tablepatch:"))
-        {
-            retVal = TableValueType.patch;
-        }
-        else if (td.BitMask != null && td.BitMask.Length > 0)
-        {
-            retVal = TableValueType.bitmask;
-        }
-        else if (td.Units.ToLower().Contains("boolean") || td.Units.ToLower().Contains("t/f"))
-        {
-            retVal = TableValueType.boolean;
-        }
-        else if (td.Units.ToLower().Contains("true") && td.Units.ToLower().Contains("false"))
-        {
-            retVal = TableValueType.boolean;
-        }
-        else if (td.Values.StartsWith("Enum: "))
-        {
-            retVal = TableValueType.selection;
-        }
-        else
-        {
-            retVal = TableValueType.number;
-        }
-        return retVal;
     }
 
     public static int GetBits(InDataType dataType)
@@ -817,6 +766,7 @@ public class Upatcher
 
         return bytes;
     }
+
     public static bool GetSigned(InDataType dataType)
     {
         bool signed = false;
@@ -959,7 +909,6 @@ public class Upatcher
             return UInt16.MinValue;
         else
             return byte.MinValue;
-
     }
 
     public static string ReadConversionTable(string mathStr, PcmFile PCM)
@@ -978,7 +927,6 @@ public class Upatcher
             retVal = mathStr.Replace("table:" + conversionTable, conversionVal.ToString());
             Debug.WriteLine("Using conversion table: " + conversionTd.TableName);
         }
-
         return retVal;
     }
 
@@ -1136,7 +1084,6 @@ public class Upatcher
             var line = frame.GetFileLineNumber();
             Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
         }
-
         return retVal;
     }
 
@@ -1711,7 +1658,6 @@ public class Upatcher
         }
         return match;
     }
-
 
     public static void SaveOBD2Codes()
     {
@@ -2528,16 +2474,32 @@ public class Upatcher
         }
         return results.ToList();
     }
-    public static void LoadPidList()
+
+    public static void LoadPidDescriptions()
     {
-        string FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.xml");
-        if (!File.Exists(FileName))
-            return;
-        pidNameList = new List<PidInfo>();
-        System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
-        System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-        pidNameList = (List<PidInfo>)reader.Deserialize(file);
-        file.Close();
+        try
+        {
+            string FileName = Path.Combine(Application.StartupPath, "XML", "PidDescriptions.xml");
+            if (!File.Exists(FileName))
+                FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.xml");
+            if (!File.Exists(FileName))
+                return;
+            pidDescriptions = new List<PidInfo>();
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
+            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+            pidDescriptions = (List<PidInfo>)reader.Deserialize(file);
+            file.Close();
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, Patcherfunctions line " + line + ": " + ex.Message);
+            Debug.WriteLine("Error, Patcherfunctions line " + line + ": " + ex.Message);
+        }
     }
 
     public static void StartLogger(PcmFile PCM)
@@ -2610,7 +2572,6 @@ public class Upatcher
         {
             LoggerBold(ex.Message);
         }
-
     }
 
     public static void SetDtcCode(ref byte[] buffer, uint bufferOffset, int codeIndex, DtcCode dtc, PcmFile PCM)
@@ -2663,7 +2624,5 @@ public class Upatcher
                 buffer[dtc.milAddrInt - bufferOffset] = dtc.MilStatus;
             }
         }
-
-
     }
 }

@@ -41,6 +41,7 @@ namespace UniversalPatcher
         private List<SegmentConfig> segmentconfig;
         public List<ObdEmu.OBDResponse> obdresponses;
         private object currentObj;
+        List<object> ClipBrd;
 
         private void frmEditXML_Load(object sender, EventArgs e)
         {
@@ -969,9 +970,16 @@ namespace UniversalPatcher
         {
             if (dataGridView1.SelectedRows.Count == 0)
             {
-                dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
+                for (int c = 0; c < dataGridView1.SelectedCells.Count; c++)
+                    dataGridView1.Rows[dataGridView1.SelectedCells[c].RowIndex].Selected = true;
             }
-            CopyToClipboard();
+            ClipBrd = new List<object>();
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            {
+                object obj = row.DataBoundItem;
+                ClipBrd.Add(obj);
+            }
+            //CopyToClipboard();
             dataGridView1.Rows.RemoveAt(dataGridView1.SelectedRows[0].Index);
         }
 
@@ -979,9 +987,16 @@ namespace UniversalPatcher
         {
             if (dataGridView1.SelectedRows.Count == 0)
             {
-                dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
+                for (int c=0; c< dataGridView1.SelectedCells.Count; c++)
+                    dataGridView1.Rows[dataGridView1.SelectedCells[c].RowIndex].Selected = true;
             }
-            CopyToClipboard();
+            ClipBrd = new List<object>();
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            {
+                object obj = row.DataBoundItem;
+                ClipBrd.Add(obj);
+            }
+            //CopyToClipboard();
         }
 
         private void pasteRowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -994,10 +1009,36 @@ namespace UniversalPatcher
                     dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
                 }
                 int row = dataGridView1.SelectedCells[0].RowIndex;
+                //currentObj = Activator.CreateInstance(currentObj.GetType());
+                for (int i = 0; i < ClipBrd.Count; i++)
+                {
+                    //bindingSource.Insert(row, currentObj);
+                    bindingSource.Insert(row, ClipBrd[i]);
+                    dataGridView1.Rows[row].Cells[0].Selected = true;
+                    //PasteClipboardValue();
+                }
+                dataGridView1.BeginEdit(true);
+                dataGridView1.NotifyCurrentCellDirty(true);
+                dataGridView1.EndEdit();
+                dataGridView1.ClearSelection();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void insertRowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridView1.SelectedRows.Count == 0)
+                {
+                    dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
+                }
+                int row = dataGridView1.SelectedCells[0].RowIndex;
                 currentObj = Activator.CreateInstance(currentObj.GetType());
                 bindingSource.Insert(row, currentObj);
-                dataGridView1.Rows[row].Cells[0].Selected = true;
-                PasteClipboardValue();
                 dataGridView1.BeginEdit(true);
                 dataGridView1.NotifyCurrentCellDirty(true);
                 dataGridView1.EndEdit();

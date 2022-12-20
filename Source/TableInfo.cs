@@ -303,6 +303,7 @@ namespace UniversalPatcher
         public CompareFile(PcmFile _pcm)
         {
             pcm = _pcm;
+            NaviCurrent = pcm.NaviCurrent;
             tableInfos = new List<TableInfo>();
             tableIds = new List<Guid>();
             refTableIds = new Dictionary<Guid, TableData>();
@@ -319,5 +320,6 @@ namespace UniversalPatcher
         public string fileLetter { get; set; }
         public int Rows { get; set; }   //How many rows (in multitable)
         public int Cols { get; set; }
+        public int NaviCurrent { get; set; }    //For navigating in TableEditor, without moving PCM navi
     }
 }

@@ -32,8 +32,8 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTuner));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
@@ -60,13 +60,14 @@ namespace UniversalPatcher
             this.resetTunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableConfigAutoloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caseSensitiveFilteringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extraOffsetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.appendToPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.appendFocusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mirrorSegmentsFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.treeviewSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.currentFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,6 +100,7 @@ namespace UniversalPatcher
             this.loggerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.patcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showOffsetVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameDuplicateTablenamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadTablelistxmlTableseekImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,6 +113,8 @@ namespace UniversalPatcher
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.revToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fwdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -162,6 +166,11 @@ namespace UniversalPatcher
             this.tabCategory = new System.Windows.Forms.TabPage();
             this.tabSegments = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.groupNavigator = new System.Windows.Forms.GroupBox();
+            this.numNaviMaxTablesTotal = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numNaviMaxTablesPerNode = new System.Windows.Forms.NumericUpDown();
             this.btnExplorerFont = new System.Windows.Forms.Button();
             this.chkShowTableCount = new System.Windows.Forms.CheckBox();
             this.chkAutoMulti1d = new System.Windows.Forms.CheckBox();
@@ -173,11 +182,13 @@ namespace UniversalPatcher
             this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
+            this.treeView1 = new UniversalPatcher.TreeViewMS();
             this.contextMenuStripListTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand3LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addSegmentOffsetNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
@@ -188,6 +199,11 @@ namespace UniversalPatcher
             this.labelBy = new System.Windows.Forms.Label();
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openInListModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.goToAxistableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xAxisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.yAxisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.sortByToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripPatch = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -206,8 +222,6 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
-            this.treeView1 = new UniversalPatcher.TreeViewMS();
-            this.treeviewSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -221,6 +235,9 @@ namespace UniversalPatcher
             this.splitContainer2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabSettings.SuspendLayout();
+            this.groupNavigator.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numNaviMaxTablesTotal)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numNaviMaxTablesPerNode)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
             this.tabFileInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerListMode)).BeginInit();
@@ -238,27 +255,27 @@ namespace UniversalPatcher
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(677, 409);
+            this.dataGridView1.Size = new System.Drawing.Size(671, 409);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
@@ -276,7 +293,6 @@ namespace UniversalPatcher
             this.txtSearchTableSeek.Name = "txtSearchTableSeek";
             this.txtSearchTableSeek.Size = new System.Drawing.Size(107, 20);
             this.txtSearchTableSeek.TabIndex = 14;
-            this.txtSearchTableSeek.TextChanged += new System.EventHandler(this.txtSearchTableSeek_TextChanged);
             // 
             // comboTableCategory
             // 
@@ -306,7 +322,9 @@ namespace UniversalPatcher
             this.tableListToolStripMenuItem,
             this.utilitiesToolStripMenuItem,
             this.xmlToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.revToolStripMenuItem,
+            this.fwdToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1021, 24);
@@ -477,13 +495,6 @@ namespace UniversalPatcher
             this.caseSensitiveFilteringToolStripMenuItem.Text = "Case sensitive filtering";
             this.caseSensitiveFilteringToolStripMenuItem.Click += new System.EventHandler(this.caseSensitiveFilteringToolStripMenuItem_Click);
             // 
-            // moreSettingsToolStripMenuItem
-            // 
-            this.moreSettingsToolStripMenuItem.Name = "moreSettingsToolStripMenuItem";
-            this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.moreSettingsToolStripMenuItem.Text = "More settings...";
-            this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
-            // 
             // extraOffsetToolStripMenuItem
             // 
             this.extraOffsetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -531,6 +542,20 @@ namespace UniversalPatcher
             this.fontToolStripMenuItem.Text = "Font";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
             // 
+            // treeviewSettingsToolStripMenuItem
+            // 
+            this.treeviewSettingsToolStripMenuItem.Name = "treeviewSettingsToolStripMenuItem";
+            this.treeviewSettingsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.treeviewSettingsToolStripMenuItem.Text = "Treeview settings";
+            this.treeviewSettingsToolStripMenuItem.Click += new System.EventHandler(this.treeviewSettingsToolStripMenuItem_Click);
+            // 
+            // moreSettingsToolStripMenuItem
+            // 
+            this.moreSettingsToolStripMenuItem.Name = "moreSettingsToolStripMenuItem";
+            this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.moreSettingsToolStripMenuItem.Text = "More settings...";
+            this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
+            // 
             // currentFileToolStripMenuItem
             // 
             this.currentFileToolStripMenuItem.Name = "currentFileToolStripMenuItem";
@@ -567,7 +592,8 @@ namespace UniversalPatcher
             this.readWritePCMToolStripMenuItem,
             this.loggerToolStripMenuItem,
             this.patcherToolStripMenuItem,
-            this.showOffsetVisualizerToolStripMenuItem});
+            this.showOffsetVisualizerToolStripMenuItem,
+            this.renameDuplicateTablenamesToolStripMenuItem});
             this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
             this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.utilitiesToolStripMenuItem.Text = "Utilities";
@@ -586,7 +612,7 @@ namespace UniversalPatcher
             this.intelHEXToolStripMenuItem,
             this.motorolaSrecordToolStripMenuItem});
             this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
-            this.importToolStripMenuItem1.Size = new System.Drawing.Size(219, 22);
+            this.importToolStripMenuItem1.Size = new System.Drawing.Size(233, 22);
             this.importToolStripMenuItem1.Text = "Import";
             // 
             // dTCToolStripMenuItem
@@ -667,7 +693,7 @@ namespace UniversalPatcher
             this.xDFToolStripMenuItem,
             this.xMLGeneratorExportToolStripMenuItem});
             this.exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
-            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(219, 22);
+            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(233, 22);
             this.exportToolStripMenuItem1.Text = "Export";
             // 
             // cSVToolStripMenuItem
@@ -696,7 +722,7 @@ namespace UniversalPatcher
             this.findDifferencesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectFileToolStripMenuItem});
             this.findDifferencesToolStripMenuItem.Name = "findDifferencesToolStripMenuItem";
-            this.findDifferencesToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.findDifferencesToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.findDifferencesToolStripMenuItem.Text = "Find differences";
             // 
             // selectFileToolStripMenuItem
@@ -711,7 +737,7 @@ namespace UniversalPatcher
             this.findDifferencesHEXToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectFileToolStripMenuItem1});
             this.findDifferencesHEXToolStripMenuItem.Name = "findDifferencesHEXToolStripMenuItem";
-            this.findDifferencesHEXToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.findDifferencesHEXToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.findDifferencesHEXToolStripMenuItem.Text = "Find differences (HEX)";
             // 
             // selectFileToolStripMenuItem1
@@ -724,65 +750,72 @@ namespace UniversalPatcher
             // massModifyTableListsToolStripMenuItem
             // 
             this.massModifyTableListsToolStripMenuItem.Name = "massModifyTableListsToolStripMenuItem";
-            this.massModifyTableListsToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.massModifyTableListsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.massModifyTableListsToolStripMenuItem.Text = "TableList editor";
             this.massModifyTableListsToolStripMenuItem.Click += new System.EventHandler(this.massModifyTableListsToolStripMenuItem_Click);
             // 
             // massModifyTableListsSelectFilesToolStripMenuItem
             // 
             this.massModifyTableListsSelectFilesToolStripMenuItem.Name = "massModifyTableListsSelectFilesToolStripMenuItem";
-            this.massModifyTableListsSelectFilesToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.massModifyTableListsSelectFilesToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.massModifyTableListsSelectFilesToolStripMenuItem.Text = "TableList editor (Select files)";
             this.massModifyTableListsSelectFilesToolStripMenuItem.Click += new System.EventHandler(this.massModifyTableListsSelectFilesToolStripMenuItem_Click);
             // 
             // applyPatchToolStripMenuItem
             // 
             this.applyPatchToolStripMenuItem.Name = "applyPatchToolStripMenuItem";
-            this.applyPatchToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.applyPatchToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.applyPatchToolStripMenuItem.Text = "Apply patch...";
             this.applyPatchToolStripMenuItem.Click += new System.EventHandler(this.applyPatchToolStripMenuItem_Click);
             // 
             // swapSegmentsToolStripMenuItem
             // 
             this.swapSegmentsToolStripMenuItem.Name = "swapSegmentsToolStripMenuItem";
-            this.swapSegmentsToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.swapSegmentsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.swapSegmentsToolStripMenuItem.Text = "Swap segments...";
             this.swapSegmentsToolStripMenuItem.Click += new System.EventHandler(this.swapSegmentsToolStripMenuItem_Click);
             // 
             // histogramToolStripMenuItem
             // 
             this.histogramToolStripMenuItem.Name = "histogramToolStripMenuItem";
-            this.histogramToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.histogramToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.histogramToolStripMenuItem.Text = "Show Histogram";
             this.histogramToolStripMenuItem.Click += new System.EventHandler(this.histogramToolStripMenuItem_Click);
             // 
             // readWritePCMToolStripMenuItem
             // 
             this.readWritePCMToolStripMenuItem.Name = "readWritePCMToolStripMenuItem";
-            this.readWritePCMToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.readWritePCMToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.readWritePCMToolStripMenuItem.Text = "Read/Write PCM";
             this.readWritePCMToolStripMenuItem.Click += new System.EventHandler(this.readWritePCMToolStripMenuItem_Click);
             // 
             // loggerToolStripMenuItem
             // 
             this.loggerToolStripMenuItem.Name = "loggerToolStripMenuItem";
-            this.loggerToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.loggerToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.loggerToolStripMenuItem.Text = "Logger";
             this.loggerToolStripMenuItem.Click += new System.EventHandler(this.loggerToolStripMenuItem_Click);
             // 
             // patcherToolStripMenuItem
             // 
             this.patcherToolStripMenuItem.Name = "patcherToolStripMenuItem";
-            this.patcherToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.patcherToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.patcherToolStripMenuItem.Text = "Patcher";
             this.patcherToolStripMenuItem.Click += new System.EventHandler(this.patcherToolStripMenuItem_Click_1);
             // 
             // showOffsetVisualizerToolStripMenuItem
             // 
             this.showOffsetVisualizerToolStripMenuItem.Name = "showOffsetVisualizerToolStripMenuItem";
-            this.showOffsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.showOffsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.showOffsetVisualizerToolStripMenuItem.Text = "Show offset visualizer";
             this.showOffsetVisualizerToolStripMenuItem.Click += new System.EventHandler(this.showOffsetVisualizerToolStripMenuItem_Click);
+            // 
+            // renameDuplicateTablenamesToolStripMenuItem
+            // 
+            this.renameDuplicateTablenamesToolStripMenuItem.Name = "renameDuplicateTablenamesToolStripMenuItem";
+            this.renameDuplicateTablenamesToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.renameDuplicateTablenamesToolStripMenuItem.Text = "Rename duplicate tablenames";
+            this.renameDuplicateTablenamesToolStripMenuItem.Click += new System.EventHandler(this.renameDuplicateTablenamesToolStripMenuItem_Click);
             // 
             // xmlToolStripMenuItem
             // 
@@ -877,6 +910,20 @@ namespace UniversalPatcher
             this.homepageToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.homepageToolStripMenuItem.Text = "Homepage";
             this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
+            // 
+            // revToolStripMenuItem
+            // 
+            this.revToolStripMenuItem.Name = "revToolStripMenuItem";
+            this.revToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.revToolStripMenuItem.Text = "<<";
+            this.revToolStripMenuItem.Click += new System.EventHandler(this.revToolStripMenuItem_Click);
+            // 
+            // fwdToolStripMenuItem
+            // 
+            this.fwdToolStripMenuItem.Name = "fwdToolStripMenuItem";
+            this.fwdToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.fwdToolStripMenuItem.Text = ">>";
+            this.fwdToolStripMenuItem.Click += new System.EventHandler(this.fwdToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -1322,6 +1369,7 @@ namespace UniversalPatcher
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupNavigator);
             this.tabSettings.Controls.Add(this.btnExplorerFont);
             this.tabSettings.Controls.Add(this.chkShowTableCount);
             this.tabSettings.Controls.Add(this.chkAutoMulti1d);
@@ -1335,9 +1383,80 @@ namespace UniversalPatcher
             this.tabSettings.TabIndex = 5;
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
+            // groupNavigator
+            // 
+            this.groupNavigator.Controls.Add(this.numNaviMaxTablesTotal);
+            this.groupNavigator.Controls.Add(this.label4);
+            this.groupNavigator.Controls.Add(this.label3);
+            this.groupNavigator.Controls.Add(this.numNaviMaxTablesPerNode);
+            this.groupNavigator.Location = new System.Drawing.Point(10, 138);
+            this.groupNavigator.Name = "groupNavigator";
+            this.groupNavigator.Size = new System.Drawing.Size(219, 72);
+            this.groupNavigator.TabIndex = 33;
+            this.groupNavigator.TabStop = false;
+            this.groupNavigator.Text = "Navigator";
+            this.groupNavigator.Enter += new System.EventHandler(this.groupNavigator_Enter);
+            // 
+            // numNaviMaxTablesTotal
+            // 
+            this.numNaviMaxTablesTotal.Location = new System.Drawing.Point(152, 39);
+            this.numNaviMaxTablesTotal.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numNaviMaxTablesTotal.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numNaviMaxTablesTotal.Name = "numNaviMaxTablesTotal";
+            this.numNaviMaxTablesTotal.Size = new System.Drawing.Size(54, 20);
+            this.numNaviMaxTablesTotal.TabIndex = 34;
+            this.numNaviMaxTablesTotal.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 41);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(134, 13);
+            this.label4.TabIndex = 33;
+            this.label4.Text = "Remember max tables total";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(140, 13);
+            this.label3.TabIndex = 32;
+            this.label3.Text = "Remember max tables/node";
+            // 
+            // numNaviMaxTablesPerNode
+            // 
+            this.numNaviMaxTablesPerNode.Location = new System.Drawing.Point(152, 14);
+            this.numNaviMaxTablesPerNode.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numNaviMaxTablesPerNode.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.numNaviMaxTablesPerNode.Name = "numNaviMaxTablesPerNode";
+            this.numNaviMaxTablesPerNode.Size = new System.Drawing.Size(54, 20);
+            this.numNaviMaxTablesPerNode.TabIndex = 31;
+            // 
             // btnExplorerFont
             // 
-            this.btnExplorerFont.Location = new System.Drawing.Point(12, 101);
+            this.btnExplorerFont.Location = new System.Drawing.Point(13, 104);
             this.btnExplorerFont.Name = "btnExplorerFont";
             this.btnExplorerFont.Size = new System.Drawing.Size(75, 23);
             this.btnExplorerFont.TabIndex = 30;
@@ -1348,7 +1467,7 @@ namespace UniversalPatcher
             // chkShowTableCount
             // 
             this.chkShowTableCount.AutoSize = true;
-            this.chkShowTableCount.Location = new System.Drawing.Point(9, 75);
+            this.chkShowTableCount.Location = new System.Drawing.Point(10, 78);
             this.chkShowTableCount.Name = "chkShowTableCount";
             this.chkShowTableCount.Size = new System.Drawing.Size(109, 17);
             this.chkShowTableCount.TabIndex = 29;
@@ -1358,7 +1477,7 @@ namespace UniversalPatcher
             // chkAutoMulti1d
             // 
             this.chkAutoMulti1d.AutoSize = true;
-            this.chkAutoMulti1d.Location = new System.Drawing.Point(9, 52);
+            this.chkAutoMulti1d.Location = new System.Drawing.Point(10, 55);
             this.chkAutoMulti1d.Name = "chkAutoMulti1d";
             this.chkAutoMulti1d.Size = new System.Drawing.Size(181, 17);
             this.chkAutoMulti1d.TabIndex = 28;
@@ -1369,7 +1488,7 @@ namespace UniversalPatcher
             // chkShowCategorySubfolder
             // 
             this.chkShowCategorySubfolder.AutoSize = true;
-            this.chkShowCategorySubfolder.Location = new System.Drawing.Point(9, 29);
+            this.chkShowCategorySubfolder.Location = new System.Drawing.Point(10, 32);
             this.chkShowCategorySubfolder.Name = "chkShowCategorySubfolder";
             this.chkShowCategorySubfolder.Size = new System.Drawing.Size(144, 17);
             this.chkShowCategorySubfolder.TabIndex = 0;
@@ -1380,7 +1499,7 @@ namespace UniversalPatcher
             // labelIconSize
             // 
             this.labelIconSize.AutoSize = true;
-            this.labelIconSize.Location = new System.Drawing.Point(6, 6);
+            this.labelIconSize.Location = new System.Drawing.Point(7, 9);
             this.labelIconSize.Name = "labelIconSize";
             this.labelIconSize.Size = new System.Drawing.Size(52, 13);
             this.labelIconSize.TabIndex = 26;
@@ -1388,7 +1507,7 @@ namespace UniversalPatcher
             // 
             // numIconSize
             // 
-            this.numIconSize.Location = new System.Drawing.Point(64, 3);
+            this.numIconSize.Location = new System.Drawing.Point(65, 6);
             this.numIconSize.Maximum = new decimal(new int[] {
             128,
             0,
@@ -1504,8 +1623,24 @@ namespace UniversalPatcher
             // 
             this.splitContainerListMode.Panel2.Controls.Add(this.dataGridView1);
             this.splitContainerListMode.Size = new System.Drawing.Size(1021, 409);
-            this.splitContainerListMode.SplitterDistance = 340;
+            this.splitContainerListMode.SplitterDistance = 346;
             this.splitContainerListMode.TabIndex = 3;
+            // 
+            // treeView1
+            // 
+            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.HideSelection = false;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
+            this.treeView1.Size = new System.Drawing.Size(346, 409);
+            this.treeView1.TabIndex = 2;
             // 
             // contextMenuStripListTree
             // 
@@ -1513,37 +1648,44 @@ namespace UniversalPatcher
             this.expandAllToolStripMenuItem,
             this.expand2LevelsToolStripMenuItem,
             this.expand3LevelsToolStripMenuItem,
-            this.collapseToolStripMenuItem});
+            this.collapseToolStripMenuItem,
+            this.addSegmentOffsetNodeToolStripMenuItem});
             this.contextMenuStripListTree.Name = "contextMenuStripListTree";
-            this.contextMenuStripListTree.Size = new System.Drawing.Size(155, 92);
+            this.contextMenuStripListTree.Size = new System.Drawing.Size(210, 114);
             // 
             // expandAllToolStripMenuItem
             // 
             this.expandAllToolStripMenuItem.Name = "expandAllToolStripMenuItem";
-            this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.expandAllToolStripMenuItem.Text = "Expand 1 level";
             this.expandAllToolStripMenuItem.Click += new System.EventHandler(this.expandAllToolStripMenuItem_Click);
             // 
             // expand2LevelsToolStripMenuItem
             // 
             this.expand2LevelsToolStripMenuItem.Name = "expand2LevelsToolStripMenuItem";
-            this.expand2LevelsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.expand2LevelsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.expand2LevelsToolStripMenuItem.Text = "Expand 2 levels";
             this.expand2LevelsToolStripMenuItem.Click += new System.EventHandler(this.expand2LevelsToolStripMenuItem_Click);
             // 
             // expand3LevelsToolStripMenuItem
             // 
             this.expand3LevelsToolStripMenuItem.Name = "expand3LevelsToolStripMenuItem";
-            this.expand3LevelsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.expand3LevelsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.expand3LevelsToolStripMenuItem.Text = "Expand 3 levels";
             this.expand3LevelsToolStripMenuItem.Click += new System.EventHandler(this.expand3LevelsToolStripMenuItem_Click);
             // 
             // collapseToolStripMenuItem
             // 
             this.collapseToolStripMenuItem.Name = "collapseToolStripMenuItem";
-            this.collapseToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.collapseToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.collapseToolStripMenuItem.Text = "Collapse";
             this.collapseToolStripMenuItem.Click += new System.EventHandler(this.collapseToolStripMenuItem_Click);
+            // 
+            // addSegmentOffsetNodeToolStripMenuItem
+            // 
+            this.addSegmentOffsetNodeToolStripMenuItem.Name = "addSegmentOffsetNodeToolStripMenuItem";
+            this.addSegmentOffsetNodeToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.addSegmentOffsetNodeToolStripMenuItem.Text = "Add Segment offset node";
             // 
             // imageList1
             // 
@@ -1721,7 +1863,7 @@ namespace UniversalPatcher
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(528, 4);
+            this.label2.Location = new System.Drawing.Point(584, 5);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 29;
@@ -1733,7 +1875,7 @@ namespace UniversalPatcher
             this.labelTableName.BackColor = System.Drawing.SystemColors.Window;
             this.labelTableName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelTableName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTableName.Location = new System.Drawing.Point(571, 2);
+            this.labelTableName.Location = new System.Drawing.Point(627, 3);
             this.labelTableName.Name = "labelTableName";
             this.labelTableName.Size = new System.Drawing.Size(74, 18);
             this.labelTableName.TabIndex = 30;
@@ -1752,10 +1894,12 @@ namespace UniversalPatcher
             // 
             this.contextMenuStripTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openInNewWindowToolStripMenuItem,
+            this.openInListModeToolStripMenuItem,
+            this.goToAxistableToolStripMenuItem,
             this.compareSelectedTablesToolStripMenuItem1,
             this.sortByToolStripMenuItem});
             this.contextMenuStripTree.Name = "contextMenuStripTree";
-            this.contextMenuStripTree.Size = new System.Drawing.Size(204, 70);
+            this.contextMenuStripTree.Size = new System.Drawing.Size(204, 114);
             // 
             // openInNewWindowToolStripMenuItem
             // 
@@ -1763,6 +1907,44 @@ namespace UniversalPatcher
             this.openInNewWindowToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.openInNewWindowToolStripMenuItem.Text = "Open in new window";
             this.openInNewWindowToolStripMenuItem.Click += new System.EventHandler(this.openInNewWindowToolStripMenuItem_Click);
+            // 
+            // openInListModeToolStripMenuItem
+            // 
+            this.openInListModeToolStripMenuItem.Name = "openInListModeToolStripMenuItem";
+            this.openInListModeToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.openInListModeToolStripMenuItem.Text = "Open in list mode";
+            this.openInListModeToolStripMenuItem.Click += new System.EventHandler(this.openInListModeToolStripMenuItem_Click);
+            // 
+            // goToAxistableToolStripMenuItem
+            // 
+            this.goToAxistableToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.xAxisToolStripMenuItem,
+            this.yAxisToolStripMenuItem,
+            this.mathToolStripMenuItem});
+            this.goToAxistableToolStripMenuItem.Name = "goToAxistableToolStripMenuItem";
+            this.goToAxistableToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.goToAxistableToolStripMenuItem.Text = "Go to Axis-table";
+            // 
+            // xAxisToolStripMenuItem
+            // 
+            this.xAxisToolStripMenuItem.Name = "xAxisToolStripMenuItem";
+            this.xAxisToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
+            this.xAxisToolStripMenuItem.Text = "X-Axis";
+            this.xAxisToolStripMenuItem.Click += new System.EventHandler(this.xAxisToolStripMenuItem_Click);
+            // 
+            // yAxisToolStripMenuItem
+            // 
+            this.yAxisToolStripMenuItem.Name = "yAxisToolStripMenuItem";
+            this.yAxisToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
+            this.yAxisToolStripMenuItem.Text = "Y-Axis";
+            this.yAxisToolStripMenuItem.Click += new System.EventHandler(this.yAxisToolStripMenuItem_Click);
+            // 
+            // mathToolStripMenuItem
+            // 
+            this.mathToolStripMenuItem.Name = "mathToolStripMenuItem";
+            this.mathToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
+            this.mathToolStripMenuItem.Text = "Math";
+            this.mathToolStripMenuItem.Click += new System.EventHandler(this.mathToolStripMenuItem_Click);
             // 
             // compareSelectedTablesToolStripMenuItem1
             // 
@@ -1796,7 +1978,7 @@ namespace UniversalPatcher
             this.radioListMode.AutoSize = true;
             this.radioListMode.ImageKey = "listmode.ico";
             this.radioListMode.ImageList = this.imageList2;
-            this.radioListMode.Location = new System.Drawing.Point(395, 0);
+            this.radioListMode.Location = new System.Drawing.Point(460, 2);
             this.radioListMode.MaximumSize = new System.Drawing.Size(40, 40);
             this.radioListMode.Name = "radioListMode";
             this.radioListMode.Padding = new System.Windows.Forms.Padding(4);
@@ -1811,7 +1993,7 @@ namespace UniversalPatcher
             this.radioTreeMode.Checked = true;
             this.radioTreeMode.ImageKey = "category.ico";
             this.radioTreeMode.ImageList = this.imageList3;
-            this.radioTreeMode.Location = new System.Drawing.Point(439, -3);
+            this.radioTreeMode.Location = new System.Drawing.Point(504, -2);
             this.radioTreeMode.Name = "radioTreeMode";
             this.radioTreeMode.Padding = new System.Windows.Forms.Padding(2);
             this.radioTreeMode.Size = new System.Drawing.Size(42, 28);
@@ -1849,7 +2031,7 @@ namespace UniversalPatcher
             this.btnFlash.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnFlash.ImageKey = "flash.ico";
             this.btnFlash.ImageList = this.imageList3;
-            this.btnFlash.Location = new System.Drawing.Point(496, -1);
+            this.btnFlash.Location = new System.Drawing.Point(552, 0);
             this.btnFlash.Name = "btnFlash";
             this.btnFlash.Size = new System.Drawing.Size(26, 25);
             this.btnFlash.TabIndex = 32;
@@ -1964,29 +2146,6 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
             // 
-            // treeView1
-            // 
-            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Indent = 20;
-            this.treeView1.ItemHeight = 18;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
-            this.treeView1.Size = new System.Drawing.Size(340, 409);
-            this.treeView1.TabIndex = 2;
-            // 
-            // treeviewSettingsToolStripMenuItem
-            // 
-            this.treeviewSettingsToolStripMenuItem.Name = "treeviewSettingsToolStripMenuItem";
-            this.treeviewSettingsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.treeviewSettingsToolStripMenuItem.Text = "Treeview settings";
-            this.treeviewSettingsToolStripMenuItem.Click += new System.EventHandler(this.treeviewSettingsToolStripMenuItem_Click);
-            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2031,6 +2190,10 @@ namespace UniversalPatcher
             this.tabControl1.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
             this.tabSettings.PerformLayout();
+            this.groupNavigator.ResumeLayout(false);
+            this.groupNavigator.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numNaviMaxTablesTotal)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numNaviMaxTablesPerNode)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).EndInit();
             this.tabFileInfo.ResumeLayout(false);
             this.splitContainerListMode.Panel1.ResumeLayout(false);
@@ -2224,5 +2387,19 @@ namespace UniversalPatcher
         private CheckBox chkShowTableCount;
         private Button btnExplorerFont;
         private ToolStripMenuItem treeviewSettingsToolStripMenuItem;
+        private ToolStripMenuItem addSegmentOffsetNodeToolStripMenuItem;
+        private ToolStripMenuItem renameDuplicateTablenamesToolStripMenuItem;
+        private ToolStripMenuItem revToolStripMenuItem;
+        private ToolStripMenuItem fwdToolStripMenuItem;
+        private ToolStripMenuItem openInListModeToolStripMenuItem;
+        private ToolStripMenuItem goToAxistableToolStripMenuItem;
+        private ToolStripMenuItem xAxisToolStripMenuItem;
+        private ToolStripMenuItem yAxisToolStripMenuItem;
+        private ToolStripMenuItem mathToolStripMenuItem;
+        private Label label3;
+        private NumericUpDown numNaviMaxTablesPerNode;
+        private GroupBox groupNavigator;
+        private NumericUpDown numNaviMaxTablesTotal;
+        private Label label4;
     }
 }

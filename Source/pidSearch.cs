@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
 using static Upatcher;
+using static Helpers;
 using System.Windows.Forms;
 using System.Diagnostics;
 
@@ -20,7 +21,6 @@ namespace UniversalPatcher
         {
             PCM = PCM1;
             uint step = 8;
-            LoadPidList();
 
             if (PCM.platformConfig.PidSearchString != null && PCM.platformConfig.PidSearchString.Length > 0)
             {
@@ -75,15 +75,86 @@ namespace UniversalPatcher
 
         public class PID
         {
-            public string PidNumber { get; set; }
+            public string PidNumber
+            {
+                get
+                {
+                    if (pidNumberInt == ushort.MaxValue)
+                        return "";
+                    else
+                        return pidNumberInt.ToString("X4");
+                }
+                set
+                {
+                    if (value.Length > 0)
+                    {
+                        ushort prevVal = pidNumberInt;
+                        if (!HexToUshort(value.Replace("0x", ""), out pidNumberInt))
+                            pidNumberInt = prevVal;
+                    }
+                    else
+                    {
+                        pidNumberInt = ushort.MaxValue;
+                    }
+                }
+            }
+
             public ushort Bytes { get; set; }
-            public string  Subroutine { get; set; }
-            public string  RamAddress { get; set; }
+            public string  Subroutine
+            {
+                get
+                {
+                    if (SubroutineInt == uint.MaxValue)
+                        return "";
+                    else
+                        return SubroutineInt.ToString("X4");
+                }
+                set
+                {
+                    if (value.Length > 0)
+                    {
+                        UInt32 prevVal = SubroutineInt;
+                        if (!HexToUint(value.Replace("0x", ""), out SubroutineInt))
+                            SubroutineInt = prevVal;
+                    }
+                    else
+                    {
+                        SubroutineInt = uint.MaxValue;
+                    }
+                }
+            }
+            public string RamAddress
+            {
+                get
+                {
+                    if (RamAddressInt == uint.MaxValue)
+                        return "";
+                    else
+                        return RamAddressInt.ToString("X8");
+                }
+                set
+                {
+                    if (value.Length > 0)
+                    {
+                        UInt32 prevVal = RamAddressInt;
+                        if (!HexToUint(value.Replace("0x", ""), out RamAddressInt))
+                            RamAddressInt = prevVal;
+                    }
+                    else
+                    {
+                        RamAddressInt = uint.MaxValue;
+                    }
+                }
+            }
             public ushort pidNumberInt;
             public uint SubroutineInt;
             public uint RamAddressInt;
             public string Name { get; set; }
             public string ConversionFactor { get; set; }
+            public string Description { get; set; }
+            public bool Signed { get; set; }
+            public string Unit { get; set; }
+            public string Scaling { get; set; }
         }
 
         public uint startAddress { get; set; }
@@ -118,48 +189,48 @@ namespace UniversalPatcher
         {
             PID pid = new PID();
             pid.pidNumberInt = PCM.ReadUInt16(addr);
-            pid.PidNumber = pid.pidNumberInt.ToString("X4");
             pid.Bytes = (ushort)(PCM.buf[addr + 2] + 1);
             if (pid.Bytes == 3)
                 pid.Bytes = 4;
             pid.SubroutineInt = PCM.ReadUInt32(addr + 4);
-            pid.Subroutine = pid.SubroutineInt.ToString("X8");
             uint ramStoreAddr = SearchBytes(PCM, "10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr == uint.MaxValue)
                 ramStoreAddr = SearchBytes(PCM, "30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr < uint.MaxValue)
             {
                 pid.RamAddressInt = PCM.ReadUInt16(ramStoreAddr + 2);
-                pid.RamAddress = pid.RamAddressInt.ToString("X4");
             }
-            PidInfo pi = pidNameList.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
+            PidInfo pi = pidDescriptions.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
             if (pi != null)
             {
                 pid.Name = pi.PidName;
                 pid.ConversionFactor = pi.ConversionFactor;
+                pid.Description = pi.Description;
+                pid.Scaling = pi.Scaling;
+                pid.Unit = pi.Unit;
+                pid.Signed = pi.Signed;
             }
             return pid;
         }
+
         private PID ReadPidDiesel(uint addr)
         {
             PID pid = new PID();
             pid.pidNumberInt = PCM.ReadUInt16(addr);
-            pid.PidNumber = pid.pidNumberInt.ToString("X4");
             pid.Bytes = (ushort)(PCM.buf[addr + 2]);
             if (pid.Bytes > 4)
                 pid.Bytes = 0;
             pid.SubroutineInt = PCM.ReadUInt32(addr + 6);
-            pid.Subroutine = pid.SubroutineInt.ToString("X8");
             pid.RamAddressInt = SearchRamAddressDiesel(pid.SubroutineInt);
-            if (pid.RamAddressInt != uint.MaxValue)
-                pid.RamAddress = pid.RamAddressInt.ToString("X4");
-            else
-                pid.RamAddress = "";
-            PidInfo pi = pidNameList.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
+            PidInfo pi = pidDescriptions.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
             if (pi != null)
             {
                 pid.Name = pi.PidName;
                 pid.ConversionFactor = pi.ConversionFactor;
+                pid.Description = pi.Description;
+                pid.Scaling = pi.Scaling;
+                pid.Unit = pi.Unit;
+                pid.Signed = pi.Signed;
             }
             return pid;
         }

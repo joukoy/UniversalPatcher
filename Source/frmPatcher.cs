@@ -104,21 +104,6 @@ namespace UniversalPatcher
                 AppSettings.ConfigModeColumnOrder = cOrder.Trim(',');
             }
 
-            if (AppSettings.TunerModeColumns == null || AppSettings.TunerModeColumns.Length == 0)
-            {
-                AppSettings.TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
-            }
-
-            if (AppSettings.ConfigModeColumnWidth == null || AppSettings.ConfigModeColumnWidth.Length == 0)
-            {
-                AppSettings.ConfigModeColumnWidth = "180,114,32,63,86,71,48,81,100,50,78,49,69,60,54,43,58,64,43,78,100,100,243,100,100";
-            }
-            if (AppSettings.TunerModeColumnWidth == null || AppSettings.TunerModeColumnWidth.Length == 0)
-            {
-                AppSettings.TunerModeColumnWidth = "192,110,100,100,100,100,100,100,100,72,100,100,100,100,60,46,100,100,100,100,100,100,197,100,100";
-
-            }
-
             if (AppSettings.PatcherLogFont != null)
                 txtResult.Font = AppSettings.PatcherLogFont.ToFont();
             if (AppSettings.DebugFont != null)
@@ -189,7 +174,7 @@ namespace UniversalPatcher
         private void RefreshExtraInfoTab()
         {
             comboExtrainfoSegment.DataSource = basefile.Segments;
-            comboExtrainfoSegment.DisplayMember = "Name";            
+            comboExtrainfoSegment.DisplayMember = "Name";
         }
 
         private void DataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -208,7 +193,7 @@ namespace UniversalPatcher
                 msg += "outside of its educational purpose." + Environment.NewLine + Environment.NewLine;
                 msg += "Do you agree?";
                 DialogResult dialogResult = MessageBox.Show(msg, "Disclaimer", MessageBoxButtons.YesNo);
-                if  (dialogResult == DialogResult.No)
+                if (dialogResult == DialogResult.No)
                 {
                     tabFunction.TabPages.Remove(tabFakeCvn);
                 }
@@ -229,7 +214,6 @@ namespace UniversalPatcher
                 cvnStrSortOrder = GetSortOrder(cvnSortIndex);
                 FilterCVN();
             }
-
         }
 
         private void FilterCVN()
@@ -395,7 +379,7 @@ namespace UniversalPatcher
                     rememberWindowSizeToolStripMenuItem.Visible = true;
                     disableTunerAutloadConfigToolStripMenuItem.Visible = true;
 
-                } 
+                }
                 else //Tourist or Basic
                 {
                     tabFunction.TabPages.Remove(tabCreate);
@@ -434,7 +418,7 @@ namespace UniversalPatcher
                     oBD2CodesToolStripMenuItem.Visible = false;
                     rememberWindowSizeToolStripMenuItem.Visible = false;
                     disableTunerAutloadConfigToolStripMenuItem.Visible = false;
-                   
+
                 }
             }
             catch (Exception ex)
@@ -494,7 +478,7 @@ namespace UniversalPatcher
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
             //basefile.tableCategories.Sort();
-            categoryBindingSource.DataSource = basefile.tableCategories.OrderBy(x=>x);
+            categoryBindingSource.DataSource = basefile.tableCategories.OrderBy(x => x);
             comboTableCategory.DataSource = categoryBindingSource;
             dataGridTableSeek.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
         }
@@ -583,7 +567,7 @@ namespace UniversalPatcher
 
         private void CheckSegmentCompatibility()
         {
-            if ( txtBaseFile.Text == "" || txtModifierFile.Text == "")
+            if (txtBaseFile.Text == "" || txtModifierFile.Text == "")
                 return;
 
             labelXML.Text = Path.GetFileName(basefile.configFileFullName) + " (v " + basefile.Segments[0].Version + ")";
@@ -643,7 +627,7 @@ namespace UniversalPatcher
             try
             {
                 if (PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                { 
+                {
                     var item = new ListViewItem(PCM.OS);
                     if (PCM.segmentAddressDatas[0].CS1Address.Address == uint.MaxValue)
                         item.SubItems.Add("");
@@ -659,7 +643,7 @@ namespace UniversalPatcher
                     else
                         item.SubItems.Add(PCM.v6VeTable.address.ToString("X") + ":" + PCM.v6VeTable.rows.ToString());
                     string v6tablelist = "";
-                    for (int i=0; i< PCM.v6tables.Count; i++)
+                    for (int i = 0; i < PCM.v6tables.Count; i++)
                     {
                         if (i > 0)
                             v6tablelist += ",";
@@ -713,7 +697,7 @@ namespace UniversalPatcher
                             continue;
                         Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                         if (S.Eeprom)
-                            Logger(GmEeprom.GetKeyStatus(PCM.buf),false);
+                            Logger(GmEeprom.GetKeyStatus(PCM.buf), false);
                         if (S.Checksum1Method != CSMethod.None && chkCS1.Checked)
                         {
                             if (PCM.segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
@@ -822,7 +806,7 @@ namespace UniversalPatcher
                 if (chkSearchTables.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
-                    tableFinder.SearchTables(PCM,false);
+                    tableFinder.SearchTables(PCM, false);
                 }
 
                 if (PCM.OS == null || PCM.OS == "")
@@ -848,11 +832,11 @@ namespace UniversalPatcher
                 TableSeek TS = new TableSeek();
                 if (chkTableSeek.Checked)
                 {
-                    Logger("Seeking tables...",false);
+                    Logger("Seeking tables...", false);
                     Logger(TS.SeekTables(PCM));
                 }
                 RefreshTableSeek();
-                                    
+
                 GetPidList();
             }
             catch (Exception ex)
@@ -861,7 +845,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void OpenBaseFile(string fileName = "")
+        public void OpenBaseFile(string fileName = "")
         {
             try
             {
@@ -873,8 +857,13 @@ namespace UniversalPatcher
                 if (fileName.Length > 1)
                 {
                     //basefile.tableCategories = new List<string>(); //Clear list
+                    string oldConfigFile = basefile.configFileFullName;
                     txtBaseFile.Text = fileName;
                     basefile = new PcmFile(fileName, chkAutodetect.Checked, basefile.configFileFullName);
+                    if (!chkAutodetect.Checked && !string.IsNullOrEmpty(oldConfigFile))
+                    {
+                        LoadConfigXMLfile(oldConfigFile);
+                    }
                     labelBinSize.Text = basefile.fsize.ToString();
                     GetFileInfo(txtBaseFile.Text, ref basefile, false);
                     this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
@@ -903,14 +892,14 @@ namespace UniversalPatcher
             if (FileName.Length > 1)
             {
                 txtModifierFile.Text = FileName;
-                modfile = new PcmFile(FileName, chkAutodetect.Checked,basefile.configFileFullName);
+                modfile = new PcmFile(FileName, chkAutodetect.Checked, basefile.configFileFullName);
                 GetFileInfo(txtModifierFile.Text, ref modfile, false);
             }
 
         }
 
-        private void RefreshFileInfo() 
-        { 
+        private void RefreshFileInfo()
+        {
             dataFileInfo.DataSource = null;
             Finfosource.DataSource = null;
             Finfosource.DataSource = SegmentList;
@@ -945,7 +934,7 @@ namespace UniversalPatcher
                 if (OrgFile[addr] != ModFile[addr])
                 {
                     bool SkipAddr = false;
-                    for (int s=0; s<SkipList.Count; s++)
+                    for (int s = 0; s < SkipList.Count; s++)
                     {
                         if (SkipList[s].Bytes > 0 && addr >= SkipList[s].Address && addr <= (uint)(SkipList[s].Address + SkipList[s].Bytes - 1))
                         {
@@ -954,10 +943,10 @@ namespace UniversalPatcher
                     }
                     if (SkipAddr)
                     {
-                        Debug.WriteLine("Skipping: " + addr.ToString("X") + "(" + CurrentSegment +")");
+                        Debug.WriteLine("Skipping: " + addr.ToString("X") + "(" + CurrentSegment + ")");
                     }
                     else
-                    { 
+                    {
                         if (!BlockStarted)
                         {
                             //Start new block 
@@ -1010,7 +999,7 @@ namespace UniversalPatcher
                     Logger("Files are different size, will not compare!");
                     return;
                 }
-                basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked,basefile.configFileFullName);
+                basefile = new PcmFile(txtBaseFile.Text, chkAutodetect.Checked, basefile.configFileFullName);
                 modfile = new PcmFile(txtModifierFile.Text, chkAutodetect.Checked, basefile.configFileFullName);
                 if (!checkAppendPatch.Checked || PatchList == null)
                     PatchList = new List<XmlPatch>();
@@ -1074,7 +1063,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold( "frmPatcher, line " + line + ": " + ex.Message);
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
         private void btnCompare_Click(object sender, EventArgs e)
@@ -1084,7 +1073,7 @@ namespace UniversalPatcher
             if (txtBaseFile.Text.Length == 0 || txtModifierFile.Text.Length == 0)
                 return;
             if (basefile.Segments != null && basefile.Segments.Count > 0)
-            { 
+            {
                 labelXML.Text = basefile.configFile + " (v " + basefile.Segments[0].Version + ")";
             }
             if (txtOS.Text.Length == 0)
@@ -1147,7 +1136,7 @@ namespace UniversalPatcher
                     Logger("Nothing to save");
                     return;
                 }
-                string fileName = SelectSaveFile(BinFilter,Path.GetFileName(txtBaseFile.Text));
+                string fileName = SelectSaveFile(BinFilter, Path.GetFileName(txtBaseFile.Text));
                 if (fileName.Length == 0)
                     return;
 
@@ -1171,12 +1160,10 @@ namespace UniversalPatcher
         private void btnCheckSums_Click(object sender, EventArgs e)
         {
             if (basefile.Segments != null && basefile.Segments.Count > 0)
-            { 
+            {
                 basefile.FixCheckSums();
             }
         }
-
-
 
         private void btnLoadFolder_Click(object sender, EventArgs e)
         {
@@ -1249,8 +1236,8 @@ namespace UniversalPatcher
             try
             {
                 XmlPatch xpatch = new XmlPatch();
-                xpatch.CompatibleOS = OSlist[0] + ":" + Start.ToString("X"); 
-                for (int i=1;i < OSlist.Length; i++)
+                xpatch.CompatibleOS = OSlist[0] + ":" + Start.ToString("X");
+                for (int i = 1; i < OSlist.Length; i++)
                     xpatch.CompatibleOS += "," + OSlist[i] + ":" + Start.ToString("X");
                 xpatch.XmlFile = Path.GetFileName(basefile.configFileFullName);
                 xpatch.Description = txtExtractDescription.Text;
@@ -1259,14 +1246,14 @@ namespace UniversalPatcher
                 {
                     if (i > Start)
                         xpatch.Data += " ";
-                    if (MaskText.ToLower() == "ff" || MaskText == "") 
-                    { 
+                    if (MaskText.ToLower() == "ff" || MaskText == "")
+                    {
                         xpatch.Data += basefile.buf[i].ToString("X2");
                     }
                     else
                     {
                         byte Mask = byte.Parse(MaskText, System.Globalization.NumberStyles.HexNumber);
-                        xpatch.Data += (basefile.buf[i] & Mask).ToString("X2") + "[" + MaskText +"]";
+                        xpatch.Data += (basefile.buf[i] & Mask).ToString("X2") + "[" + MaskText + "]";
                     }
                 }
                 if (PatchList == null)
@@ -1280,8 +1267,8 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
-
         }
+
         private void btnExtract_Click(object sender, EventArgs e)
         {
             try
@@ -1358,12 +1345,12 @@ namespace UniversalPatcher
             bindingSource.DataSource = PatchList;
             dataPatch.DataSource = bindingSource;
             if (PatchList == null || PatchList.Count == 0)
-            { 
+            {
                 tabPatch.Text = "Patch editor";
             }
-            else 
-            { 
-                tabPatch.Text = "Patch editor (" + PatchList.Count.ToString() +")";
+            else
+            {
+                tabPatch.Text = "Patch editor (" + PatchList.Count.ToString() + ")";
             }
         }
 
@@ -1401,7 +1388,7 @@ namespace UniversalPatcher
                 if (!string.IsNullOrEmpty(basefile.configFileFullName))
                     frmM.txtXML.Text = Path.GetFileName(basefile.configFileFullName);
             }
-            
+
             if (frmM.ShowDialog(this) == DialogResult.OK)
             {
                 if (PatchList == null)
@@ -1468,7 +1455,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (PatchList == null ||  PatchList.Count == 0)
+                if (PatchList == null || PatchList.Count == 0)
                     return;
                 if (dataPatch.SelectedRows.Count == 0 && dataPatch.SelectedCells.Count == 0)
                     return;
@@ -1520,7 +1507,6 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
-
         }
 
         private void dataPatch_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -1542,7 +1528,7 @@ namespace UniversalPatcher
 
         private void btnUp_Click(object sender, EventArgs e)
         {
-            int row = dataPatch.CurrentRow.Index; 
+            int row = dataPatch.CurrentRow.Index;
             if (row == 0)
                 return;
             XmlPatch CurrentP = PatchList[row];
@@ -1566,11 +1552,12 @@ namespace UniversalPatcher
             dataPatch.Rows[row + 1].Selected = true;
         }
 
-        private void LoadConfigXMLfile()
+        private void LoadConfigXMLfile(string fileName = null)
         {
             try
             {
-                string fileName = SelectFile("Select XML file", XmlFilter);
+                if (fileName == null)
+                    fileName = SelectFile("Select XML file", XmlFilter);
                 if (fileName.Length < 1)
                     return;
                 basefile.LoadConfigFile(fileName);
@@ -1582,6 +1569,7 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
             }
         }
+
         private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LoadConfigXMLfile();
@@ -1674,9 +1662,9 @@ namespace UniversalPatcher
                         }
                     }
                     bool isCompatible = false;
-                    for (int x=0; x<PatchList.Count; x++)
+                    for (int x = 0; x < PatchList.Count; x++)
                     {
-                        if (CheckPatchCompatibility(PatchList[x],basefile) < uint.MaxValue)
+                        if (CheckPatchCompatibility(PatchList[x], basefile) < uint.MaxValue)
                             isCompatible = true;
                     }
                     if (isCompatible)
@@ -1701,12 +1689,12 @@ namespace UniversalPatcher
 
         private void btnHelp_Click(object sender, EventArgs e)
         {
-            try 
+            try
             {
                 if (dataPatch.Rows[dataPatch.CurrentRow.Index].Cells[6].Value == null)
                     return;
                 string FileName = dataPatch.Rows[dataPatch.CurrentRow.Index].Cells[6].Value.ToString();
-                FileName = Path.Combine(Application.StartupPath, "Patches" , FileName);
+                FileName = Path.Combine(Application.StartupPath, "Patches", FileName);
                 Process.Start(FileName);
             }
             catch (Exception ex)
@@ -1721,23 +1709,23 @@ namespace UniversalPatcher
             {
                 bool isNew = false;
                 int counter = 0;
-                for (int i=0;i < ListCVN.Count; i++)
+                for (int i = 0; i < ListCVN.Count; i++)
                 {
                     CVN stock = ListCVN[i];
                     counter++;
                     uint cvnInt = 0;
                     if (HexToUint(stock.cvn, out cvnInt))
-                    if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr, cvnInt, false, basefile.configFileFullName) != "[stock]")
-                    {
-                        //Add if not already in list
-                        cvnDB.AddtoStock(stock);
-                        isNew = true;
-                        Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " added");
-                    }
-                    else
-                    {
-                        Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " Already in list");
-                    }
+                        if (CheckStockCVN(stock.PN, stock.Ver, stock.SegmentNr, cvnInt, false, basefile.configFileFullName) != "[stock]")
+                        {
+                            //Add if not already in list
+                            cvnDB.AddtoStock(stock);
+                            isNew = true;
+                            Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " added");
+                        }
+                        else
+                        {
+                            Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " Already in list");
+                        }
                 }
                 if (counter == 0)
                 {
@@ -1840,7 +1828,7 @@ namespace UniversalPatcher
         private void btnSaveCSV_Click(object sender, EventArgs e)
         {
             try
-            { 
+            {
                 string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
@@ -1899,10 +1887,10 @@ namespace UniversalPatcher
                 Directory.CreateDirectory(Path.GetDirectoryName(FnameStart));
             if (radioReplace.Checked)
             {
-                for (int x=0;x<SwapSegments.Count;x++)
+                for (int x = 0; x < SwapSegments.Count; x++)
                 {
                     if (FileName == Application.StartupPath + SwapSegments[x].FileName)
-                    {                        
+                    {
                         SwapSegments.RemoveAt(x);
                     }
                 }
@@ -1930,8 +1918,8 @@ namespace UniversalPatcher
             return FileName;
         }
 
-        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments, string dstFolder, string prefix="", string suffix="")
-        {            
+        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments, string dstFolder, string prefix = "", string suffix = "")
+        {
             if (PCM.segmentinfos == null)
             {
                 Logger("no segments defined");
@@ -1941,7 +1929,7 @@ namespace UniversalPatcher
             {
                 string scriptFName = prefix.Replace("$nr", "").Replace("$ver", "").Replace("$cvn", "").Replace("-", "").Replace("#", "") + "-";
                 scriptFName += Path.GetFileNameWithoutExtension(PCM.FileName) + "-";
-                scriptFName += suffix.Replace("$ver", "").Replace("$cvn", "").Replace("-","").Replace("#", "") + ".csv";
+                scriptFName += suffix.Replace("$ver", "").Replace("$cvn", "").Replace("-", "").Replace("#", "") + ".csv";
                 scriptFName = Path.Combine(dstFolder, scriptFName);
                 string scriptContent = "Filename;Part1";
                 int maxBlocks = 1;
@@ -1950,20 +1938,20 @@ namespace UniversalPatcher
                     if (PCM.segmentAddressDatas[s].SegmentBlocks.Count > maxBlocks)
                         maxBlocks = PCM.segmentAddressDatas[s].SegmentBlocks.Count;
                 }
-                for (int b=1; b<maxBlocks;b++)
+                for (int b = 1; b < maxBlocks; b++)
                 {
                     scriptContent += ";Part" + (b + 1).ToString();
                 }
                 scriptContent += Environment.NewLine + "Fill:4A FC;" + PCM.fsize.ToString("X") + Environment.NewLine;
 
-                for (int s=0;s<PCM.segmentinfos.Length;s++)
+                for (int s = 0; s < PCM.segmentinfos.Length; s++)
                 {
                     if (AllSegments || chkExtractSegments[s].Checked)
                     {
                         string FileName;
                         if (dstFolder.Length > 0)
                         {
-                            string FnameStart = PCM.segmentinfos[s].PN.PadLeft(8,'0');
+                            string FnameStart = PCM.segmentinfos[s].PN.PadLeft(8, '0');
                             string tmpPrefix = prefix.Replace("$nr", PCM.segmentinfos[s].SegNr).Replace("$ver", PCM.segmentinfos[s].Ver).Replace("$cvn", PCM.segmentinfos[s].cvn);
                             string tmpSuffix = suffix.Replace("$nr", PCM.segmentinfos[s].SegNr).Replace("$ver", PCM.segmentinfos[s].Ver).Replace("$cvn", PCM.segmentinfos[s].cvn);
                             FnameStart = tmpPrefix + FnameStart + tmpSuffix;
@@ -1975,10 +1963,10 @@ namespace UniversalPatcher
                             string FnameStart = Path.Combine(Application.StartupPath, "Segments", PCM.OS, PCM.segmentinfos[s].SegNr, PCM.segmentinfos[s].Name + "-" + PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver);
                             FileName = SegmentFileName(FnameStart, ".binsegment");
                             if (FileName.Length > 0)
-                            { 
+                            {
                                 SwapSegment swapsegment = new SwapSegment();
                                 swapsegment.Description = Descr;
-                                swapsegment.FileName = FileName.Replace(Application.StartupPath,"");
+                                swapsegment.FileName = FileName.Replace(Application.StartupPath, "");
                                 swapsegment.OS = PCM.OS;
                                 swapsegment.PN = PCM.segmentinfos[s].PN;
                                 swapsegment.Ver = PCM.segmentinfos[s].Ver;
@@ -1999,9 +1987,9 @@ namespace UniversalPatcher
                                 swapsegment.XmlFile = PCM.configFile + ".xml";
                                 if (PCM.segmentinfos[s].Name == "OS")
                                 {
-                                    for (int x=0;x< PCM.segmentinfos.Length;x++)
+                                    for (int x = 0; x < PCM.segmentinfos.Length; x++)
                                     {
-                                        if (x>0)
+                                        if (x > 0)
                                         {
                                             swapsegment.SegmentSizes += ";";
                                             swapsegment.SegmentAddresses += ";";
@@ -2012,7 +2000,7 @@ namespace UniversalPatcher
                                             swapsegment.SegmentAddresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].SwapAddress;
                                         }
                                         else
-                                        { 
+                                        {
                                             swapsegment.SegmentSizes += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Size;
                                             swapsegment.SegmentAddresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Address;
                                         }
@@ -2021,19 +2009,19 @@ namespace UniversalPatcher
                                 SwapSegments.Add(swapsegment);
                             }
                         }
-                        if (FileName.Length > 0) 
+                        if (FileName.Length > 0)
                         {
-                            
+
                             if (PCM.segmentinfos[s].SwapAddress != "")
                             {
                                 Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].SwapSize);
                                 WriteSegmentToFile(FileName, PCM.segmentAddressDatas[s].SwapBlocks, PCM.buf);
                                 scriptContent += FileName + ";" + PCM.segmentAddressDatas[s].SwapBlocks[0].Start.ToString("X") + "-" + PCM.segmentAddressDatas[s].SwapBlocks[0].End.ToString("X");
-                                for (int b=1; b< PCM.segmentAddressDatas[s].SwapBlocks.Count; b++)
+                                for (int b = 1; b < PCM.segmentAddressDatas[s].SwapBlocks.Count; b++)
                                     scriptContent += ";" + PCM.segmentAddressDatas[s].SwapBlocks[b].Start.ToString("X") + "-" + PCM.segmentAddressDatas[s].SwapBlocks[b].End.ToString("X");
                             }
                             else
-                            { 
+                            {
                                 Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size);
                                 WriteSegmentToFile(FileName, PCM.segmentAddressDatas[s].SegmentBlocks, PCM.buf);
                                 scriptContent += FileName + ";" + PCM.segmentAddressDatas[s].SegmentBlocks[0].Start.ToString("X") + "-" + PCM.segmentAddressDatas[s].SegmentBlocks[0].End.ToString("X");
@@ -2105,7 +2093,7 @@ namespace UniversalPatcher
                             descr = frmES.txtDescription.Text;
                         string prefix = frmES.txtFileNamePrefix.Text.ToLower();
                         string suffix = frmES.txtFilenameSuffix.Text.ToLower();
-                        ExtractSegments(PCM, descr, true, dstFolder,prefix,suffix);
+                        ExtractSegments(PCM, descr, true, dstFolder, prefix, suffix);
                     }
                     if (!chkLogtodisplay.Checked)
                         txtResult.AppendText(Environment.NewLine + "Segments extracted" + Environment.NewLine);
@@ -2171,10 +2159,10 @@ namespace UniversalPatcher
         {
             try
             {
-                PcmFile newPcm = new PcmFile(fileName,chkAutodetect.Checked, "");
+                PcmFile newPcm = new PcmFile(fileName, chkAutodetect.Checked, "");
                 //GetFileInfo(fileName, ref basefile, true, false);                
                 if (newPcm.FixCheckSums())  //Returns true, if need fix for checksum
-                {  
+                {
                     Logger("Saving file: " + fileName);
                     newPcm.SaveBin(fileName);
                     Logger("[OK]");
@@ -2194,13 +2182,13 @@ namespace UniversalPatcher
             {
                 if (!chkLogtodisplay.Checked)
                     txtResult.AppendText("Fixing checksums...");
-                for (int i= 0; i< frmF.listFiles.CheckedItems.Count; i++)
+                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     FixFileChecksum(FileName);
                 }
                 if (!chkLogtodisplay.Checked)
-                    txtResult.AppendText(Environment.NewLine +  "[Checksums fixed]" + Environment.NewLine);
+                    txtResult.AppendText(Environment.NewLine + "[Checksums fixed]" + Environment.NewLine);
                 else
                     Logger("[Checksums fixed]");
             }
@@ -2228,7 +2216,7 @@ namespace UniversalPatcher
             AppSettings.Save();
         }
 
-         private void chkLogtoFile_CheckedChanged(object sender, EventArgs e)
+        private void chkLogtoFile_CheckedChanged(object sender, EventArgs e)
         {
 
             if (chkLogtoFile.Checked)
@@ -2250,8 +2238,8 @@ namespace UniversalPatcher
             if (FileName.Length == 0)
                 return;
             Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            try 
-            { 
+            try
+            {
                 using (StreamWriter writetext = new StreamWriter(FileName))
                 {
                     string row = "";
@@ -2299,8 +2287,8 @@ namespace UniversalPatcher
 
         private void dataFileInfo_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            try 
-            {    
+            try
+            {
                 string folder = Path.GetDirectoryName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
                 string FileName = Path.GetFileName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
                 OpenFolderAndSelectItem(folder, FileName);
@@ -2315,7 +2303,7 @@ namespace UniversalPatcher
         private void btnSaveCsvBadChkFile_Click(object sender, EventArgs e)
         {
             try
-            { 
+            {
                 string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
@@ -2376,7 +2364,8 @@ namespace UniversalPatcher
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            try { 
+            try
+            {
                 frmSearchText frmS = new frmSearchText();
                 frmS.Show();
                 frmS.InitMe(txtResult);
@@ -2427,12 +2416,12 @@ namespace UniversalPatcher
         {
             try
             {
-            frmSearchTables frmST = new frmSearchTables();
-            frmST.Show(this);
-            if (!string.IsNullOrEmpty(tableSearchFile))
-                frmST.LoadFile(tableSearchFile);
-            else
-                frmST.LoadConfig();
+                frmSearchTables frmST = new frmSearchTables();
+                frmST.Show(this);
+                if (!string.IsNullOrEmpty(tableSearchFile))
+                    frmST.LoadFile(tableSearchFile);
+                else
+                    frmST.LoadConfig();
             }
             catch (Exception ex)
             {
@@ -2517,7 +2506,7 @@ namespace UniversalPatcher
         private void btnSavePidList_Click(object sender, EventArgs e)
         {
             try
-            { 
+            {
                 string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
@@ -2612,7 +2601,7 @@ namespace UniversalPatcher
                 if (chkCustomTableSearch.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
-                    tableFinder.SearchTables(basefile,false, txtCustomSearchString.Text);
+                    tableFinder.SearchTables(basefile, false, txtCustomSearchString.Text);
                     RefreshSearchedTables();
                     return;
                 }
@@ -2672,7 +2661,7 @@ namespace UniversalPatcher
                         Logger("Done");
                         return;
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -2715,8 +2704,8 @@ namespace UniversalPatcher
             Logger("Cross table search...");
             tableSearchResult = new List<TableSearchResult>();
             TableFinder tableFinder = new TableFinder();
-            tableFinder.SearchTables(basefile,false);
-            tableFinder.SearchTables(modfile, true,"",(int)numCrossVariation.Value);
+            tableFinder.SearchTables(basefile, false);
+            tableFinder.SearchTables(modfile, true, "", (int)numCrossVariation.Value);
             RefreshSearchedTables();
             Logger("Done");
         }
@@ -2754,14 +2743,14 @@ namespace UniversalPatcher
                             {
                                 string[] aparts = val.Split(',');
                                 val = "";
-                                for (int a= 0; a<aparts.Length; a++)
+                                for (int a = 0; a < aparts.Length; a++)
                                 {
                                     if (a > 0)
                                         val += ":";
                                     string[] addresses = aparts[a].Split('-');
                                     if (addresses.Length > 1)
                                     {
-                                        if (!HexToUint(addresses[0],out valDec))
+                                        if (!HexToUint(addresses[0], out valDec))
                                         {
                                             Debug.WriteLine("Can't convert from hex: " + addresses[0]);
                                             break;
@@ -2807,7 +2796,7 @@ namespace UniversalPatcher
         private void btnSaveCsvDTC_Click(object sender, EventArgs e)
         {
             try
-            { 
+            {
                 string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
@@ -2906,8 +2895,8 @@ namespace UniversalPatcher
 
         private void dTCSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try 
-            { 
+            try
+            {
                 frmEditXML frmE = new frmEditXML();
                 frmE.LoadDTCSearchConfig();
                 frmE.Show();
@@ -2920,8 +2909,8 @@ namespace UniversalPatcher
 
         private void btnShowTableData_Click(object sender, EventArgs e)
         {
-            try 
-            { 
+            try
+            {
                 tableViews = new List<TableView>();
                 int dataIndex = dataIndex = dataGridSearchedTables.SelectedCells[0].RowIndex;
                 uint StartAddr;
@@ -2975,13 +2964,13 @@ namespace UniversalPatcher
 
         private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try 
+            try
             {
                 string fName;
                 if (basefile.configFileFullName.Length == 0)
                     fName = SelectFile("Select tableseekfile", XmlFilter);
                 else
-                     fName = basefile.TableSeekFile;
+                    fName = basefile.TableSeekFile;
                 frmEditXML frmE = new frmEditXML();
                 frmE.LoadTableSeek(fName);
                 frmE.Show();
@@ -3077,7 +3066,7 @@ namespace UniversalPatcher
         private void btnSearchTableSeek_Click(object sender, EventArgs e)
         {
             int rowindex = dataGridTableSeek.CurrentCell.RowIndex;
-            for (int i = rowindex +1 ; i < dataGridTableSeek.RowCount; i++)
+            for (int i = rowindex + 1; i < dataGridTableSeek.RowCount; i++)
             {
                 if (dataGridTableSeek.Rows[i].Cells["Name"].Value.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()))
                 {
@@ -3102,7 +3091,7 @@ namespace UniversalPatcher
                 FrmTuner ft = new FrmTuner(basefile);
                 ft.Show();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LoggerBold(ex.Message);
             }
@@ -3141,7 +3130,7 @@ namespace UniversalPatcher
         }
 
         private void saveToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {            
+        {
             Logger("Saving file: " + basefile.FileName);
             basefile.SaveBin(basefile.FileName);
             Logger("OK");
@@ -3161,7 +3150,8 @@ namespace UniversalPatcher
 
         private void moreSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try { 
+            try
+            {
                 frmMoreSettings frmTS = new frmMoreSettings();
                 frmTS.Show();
             }
@@ -3313,7 +3303,7 @@ namespace UniversalPatcher
                 Logger("Checksum research:");
 
                 UInt64 savedVal = 0;
-                uint csAddr;                
+                uint csAddr;
                 CSMethod method = csUtilSelectedMethod();
 
                 if (HexToUint(txtCSAddr.Text, out csAddr))
@@ -3321,7 +3311,7 @@ namespace UniversalPatcher
                     if (numCSBytes.Value == 1)
                         savedVal = basefile.buf[csAddr];
                     else if (numCSBytes.Value == 2)
-                        savedVal = ReadUint16(basefile.buf, csAddr,chkCsMSB.Checked);
+                        savedVal = ReadUint16(basefile.buf, csAddr, chkCsMSB.Checked);
                     else if (numCSBytes.Value == 4)
                         savedVal = ReadUint32(basefile.buf, csAddr, chkCsMSB.Checked);
                     else if (numCSBytes.Value == 8)
@@ -3338,11 +3328,11 @@ namespace UniversalPatcher
                 {
                     Logger("Result: ", false);
                     ulong calCval = csUtilCalcCS(true, savedVal);
-                    Logger(SegmentInfo.CsToString(calCval,(int)numCSBytes.Value,method,chkCsMSB.Checked), false);
+                    Logger(SegmentInfo.CsToString(calCval, (int)numCSBytes.Value, method, chkCsMSB.Checked), false);
                     if (savedVal == calCval)
                         Logger(" [Match]");
                     else
-                        Logger ("");
+                        Logger("");
                 }
             }
             catch (Exception ex)
@@ -3612,7 +3602,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        for (int i=0; i<comboFakeCvnSegment.Items.Count;i++)
+                        for (int i = 0; i < comboFakeCvnSegment.Items.Count; i++)
                         {
                             if (btnFakeCVN.Text == "Go")
                                 break;
@@ -3629,7 +3619,7 @@ namespace UniversalPatcher
                     }
                     Logger("Done");
                     basefile.FixCheckSums();
-                    ShowFileInfo(basefile,true);
+                    ShowFileInfo(basefile, true);
                     ShowFakeCvnSelectedBytes();
                     //GetFileInfo(txtBaseFile.Text, ref basefile, false);
                 }
@@ -3689,7 +3679,7 @@ namespace UniversalPatcher
                         richEndOfSegment.SelectionColor = Color.LightBlue;
                         otherSegAddr = a;
                     }
-                    if (a==segEndAddr || a == (segStartAddr-1))
+                    if (a == segEndAddr || a == (segStartAddr - 1))
                         richEndOfSegment.AppendText(basefile.buf[a].ToString("X2") + "|");
                     else
                         richEndOfSegment.AppendText(basefile.buf[a].ToString("X2") + " ");
@@ -3757,7 +3747,7 @@ namespace UniversalPatcher
             {
                 if (comboFakeCvnSegment.Text == "" || !radioFakeCVNRelativeAddr.Checked)
                     return;
-                int seg = comboFakeCvnSegment.SelectedIndex;   
+                int seg = comboFakeCvnSegment.SelectedIndex;
                 txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
             }
             catch (Exception ex)
@@ -3943,15 +3933,15 @@ namespace UniversalPatcher
                             buf = new byte[fsize];
 
                             uint addr = 0;
-                            for (;addr <= (fsize - fillBytes.Length);)
+                            for (; addr <= (fsize - fillBytes.Length);)
                             {
-                                for (int f=0; f < fillBytes.Length ; f++)
+                                for (int f = 0; f < fillBytes.Length; f++)
                                 {
                                     buf[addr] = fillBytes[f];
                                     addr++;
                                 }
                             }
-                            
+
                         }
                         else
                         {
@@ -3963,7 +3953,7 @@ namespace UniversalPatcher
                             }
                             byte[] segment = ReadBin(fParts[0]);
                             uint offset = 0;
-                            for (int x=1; x < fParts.Length;x++) //Part1, Part2...
+                            for (int x = 1; x < fParts.Length; x++) //Part1, Part2...
                             {
                                 string[] pParts = fParts[x].Split('-');
                                 if (pParts.Length != 2)
@@ -3984,14 +3974,14 @@ namespace UniversalPatcher
                                     LoggerBold("Unknown segment Start - End: " + fParts[x]);
                                     return;
                                 }
-                                Array.Copy(segment, offset, buf, start, end -start + 1);
+                                Array.Copy(segment, offset, buf, start, end - start + 1);
                                 offset += end - start + 1;
                             }
                         }
                     }
                 }
                 string defName = Path.GetFileNameWithoutExtension(scriptFname) + "-rebuild.bin";
-                string fName = SelectSaveFile("",defName);
+                string fName = SelectSaveFile("", defName);
                 if (fName.Length == 0)
                     return;
                 Logger("Writing to file: " + fName);
@@ -4050,7 +4040,7 @@ namespace UniversalPatcher
                 }
 
                 if (seg > -1)
-                { 
+                {
                     segStartAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[0].Start;
                     segEndAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End;
                 }
@@ -4199,7 +4189,7 @@ namespace UniversalPatcher
                 {
                     string fName = basefile.PlatformConfigFile;
                     if (basefile.configFile.Length == 0)
-                        fName = SelectSaveFile(XmlFilter,"new-platform.xml");
+                        fName = SelectSaveFile(XmlFilter, "new-platform.xml");
                     if (fName.Length == 0)
                         return;
                     Logger("Saving platform config: " + Path.GetFileName(fName), false);
@@ -4229,7 +4219,7 @@ namespace UniversalPatcher
             comboExtraInfoExtra.Items.Clear();
             int seg = comboExtrainfoSegment.SelectedIndex;
             for (int i = 0; i < basefile.segmentAddressDatas[seg].ExtraInfo.Count; i++)
-                comboExtraInfoExtra.Items.Add(basefile.segmentAddressDatas[seg].ExtraInfo[i].Name);            
+                comboExtraInfoExtra.Items.Add(basefile.segmentAddressDatas[seg].ExtraInfo[i].Name);
         }
 
         private void comboExtraInfoExtra_SelectedIndexChanged(object sender, EventArgs e)
@@ -4260,13 +4250,13 @@ namespace UniversalPatcher
         {
             try
             {
-                for (uint a=0; a<(basefile.fsize-7);a++)
+                for (uint a = 0; a < (basefile.fsize - 7); a++)
                 {
                     uint dWord1 = basefile.ReadUInt32(a);
-                    uint dWord2 = basefile.ReadUInt32(a+4);
+                    uint dWord2 = basefile.ReadUInt32(a + 4);
                     if (dWord1 == ~dWord2)
                     {
-                        if (!chkCsUtilFilter.Checked || dWord1.ToString("X8").Replace("F","").Replace("0","") != "")
+                        if (!chkCsUtilFilter.Checked || dWord1.ToString("X8").Replace("F", "").Replace("0", "") != "")
                             Logger("Address: " + a.ToString("X8") + ": " + dWord1.ToString("X8") + " " + dWord2.ToString("X8"));
                     }
                 }
@@ -4349,7 +4339,7 @@ namespace UniversalPatcher
                     {
                         string fName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                         PcmFile PCM = new PcmFile(fName, true, "");
-                        Logger("File: " + fName +", Platform: " + PCM.configFile + ", OS: " + PCM.OS);
+                        Logger("File: " + fName + ", Platform: " + PCM.configFile + ", OS: " + PCM.OS);
                         string dstFile;
                         if (radioSortPlatform.Checked)
                             dstFile = Path.Combine(dstFldr, PCM.configFile, Path.GetFileName(fName));
@@ -4422,7 +4412,7 @@ namespace UniversalPatcher
 
         private void btnStartFlashApp_Click(object sender, EventArgs e)
         {
-            StartFlashApp(null,false);
+            StartFlashApp(null, false);
         }
 
         private void creditsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4448,6 +4438,47 @@ namespace UniversalPatcher
             }
         }
 
+        private void btnImportCsv_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectFile("Select CSV file", CsvFilter);
+            if (FileName.Length == 0)
+                return;
+            StreamReader sr = new StreamReader(FileName);
+            string line;
+            //Type,PID,NAME,DEFINITION,AdditionalInfo,SCALING,UNIT,SIGNED,Bytes,,,,,,,,,,,,,,,,,,,,,,,,,,
+            while ((line = sr.ReadLine()) != null)
+            {
+                List<string> lineparts = ParseCswRow(line);
+                if (lineparts.Count < 8)
+                    continue;
+                if (HexToUshort(lineparts[1], out ushort nr))
+                {
+                    for (int i = 0; i < pidDescriptions.Count; i++)
+                    {
+                        if (pidDescriptions[i].PidNumber == nr)
+                        {
+                            pidDescriptions[i].Description = lineparts[3];
+                            pidDescriptions[i].Scaling = lineparts[5];
+                            pidDescriptions[i].Unit = lineparts[6];
+                            if (lineparts[7] == "Y")
+                                pidDescriptions[i].Signed = true;
+                            else
+                                pidDescriptions[i].Signed = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            string pidDfile = Path.Combine(Application.StartupPath, "XML", "PidDescriptions.xml");
+            Logger("Saving file " + pidDfile + "...", false);
+            using (FileStream stream = new FileStream(pidDfile, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
+                writer.Serialize(stream, pidDescriptions);
+                stream.Close();
+            }
+            Logger(" [OK]");
+        }
     }
 }
 

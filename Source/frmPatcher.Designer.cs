@@ -296,6 +296,7 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
+            this.btnImportCsv = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1293,6 +1294,7 @@
             // 
             // tabPIDList
             // 
+            this.tabPIDList.Controls.Add(this.btnImportCsv);
             this.tabPIDList.Controls.Add(this.btnClearPidList);
             this.tabPIDList.Controls.Add(this.btnSavePidList);
             this.tabPIDList.Controls.Add(this.dataGridPIDlist);
@@ -3270,6 +3272,16 @@
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
             // 
+            // btnImportCsv
+            // 
+            this.btnImportCsv.Location = new System.Drawing.Point(170, 3);
+            this.btnImportCsv.Name = "btnImportCsv";
+            this.btnImportCsv.Size = new System.Drawing.Size(75, 23);
+            this.btnImportCsv.TabIndex = 5;
+            this.btnImportCsv.Text = "Import";
+            this.btnImportCsv.UseVisualStyleBackColor = true;
+            this.btnImportCsv.Click += new System.EventHandler(this.btnImportCsv_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3645,5 +3657,6 @@
         public System.Windows.Forms.CheckBox chkDebug;
         private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
         private System.Windows.Forms.Timer timerDebug;
+        private System.Windows.Forms.Button btnImportCsv;
     }
 }

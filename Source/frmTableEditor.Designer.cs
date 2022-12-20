@@ -58,11 +58,16 @@ namespace UniversalPatcher
             this.showRawHEXValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTooltipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rememberCompareSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showTableVisualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.offsetVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fwdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.upToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
             this.numColumn = new System.Windows.Forms.NumericUpDown();
             this.labelColumn = new System.Windows.Forms.Label();
@@ -83,7 +88,6 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
-            this.rememberCompareSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -106,7 +110,7 @@ namespace UniversalPatcher
             this.dataGridView1.Location = new System.Drawing.Point(2, 72);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(583, 359);
+            this.dataGridView1.Size = new System.Drawing.Size(891, 359);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
@@ -219,10 +223,14 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.graphToolStripMenuItem,
-            this.compareToolStripMenuItem});
+            this.compareToolStripMenuItem,
+            this.rewToolStripMenuItem,
+            this.fwdToolStripMenuItem,
+            this.upToolStripMenuItem,
+            this.downToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(587, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(895, 24);
             this.menuStrip1.TabIndex = 6;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -313,6 +321,13 @@ namespace UniversalPatcher
             this.dataFontToolStripMenuItem.Text = "Data font...";
             this.dataFontToolStripMenuItem.Click += new System.EventHandler(this.dataFontToolStripMenuItem_Click);
             // 
+            // rememberCompareSelectionToolStripMenuItem
+            // 
+            this.rememberCompareSelectionToolStripMenuItem.Name = "rememberCompareSelectionToolStripMenuItem";
+            this.rememberCompareSelectionToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.rememberCompareSelectionToolStripMenuItem.Text = "Remember compare selection";
+            this.rememberCompareSelectionToolStripMenuItem.Click += new System.EventHandler(this.rememberCompareSelectionToolStripMenuItem_Click);
+            // 
             // graphToolStripMenuItem
             // 
             this.graphToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -350,10 +365,38 @@ namespace UniversalPatcher
             this.compareToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
             this.compareToolStripMenuItem.Text = "Compare file";
             // 
+            // rewToolStripMenuItem
+            // 
+            this.rewToolStripMenuItem.Name = "rewToolStripMenuItem";
+            this.rewToolStripMenuItem.Size = new System.Drawing.Size(27, 20);
+            this.rewToolStripMenuItem.Text = "<";
+            this.rewToolStripMenuItem.Click += new System.EventHandler(this.rewToolStripMenuItem_Click);
+            // 
+            // fwdToolStripMenuItem
+            // 
+            this.fwdToolStripMenuItem.Name = "fwdToolStripMenuItem";
+            this.fwdToolStripMenuItem.Size = new System.Drawing.Size(27, 20);
+            this.fwdToolStripMenuItem.Text = ">";
+            this.fwdToolStripMenuItem.Click += new System.EventHandler(this.fwdToolStripMenuItem_Click);
+            // 
+            // downToolStripMenuItem
+            // 
+            this.downToolStripMenuItem.Name = "downToolStripMenuItem";
+            this.downToolStripMenuItem.Size = new System.Drawing.Size(26, 20);
+            this.downToolStripMenuItem.Text = "˅";
+            this.downToolStripMenuItem.Click += new System.EventHandler(this.downToolStripMenuItem_Click);
+            // 
+            // upToolStripMenuItem
+            // 
+            this.upToolStripMenuItem.Name = "upToolStripMenuItem";
+            this.upToolStripMenuItem.Size = new System.Drawing.Size(26, 20);
+            this.upToolStripMenuItem.Text = "˄";
+            this.upToolStripMenuItem.Click += new System.EventHandler(this.upToolStripMenuItem_Click);
+            // 
             // chkSwapXY
             // 
             this.chkSwapXY.AutoSize = true;
-            this.chkSwapXY.Location = new System.Drawing.Point(247, 6);
+            this.chkSwapXY.Location = new System.Drawing.Point(347, 4);
             this.chkSwapXY.Name = "chkSwapXY";
             this.chkSwapXY.Size = new System.Drawing.Size(75, 17);
             this.chkSwapXY.TabIndex = 7;
@@ -364,7 +407,7 @@ namespace UniversalPatcher
             // numColumn
             // 
             this.numColumn.Enabled = false;
-            this.numColumn.Location = new System.Drawing.Point(537, 3);
+            this.numColumn.Location = new System.Drawing.Point(636, 3);
             this.numColumn.Maximum = new decimal(new int[] {
             3,
             0,
@@ -389,7 +432,7 @@ namespace UniversalPatcher
             // labelColumn
             // 
             this.labelColumn.AutoSize = true;
-            this.labelColumn.Location = new System.Drawing.Point(486, 6);
+            this.labelColumn.Location = new System.Drawing.Point(585, 5);
             this.labelColumn.Name = "labelColumn";
             this.labelColumn.Size = new System.Drawing.Size(45, 13);
             this.labelColumn.TabIndex = 9;
@@ -500,7 +543,7 @@ namespace UniversalPatcher
             // 
             // numDecimals
             // 
-            this.numDecimals.Location = new System.Drawing.Point(442, 4);
+            this.numDecimals.Location = new System.Drawing.Point(541, 1);
             this.numDecimals.Minimum = new decimal(new int[] {
             1,
             0,
@@ -519,7 +562,7 @@ namespace UniversalPatcher
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(383, 6);
+            this.label1.Location = new System.Drawing.Point(482, 5);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 13);
             this.label1.TabIndex = 12;
@@ -609,7 +652,7 @@ namespace UniversalPatcher
             // chkRawHex
             // 
             this.chkRawHex.AutoSize = true;
-            this.chkRawHex.Location = new System.Drawing.Point(328, 6);
+            this.chkRawHex.Location = new System.Drawing.Point(428, 4);
             this.chkRawHex.Name = "chkRawHex";
             this.chkRawHex.Size = new System.Drawing.Size(48, 17);
             this.chkRawHex.TabIndex = 18;
@@ -617,18 +660,11 @@ namespace UniversalPatcher
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
             // 
-            // rememberCompareSelectionToolStripMenuItem
-            // 
-            this.rememberCompareSelectionToolStripMenuItem.Name = "rememberCompareSelectionToolStripMenuItem";
-            this.rememberCompareSelectionToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.rememberCompareSelectionToolStripMenuItem.Text = "Remember compare selection";
-            this.rememberCompareSelectionToolStripMenuItem.Click += new System.EventHandler(this.rememberCompareSelectionToolStripMenuItem_Click);
-            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(587, 450);
+            this.ClientSize = new System.Drawing.Size(895, 450);
             this.Controls.Add(this.chkRawHex);
             this.Controls.Add(this.groupDifference);
             this.Controls.Add(this.labelInfo);
@@ -720,5 +756,9 @@ namespace UniversalPatcher
         private ToolStripMenuItem showHistogramToolStripMenuItem;
         private ToolStripMenuItem offsetVisualizerToolStripMenuItem;
         private ToolStripMenuItem rememberCompareSelectionToolStripMenuItem;
+        private ToolStripMenuItem rewToolStripMenuItem;
+        private ToolStripMenuItem fwdToolStripMenuItem;
+        private ToolStripMenuItem downToolStripMenuItem;
+        private ToolStripMenuItem upToolStripMenuItem;
     }
 }

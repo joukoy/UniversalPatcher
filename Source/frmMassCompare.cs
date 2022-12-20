@@ -87,7 +87,7 @@ namespace UniversalPatcher
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + compTd.Units;
                     string maskTxt = "";
-                    TableValueType vt = GetTableValueType(compTd);
+                    TableValueType vt = compTd.ValueType();
                     if (vt == TableValueType.bitmask)
                     {
                         unitTxt = "";

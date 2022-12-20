@@ -52,6 +52,107 @@ namespace UniversalPatcher
             public bool Isroot { get; set; }
         }
 
+        public class Navi
+        {
+            public Navi()
+            {
+
+            }
+            public Navi(TabPage Tab, List<string> Path, string Filter, string FilterBy, TableData Td)
+            {
+                this.Tab = Tab;
+                this.Path = new List<string>();
+                this.Path.AddRange(Path);
+                this.Filter = Filter;
+                this.FilterBy = FilterBy;
+                this.Td = Td;
+                if (this.Filter == null)
+                    this.Filter = "";
+                if (this.FilterBy == null)
+                    this.FilterBy = "";
+            }
+            public TabPage Tab { get; set; }
+            public string TabName { 
+                get
+                {
+                    string tabName = "Listmode";
+                    if (Tab != null)
+                        tabName = Tab.Name;
+                    return tabName;
+                }
+            }
+            public string TableName
+            {
+                get
+                {
+                    string tableName = "";
+                    if (Td != null)
+                        tableName = Td.TableName;
+                    return tableName;
+                }
+            }
+            public List<string> Path { get; set; }
+            public string Filter { get; set; }
+            public string FilterBy { get; set; }
+            public TableData Td { get; set; }
+
+            public string PathStr()
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int i=Path.Count-1; i>=0; i--)
+                {
+                    sb.Append(Path[i]);
+                    if (i>0)
+                        sb.Append(" -> ");
+                }
+                return sb.ToString();
+            }
+            //
+            //This func returns node's path without node (table) itself
+            //
+            public string NodePath()
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int i=Path.Count-1;i > 0; i--)
+                {
+                    sb.Append(Path[i]);
+                    if (i<Path.Count -1)
+                        sb.Append(" -> ");
+                }
+                return sb.ToString();
+            }
+
+            //
+            //"Fingerprint" of navi, for comparing 
+            //
+            public string NodeSerial()
+            {
+                string naviSerial = TabName +"-"+ Filter +"-"+ FilterBy +"-"+ PathStr();
+                return naviSerial;
+            }
+
+            //
+            //"Fingerprint" of navi, for comparing 
+            //
+            public string PathSerial()
+            {
+                string pathSerial = TabName +"-" +Filter +"-"+ FilterBy +"-"+ NodePath();
+                Debug.WriteLine("Pathserial: " + pathSerial);
+                return pathSerial;
+            }
+
+            public string NaviInfo()
+            {
+                StringBuilder nSb = new StringBuilder();
+                nSb.Append("Tab: " + TabName + Environment.NewLine);
+                nSb.Append("Filter: " + Filter + Environment.NewLine);
+                nSb.Append("FilterBy: " + FilterBy + Environment.NewLine);
+                //nSb.Append("Table: " + TableName + Environment.NewLine);
+                nSb.Append("Path: " + PathStr());
+                return nSb.ToString();
+            }
+        }
+
         public enum NType
         {
             Valuetype,
@@ -340,7 +441,7 @@ namespace UniversalPatcher
 
                 for (int t = 0; t < filteredTableDatas.Count; t++)
                 {
-                    string vt = GetTableValueType(filteredTableDatas[t]).ToString();
+                    string vt = filteredTableDatas[t].ValueType().ToString();
                     if (!valueTypeTables.ContainsKey(vt))
                     {
                         valueTypeTables.Add(vt, new List<TableData>());
@@ -392,23 +493,29 @@ namespace UniversalPatcher
             }
         }
 
-        public static void AddSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas, bool AddRoot)
+        public static void AddSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas, bool AddRoot, bool OffsetTool = false)
         {
             try
             {
-                if (filteredTableDatas == null)
+                if (filteredTableDatas == null || PCM == null || PCM.segmentinfos == null)
                     return;
 
                 string iconFolder = Path.Combine(Application.StartupPath, "Icons");
                 string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
 
                 Tnode tnS = new Tnode("", "Segments", NType.Segment, "segments.ico");
+                if (OffsetTool)
+                {
+                    tnS.Node.Name = "OffsetTool";
+                    tnS.Node.Text = "Offset";
+                }
                 tnS.Isroot = true;
                 List<string> usedSegments = new List<string>();
                 Dictionary<string, List<TableData>> segTables = new Dictionary<string, List<TableData>>();
                 for (int t = 0; t < filteredTableDatas.Count; t++)
                 {
                     string seg = PCM.GetSegmentName(filteredTableDatas[t].addrInt);
+                    //Debug.WriteLine(filteredTableDatas[t].TableName + ": " + seg);
                     if (string.IsNullOrEmpty(seg))
                         seg = "Unknown";
                     if (!usedSegments.Contains(seg))
@@ -419,21 +526,32 @@ namespace UniversalPatcher
                     segTables[seg].Add(filteredTableDatas[t]);
                 }
 
-                usedSegments.Sort();
+                List<string> tmpL = new List<string>();
+                foreach (SegmentInfo s in PCM.segmentinfos)
+                {
+                    if (usedSegments.Contains(s.Name))
+                        tmpL.Add(s.Name);
+                }
+                usedSegments = tmpL;
+                //usedSegments.Sort();
 
                 Tnode segTn;
                 for (int i = 0; i < usedSegments.Count; i++)
                 {
+                    string seg = usedSegments[i];
+                    string segName = usedSegments[i];
+                    if (OffsetTool)
+                        segName += "-offset";
                     string txt = usedSegments[i];
                     if (AppSettings.TunerShowTableCount)
-                        txt += " [" + segTables[usedSegments[i]].Count.ToString() + "]";
-                    segTn = new Tnode(txt, usedSegments[i], NType.Segment, "segments.ico", tnS.Node);
-                    segTn.filteredTds = segTables[usedSegments[i]];
+                        txt += " [" + segTables[seg].Count.ToString() + "]";
+                    segTn = new Tnode(txt, segName, NType.Segment, "segments.ico", tnS.Node);
+                    segTn.filteredTds = segTables[seg];
 
                     bool found = false;
                     foreach (string icofile in GalleryArray)
                     {
-                        double percentage = ComputeSimilarity.CalculateSimilarity(Path.GetFileNameWithoutExtension(icofile).ToLower(), segTn.Node.Name.ToLower());
+                        double percentage = ComputeSimilarity.CalculateSimilarity(Path.GetFileNameWithoutExtension(icofile).ToLower(), seg.ToLower());
                         if ((int)(percentage * 100) >= 80)
                         {
                             segTn.Node.ImageKey = Path.GetFileName(icofile);
@@ -672,7 +790,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < tnode1.filteredTds.Count; i++)
                 {
                     TableData td = tnode1.filteredTds[i];
-                    string ico = GetTableValueType(td).ToString().Replace("number", "") + td.Dimensions().ToString() + "d.ico";
+                    string ico = td.ValueType().ToString().Replace("number", "") + td.Dimensions().ToString() + "d.ico";
                     string cat = td.Category;
                     if (tnode1.ExtraCategory)
                     {
@@ -694,18 +812,24 @@ namespace UniversalPatcher
                 for (int i = 0; i < tnode1.filteredTds.Count; i++)
                 {
                     TableData td = tnode1.filteredTds[i];
-                    string ico = GetTableValueType(td).ToString().Replace("number", "") + td.Dimensions().ToString()+ "d.ico";
+                    string ico = td.ValueType().ToString().Replace("number", "") + td.Dimensions().ToString()+ "d.ico";
                     Tnode tTd = new Tnode(td.TableName, td.TableName, NType.Table, ico, Node);
                     tTd.Td = td;
                 }
             }
-
+            Application.DoEvents();
         }
 
         public static void RestoreNodePath(TreeViewMS tv, List<string> path, PcmFile PCM)
         {
             try
             {
+                Debug.WriteLine("Restoring node");                
+                if (path == null || path.Count == 0)
+                {
+                    Debug.WriteLine("Empty path");
+                    return;
+                }
                 StringBuilder dbgStr = new StringBuilder("Restoring " + tv.Name +": ");
                 for (int i = 0; i < path.Count; i++)
                 {

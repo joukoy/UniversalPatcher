@@ -50,6 +50,11 @@ namespace UniversalPatcher
             LoggerLogSeparator = ",";
             LoggerDecimalSeparator = ".";
             TunerShowTableCount = true;
+            TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
+            ConfigModeColumnWidth = "180,114,32,63,86,71,48,81,100,50,78,49,69,60,54,43,58,64,43,78,100,100,243,100,100";
+            TunerModeColumnWidth = "192,110,100,100,100,100,100,100,100,72,100,100,100,100,60,46,100,100,100,100,100,100,197,100,100";
+            NavigatorMaxTablesPerNode = 3;
+            NavigatorMaxTablesTotal = 50;
             TableEditorFont = new SerializableFont(new Font("Consolas", 8));
             TableExplorerFont = new SerializableFont(new Font("Arial", 8));
             PatcherLogFont = new SerializableFont(new Font("Consolas", 8));
@@ -190,6 +195,8 @@ namespace UniversalPatcher
         public int TableEditorCompareSelection { get; set; }
         public int TableEditorCompareType { get; set; }
         public bool TunerShowTableCount { get; set; }
+        public int NavigatorMaxTablesPerNode { get; set; }
+        public int NavigatorMaxTablesTotal { get; set; }
 
         public SerializableFont TableEditorFont { get; set; }
         public SerializableFont TableExplorerFont { get; set; }

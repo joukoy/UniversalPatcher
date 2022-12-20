@@ -675,5 +675,31 @@ public static class Helpers
         return returnValue;
     }
 
+    public static List<string> ParseCswRow(string eRow)
+    {
+        List<string> retVal = new List<string>();
+        StringBuilder rPart = new StringBuilder();
+        //string rPart = "";
+        int parCount = 0;
+        for (int i = 0; i < eRow.Length; i++)
+        {
+            if (eRow[i] == '"')
+            {
+                parCount++;
+            }
+            else if (eRow[i] == ',' && parCount % 2 == 0)
+            {
+                retVal.Add(rPart.ToString());
+                rPart = new StringBuilder();
+            }
+            else
+            {
+                rPart.Append(eRow[i]);
+            }
+        }
+
+        return retVal;
+    }
+
 
 }

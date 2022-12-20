@@ -217,6 +217,39 @@ namespace UniversalPatcher
             return Rows * Columns;
         }
 
+        public TableValueType ValueType()
+        {
+            TableValueType retVal;
+
+            if (Units == null)
+                Units = "";
+            if (Values.ToLower().StartsWith("patch:") || Values.ToLower().StartsWith("tablepatch:"))
+            {
+                retVal = TableValueType.patch;
+            }
+            else if (BitMask != null && BitMask.Length > 0)
+            {
+                retVal = TableValueType.bitmask;
+            }
+            else if (Units.ToLower().Contains("boolean") || Units.ToLower().Contains("t/f"))
+            {
+                retVal = TableValueType.boolean;
+            }
+            else if (Units.ToLower().Contains("true") && Units.ToLower().Contains("false"))
+            {
+                retVal = TableValueType.boolean;
+            }
+            else if (Values.StartsWith("Enum: "))
+            {
+                retVal = TableValueType.selection;
+            }
+            else
+            {
+                retVal = TableValueType.number;
+            }
+            return retVal;
+        }
+
         public TableData ShallowCopy(bool newGuid)
         {
             TableData newTd = (TableData)this.MemberwiseClone();

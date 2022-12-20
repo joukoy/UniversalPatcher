@@ -146,7 +146,10 @@ namespace UniversalPatcher
                     for (int c=0; c < cHeaders.Length;c++)
                     {
                         string hNr = Regex.Replace(cHeaders[c], "[^0-9]", "");
-                        ColumnHeaders[c] = Convert.ToDouble(hNr.Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                        if (Double.TryParse(hNr.Trim(), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double h))
+                            ColumnHeaders[c] = h;
+                        else
+                            ColumnHeaders[c] = c;
                     }
                 }
 

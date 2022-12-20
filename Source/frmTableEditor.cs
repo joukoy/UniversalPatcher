@@ -79,7 +79,9 @@ namespace UniversalPatcher
 
         //List of loaded files (for compare) File 0 is always "master" or A
         public List<CompareFile> compareFiles = new List<CompareFile>();
-
+        //List of selected tables in tuner (current node in tree)
+        public List<TableData> tunerSelectedTables;
+        int currentTunerTd = -1;
         public string tableName = "";
         Font dataFont;
 
@@ -107,6 +109,8 @@ namespace UniversalPatcher
         private bool showRawHex = false;
         private bool enableDiff = false;
         bool disableTooltips = false;
+        ToolTip NaviTip = new ToolTip();
+        ToolTip UpDownTip = new ToolTip();
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
@@ -188,6 +192,102 @@ namespace UniversalPatcher
             dataGridView1.RowHeaderMouseClick += DataGridView1_RowHeaderMouseClick;
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
             dataGridView1.CellClick += DataGridView1_SelectionChanged;
+            rewToolStripMenuItem.MouseDown += NavigatorMenuItem_MouseDown;
+            fwdToolStripMenuItem.MouseDown += NavigatorMenuItem_MouseDown;
+            if (this.Parent == null)
+            {
+                rewToolStripMenuItem.Visible = true;
+                fwdToolStripMenuItem.Visible = true;
+                upToolStripMenuItem.Visible = true;
+                downToolStripMenuItem.Visible = true;
+                upToolStripMenuItem.MouseHover += UpToolStripMenuItem_MouseHover;
+                downToolStripMenuItem.MouseHover += DownToolStripMenuItem_MouseHover;
+                rewToolStripMenuItem.MouseHover += Navigator_MouseHover;
+                fwdToolStripMenuItem.MouseHover += Navigator_MouseHover;
+                CompareFile selectedFile = compareFiles[currentFile];
+                TableData td = selectedFile.tableInfos[0].td;
+                SetUpDownToolTips();
+            }
+            else
+            {
+                rewToolStripMenuItem.Visible = false;
+                fwdToolStripMenuItem.Visible = false;
+                upToolStripMenuItem.Visible = false;
+                downToolStripMenuItem.Visible = false;
+
+            }
+        }
+
+        private void ShowNaviSelection()
+        {
+            ContextMenuStrip cms = new ContextMenuStrip();
+            List<TreeParts.Navi> navigator = compareFiles[currentFile].pcm.NaviGator;
+            for (int i = 0; i < navigator.Count; i++)
+            {
+                ToolStripMenuItem mi = new ToolStripMenuItem(navigator[i].PathStr());
+                if (i == compareFiles[currentFile].NaviCurrent)
+                    mi.Checked = true;
+                mi.Click += Mi_Click;
+                mi.Tag = i;
+                cms.Items.Add(mi);
+            }
+            cms.Show(System.Windows.Forms.Cursor.Position);
+
+        }
+
+        private void Mi_Click(object sender, EventArgs e)
+        {
+            int pos = (int)((ToolStripMenuItem)sender).Tag;
+            Navigate(pos);
+        }
+
+        private void NavigatorMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                ShowNaviSelection();
+        }
+
+        private void Navigator_MouseHover(object sender, EventArgs e)
+        {
+            ShowNaviTip();
+        }
+
+        private void ShowNaviTip()
+        {
+            List<TreeParts.Navi> navi = compareFiles[currentFile].pcm.NaviGator;
+            PcmFile pcm = compareFiles[currentFile].pcm;
+            int position = compareFiles[currentFile].NaviCurrent;
+            string message = "Navigator: " + (position + 1).ToString() + "/" + navi.Count.ToString();
+            NaviTip.Show(message, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y - 30, 2000);
+        }
+
+        public void SaveOnExit()
+        {
+            bool tableModified = false;
+            uint addr = compareFiles[0].tableBufferOffset;
+            for (int a = 0; a < compareFiles[0].buf.Length; a++)
+            {
+                if (compareFiles[0].pcm.buf[addr + a] != compareFiles[0].buf[a])
+                {
+                    tableModified = true;
+                    break;
+                }
+            }
+
+            if (tableModified)
+            {
+                DialogResult dialogResult = MessageBox.Show("Apply modifications?", "Apply modifications?", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    SaveTable(true);
+                    this.DialogResult = DialogResult.OK;
+                }
+                else
+                {
+                    this.DialogResult = DialogResult.Cancel;
+                }
+            }
+
         }
 
         private void frmTableEditor_FormClosing(object sender, EventArgs e)
@@ -210,30 +310,8 @@ namespace UniversalPatcher
                 }
                 AppSettings.Save();
 
-                bool tableModified = false;
-                uint addr = compareFiles[0].tableBufferOffset;
-                for (int a = 0; a < compareFiles[0].buf.Length; a++)
-                {
-                    if (compareFiles[0].pcm.buf[addr + a] != compareFiles[0].buf[a])
-                    {
-                        tableModified = true;
-                        break;
-                    }
-                }
+                SaveOnExit();
 
-                if (tableModified)
-                {
-                    DialogResult dialogResult = MessageBox.Show("Apply modifications?", "Apply modifications?", MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.Yes)
-                    {
-                        SaveTable(true);
-                        this.DialogResult = DialogResult.OK;
-                    }
-                    else
-                    {
-                        this.DialogResult = DialogResult.Cancel;
-                    }
-                }
                 if (ftvd != null && ftvd.Visible)
                     ftvd.Dispose();
             }
@@ -254,6 +332,7 @@ namespace UniversalPatcher
         {
             compareToolStripMenuItem.DropDownItems.Clear();
             compareFiles = new List<CompareFile>();
+            chkSwapXY.Enabled = true;
 
             tableName = "";
             only1d = false;    //Show multiple 1D tables as one multirow table
@@ -277,7 +356,7 @@ namespace UniversalPatcher
                     return; //OBD2 Description
                 }
                 string thisTable = tCell.td.TableName;
-                if (thisTable != lastTable && tuner != null)
+                if (thisTable != lastTable && tuner != null && this.Parent != null)
                 {
                     lastTable = thisTable;
                     tuner.ShowTableDescription(tCell.tableInfo.compareFile.pcm, tCell.td);
@@ -1269,7 +1348,7 @@ namespace UniversalPatcher
                 return;
             try
             {
-                TableValueType vt = GetTableValueType(ft);
+                TableValueType vt = ft.ValueType();
                 if (vt == TableValueType.boolean || vt == TableValueType.bitmask)
                 {
                     DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
@@ -1337,7 +1416,7 @@ namespace UniversalPatcher
                     labelUnits.Text = "Units: Boolean";
                 else
                     labelUnits.Text = "Units: " + GetUnitFromTableData(td);
-                if (GetTableValueType(td) == TableValueType.selection)
+                if (td.ValueType() == TableValueType.selection)
                     labelUnits.Text += ", Values: " + td.Values;
 
                 dataGridView1.Rows.Clear();
@@ -1594,6 +1673,18 @@ namespace UniversalPatcher
                     ftvd.UpdateDisplay();
                 }
 
+                if (this.Parent == null) //Not docked
+                {
+                    currentTunerTd = -1;
+                    for (int t = 0; t < tunerSelectedTables.Count; t++)
+                    {
+                        if (tunerSelectedTables[t].guid == td.guid)
+                        {
+                            currentTunerTd = t;
+                            break;
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -2949,5 +3040,164 @@ namespace UniversalPatcher
             AppSettings.TableEditorRememberCompare = rememberCompareSelectionToolStripMenuItem.Checked;
             AppSettings.Save();
         }
+
+        private void Navigate(int position)
+        {
+            List<TreeParts.Navi> navi = compareFiles[currentFile].pcm.NaviGator;
+            TableData td = navi[position].Td;
+            PcmFile pcm = compareFiles[currentFile].pcm;
+            string message = "Navigator: " + (position + 1).ToString() + "/" + navi.Count.ToString();
+            NaviTip.Show(message, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y - 30, 2000);
+            CleanUp();
+            PrepareTable(pcm, td, null, tuner.currentBin);
+            LoadTable();
+            compareFiles[currentFile].NaviCurrent = position;
+        }
+
+        private void rewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (compareFiles[currentFile].NaviCurrent > 0)
+                {
+                    compareFiles[currentFile].NaviCurrent--;
+                    Navigate(compareFiles[currentFile].NaviCurrent);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void fwdToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (compareFiles[currentFile].NaviCurrent < compareFiles[currentFile].pcm.NaviGator.Count - 1)
+                {
+                    compareFiles[currentFile].NaviCurrent++;
+                    Navigate(compareFiles[currentFile].NaviCurrent);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void SetUpDownToolTips()
+        {
+            if (currentTunerTd > 0)
+            {
+                upToolStripMenuItem.ToolTipText = "Previous: " + tunerSelectedTables[currentTunerTd - 1].TableName;
+            }
+            else
+            {
+                upToolStripMenuItem.ToolTipText = null;
+            }
+            if (currentTunerTd < tunerSelectedTables.Count - 1)
+            {
+                downToolStripMenuItem.ToolTipText = "Next: " + tunerSelectedTables[currentTunerTd + 1].TableName;
+            }
+            else
+            {
+                downToolStripMenuItem.ToolTipText = null;
+            }
+
+        }
+
+        private void UpDownTableList(bool down)
+        {
+            try
+            {
+                CompareFile selectedFile = compareFiles[currentFile];
+                TableData td = selectedFile.tableInfos[0].td;
+                PcmFile pcm = selectedFile.pcm;
+                if (currentTunerTd == -1)
+                {
+                    LoggerBold("Error in table list");
+                    return;
+                }
+                if (down)
+                {
+                    if (currentTunerTd < tunerSelectedTables.Count - 1)
+                        currentTunerTd++;
+                    else
+                        return;
+                }
+                else
+                {
+                    if (currentTunerTd > 0)
+                        currentTunerTd--;
+                    else
+                        return;
+                }
+                CleanUp();
+                PrepareTable(pcm, tunerSelectedTables[currentTunerTd], null, tuner.currentBin);
+                LoadTable();
+                SetUpDownToolTips();
+                if (down)
+                    ShowDownToolTip();
+                else
+                    ShowUpToolTip();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void downToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpDownTableList(true);
+        }
+
+        private void upToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpDownTableList(false);
+        }
+
+        private void ShowDownToolTip()
+        {
+            if (downToolStripMenuItem.ToolTipText != null)
+            {
+                UpDownTip.Show(downToolStripMenuItem.ToolTipText, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y - 20, 2000);
+            }
+
+        }
+        private void DownToolStripMenuItem_MouseHover(object sender, EventArgs e)
+        {
+            ShowDownToolTip();
+        }
+
+        private void ShowUpToolTip()
+        {
+            if (upToolStripMenuItem.ToolTipText != null)
+            {
+                UpDownTip.Show(upToolStripMenuItem.ToolTipText, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y - 20, 2000);
+            }
+        }
+        private void UpToolStripMenuItem_MouseHover(object sender, EventArgs e)
+        {
+            ShowUpToolTip();
+        }
+
     }
 }

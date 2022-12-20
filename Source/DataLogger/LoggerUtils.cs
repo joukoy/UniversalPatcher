@@ -13,61 +13,61 @@ using System.IO;
 using System.Threading;
 
 public static class LoggerUtils
+{
+    public static List<OBDMessage> analyzerData { get; set; }
+    public static Dictionary<byte, string> PcmResponses;
+    public class Parameter
     {
-        public static List<OBDMessage> analyzerData { get; set; }
-        public static Dictionary<byte, string> PcmResponses;
-        public class Parameter
+        public Parameter()
         {
-            public Parameter()
-            {
-                Conversions = new List<Conversion>();
-            }
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public List<Conversion> Conversions { get; set; }
-            public string Description { get; set; }
-            public string DataType { get; set; }
-            public int index { get; set; }
+            Conversions = new List<Conversion>();
         }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public List<Conversion> Conversions { get; set; }
+        public string Description { get; set; }
+        public string DataType { get; set; }
+        public int index { get; set; }
+    }
 
-        public class MathParameter
+    public class MathParameter
+    {
+        public MathParameter()
         {
-            public MathParameter()
-            {
-                Conversions = new List<Conversion>();
-            }
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public List<Conversion> Conversions { get; set; }
-            public string Description { get; set; }
-            public string xParameterId { get; set; }
-            public string yParameterId { get; set; }
-            public string xDataType { get; set; }
-            public string yDataType { get; set; }
-            public int index { get; set; }
+            Conversions = new List<Conversion>();
         }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public List<Conversion> Conversions { get; set; }
+        public string Description { get; set; }
+        public string xParameterId { get; set; }
+        public string yParameterId { get; set; }
+        public string xDataType { get; set; }
+        public string yDataType { get; set; }
+        public int index { get; set; }
+    }
 
-        public class RamParameter
+    public class RamParameter
+    {
+        public RamParameter()
         {
-            public RamParameter()
-            {
-                Conversions = new List<Conversion>();
-                Locations = new List<Location>();
-            }
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public List<Conversion> Conversions { get; set; }
-            public List<Location> Locations { get; set; }
-            public string Description { get; set; }
-            public string DataType { get; set; }
-            public int index { get; set; }
+            Conversions = new List<Conversion>();
+            Locations = new List<Location>();
         }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public List<Conversion> Conversions { get; set; }
+        public List<Location> Locations { get; set; }
+        public string Description { get; set; }
+        public string DataType { get; set; }
+        public int index { get; set; }
+    }
 
-        public class Location
-        {
-            public string os { get; set; }
-            public string address { get; set; }
-        }
+    public class Location
+    {
+        public string os { get; set; }
+        public string address { get; set; }
+    }
 
     public enum DefineBy
     {
@@ -129,91 +129,92 @@ public static class LoggerUtils
     }
 
     public class Conversion
+    {
+        public string Units { get; private set; }
+
+        public string Expression { get; private set; }
+
+        public string Format { get; private set; }
+
+        public bool IsBitMapped { get; private set; }
+
+        public int BitIndex { get; private set; }
+
+        public string TrueValue { get; private set; }
+
+        public string FalseValue { get; private set; }
+
+        public Conversion(string units, string expression, string format)
         {
-            public string Units { get; private set; }
-
-            public string Expression { get; private set; }
-
-            public string Format { get; private set; }
-
-            public bool IsBitMapped { get; private set; }
-
-            public int BitIndex { get; private set; }
-
-            public string TrueValue { get; private set; }
-
-            public string FalseValue { get; private set; }
-
-            public Conversion(string units, string expression, string format)
-            {
-                this.Units = units;
-                this.Expression = Sanitize(expression);
-                this.Format = format;
-                this.IsBitMapped = false;
-                this.BitIndex = -1;
-                this.TrueValue = null;
-                this.FalseValue = null;
-            }
-
-            public Conversion(string units, int bitIndex, string trueValue, string falseValue)
-            {
-                this.Units = units;
-                this.Expression = "x";
-                this.Format = "";
-                this.IsBitMapped = true;
-                this.BitIndex = bitIndex;
-                this.TrueValue = trueValue;
-                this.FalseValue = falseValue;
-            }
-
-            public override string ToString()
-            {
-                return this.Units;
-            }
-
-            /// <summary>
-            /// The expression parser doesn't support bit-shift operators.
-            /// So we hack them into division operators here.
-            /// It's not pretty, but it's less ugly than changing the
-            /// expressions in the XML file.
-            /// </summary>
-            private string Sanitize(string input)
-            {
-                int startIndex = input.IndexOf(">>");
-                if (startIndex == -1)
-                {
-                    return input;
-                }
-
-                int endIndex = startIndex;
-                char shiftChar = ' ';
-                for (int index = startIndex + 2; index < input.Length; index++)
-                {
-                    endIndex = index;
-                    shiftChar = input[index];
-                    if (shiftChar == ' ')
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        endIndex++;
-                        break;
-                    }
-                }
-
-                int shiftCount = shiftChar - '0';
-                if (shiftCount < 0 || shiftCount > 15)
-                {
-                    throw new InvalidOperationException(
-                        string.Format("Unable to parse >> operator in \"{0}\"", input));
-                }
-
-                string oldText = input.Substring(startIndex, endIndex - startIndex);
-                string newText = string.Format("/{0}", Math.Pow(2, shiftCount));
-                return input.Replace(oldText, newText);
-            }
+            this.Units = units;
+            this.Expression = Sanitize(expression);
+            this.Format = format;
+            this.IsBitMapped = false;
+            this.BitIndex = -1;
+            this.TrueValue = null;
+            this.FalseValue = null;
         }
+
+        public Conversion(string units, int bitIndex, string trueValue, string falseValue)
+        {
+            this.Units = units;
+            this.Expression = "x";
+            this.Format = "";
+            this.IsBitMapped = true;
+            this.BitIndex = bitIndex;
+            this.TrueValue = trueValue;
+            this.FalseValue = falseValue;
+        }
+
+        public override string ToString()
+        {
+            return this.Units;
+        }
+
+        /// <summary>
+        /// The expression parser doesn't support bit-shift operators.
+        /// So we hack them into division operators here.
+        /// It's not pretty, but it's less ugly than changing the
+        /// expressions in the XML file.
+        /// </summary>
+        private string Sanitize(string input)
+        {
+            int startIndex = input.IndexOf(">>");
+            if (startIndex == -1)
+            {
+                return input;
+            }
+
+            int endIndex = startIndex;
+            char shiftChar = ' ';
+            for (int index = startIndex + 2; index < input.Length; index++)
+            {
+                endIndex = index;
+                shiftChar = input[index];
+                if (shiftChar == ' ')
+                {
+                    continue;
+                }
+                else
+                {
+                    endIndex++;
+                    break;
+                }
+            }
+
+            int shiftCount = shiftChar - '0';
+            if (shiftCount < 0 || shiftCount > 15)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Unable to parse >> operator in \"{0}\"", input));
+            }
+
+            string oldText = input.Substring(startIndex, endIndex - startIndex);
+            string newText = string.Format("/{0}", Math.Pow(2, shiftCount));
+            return input.Replace(oldText, newText);
+        }
+    }
+
 
         public enum ProfileDataType
         {
@@ -241,93 +242,93 @@ public static class LoggerUtils
             }
         }
 
-        public class PidConfig
+    public class PidConfig
+    {
+        public PidConfig()
         {
-            public PidConfig()
+            DataType = ProfileDataType.UBYTE;
+            addr2 = -1;
+            Math = "X";
+        }
+        public string PidName { get; set; }
+        public DefineBy Type { get; set; }
+        public string Address
+        {
+            get
             {
-                DataType = ProfileDataType.UBYTE;
-                addr2 = -1;
-                Math = "X";
-            }
-            public string PidName { get; set; }
-            public DefineBy Type { get; set; }
-            public string Address
-            {
-                get
+                if (addr < 0)
                 {
-                    if (addr < 0)
-                    {
-                        return "-" + (-1 * addr).ToString("X4");
-                    }
-                    else
-                    {
-                        return addr.ToString("X4");
-                    }
+                    return "-" + (-1 * addr).ToString("X4");
                 }
-                set
+                else
                 {
-                    HexToInt(value.Replace("0x", "").Replace("-", ""), out addr);
-                    if (value.StartsWith("-"))
+                    return addr.ToString("X4");
+                }
+            }
+            set
+            {
+                HexToInt(value.Replace("0x", "").Replace("-", ""), out addr);
+                if (value.StartsWith("-"))
+                {
+                    addr = -1 * addr;
+                }
+                else
+                {
+                    if (Type == DefineBy.Address)
                     {
-                        addr = -1 * addr;
-                    }
-                    else
-                    {
-                        if (Type == DefineBy.Address)
-                        {
-                            addr |= 0xFF0000;
-                        }
+                        addr |= 0xFF0000;
                     }
                 }
             }
-            public string Address2
+        }
+        public string Address2
+        {
+            get
             {
-                get
-                {
-                    if (addr2 < 0)
-                        return "-" + (-1 * addr2).ToString("X4");
-                    else
-                        return addr2.ToString("X4");
-                }
-                set
-                {
-                    HexToInt(value.Replace("0x", "").Replace("-", ""), out addr2);
-                    if (value.StartsWith("-"))
-                        addr2 = -1 * addr2;
-                }
+                if (addr2 < 0)
+                    return "-" + (-1 * addr2).ToString("X4");
+                else
+                    return addr2.ToString("X4");
             }
-            public ProfileDataType DataType { get; set; }
-            public ProfileDataType Pid2DataType { get; set; }
-            //public OutDataType OutDataType { get; set; }
-            public bool HighPriority { get; set; }
-            public string Math { get; set; }
-            public string Units { get; set; }
-            //public int index { get; set; }
-            public bool IsBitMapped { get; set; }
-            public int BitIndex { get; set; }
-            public int addr;
-            public int addr2;
+            set
+            {
+                HexToInt(value.Replace("0x", "").Replace("-", ""), out addr2);
+                if (value.StartsWith("-"))
+                    addr2 = -1 * addr2;
+            }
+        }
+        public ProfileDataType DataType { get; set; }
+        public ProfileDataType Pid2DataType { get; set; }
+        //public OutDataType OutDataType { get; set; }
+        public bool HighPriority { get; set; }
+        public string Math { get; set; }
+        public string Units { get; set; }
+        //public int index { get; set; }
+        public bool IsBitMapped { get; set; }
+        public int BitIndex { get; set; }
+        public int addr;
+        public int addr2;
 
-            public string GetBitmappedValue(double value)
+        public string GetBitmappedValue(double value)
+        {
+            string trueVal = "On";
+            string falseVal = "Off";
+            string[] vals = Math.Split(',');
+            if (vals.Length > 1)
             {
-                string trueVal = "On";
-                string falseVal = "Off";
-                string[] vals = Math.Split(',');
-                if (vals.Length > 1)
-                {
-                    trueVal = vals[0];
-                    falseVal = vals[1];
-                }
-                int bits = (int)value;
-                bits = bits >> BitIndex;
-                bool flag = (bits & 1) != 0;
-                string retVal = falseVal;
-                if (flag)
-                    retVal = trueVal;
-                //Debug.WriteLine("Bitmapped: " + retVal);
-                return retVal;
+                trueVal = vals[0];
+                falseVal = vals[1];
             }
-
+            int bits = (int)value;
+            bits = bits >> BitIndex;
+            bool flag = (bits & 1) != 0;
+            string retVal = falseVal;
+            if (flag)
+                retVal = trueVal;
+            //Debug.WriteLine("Bitmapped: " + retVal);
+            return retVal;
+        }
+    
         public bool GetBitmappedBoolValue(double value)
         {
             string[] vals = Math.Split(',');
@@ -339,40 +340,65 @@ public static class LoggerUtils
 
         public string GetCalculatedValue(double value1, double value2)
         {
-            if (IsBitMapped)
+            try
             {
-                return GetBitmappedValue(value1);
+                if (IsBitMapped)
+                {
+                    return GetBitmappedValue(value1);
+                }
+                else
+                {
+                    string assigneMath = Math.ToLower().Replace("x", value1.ToString());
+                    if (Math.Contains("y") && value2 > double.MinValue)
+                        assigneMath = assigneMath.ToLower().Replace("y", value2.ToString());
+                    double calcVal = parser.Parse(assigneMath);
+                    return calcVal.ToString();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                string math = Math.ToLower().Replace("x", value1.ToString());
-                if (Math.Contains("y") && value2 > double.MinValue)
-                    math = Math.ToLower().Replace("y", value2.ToString());
-                double calcVal = parser.Parse(math);
-                return calcVal.ToString();
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, LoggerUtils line " + line + ": " + ex.Message);
             }
+            return "";
         }
 
         public double GetCalculatedDoubleValue(double value1, double value2)
         {
-            if (IsBitMapped)
+            try
             {
-                bool val = GetBitmappedBoolValue(value1);
-                if (val)
-                    return 1;
+                if (IsBitMapped)
+                {
+                    bool val = GetBitmappedBoolValue(value1);
+                    if (val)
+                        return 1;
+                    else
+                        return 0;
+                }
                 else
-                    return 0;
+                {
+                    string assignedMath = Math.ToLower().Replace("x", value1.ToString());
+                    if (Math.Contains("y") && value2 > double.MinValue)
+                        assignedMath = assignedMath.ToLower().Replace("y", value2.ToString());
+                    double calcVal = parser.Parse(assignedMath);
+                    return calcVal;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                string math = Math.ToLower().Replace("x", value1.ToString());
-                if (Math.Contains("y") && value2 > double.MinValue)
-                    math = Math.ToLower().Replace("y", value2.ToString());
-                double calcVal = parser.Parse(math);
-                return calcVal;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, LoggerUtils line " + line + ": " + ex.Message);
             }
+            return double.MinValue;
         }
-
     }
 
     public static byte CreateConfigByte(byte position, byte bytes, byte defineBy)

@@ -250,8 +250,7 @@ namespace UniversalPatcher
                         {
                             foreach (TableDiff tDif in results)
                             {
-                                string tdValT = GetTableValueType(tDif.td).ToString();
-                                if (tdValT == valT)
+                                if (tDif.td.ValueType().ToString() == valT)
                                     newTDList.Add(tDif);
                             }
                         }

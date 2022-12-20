@@ -560,3 +560,12 @@
 - Tuner: Fixed bug: screen flickering when switching between tables in tree-mode
 - Application settings saved to "universalpatcher.xml" in application startupfolder, instead of appdata folder in user profile
 - Logger: VPW Console: Selection for logging to File and/or Display
+
+0.21.12
+- Tuner: Ask to save modified table, before switching to another table in tree mode
+- Tuner: Navigator for opening previously opened node (Right-click to select from list)
+- Tuner: In tree mode: Added right click -> Open in list mode
+- Tuner: Added "Goto Axis-table" to right-click menu in tree-mode
+- Logger: Fixed bug: Math pids not working
+- Histogram: Fixed bug: Can't use table without numbers in columnheaders as template
+- XML editor: Fixed bugs in row cut/copy/paste. Now using custom list instead of windows clipboard

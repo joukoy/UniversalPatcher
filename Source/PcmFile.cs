@@ -100,6 +100,8 @@ namespace UniversalPatcher
         public List<string> SelectedNodeList;
 */
         public Dictionary<string, List<String>> SelectedNode = new Dictionary<string, List<string>>();
+        public List<TreeParts.Navi> NaviGator = new List<TreeParts.Navi>();
+        public int NaviCurrent;
 
         public List<string> tableCategories
         {
