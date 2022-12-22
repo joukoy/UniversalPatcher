@@ -221,7 +221,7 @@ namespace UniversalPatcher
         private void ShowNaviSelection()
         {
             ContextMenuStrip cms = new ContextMenuStrip();
-            List<TreeParts.Navi> navigator = compareFiles[currentFile].pcm.NaviGator;
+            List<TreeParts.Navi> navigator = compareFiles[currentFile].pcm.Navigator;
             for (int i = 0; i < navigator.Count; i++)
             {
                 ToolStripMenuItem mi = new ToolStripMenuItem(navigator[i].PathStr());
@@ -254,7 +254,7 @@ namespace UniversalPatcher
 
         private void ShowNaviTip()
         {
-            List<TreeParts.Navi> navi = compareFiles[currentFile].pcm.NaviGator;
+            List<TreeParts.Navi> navi = compareFiles[currentFile].pcm.Navigator;
             PcmFile pcm = compareFiles[currentFile].pcm;
             int position = compareFiles[currentFile].NaviCurrent;
             string message = "Navigator: " + (position + 1).ToString() + "/" + navi.Count.ToString();
@@ -3043,7 +3043,7 @@ namespace UniversalPatcher
 
         private void Navigate(int position)
         {
-            List<TreeParts.Navi> navi = compareFiles[currentFile].pcm.NaviGator;
+            List<TreeParts.Navi> navi = compareFiles[currentFile].pcm.Navigator;
             TableData td = navi[position].Td;
             PcmFile pcm = compareFiles[currentFile].pcm;
             string message = "Navigator: " + (position + 1).ToString() + "/" + navi.Count.ToString();
@@ -3079,7 +3079,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (compareFiles[currentFile].NaviCurrent < compareFiles[currentFile].pcm.NaviGator.Count - 1)
+                if (compareFiles[currentFile].NaviCurrent < compareFiles[currentFile].pcm.Navigator.Count - 1)
                 {
                     compareFiles[currentFile].NaviCurrent++;
                     Navigate(compareFiles[currentFile].NaviCurrent);

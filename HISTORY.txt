@@ -569,3 +569,8 @@
 - Logger: Fixed bug: Math pids not working
 - Histogram: Fixed bug: Can't use table without numbers in columnheaders as template
 - XML editor: Fixed bugs in row cut/copy/paste. Now using custom list instead of windows clipboard
+
+0.21.13
+- Tuner: Navigator assigned to tablelist, if have multiple tablelists/bin-file
+- Tuner: Fixes & improvements to navigator
+- XML file updates

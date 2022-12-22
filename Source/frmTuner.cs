@@ -165,6 +165,7 @@ namespace UniversalPatcher
             this.DragDrop += FrmTuner_DragDrop;
 
             dataGridView1.EditingControlShowing += new DataGridViewEditingControlShowingEventHandler(dataGridView1_EditingControlShowing);
+            dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
             dataGridView1.KeyUp += DataGridView1_KeyUp;
             revToolStripMenuItem.MouseHover += RevToolStripMenuItem_MouseHover;
             fwdToolStripMenuItem.MouseHover += RevToolStripMenuItem_MouseHover;
@@ -581,6 +582,21 @@ namespace UniversalPatcher
             dataGridView1.Refresh();
         }
 
+        private void RefreshCategories()
+        {
+            //Don't fire events when adding data to combobox!
+            this.comboTableCategory.SelectedIndexChanged -= new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
+            string selectedCat = comboTableCategory.Text;
+            comboTableCategory.DataSource = null;
+            categoryBindingSource.DataSource = null;
+            categoryBindingSource.DataSource = PCM.tableCategories.OrderBy(x => x);
+            comboTableCategory.DataSource = categoryBindingSource;
+            comboTableCategory.Refresh();
+            if (comboTableCategory.Items.Contains(selectedCat))
+                comboTableCategory.Text = selectedCat;
+            this.comboTableCategory.SelectedIndexChanged += new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
+        }
+
         public void RefreshTablelist(bool RestorePath)
         {
             try
@@ -589,14 +605,7 @@ namespace UniversalPatcher
 
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
-                //Don't fire events when adding data to combobox!
-                this.comboTableCategory.SelectedIndexChanged -= new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
-                comboTableCategory.DataSource = null;
-                categoryBindingSource.DataSource = null;
-                categoryBindingSource.DataSource = PCM.tableCategories.OrderBy(x=>x);
-                comboTableCategory.DataSource = categoryBindingSource;
-                comboTableCategory.Refresh();
-                this.comboTableCategory.SelectedIndexChanged += new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
+                RefreshCategories();
 
                 Application.DoEvents();
                 FilterTables(RestorePath);
@@ -644,7 +653,7 @@ namespace UniversalPatcher
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            PCM.tableDatas = new List<TableData>();
+            PCM.ClearTableList();
             RefreshTablelist(false);
         }
 
@@ -931,7 +940,6 @@ namespace UniversalPatcher
                 txtDescription.Text = "";
                 FilterTree(RestorePath);
                 this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
-                dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
                 DrawingControl.ResumeDrawing(dataGridView1);
             }
             catch (Exception ex)
@@ -950,6 +958,11 @@ namespace UniversalPatcher
         private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             //Debug.WriteLine("End edit");
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "Category" || dataGridView1.Columns[e.ColumnIndex].Name == "ExtraCatefories")
+            {
+                Debug.WriteLine("Refresh cats");
+                RefreshCategories();
+            }
         }
 
         private void FilterTree(bool RestorePath)
@@ -1111,7 +1124,7 @@ namespace UniversalPatcher
 
         private void clearTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PCM.tableDatas = new List<TableData>();
+            PCM.ClearTableList();
             //PCM.tableCategories = new List<string>();
             RefreshTablelist(false);
         }
@@ -2744,7 +2757,8 @@ namespace UniversalPatcher
             ToolStripMenuItem mItem = (ToolStripMenuItem)sender;
             PCM.SelectTableDatas((int)mItem.Tag, mItem.Name);
             mItem.Checked = true;
-            FilterTables(true);
+            FilterTables(false);
+            Navigate(0);
         }
 
 
@@ -2812,27 +2826,31 @@ namespace UniversalPatcher
 
         private void AddNewTableList()
         {
+            int l = 0;
+            foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
+            {
+                //Reset all to uncheck
+                mi.Checked = false;
+                l++;
+            }
+            string listName = "List" + l.ToString();
+
             frmData frmD = new frmData();
-            frmD.Text = "Tablelist name:";
+            frmD.Text = "Tablelist name (optional)";
             if (frmD.ShowDialog() == DialogResult.OK)
             {
-                foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
-                {
-                    //Reset all to uncheck
-                    mi.Checked = false;
-                }
-                ToolStripMenuItem mItem = new ToolStripMenuItem(frmD.txtData.Text);
-                mItem.Name = frmD.txtData.Text;
-                PCM.SelectTableDatas(PCM.altTableDatas.Count, mItem.Name);
-                mItem.Tag = PCM.altTableDatas.Count - 1;
-                mItem.Checked = true;
-                tableListToolStripMenuItem.DropDownItems.Add(mItem);
-                mItem.Click += tablelistSelect_Click;
-                FilterTables(true);
+                listName = frmD.txtData.Text;
             }
-
-
+            ToolStripMenuItem mItem = new ToolStripMenuItem(listName);
+            mItem.Name = listName;
+            PCM.SelectTableDatas(PCM.altTableDatas.Count, mItem.Name);
+            mItem.Tag = PCM.altTableDatas.Count - 1;
+            mItem.Checked = true;
+            tableListToolStripMenuItem.DropDownItems.Add(mItem);
+            mItem.Click += tablelistSelect_Click;
+            FilterTables(true);
         }
+
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddNewTableList();
@@ -2897,6 +2915,7 @@ namespace UniversalPatcher
                             //PCM.tableDatas.RemoveAt(id);
                             //PCM.tableDatas.Insert(id,fte.td);
                             FilterTables(true);
+                            RefreshCategories();
                             dataGridView1.ClearSelection();
                             dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
                             break;
@@ -2912,7 +2931,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
             }
 
         }
@@ -4007,29 +4026,29 @@ namespace UniversalPatcher
                     //return;
                 }
                 List<string> path = GetCurrentNodePath(tv);
-                if (path == null || path.Count ==0)
+                if (path == null || path.Count ==0 )
                 {
                     Debug.WriteLine("Empty path, not saving");
                     return;
                 }
                 TabPage tab = tabControl1.SelectedTab;
+                Tnode tnode = (Tnode)tv.SelectedNode.Tag;
+                TableData td = null;
                 if (DisplayMode == DispMode.List)
                 {
                     tab = null;
-                }
-                Tnode tnode = (Tnode)tv.SelectedNode.Tag;
-                TableData td;
-                if (DisplayMode == DispMode.List)
-                {
-                    td = (TableData)dataGridView1.CurrentRow.DataBoundItem;
-                    path.Insert(0, td.TableName);
+                    if (filteredTableDatas.Count > 0)
+                    {
+                        td = (TableData)dataGridView1.CurrentRow.DataBoundItem;
+                        path.Insert(0, td.TableName);
+                    }
                 }
                 else
                 {
                     td = tnode.Td;
                 }
                 Navi navi = new Navi(tab, path, txtSearchTableSeek.Text, comboFilterBy.Text, td);
-                Navi naviPrev = PCM.NaviGator.LastOrDefault();
+                Navi naviPrev = PCM.Navigator.LastOrDefault();
                 if (naviPrev != null && naviPrev.Path != null && naviPrev.Path.Count > 0 && navi.Tab != null && navi.Tab.Name != null)
                 {
                     if (navi.NodeSerial() == naviPrev.NodeSerial())
@@ -4039,16 +4058,16 @@ namespace UniversalPatcher
                     }
 
                     int count = 0;
-                    for (int n= PCM.NaviGator.Count-1; n>= 0; n--)
+                    for (int n= PCM.Navigator.Count-1; n>= 0; n--)
                     {
-                        naviPrev = PCM.NaviGator[n];
+                        naviPrev = PCM.Navigator[n];
                         if (navi.PathSerial() == naviPrev.PathSerial())
                         {
                             count++;
                             if (count >= AppSettings.NavigatorMaxTablesPerNode)
                             {
                                 Debug.WriteLine( AppSettings.NavigatorMaxTablesPerNode.ToString() + " nodes in same path. removing oldest");
-                                PCM.NaviGator.RemoveAt(n);
+                                PCM.Navigator.RemoveAt(n);
                                 break;
                             }
                         }
@@ -4059,14 +4078,14 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                PCM.NaviGator.Add(navi);
+                PCM.Navigator.Add(navi);
                 Debug.WriteLine("Adding navi: " + navi.NodeSerial());
-                while (PCM.NaviGator.Count > AppSettings.NavigatorMaxTablesTotal)
+                while (PCM.Navigator.Count > AppSettings.NavigatorMaxTablesTotal)
                 {
-                    Debug.WriteLine("Removing items from navigator, currentcount: " + PCM.NaviGator.Count);
-                    PCM.NaviGator.RemoveAt(PCM.NaviGator.Count - 1);
+                    Debug.WriteLine("Removing items from navigator, currentcount: " + PCM.Navigator.Count);
+                    PCM.Navigator.RemoveAt(0);
                 }
-                PCM.NaviCurrent = PCM.NaviGator.Count - 1;
+                PCM.NaviCurrent = PCM.Navigator.Count - 1;
                 if (path == null || path.Count == 0)
                 {
                     return;
@@ -4145,12 +4164,16 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    if (tableTds != null && tableTds.Count > 0)
+                    if (tableTds == null || tableTds.Count == 0)
+                    {
+                        ClearPanel2();
+                    }
+                    else
                     {
                         lastSelectTd = tableTds.LastOrDefault();
                         EnableTreeModeAxisMenus(lastSelectTd);
+                        OpenTableEditor(tableTds);
                     }
-                    OpenTableEditor(tableTds);
                 }
             }
             catch (Exception ex)
@@ -4235,10 +4258,10 @@ namespace UniversalPatcher
             AppSettings.TableExplorerIconSize = (int)numIconSize.Value;
             AppSettings.NavigatorMaxTablesPerNode = (int)numNaviMaxTablesPerNode.Value;
             AppSettings.NavigatorMaxTablesTotal = (int)numNaviMaxTablesTotal.Value;
-            while (PCM.NaviGator.Count > AppSettings.NavigatorMaxTablesTotal)
+            while (PCM.Navigator.Count > AppSettings.NavigatorMaxTablesTotal)
             {
-                Debug.WriteLine("Removing items from navigator, currentcount: " + PCM.NaviGator.Count);
-                PCM.NaviGator.RemoveAt(PCM.NaviGator.Count - 1);
+                Debug.WriteLine("Removing items from navigator, currentcount: " + PCM.Navigator.Count);
+                PCM.Navigator.RemoveAt(PCM.Navigator.Count - 1);
             }
             AppSettings.TunerShowTableCount = chkShowTableCount.Checked;
             AppSettings.Save();
@@ -5805,10 +5828,10 @@ namespace UniversalPatcher
 
         private void ShowNaviTip()
         {
-            if (PCM.NaviGator.Count == 0)
+            if (PCM.Navigator.Count == 0)
                 return;
 
-            string message = "Navigator: " + (PCM.NaviCurrent + 1).ToString() + "/" + PCM.NaviGator.Count.ToString();
+            string message = "Navigator: " + (PCM.NaviCurrent + 1).ToString() + "/" + PCM.Navigator.Count.ToString();
             NaviTip.Show(message, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y - 30, 2000);
         }
 
@@ -5816,16 +5839,16 @@ namespace UniversalPatcher
         {
             try
             {
-                if (PCM.NaviGator.Count > 0)
+                if (PCM.Navigator.Count > 0)
                 {
                     Navigating = true;
-                    Navi naviOld = PCM.NaviGator[PCM.NaviCurrent];
+                    Navi naviOld = PCM.Navigator[PCM.NaviCurrent];
                     PCM.NaviCurrent += step;
 
                     ShowNaviTip();
 
                     TreeViewMS tv;
-                    Navi navi = PCM.NaviGator[PCM.NaviCurrent];
+                    Navi navi = PCM.Navigator[PCM.NaviCurrent];
                     if (navi.Tab == null)
                     {
                         radioListMode.Checked = true;
@@ -5893,7 +5916,7 @@ namespace UniversalPatcher
 
         private void fwdToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PCM.NaviCurrent < (PCM.NaviGator.Count -1))
+            if (PCM.NaviCurrent < (PCM.Navigator.Count -1))
             {
                 Navigate(1);
             }
@@ -5956,7 +5979,7 @@ namespace UniversalPatcher
         {
             try
             {
-                Debug.WriteLine("Axis table, Navigator: " + PCM.NaviCurrent.ToString() + "/" + (PCM.NaviGator.Count - 1).ToString());
+                Debug.WriteLine("Axis table, Navigator: " + PCM.NaviCurrent.ToString() + "/" + (PCM.Navigator.Count - 1).ToString());
                 TableData hTd = PCM.GetTdbyHeader(header);
                 TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
                 List<string> path = GetCurrentNodePath(tv);
@@ -6037,7 +6060,7 @@ namespace UniversalPatcher
             {
                 Navigating = true;
                 FindAxisTable(lastSelectTd.ColumnHeaders);
-                Debug.WriteLine("Axis table, Navigator: " + (PCM.NaviCurrent + 1).ToString() + "/" + PCM.NaviGator.Count.ToString());
+                Debug.WriteLine("Axis table, Navigator: " + (PCM.NaviCurrent + 1).ToString() + "/" + PCM.Navigator.Count.ToString());
                 Application.DoEvents();
                 TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
                 SaveCurrentPath(tv);
@@ -6072,16 +6095,16 @@ namespace UniversalPatcher
 
         private void ShowNaviInfo(string NextPrev, int ind)
         {
-            string message = NextPrev + Environment.NewLine + PCM.NaviGator[ind].NaviInfo();
+            string message = NextPrev + Environment.NewLine + PCM.Navigator[ind].NaviInfo();
             NaviTip.Show(message, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y, 7000);
         }
 
         private void ShowNaviSelection()
         {
             ContextMenuStrip cms = new ContextMenuStrip();
-            for (int i=0; i< PCM.NaviGator.Count; i++)
+            for (int i=0; i< PCM.Navigator.Count; i++)
             {
-                ToolStripMenuItem mi = new ToolStripMenuItem(PCM.NaviGator[i].PathStr());
+                ToolStripMenuItem mi = new ToolStripMenuItem(PCM.Navigator[i].PathStr());
                 if (i == PCM.NaviCurrent)
                     mi.Checked = true;
                 mi.Click += Mi_Click;

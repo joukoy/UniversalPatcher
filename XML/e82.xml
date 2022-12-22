@@ -26,14 +26,14 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>OS</Name>
-    <Addresses>@100126&lt;7FFFFF</Addresses>
+    <Addresses>@100126&lt;800000</Addresses>
     <SwapAddress />
     <CS1Address>#120:2:hex</CS1Address>
     <CS2Address>#100:2:hex</CS2Address>
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
-    <CS1Blocks>@100136*3&lt;7FFFFF</CS1Blocks>
-    <CS2Blocks>@10014E*2&lt;7FFFFF</CS2Blocks>
+    <CS1Blocks>@100136*3&lt;800000</CS1Blocks>
+    <CS2Blocks>@10014E*2&lt;800000</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
@@ -49,14 +49,14 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>System</Name>
-    <Addresses>@100162&lt;7FFFFF</Addresses>
+    <Addresses>@100162&lt;800000</Addresses>
     <SwapAddress />
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
-    <CS1Blocks>@10016A*2&lt;7FFFFF</CS1Blocks>
-    <CS2Blocks>@10017A&lt;7FFFFF</CS2Blocks>
+    <CS1Blocks>@10016A*2&lt;800000</CS1Blocks>
+    <CS2Blocks>@10017A&lt;800000</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
@@ -72,14 +72,14 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Fuel</Name>
-    <Addresses>@100186&lt;7FFFFF</Addresses>
+    <Addresses>@100186&lt;800000</Addresses>
     <SwapAddress />
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
-    <CS1Blocks>@10018E*2&lt;7FFFFF</CS1Blocks>
-    <CS2Blocks>@10019E&lt;7FFFFF</CS2Blocks>
+    <CS1Blocks>@10018E*2&lt;800000</CS1Blocks>
+    <CS2Blocks>@10019E&lt;800000</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
@@ -95,14 +95,14 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Speedo</Name>
-    <Addresses>@1001AA&lt;7FFFFF</Addresses>
+    <Addresses>@1001AA&lt;800000</Addresses>
     <SwapAddress />
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
-    <CS1Blocks>@1001B2*2&lt;7FFFFF</CS1Blocks>
-    <CS2Blocks>@1001C2&lt;7FFFFF</CS2Blocks>
+    <CS1Blocks>@1001B2*2&lt;800000</CS1Blocks>
+    <CS2Blocks>@1001C2&lt;800000</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
@@ -118,14 +118,14 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>EngineDiag</Name>
-    <Addresses>@1001CE&lt;7FFFFF</Addresses>
+    <Addresses>@1001CE&lt;800000</Addresses>
     <SwapAddress />
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
-    <CS1Blocks>@1001D6*2&lt;7FFFFF</CS1Blocks>
-    <CS2Blocks>@1001E6&lt;7FFFFF</CS2Blocks>
+    <CS1Blocks>@1001D6*2&lt;800000</CS1Blocks>
+    <CS2Blocks>@1001E6&lt;800000</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
@@ -141,14 +141,14 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Engine</Name>
-    <Addresses>@1001F2&lt;7FFFFF</Addresses>
+    <Addresses>@1001F2&lt;800000</Addresses>
     <SwapAddress />
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
-    <CS1Blocks>@1001FA*2&lt;7FFFFF</CS1Blocks>
-    <CS2Blocks>@10020A&lt;7FFFFF</CS2Blocks>
+    <CS1Blocks>@1001FA*2&lt;800000</CS1Blocks>
+    <CS2Blocks>@10020A&lt;800000</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>

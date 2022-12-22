@@ -395,7 +395,7 @@ namespace UniversalPatcher
                             break;
                     if (dCodes && linear)
                     {
-                        //There should be only D or E (U) codes after first D code
+                        //There should be only D or E (U) codes after first D or E code
                         if (!codeTmp.StartsWith("D") && !codeTmp.StartsWith("E"))
                             break;
                     }
@@ -408,7 +408,7 @@ namespace UniversalPatcher
                     }
 */
                     dtc.Code = DecodeDTC(codeTmp);
-                    if (codeTmp.StartsWith("D")) 
+                    if (codeTmp.StartsWith("D") || codeTmp.StartsWith("E")) 
                         dCodes = true;
                     //Find description for code:
                     dtc.Description = GetDtcDescription(dtc.Code);

@@ -73,8 +73,18 @@ namespace UniversalPatcher
 
         public class AltTableData
         {
+            public AltTableData()
+            {
+                tableDatas = new List<TableData>();
+                Navigator = new List<TreeParts.Navi>();
+                tunerFile = "";
+            }
             public List<TableData> tableDatas { get; set; }
             public string Name { get; set; }
+            public List<TreeParts.Navi> Navigator { get; set; }
+            public int NaviCurrent { get; set; }
+            public string tunerFile { get; set; }
+
         }
         public byte[] buf;
         public string FileName;
@@ -100,7 +110,7 @@ namespace UniversalPatcher
         public List<string> SelectedNodeList;
 */
         public Dictionary<string, List<String>> SelectedNode = new Dictionary<string, List<string>>();
-        public List<TreeParts.Navi> NaviGator = new List<TreeParts.Navi>();
+        public List<TreeParts.Navi> Navigator = new List<TreeParts.Navi>();
         public int NaviCurrent;
 
         public List<string> tableCategories
@@ -138,7 +148,6 @@ namespace UniversalPatcher
         public string configFile { get { return Path.GetFileNameWithoutExtension(configFileFullName); } }
         public string tunerFile { get; set; }
         public string compXml = "";
-        public List<string> tunerFileList { get; set; }
         public bool seekTablesImported;
         public PcmPlatform platformConfig = new PcmPlatform();
 
@@ -277,7 +286,6 @@ namespace UniversalPatcher
             foundSegments = new List<FoundSegment>();
             //tableCategories = new List<string>();
             altTableDatas = new List<AltTableData>();
-            tunerFileList = new List<string>();
             currentTableDatasList = 0;
             SelectTableDatas(0, "");
             seekTablesImported = false;
@@ -475,6 +483,13 @@ namespace UniversalPatcher
 
         }
 
+        public void ClearTableList()
+        {
+            tableDatas = new List<TableData>();
+            Navigator = new List<TreeParts.Navi>();
+            NaviCurrent = 0;
+        }
+
         public void LoadTableList(string fName = "")
         {
             try
@@ -573,10 +588,8 @@ namespace UniversalPatcher
         {
             AltTableData tdl = new AltTableData();
             tdl.Name = name;
-            tdl.tableDatas = new List<TableData>();
             altTableDatas.Add(tdl);
             tunerFile = "";
-            tunerFileList.Add("");
         }
 
         public void SelectTableDatas(int listNumber, string name)
@@ -589,11 +602,15 @@ namespace UniversalPatcher
             {
                 //Store old list:
                 altTableDatas[currentTableDatasList].tableDatas = tableDatas;
-                tunerFileList[currentTableDatasList] = tunerFile;
+                altTableDatas[currentTableDatasList].Navigator = Navigator;
+                altTableDatas[currentTableDatasList].NaviCurrent = NaviCurrent;
+                altTableDatas[currentTableDatasList].tunerFile = tunerFile;
                 //Select new:
                 currentTableDatasList = listNumber;
                 tableDatas = altTableDatas[currentTableDatasList].tableDatas;
-                tunerFile = tunerFileList[listNumber];
+                tunerFile = altTableDatas[currentTableDatasList].tunerFile;
+                NaviCurrent = altTableDatas[currentTableDatasList].NaviCurrent;
+                Navigator = altTableDatas[currentTableDatasList].Navigator;
             }
         }
 

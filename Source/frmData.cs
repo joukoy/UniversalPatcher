@@ -24,7 +24,7 @@ namespace UniversalPatcher
 
         private void frmData_Load(object sender, EventArgs e)
         {
-            txtData.KeyDown += TxtData_KeyDown; ;
+            txtData.KeyDown += TxtData_KeyDown; 
         }
 
         private void TxtData_KeyDown(object sender, KeyEventArgs e)
