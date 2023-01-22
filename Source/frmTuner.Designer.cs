@@ -36,7 +36,7 @@ namespace UniversalPatcher
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTuner));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
+            this.txtFilter = new System.Windows.Forms.TextBox();
             this.comboTableCategory = new System.Windows.Forms.ComboBox();
             this.labelCategory = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -119,6 +119,8 @@ namespace UniversalPatcher
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyRowToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchAndCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchAndCompareAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -287,12 +289,12 @@ namespace UniversalPatcher
             this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataGridView1_MouseDown);
             this.dataGridView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DataGridView1_MouseUp);
             // 
-            // txtSearchTableSeek
+            // txtFilter
             // 
-            this.txtSearchTableSeek.Location = new System.Drawing.Point(50, 29);
-            this.txtSearchTableSeek.Name = "txtSearchTableSeek";
-            this.txtSearchTableSeek.Size = new System.Drawing.Size(107, 20);
-            this.txtSearchTableSeek.TabIndex = 14;
+            this.txtFilter.Location = new System.Drawing.Point(50, 29);
+            this.txtFilter.Name = "txtFilter";
+            this.txtFilter.Size = new System.Drawing.Size(107, 22);
+            this.txtFilter.TabIndex = 14;
             // 
             // comboTableCategory
             // 
@@ -308,7 +310,7 @@ namespace UniversalPatcher
             this.labelCategory.AutoSize = true;
             this.labelCategory.Location = new System.Drawing.Point(317, 34);
             this.labelCategory.Name = "labelCategory";
-            this.labelCategory.Size = new System.Drawing.Size(52, 13);
+            this.labelCategory.Size = new System.Drawing.Size(66, 16);
             this.labelCategory.TabIndex = 12;
             this.labelCategory.Text = "Category:";
             // 
@@ -932,6 +934,8 @@ namespace UniversalPatcher
             this.cutToolStripMenuItem,
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
+            this.copyRowToolStripMenuItem1,
+            this.pasteRowToolStripMenuItem,
             this.editTableToolStripMenuItem,
             this.searchAndCompareToolStripMenuItem,
             this.searchAndCompareAllToolStripMenuItem,
@@ -954,7 +958,7 @@ namespace UniversalPatcher
             this.toolStripSeparator2,
             this.axistablesToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 484);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 528);
             // 
             // cutToolStripMenuItem
             // 
@@ -976,6 +980,20 @@ namespace UniversalPatcher
             this.pasteToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+            // 
+            // copyRowToolStripMenuItem1
+            // 
+            this.copyRowToolStripMenuItem1.Name = "copyRowToolStripMenuItem1";
+            this.copyRowToolStripMenuItem1.Size = new System.Drawing.Size(230, 22);
+            this.copyRowToolStripMenuItem1.Text = "Copy row";
+            this.copyRowToolStripMenuItem1.Click += new System.EventHandler(this.copyRowToolStripMenuItem1_Click);
+            // 
+            // pasteRowToolStripMenuItem
+            // 
+            this.pasteRowToolStripMenuItem.Name = "pasteRowToolStripMenuItem";
+            this.pasteRowToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.pasteRowToolStripMenuItem.Text = "Paste row";
+            this.pasteRowToolStripMenuItem.Click += new System.EventHandler(this.pasteRowToolStripMenuItem_Click);
             // 
             // editTableToolStripMenuItem
             // 
@@ -1231,7 +1249,7 @@ namespace UniversalPatcher
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 33);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 13);
+            this.label1.Size = new System.Drawing.Size(40, 16);
             this.label1.TabIndex = 17;
             this.label1.Text = "Filter:";
             // 
@@ -1411,7 +1429,7 @@ namespace UniversalPatcher
             0,
             0});
             this.numNaviMaxTablesTotal.Name = "numNaviMaxTablesTotal";
-            this.numNaviMaxTablesTotal.Size = new System.Drawing.Size(54, 20);
+            this.numNaviMaxTablesTotal.Size = new System.Drawing.Size(54, 22);
             this.numNaviMaxTablesTotal.TabIndex = 34;
             this.numNaviMaxTablesTotal.Value = new decimal(new int[] {
             1,
@@ -1424,7 +1442,7 @@ namespace UniversalPatcher
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(6, 41);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(134, 13);
+            this.label4.Size = new System.Drawing.Size(172, 16);
             this.label4.TabIndex = 33;
             this.label4.Text = "Remember max tables total";
             // 
@@ -1433,7 +1451,7 @@ namespace UniversalPatcher
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(6, 16);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(140, 13);
+            this.label3.Size = new System.Drawing.Size(179, 16);
             this.label3.TabIndex = 32;
             this.label3.Text = "Remember max tables/node";
             // 
@@ -1451,7 +1469,7 @@ namespace UniversalPatcher
             0,
             -2147483648});
             this.numNaviMaxTablesPerNode.Name = "numNaviMaxTablesPerNode";
-            this.numNaviMaxTablesPerNode.Size = new System.Drawing.Size(54, 20);
+            this.numNaviMaxTablesPerNode.Size = new System.Drawing.Size(54, 22);
             this.numNaviMaxTablesPerNode.TabIndex = 31;
             // 
             // btnExplorerFont
@@ -1469,7 +1487,7 @@ namespace UniversalPatcher
             this.chkShowTableCount.AutoSize = true;
             this.chkShowTableCount.Location = new System.Drawing.Point(10, 78);
             this.chkShowTableCount.Name = "chkShowTableCount";
-            this.chkShowTableCount.Size = new System.Drawing.Size(109, 17);
+            this.chkShowTableCount.Size = new System.Drawing.Size(128, 20);
             this.chkShowTableCount.TabIndex = 29;
             this.chkShowTableCount.Text = "Show table count";
             this.chkShowTableCount.UseVisualStyleBackColor = true;
@@ -1479,7 +1497,7 @@ namespace UniversalPatcher
             this.chkAutoMulti1d.AutoSize = true;
             this.chkAutoMulti1d.Location = new System.Drawing.Point(10, 55);
             this.chkAutoMulti1d.Name = "chkAutoMulti1d";
-            this.chkAutoMulti1d.Size = new System.Drawing.Size(181, 17);
+            this.chkAutoMulti1d.Size = new System.Drawing.Size(222, 20);
             this.chkAutoMulti1d.TabIndex = 28;
             this.chkAutoMulti1d.Text = "Automatic multitable for 1d tables";
             this.chkAutoMulti1d.UseVisualStyleBackColor = true;
@@ -1490,7 +1508,7 @@ namespace UniversalPatcher
             this.chkShowCategorySubfolder.AutoSize = true;
             this.chkShowCategorySubfolder.Location = new System.Drawing.Point(10, 32);
             this.chkShowCategorySubfolder.Name = "chkShowCategorySubfolder";
-            this.chkShowCategorySubfolder.Size = new System.Drawing.Size(144, 17);
+            this.chkShowCategorySubfolder.Size = new System.Drawing.Size(177, 20);
             this.chkShowCategorySubfolder.TabIndex = 0;
             this.chkShowCategorySubfolder.Text = "Show Category subfolder";
             this.chkShowCategorySubfolder.UseVisualStyleBackColor = true;
@@ -1501,7 +1519,7 @@ namespace UniversalPatcher
             this.labelIconSize.AutoSize = true;
             this.labelIconSize.Location = new System.Drawing.Point(7, 9);
             this.labelIconSize.Name = "labelIconSize";
-            this.labelIconSize.Size = new System.Drawing.Size(52, 13);
+            this.labelIconSize.Size = new System.Drawing.Size(63, 16);
             this.labelIconSize.TabIndex = 26;
             this.labelIconSize.Text = "Icon size:";
             // 
@@ -1519,7 +1537,7 @@ namespace UniversalPatcher
             0,
             0});
             this.numIconSize.Name = "numIconSize";
-            this.numIconSize.Size = new System.Drawing.Size(40, 20);
+            this.numIconSize.Size = new System.Drawing.Size(40, 22);
             this.numIconSize.TabIndex = 27;
             this.numIconSize.Value = new decimal(new int[] {
             16,
@@ -1865,7 +1883,7 @@ namespace UniversalPatcher
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(584, 5);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(37, 13);
+            this.label2.Size = new System.Drawing.Size(47, 16);
             this.label2.TabIndex = 29;
             this.label2.Text = "Table:";
             // 
@@ -1886,7 +1904,7 @@ namespace UniversalPatcher
             this.labelBy.AutoSize = true;
             this.labelBy.Location = new System.Drawing.Point(163, 34);
             this.labelBy.Name = "labelBy";
-            this.labelBy.Size = new System.Drawing.Size(21, 13);
+            this.labelBy.Size = new System.Drawing.Size(26, 16);
             this.labelBy.TabIndex = 31;
             this.labelBy.Text = "by:";
             // 
@@ -2052,7 +2070,7 @@ namespace UniversalPatcher
             // 
             this.txtMath.Location = new System.Drawing.Point(571, 31);
             this.txtMath.Name = "txtMath";
-            this.txtMath.Size = new System.Drawing.Size(82, 20);
+            this.txtMath.Size = new System.Drawing.Size(82, 22);
             this.txtMath.TabIndex = 33;
             this.txtMath.Text = "X*1";
             // 
@@ -2095,7 +2113,7 @@ namespace UniversalPatcher
             0,
             -2147483648});
             this.numExtraOffsetTest.Name = "numExtraOffsetTest";
-            this.numExtraOffsetTest.Size = new System.Drawing.Size(55, 20);
+            this.numExtraOffsetTest.Size = new System.Drawing.Size(55, 22);
             this.numExtraOffsetTest.TabIndex = 7;
             // 
             // btnExtraOffsetTest
@@ -2122,7 +2140,7 @@ namespace UniversalPatcher
             0,
             -2147483648});
             this.numExtraOffset.Name = "numExtraOffset";
-            this.numExtraOffset.Size = new System.Drawing.Size(55, 20);
+            this.numExtraOffset.Size = new System.Drawing.Size(55, 22);
             this.numExtraOffset.TabIndex = 3;
             this.numExtraOffset.ValueChanged += new System.EventHandler(this.numExtraOffset_ValueChanged);
             // 
@@ -2158,7 +2176,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.radioListMode);
             this.Controls.Add(this.radioTreeMode);
             this.Controls.Add(this.labelBy);
-            this.Controls.Add(this.txtSearchTableSeek);
+            this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.labelTableName);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnCollapse);
@@ -2215,7 +2233,7 @@ namespace UniversalPatcher
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.TextBox txtSearchTableSeek;
+        private System.Windows.Forms.TextBox txtFilter;
         private System.Windows.Forms.ComboBox comboTableCategory;
         private System.Windows.Forms.Label labelCategory;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -2401,5 +2419,7 @@ namespace UniversalPatcher
         private GroupBox groupNavigator;
         private NumericUpDown numNaviMaxTablesTotal;
         private Label label4;
+        private ToolStripMenuItem copyRowToolStripMenuItem1;
+        private ToolStripMenuItem pasteRowToolStripMenuItem;
     }
 }

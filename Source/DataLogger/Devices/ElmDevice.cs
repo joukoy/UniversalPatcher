@@ -133,7 +133,7 @@ namespace UniversalPatcher
                 this.LogDeviceType = this.implementation.LogDeviceType;
 
                 SetLoggingFilter();
-
+                this.Connected = true;
                 return true;
             }
             catch (Exception exception)
@@ -222,6 +222,14 @@ namespace UniversalPatcher
         /// <returns></returns>
         public override void Receive()
         {
+            if (this.Port == null || !this.Port.PortOpen())
+            {
+                Debug.WriteLine("Port closed, disposing ELM device");
+                OBDMessage oMsg = new OBDMessage(new byte[] { 0 });
+                oMsg.Error = 0x99;
+                this.Enqueue(oMsg);                
+                return;
+            }
             this.implementation.Receive();
         }
 

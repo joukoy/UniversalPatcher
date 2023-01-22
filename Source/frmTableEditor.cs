@@ -114,107 +114,119 @@ namespace UniversalPatcher
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
-            dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            if (AppSettings.TableEditorFont == null)
-                dataFont = new Font("Consolas", 9);
-            else
-                dataFont = AppSettings.TableEditorFont.ToFont();
+            try
+            {
+                dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+                if (AppSettings.TableEditorFont == null)
+                    dataFont = new Font("Consolas", 9);
+                else
+                    dataFont = AppSettings.TableEditorFont.ToFont();
 
-            numTuneValue.Tag = numTuneValue.Value;
-            autoResizeToolStripMenuItem.Checked = AppSettings.TableEditorAutoResize;
-            if (AppSettings.TableEditorAutoResize)
-            {
-                AutoResize();
-            }
-            else if (AppSettings.MainWindowPersistence)
-            {
-                if (AppSettings.TableEditorWindowSize.Width > 0 || AppSettings.TableEditorWindowSize.Height > 0)
+                numTuneValue.Tag = numTuneValue.Value;
+                autoResizeToolStripMenuItem.Checked = AppSettings.TableEditorAutoResize;
+                if (AppSettings.TableEditorAutoResize)
                 {
-                    this.WindowState = AppSettings.TableEditorWindowState;
-                    if (this.WindowState == FormWindowState.Minimized)
-                    {
-                        this.WindowState = FormWindowState.Normal;
-                    }
-                    this.Location = AppSettings.TableEditorWindowLocation;
-                    this.Size = AppSettings.TableEditorWindowSize;
+                    AutoResize();
                 }
-            }
-            disableTooltipsToolStripMenuItem.Checked = false;
-            rememberCompareSelectionToolStripMenuItem.Checked = AppSettings.TableEditorRememberCompare;
-            if (AppSettings.TableEditorRememberCompare)
-            {
-                swapXyToolStripMenuItem.Checked = tuner.SwapXy;
-                chkSwapXY.Checked = tuner.SwapXy;
-                showRawHEXValuesToolStripMenuItem.Checked = tuner.ShowAsHex;
-                chkRawHex.Checked = tuner.ShowAsHex;
-                if (groupSelectCompare.Enabled)
+                else if (AppSettings.MainWindowPersistence)
                 {
-                    switch (tuner.CompareSelection)
+                    if (AppSettings.TableEditorWindowSize.Width > 0 || AppSettings.TableEditorWindowSize.Height > 0)
                     {
-                        case 0:
-                            radioOriginal.Checked = true;
-                            break;
-                        case 1:
-                            radioCompareFile.Checked = true;
-                            break;
-                        case 2:
-                            radioSideBySide.Checked = true;
-                            break;
-                        case 3:
-                            radioSideBySideText.Checked = true;
-                            break;
-                        case 4:
-                            radioCompareAll.Checked = true;
-                            break;
-                        case 5:
-                            radioDifference.Checked = true;
-                            break;
-                        case 6:
-                            radioDifference2.Checked = true;
-                            break;
-
-                    }
-                    switch (tuner.CompareType)
-                    {
-                        case 0:
-                            radioAbsolute.Checked = true;
-                            break;
-                        case 1:
-                            radioMultiplier.Checked = true;
-                            break;
-                        case 2:
-                            radioPercent.Checked = true;
-                            break;
+                        this.WindowState = AppSettings.TableEditorWindowState;
+                        if (this.WindowState == FormWindowState.Minimized)
+                        {
+                            this.WindowState = FormWindowState.Normal;
+                        }
+                        this.Location = AppSettings.TableEditorWindowLocation;
+                        this.Size = AppSettings.TableEditorWindowSize;
                     }
                 }
-            }
-            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
-            dataGridView1.RowHeaderMouseClick += DataGridView1_RowHeaderMouseClick;
-            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
-            dataGridView1.CellClick += DataGridView1_SelectionChanged;
-            rewToolStripMenuItem.MouseDown += NavigatorMenuItem_MouseDown;
-            fwdToolStripMenuItem.MouseDown += NavigatorMenuItem_MouseDown;
-            if (this.Parent == null)
-            {
-                rewToolStripMenuItem.Visible = true;
-                fwdToolStripMenuItem.Visible = true;
-                upToolStripMenuItem.Visible = true;
-                downToolStripMenuItem.Visible = true;
-                upToolStripMenuItem.MouseHover += UpToolStripMenuItem_MouseHover;
-                downToolStripMenuItem.MouseHover += DownToolStripMenuItem_MouseHover;
-                rewToolStripMenuItem.MouseHover += Navigator_MouseHover;
-                fwdToolStripMenuItem.MouseHover += Navigator_MouseHover;
-                CompareFile selectedFile = compareFiles[currentFile];
-                TableData td = selectedFile.tableInfos[0].td;
-                SetUpDownToolTips();
-            }
-            else
-            {
-                rewToolStripMenuItem.Visible = false;
-                fwdToolStripMenuItem.Visible = false;
-                upToolStripMenuItem.Visible = false;
-                downToolStripMenuItem.Visible = false;
+                disableTooltipsToolStripMenuItem.Checked = false;
+                rememberCompareSelectionToolStripMenuItem.Checked = AppSettings.TableEditorRememberCompare;
+                if (AppSettings.TableEditorRememberCompare)
+                {
+                    swapXyToolStripMenuItem.Checked = tuner.SwapXy;
+                    chkSwapXY.Checked = tuner.SwapXy;
+                    showRawHEXValuesToolStripMenuItem.Checked = tuner.ShowAsHex;
+                    chkRawHex.Checked = tuner.ShowAsHex;
+                    if (groupSelectCompare.Enabled)
+                    {
+                        switch (tuner.CompareSelection)
+                        {
+                            case 0:
+                                radioOriginal.Checked = true;
+                                break;
+                            case 1:
+                                radioCompareFile.Checked = true;
+                                break;
+                            case 2:
+                                radioSideBySide.Checked = true;
+                                break;
+                            case 3:
+                                radioSideBySideText.Checked = true;
+                                break;
+                            case 4:
+                                radioCompareAll.Checked = true;
+                                break;
+                            case 5:
+                                radioDifference.Checked = true;
+                                break;
+                            case 6:
+                                radioDifference2.Checked = true;
+                                break;
 
+                        }
+                        switch (tuner.CompareType)
+                        {
+                            case 0:
+                                radioAbsolute.Checked = true;
+                                break;
+                            case 1:
+                                radioMultiplier.Checked = true;
+                                break;
+                            case 2:
+                                radioPercent.Checked = true;
+                                break;
+                        }
+                    }
+                }
+                dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
+                dataGridView1.RowHeaderMouseClick += DataGridView1_RowHeaderMouseClick;
+                dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
+                dataGridView1.CellClick += DataGridView1_SelectionChanged;
+                rewToolStripMenuItem.MouseDown += NavigatorMenuItem_MouseDown;
+                fwdToolStripMenuItem.MouseDown += NavigatorMenuItem_MouseDown;
+                if (this.Parent == null)
+                {
+                    rewToolStripMenuItem.Visible = true;
+                    fwdToolStripMenuItem.Visible = true;
+                    upToolStripMenuItem.Visible = true;
+                    downToolStripMenuItem.Visible = true;
+                    upToolStripMenuItem.MouseHover += UpToolStripMenuItem_MouseHover;
+                    downToolStripMenuItem.MouseHover += DownToolStripMenuItem_MouseHover;
+                    rewToolStripMenuItem.MouseHover += Navigator_MouseHover;
+                    fwdToolStripMenuItem.MouseHover += Navigator_MouseHover;
+                    CompareFile selectedFile = compareFiles[currentFile];
+                    TableData td = selectedFile.tableInfos[0].td;
+                    SetUpDownToolTips();
+                }
+                else
+                {
+                    rewToolStripMenuItem.Visible = false;
+                    fwdToolStripMenuItem.Visible = false;
+                    upToolStripMenuItem.Visible = false;
+                    downToolStripMenuItem.Visible = false;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
 
@@ -263,6 +275,10 @@ namespace UniversalPatcher
 
         public void SaveOnExit()
         {
+            if (compareFiles == null || compareFiles.Count == 0)
+            {
+                return;
+            }
             bool tableModified = false;
             uint addr = compareFiles[0].tableBufferOffset;
             for (int a = 0; a < compareFiles[0].buf.Length; a++)
@@ -333,6 +349,10 @@ namespace UniversalPatcher
             compareToolStripMenuItem.DropDownItems.Clear();
             compareFiles = new List<CompareFile>();
             chkSwapXY.Enabled = true;
+            this.numDecimals.ValueChanged -= new System.EventHandler(this.numDecimals_ValueChanged);
+            numDecimals.Value = -1;
+            this.numDecimals.ValueChanged += new System.EventHandler(this.numDecimals_ValueChanged);
+            decimals = 0;
 
             tableName = "";
             only1d = false;    //Show multiple 1D tables as one multirow table
@@ -340,6 +360,7 @@ namespace UniversalPatcher
             duplicateTableName = false;    // Multiple tables wit equal name, but some other setting may differ
             currentFile = 0;
             currentCmpFile = 1;
+            currentTunerTd = -1;
             lastTable = "";
         }
 
@@ -1395,6 +1416,11 @@ namespace UniversalPatcher
         {
             try
             {
+                if (compareFiles.Count == 0)
+                {
+                    Debug.WriteLine("Table Editor: LoadTable: No files loaded, exit");
+                    return;
+                }
                 this.dataGridView1.CellValueChanged -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
                 dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
                 dataGridView1.ColumnHeadersHeightSizeMode =  DataGridViewColumnHeadersHeightSizeMode.DisableResizing;

@@ -63,6 +63,7 @@ namespace UniversalPatcher
         private string cvnSortBy = "";
         private int cvnSortIndex = 0;
         SortOrder cvnStrSortOrder = SortOrder.Ascending;
+        ListViewColumnSorter lvwColumnSorter;
 
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
@@ -130,8 +131,12 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("OS Store Address");
             listCSAddresses.Columns.Add("MAF Address");
             listCSAddresses.Columns.Add("VE table");
+            listCSAddresses.Columns.Add("Cal start");
+            listCSAddresses.Columns.Add("OS crc");
             listCSAddresses.Columns.Add("3d tables");
-
+            lvwColumnSorter = new ListViewColumnSorter();
+            this.listCSAddresses.ListViewItemSorter = lvwColumnSorter;
+            listCSAddresses.ColumnClick += ListCSAddresses_ColumnClick;
             SetWorkingMode();
             dataCVN.ColumnHeaderMouseClick += DataCVN_ColumnHeaderMouseClick;
             tabFakeCvn.Enter += TabFakeCvn_Enter;
@@ -147,6 +152,7 @@ namespace UniversalPatcher
             this.DragDrop += FrmPatcher_DragDrop;
 
         }
+
 
         private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
         {
@@ -169,6 +175,31 @@ namespace UniversalPatcher
         private void TabEditExtra_Enter(object sender, EventArgs e)
         {
             RefreshExtraInfoTab();
+        }
+        private void ListCSAddresses_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == lvwColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (lvwColumnSorter.Order == SortOrder.Ascending)
+                {
+                    lvwColumnSorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    lvwColumnSorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                lvwColumnSorter.SortColumn = e.Column;
+                lvwColumnSorter.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            this.listCSAddresses.Sort();
         }
 
         private void RefreshExtraInfoTab()
@@ -642,6 +673,14 @@ namespace UniversalPatcher
                         item.SubItems.Add("");
                     else
                         item.SubItems.Add(PCM.v6VeTable.address.ToString("X") + ":" + PCM.v6VeTable.rows.ToString());
+                    if (!string.IsNullOrEmpty(PCM.v6CalStart))
+                        item.SubItems.Add(PCM.v6CalStart);
+                    else
+                        item.SubItems.Add("");
+                    if (!string.IsNullOrEmpty(PCM.v6OSCrc))
+                        item.SubItems.Add(PCM.v6OSCrc);
+                    else
+                        item.SubItems.Add("");
                     string v6tablelist = "";
                     for (int i = 0; i < PCM.v6tables.Count; i++)
                     {
@@ -1827,43 +1866,7 @@ namespace UniversalPatcher
 
         private void btnSaveCSV_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string FileName = SelectSaveFile(CsvFilter);
-                if (FileName.Length == 0)
-                    return;
-                Logger("Writing to file: " + Path.GetFileName(FileName), false);
-                using (StreamWriter writetext = new StreamWriter(FileName))
-                {
-                    string row = "";
-                    for (int i = 0; i < dataFileInfo.Columns.Count; i++)
-                    {
-                        if (i > 0)
-                            row += ";";
-                        row += dataFileInfo.Columns[i].HeaderText;
-                    }
-                    writetext.WriteLine(row);
-                    for (int r = 0; r < (dataFileInfo.Rows.Count - 1); r++)
-                    {
-                        row = "";
-                        for (int i = 0; i < dataFileInfo.Columns.Count; i++)
-                        {
-                            if (i > 0)
-                                row += ";";
-                            if (dataFileInfo.Rows[r].Cells[i].Value != null)
-                                row += dataFileInfo.Rows[r].Cells[i].Value.ToString();
-                        }
-                        row = row.Replace(Environment.NewLine, ":");
-                        row = row.Replace(",", " ");
-                        writetext.WriteLine(row);
-                    }
-                }
-                Logger(" [OK]");
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
+            SaveCsvDatagridview(dataFileInfo);
         }
 
         private void SaveSegmentList()
@@ -2302,42 +2305,7 @@ namespace UniversalPatcher
 
         private void btnSaveCsvBadChkFile_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string FileName = SelectSaveFile(CsvFilter);
-                if (FileName.Length == 0)
-                    return;
-                Logger("Writing to file: " + Path.GetFileName(FileName), false);
-                using (StreamWriter writetext = new StreamWriter(FileName))
-                {
-                    string row = "";
-                    for (int i = 0; i < dataBadChkFile.Columns.Count; i++)
-                    {
-                        if (i > 0)
-                            row += ";";
-                        row += dataBadChkFile.Columns[i].HeaderText;
-                    }
-                    writetext.WriteLine(row);
-                    for (int r = 0; r < (dataBadChkFile.Rows.Count - 1); r++)
-                    {
-                        row = "";
-                        for (int i = 0; i < dataBadChkFile.Columns.Count; i++)
-                        {
-                            if (i > 0)
-                                row += ";";
-                            if (dataBadChkFile.Rows[r].Cells[i].Value != null)
-                                row += dataBadChkFile.Rows[r].Cells[i].Value.ToString();
-                        }
-                        writetext.WriteLine(row);
-                    }
-                }
-                Logger(" [OK]");
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
-
+            SaveCsvDatagridview(dataBadChkFile);
         }
 
         private void btnRefreshBadChkFile_Click(object sender, EventArgs e)
@@ -2432,41 +2400,7 @@ namespace UniversalPatcher
 
         private void btnSaveSearchedTables_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string FileName = SelectSaveFile(CsvFilter);
-                if (FileName.Length == 0)
-                    return;
-                Logger("Writing to file: " + Path.GetFileName(FileName), false);
-                using (StreamWriter writetext = new StreamWriter(FileName))
-                {
-                    string row = "";
-                    for (int i = 0; i < dataGridSearchedTables.Columns.Count; i++)
-                    {
-                        if (i > 0)
-                            row += ";";
-                        row += dataGridSearchedTables.Columns[i].HeaderText;
-                    }
-                    writetext.WriteLine(row);
-                    for (int r = 0; r < (dataGridSearchedTables.Rows.Count - 1); r++)
-                    {
-                        row = "";
-                        for (int i = 0; i < dataGridSearchedTables.Columns.Count; i++)
-                        {
-                            if (i > 0)
-                                row += ";";
-                            if (dataGridSearchedTables.Rows[r].Cells[i].Value != null)
-                                row += dataGridSearchedTables.Rows[r].Cells[i].Value.ToString();
-                        }
-                        writetext.WriteLine(row);
-                    }
-                }
-                Logger(" [OK]");
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
+            SaveCsvDatagridview(dataGridSearchedTables);
         }
 
         private void btnClearSearchedTables_Click(object sender, EventArgs e)
@@ -2505,42 +2439,7 @@ namespace UniversalPatcher
 
         private void btnSavePidList_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string FileName = SelectSaveFile(CsvFilter);
-                if (FileName.Length == 0)
-                    return;
-                Logger("Writing to file: " + Path.GetFileName(FileName), false);
-                using (StreamWriter writetext = new StreamWriter(FileName))
-                {
-                    string row = "";
-                    for (int i = 0; i < dataGridPIDlist.Columns.Count; i++)
-                    {
-                        if (i > 0)
-                            row += ";";
-                        row += dataGridPIDlist.Columns[i].HeaderText;
-                    }
-                    writetext.WriteLine(row);
-                    for (int r = 0; r < (dataGridPIDlist.Rows.Count - 1); r++)
-                    {
-                        row = "";
-                        for (int i = 0; i < dataGridPIDlist.Columns.Count; i++)
-                        {
-                            if (i > 0)
-                                row += ";";
-                            if (dataGridPIDlist.Rows[r].Cells[i].Value != null)
-                                row += dataGridPIDlist.Rows[r].Cells[i].Value.ToString();
-                        }
-                        writetext.WriteLine(row);
-                    }
-                }
-                Logger(" [OK]");
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
-
+            SaveCsvDatagridview(dataGridPIDlist);
         }
 
         private void chkTableSearchNoFilters_CheckedChanged(object sender, EventArgs e)
@@ -2795,41 +2694,7 @@ namespace UniversalPatcher
 
         private void btnSaveCsvDTC_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string FileName = SelectSaveFile(CsvFilter);
-                if (FileName.Length == 0)
-                    return;
-                Logger("Writing to file: " + Path.GetFileName(FileName), false);
-                using (StreamWriter writetext = new StreamWriter(FileName))
-                {
-                    string row = "";
-                    for (int i = 0; i < dataGridDTC.Columns.Count; i++)
-                    {
-                        if (i > 0)
-                            row += ";";
-                        row += dataGridDTC.Columns[i].HeaderText;
-                    }
-                    writetext.WriteLine(row);
-                    for (int r = 0; r < (dataGridDTC.Rows.Count - 1); r++)
-                    {
-                        row = "";
-                        for (int i = 0; i < dataGridDTC.Columns.Count; i++)
-                        {
-                            if (i > 0)
-                                row += ";";
-                            if (dataGridDTC.Rows[r].Cells[i].Value != null)
-                                row += dataGridDTC.Rows[r].Cells[i].Value.ToString();
-                        }
-                        writetext.WriteLine(row);
-                    }
-                }
-                Logger(" [OK]");
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
+            SaveCsvDatagridview(dataGridDTC);
         }
 
         private void ModifyDtc()
@@ -3217,8 +3082,11 @@ namespace UniversalPatcher
             List<Block> excludes;
             ParseAddress(txtExclude.Text, basefile, out excludes);
             AddressData csAddr;
-            csAddr.Address = 0;
-            HexToUint(txtCSAddr.Text, out csAddr.Address);
+            csAddr.Address = uint.MaxValue - 4;
+            if (!string.IsNullOrEmpty(txtCSAddr.Text) && HexToUint(txtCSAddr.Text, out uint addr))
+            {
+                csAddr.Address = addr;
+            }
             csAddr.Bytes = (ushort)numCSBytes.Value;
             csAddr.Name = "CS";
             csAddr.Type = 0;
@@ -3303,10 +3171,10 @@ namespace UniversalPatcher
                 Logger("Checksum research:");
 
                 UInt64 savedVal = 0;
-                uint csAddr;
+                uint csAddr = uint.MaxValue;
                 CSMethod method = csUtilSelectedMethod();
 
-                if (HexToUint(txtCSAddr.Text, out csAddr))
+                if (!string.IsNullOrEmpty(txtCSAddr.Text) && HexToUint(txtCSAddr.Text, out csAddr))
                 {
                     if (numCSBytes.Value == 1)
                         savedVal = basefile.buf[csAddr];
@@ -4438,7 +4306,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void btnImportCsv_Click(object sender, EventArgs e)
+/*        private void btnImportCsv_Click(object sender, EventArgs e)
         {
             string FileName = SelectFile("Select CSV file", CsvFilter);
             if (FileName.Length == 0)
@@ -4453,17 +4321,19 @@ namespace UniversalPatcher
                     continue;
                 if (HexToUshort(lineparts[1], out ushort nr))
                 {
-                    for (int i = 0; i < pidDescriptions.Count; i++)
+                    for (int i = 0; i < PidDescriptions.Count; i++)
                     {
-                        if (pidDescriptions[i].PidNumber == nr)
+                        if (PidDescriptions[i].PidNumber == nr)
                         {
-                            pidDescriptions[i].Description = lineparts[3];
-                            pidDescriptions[i].Scaling = lineparts[5];
-                            pidDescriptions[i].Unit = lineparts[6];
+                            PidDescriptions[i].Description = lineparts[3];
+                            PidDescriptions[i].Scaling = lineparts[5];
+                            PidDescriptions[i].Unit = lineparts[6];
                             if (lineparts[7] == "Y")
-                                pidDescriptions[i].Signed = true;
+                                PidDescriptions[i].Signed = true;
                             else
-                                pidDescriptions[i].Signed = false;
+                                PidDescriptions[i].Signed = false;
+                            if (int.TryParse(lineparts[8], out int bytes))
+                                PidDescriptions[i].Bytes = bytes;
                             break;
                         }
                     }
@@ -4474,10 +4344,39 @@ namespace UniversalPatcher
             using (FileStream stream = new FileStream(pidDfile, FileMode.Create))
             {
                 System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
-                writer.Serialize(stream, pidDescriptions);
+                writer.Serialize(stream, PidDescriptions);
                 stream.Close();
             }
             Logger(" [OK]");
+        }
+*/
+        private void deviceNamesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML fe = new frmEditXML();
+            fe.Show();
+            fe.LoadDeviceNames();
+        }
+
+        private void functionNamesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML fe = new frmEditXML();
+            fe.Show();
+            fe.LoadFuncNames();
+        }
+
+        private void pIDDescriptionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmEditXML frmE = new frmEditXML();
+                frmE.LoadPIDDescriptions();
+                frmE.Show();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
         }
     }
 }

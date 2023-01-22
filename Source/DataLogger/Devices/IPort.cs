@@ -64,6 +64,11 @@ namespace UniversalPatcher
         void CancelReceive();
 
         /// <summary>
+        /// Get status of port;
+        /// </summary>
+        bool PortOpen();
+
+        /// <summary>
         /// Sets the timeout for incoming messages;
         /// </summary>
         // bool PromptReceived();

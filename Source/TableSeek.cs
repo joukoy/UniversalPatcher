@@ -23,7 +23,7 @@ namespace UniversalPatcher
             RowHeaders = "";
             ColHeaders = "";
             Math = "X";
-            SavingMath = "X";
+            //SavingMath = "X";
             Offset = 0;
             ConditionalOffset = false;
             SignedOffset = false;
@@ -47,7 +47,7 @@ namespace UniversalPatcher
         public string RowHeaders { get; set; }
         public string ColHeaders { get; set; }
         public string Math { get; set; }
-        public string SavingMath { get; set; }
+        //public string SavingMath { get; set; }
         public Int64 Offset { get; set; }
         public bool ConditionalOffset { get; set; }
         public bool SignedOffset { get; set; }
@@ -87,6 +87,31 @@ namespace UniversalPatcher
         public TableSeek ShallowCopy()
         {
             return (TableSeek)this.MemberwiseClone();
+        }
+
+        public void ImportTableData(TableData td)
+        {
+            BitMask = td.BitMask;
+            Category = td.Category;
+            ColHeaders = td.ColumnHeaders;
+            Columns = td.Columns;
+            Decimals = td.Decimals;
+            Description = td.TableDescription;
+            ExtraDescription = td.ExtraDescription;
+            ExtraCategories = td.ExtraCategories;
+            Math = td.Math;
+            Max = td.Max;
+            Min = td.Min;
+            Name = td.TableName;
+            Offset = td.Offset;
+            OutputType = td.OutputType;
+            RowHeaders = td.RowHeaders;
+            RowMajor = td.RowMajor;
+            Rows = td.Rows;
+            Values = td.Values;
+            Units = td.Units;
+            DataType = td.DataType;
+            RefAddress = td.Address;
         }
 
         private uint SearchByteSequence(PcmFile PCM, string searchString, uint Start, uint End)
@@ -390,7 +415,7 @@ namespace UniversalPatcher
                         ts.Decimals = 6;
                         ts.Math = "X*0.0002441406";
                         ts.Offset = 0;
-                        ts.SavingMath = "X/0.0002441406";
+                        //ts.SavingMath = "X/0.0002441406";
                         //ts.Signed = false;
                         ts.Category = "Fuel";                            
                         ts.ColHeaders = "RPM 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400, 6800";
@@ -417,7 +442,7 @@ namespace UniversalPatcher
                         //ts.Bits = 16;
                         ts.Name = "MAF";
                         ts.Math = "X*0.0078125";
-                        ts.SavingMath = "X/0.0078125";
+                        //ts.SavingMath = "X/0.0078125";
                         //ts.Floating = true;
                         ts.OutputType = OutDataType.Float;
                         ts.Decimals = 4;

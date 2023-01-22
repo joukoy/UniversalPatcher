@@ -37,7 +37,8 @@ namespace UniversalPatcher
         /// Not actually necessary for this device type, but since we need to implement IDisposable...
         /// </summary>
         protected override void Dispose(bool disposing)
-        {    
+        {
+            this.Connected = false;
         }
         
         /// <summary>
@@ -45,6 +46,7 @@ namespace UniversalPatcher
         /// </summary>
         public override bool Initialize(int Baudrate, LoggerUtils.J2534InitParameters j2534Init)
         {
+            this.Connected = true;
             return true;
         }
 

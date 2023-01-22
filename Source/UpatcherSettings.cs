@@ -55,6 +55,10 @@ namespace UniversalPatcher
             TunerModeColumnWidth = "192,110,100,100,100,100,100,100,100,72,100,100,100,100,60,46,100,100,100,100,100,100,197,100,100";
             NavigatorMaxTablesPerNode = 3;
             NavigatorMaxTablesTotal = 50;
+            LoggerStartJ2534Process = true;
+            LoggerJ2534ProcessVisible = false;
+            LoggerAutoDisconnect = true;
+
             TableEditorFont = new SerializableFont(new Font("Consolas", 8));
             TableExplorerFont = new SerializableFont(new Font("Arial", 8));
             PatcherLogFont = new SerializableFont(new Font("Consolas", 8));
@@ -197,6 +201,9 @@ namespace UniversalPatcher
         public bool TunerShowTableCount { get; set; }
         public int NavigatorMaxTablesPerNode { get; set; }
         public int NavigatorMaxTablesTotal { get; set; }
+        public bool LoggerStartJ2534Process { get; set; }
+        public bool LoggerJ2534ProcessVisible { get; set; }
+        public bool LoggerAutoDisconnect { get; set; }
 
         public SerializableFont TableEditorFont { get; set; }
         public SerializableFont TableExplorerFont { get; set; }

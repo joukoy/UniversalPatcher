@@ -370,13 +370,29 @@ public class Upatcher
 
     public class PidInfo
     {
+        public PidInfo()
+        {
+            PidName = "";
+            Description = "";
+            ConversionFactor = "";
+            Unit = "";
+            Scaling = "";
+            //Bytes = 1;
+            DataType = InDataType.UBYTE;
+        }
         public uint PidNumber { get; set; }
         public string PidName { get; set; }
+        //public int Bytes { get; set; }
+        public InDataType DataType { get; set; }
         public string ConversionFactor { get; set; }
         public string Description { get; set; }
-        public bool Signed { get; set; }
+        //public bool Signed { get; set; }
         public string Unit { get; set; }
         public string Scaling { get; set; }
+        public PidInfo ShallowCopy()
+        {
+            return (PidInfo)this.MemberwiseClone();
+        }
     }
 
     public struct SearchedAddress
@@ -407,7 +423,37 @@ public class Upatcher
         Unknown = 99
     }
 
+    public enum j2534Command
+    {
+        NoCommand,
+        Initialize,
+        Dispose,
+        SetConfigParams,
+        SetTimeout,
+        SetWriteTimeout,
+        SetReadTimeout,
+        Receive,
+        Receive2,
+        SendMessage,
+        ConnectSecondaryProtocol,
+        DisconnectSecondayProtocol,
+        SetupFilters,
+        ClearFilters,
+        SetVpwSpeed,
+        ClearMessageBuffer,
+        SetLoggingFilter,
+        SetAnalyzerFilter,
+        RemoveFilters,
+        quit
+    }
+    //
+    // Universalpatcher Program global variables
+    //
+
     public static UpatcherSettings AppSettings = new UpatcherSettings();
+
+    public static List<Analyzer.IdName> DeviceNames;
+    public static List<Analyzer.IdName> FuncNames;
 
     public static bool J2534FunctionsIsLoaded = false;
     public static List<DetectRule> DetectRules;
@@ -433,7 +479,7 @@ public class Upatcher
     //public static List<TableData> XdfElements;
     public static List<Units> unitList;
     public static List<RichTextBox> LogReceivers;
-    public static List<PidInfo> pidDescriptions;
+    public static List<PidInfo> PidDescriptions;
 
     public static string tableSearchFile;
     //public static string tableSeekFile = "";
@@ -482,6 +528,7 @@ public class Upatcher
         INT64,            //SIGNED INTEGER - 64 BIT
         FLOAT32,       //SINGLE PRECISION FLOAT - 32 BIT
         FLOAT64,        //DOUBLE PRECISION FLOAT - 64 BIT
+        //THREEBYTES,
         UNKNOWN
     }
 
@@ -501,15 +548,29 @@ public class Upatcher
         LSB
     }
 
-    public static void StartupSettings(string[] args)
+    public static void Startup(string[] args)
     {
         try
         {
             LoadAppSettings();
+            ClipBrd = new List<object>();
             if (args.Length > 0)
             {
                 if (args[0] == "-")
                     Debug.WriteLine("Remember previous settings");
+                else if (args[0].ToLower().Contains("j2534server"))
+                {
+                    if (Upatcher.AppSettings.LoggerJ2534ProcessVisible)
+                    {
+                        Application.Run(new frmJ2534Server(args[1]));
+                    }
+                    else
+                    {
+                        J2534Server server = new J2534Server(args[1]);
+                        server.ServerLoop();
+                    }
+                    return;
+                }
                 else if (args[0].ToLower().Contains("tourist"))
                     AppSettings.WorkingMode = 0;
                 else if (args[0].ToLower().Contains("basic"))
@@ -563,7 +624,51 @@ public class Upatcher
             frmSplash.moveMe(xy);
             frmSplash.labelProgress.Text = "";
             LoadSettingFiles();
-            //frmSplash.Dispose();
+
+            if (args.Length > 1)
+            {
+                if (args[1].ToLower().Contains("launcher"))
+                {
+                    Application.Run(new FrmMain());
+                }
+                else if (args[1].ToLower().Contains("tuner"))
+                {
+                    PcmFile pcm = new PcmFile();
+                    Application.Run(new FrmTuner(pcm));
+                }
+                else if (args[1].ToLower().Contains("patcher"))
+                {
+                    Application.Run(new FrmPatcher());
+                }
+                else if (args[1].ToLower().Contains("logger"))
+                {
+                    Application.Run(new frmLogger());
+                }
+                else if (args[0].ToLower().Contains("j2534server"))
+                {
+                    if (Upatcher.AppSettings.LoggerJ2534ProcessVisible)
+                    {
+                        Application.Run(new frmJ2534Server(args[1]));
+                    }
+                    else
+                    {
+                        J2534Server server = new J2534Server(args[1]);
+                        server.ServerLoop();
+                    }
+                }
+                else
+                {
+                    //Application.Run(new FrmPatcher());
+                    PcmFile pcm = new PcmFile();
+                    Application.Run(new FrmTuner(pcm));
+                }
+            }
+            else
+            {
+                PcmFile pcm = new PcmFile();
+                Application.Run(new FrmTuner(pcm));
+                //Application.Run(new FrmPatcher());
+            }            
         }
         catch (Exception ex)
         {
@@ -615,123 +720,162 @@ public class Upatcher
 
     private static void LoadSettingFiles()
     {
-        DetectRules = new List<DetectRule>();
-        StockCVN = new List<CVN>();
-        fileTypeList = new List<FileType>();
-        dtcSearchConfigs = new List<DtcSearchConfig>();
-        pidSearchConfigs = new List<PidSearchConfig>();
-        SwapSegments = new List<SwapSegment>();
-        unitList = new List<Units>();
-        patches = new List<Patch>();
-        //Dirty fix to make system work without stockcvn.xml
-        CVN ctmp = new CVN();
-        ctmp.cvn = "";
-        ctmp.PN = "";
-        StockCVN.Add(ctmp);
-
-        cvnDB = new CvnDB();
-        cvnDB.LoadDB();
-
-        Logger("Loading configurations... filetypes", false);
-        ShowSplash("Loading configurations...");
-        ShowSplash("filetypes");
-        Application.DoEvents();
-
-        Logger("Loading Pid descriptions...", false);
-        ShowSplash("Pid descriptions");
-        LoadPidDescriptions();
-        Application.DoEvents();
-
-        string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
-        if (File.Exists(FileTypeListFile))
+        try
         {
-            Debug.WriteLine("Loading filetypes.xml");
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
-            System.IO.StreamReader file = new System.IO.StreamReader(FileTypeListFile);
-            fileTypeList = (List<FileType>)reader.Deserialize(file);
-            file.Close();
+            DetectRules = new List<DetectRule>();
+            StockCVN = new List<CVN>();
+            fileTypeList = new List<FileType>();
+            dtcSearchConfigs = new List<DtcSearchConfig>();
+            pidSearchConfigs = new List<PidSearchConfig>();
+            SwapSegments = new List<SwapSegment>();
+            unitList = new List<Units>();
+            patches = new List<Patch>();
+            //Dirty fix to make system work without stockcvn.xml
+            CVN ctmp = new CVN();
+            ctmp.cvn = "";
+            ctmp.PN = "";
+            StockCVN.Add(ctmp);
 
+            cvnDB = new CvnDB();
+            cvnDB.LoadDB();
+
+            Logger("Loading configurations... filetypes", false);
+            ShowSplash("Loading configurations...");
+            ShowSplash("filetypes");
+            Application.DoEvents();
+
+            Logger("Loading Pid descriptions...", false);
+            ShowSplash("Pid descriptions");
+            LoadPidDescriptions();
+            Application.DoEvents();
+
+            string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
+            if (File.Exists(FileTypeListFile))
+            {
+                Debug.WriteLine("Loading filetypes.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
+                System.IO.StreamReader file = new System.IO.StreamReader(FileTypeListFile);
+                fileTypeList = (List<FileType>)reader.Deserialize(file);
+                file.Close();
+
+            }
+
+            Logger(",Function names", false);
+            ShowSplash("Function names");
+            Application.DoEvents();
+            string funcNameFile = Path.Combine(Application.StartupPath, "XML", "functionnames.xml");
+            if (File.Exists(funcNameFile))
+            {
+                Debug.WriteLine("Loading functionnames.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<Analyzer.IdName>));
+                System.IO.StreamReader file = new System.IO.StreamReader(funcNameFile);
+                FuncNames = (List<Analyzer.IdName>)reader.Deserialize(file);
+                file.Close();
+            }
+
+            Logger(",Devicenames", false);
+            ShowSplash("Devicenames");
+            Application.DoEvents();
+            string deviceNameFile = Path.Combine(Application.StartupPath, "XML", "devicenames.xml");
+            if (File.Exists(deviceNameFile))
+            {
+                Debug.WriteLine("Loading devicenames.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<Analyzer.IdName>));
+                System.IO.StreamReader file = new System.IO.StreamReader(deviceNameFile);
+                DeviceNames = (List<Analyzer.IdName>)reader.Deserialize(file);
+                file.Close();
+            }
+
+            Logger(",dtcsearch", false);
+            ShowSplash("dtcsearch");
+            Application.DoEvents();
+            string CtsSearchFile = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
+            if (File.Exists(CtsSearchFile))
+            {
+                Debug.WriteLine("Loading DtcSearch.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
+                System.IO.StreamReader file = new System.IO.StreamReader(CtsSearchFile);
+                dtcSearchConfigs = (List<DtcSearchConfig>)reader.Deserialize(file);
+                file.Close();
+
+            }
+
+            Logger(",pidsearch", false);
+            ShowSplash("pidsearch");
+            Application.DoEvents();
+
+            string pidSearchFile = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
+            if (File.Exists(pidSearchFile))
+            {
+                Debug.WriteLine("Loading PidSearch.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
+                System.IO.StreamReader file = new System.IO.StreamReader(pidSearchFile);
+                pidSearchConfigs = (List<PidSearchConfig>)reader.Deserialize(file);
+                file.Close();
+
+            }
+
+            Logger(",autodetect", false);
+            ShowSplash("autodetect");
+            Application.DoEvents();
+
+            string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
+            if (File.Exists(AutoDetectFile))
+            {
+                Debug.WriteLine("Loading autodetect.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
+                System.IO.StreamReader file = new System.IO.StreamReader(AutoDetectFile);
+                DetectRules = (List<DetectRule>)reader.Deserialize(file);
+                file.Close();
+            }
+
+            Logger(",extractedsegments", false);
+            ShowSplash("extractedsegments");
+            Application.DoEvents();
+
+            string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
+            if (File.Exists(SwapSegmentListFile))
+            {
+                Debug.WriteLine("Loading extractedsegments.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
+                System.IO.StreamReader file = new System.IO.StreamReader(SwapSegmentListFile);
+                SwapSegments = (List<SwapSegment>)reader.Deserialize(file);
+                file.Close();
+
+            }
+
+            Logger(",units", false);
+            ShowSplash("units");
+            Application.DoEvents();
+
+            string unitsFile = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
+            if (File.Exists(unitsFile))
+            {
+                Debug.WriteLine("Loading units.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
+                System.IO.StreamReader file = new System.IO.StreamReader(unitsFile);
+                unitList = (List<Units>)reader.Deserialize(file);
+                file.Close();
+
+            }
+
+            Logger(",OBD2 Codes", false);
+            ShowSplash("OBD2 Codes");
+            Application.DoEvents();
+            LoadOBD2Codes();
+            Logger(" - Done");
+            ShowSplash("Done");
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
         }
 
-        Logger(",dtcsearch", false);
-        ShowSplash("dtcsearch");
-        Application.DoEvents();
-        string CtsSearchFile = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
-        if (File.Exists(CtsSearchFile))
-        {
-            Debug.WriteLine("Loading DtcSearch.xml");
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
-            System.IO.StreamReader file = new System.IO.StreamReader(CtsSearchFile);
-            dtcSearchConfigs = (List<DtcSearchConfig>)reader.Deserialize(file);
-            file.Close();
-
-        }
-
-        Logger(",pidsearch", false);
-        ShowSplash("pidsearch");
-        Application.DoEvents();
-
-        string pidSearchFile = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
-        if (File.Exists(pidSearchFile))
-        {
-            Debug.WriteLine("Loading PidSearch.xml");
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
-            System.IO.StreamReader file = new System.IO.StreamReader(pidSearchFile);
-            pidSearchConfigs = (List<PidSearchConfig>)reader.Deserialize(file);
-            file.Close();
-
-        }
-
-        Logger(",autodetect", false);
-        ShowSplash("autodetect");
-        Application.DoEvents();
-
-        string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
-        if (File.Exists(AutoDetectFile))
-        {
-            Debug.WriteLine("Loading autodetect.xml");
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
-            System.IO.StreamReader file = new System.IO.StreamReader(AutoDetectFile);
-            DetectRules = (List<DetectRule>)reader.Deserialize(file);
-            file.Close();
-        }
-
-        Logger(",extractedsegments", false);
-        ShowSplash("extractedsegments");
-        Application.DoEvents();
-
-        string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
-        if (File.Exists(SwapSegmentListFile))
-        {
-            Debug.WriteLine("Loading extractedsegments.xml");
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
-            System.IO.StreamReader file = new System.IO.StreamReader(SwapSegmentListFile);
-            SwapSegments = (List<SwapSegment>)reader.Deserialize(file);
-            file.Close();
-
-        }
-
-        Logger(",units", false);
-        ShowSplash("units");
-        Application.DoEvents();
-
-        string unitsFile = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
-        if (File.Exists(unitsFile))
-        {
-            Debug.WriteLine("Loading units.xml");
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
-            System.IO.StreamReader file = new System.IO.StreamReader(unitsFile);
-            unitList = (List<Units>)reader.Deserialize(file);
-            file.Close();
-
-        }
-
-        Logger(",OBD2 Codes", false);
-        ShowSplash("OBD2 Codes");
-        Application.DoEvents();
-        LoadOBD2Codes();
-        Logger(" - Done");
-        ShowSplash("Done");
     }
 
     public static int GetBits(InDataType dataType)
@@ -780,7 +924,9 @@ public class Upatcher
         uint8 = 1,
         uint16 = 2,
         int8,
-        int16
+        int16,
+        uint32,
+        int32
     }
 
     public static InDataType ConvertToDataType(string bitStr, bool signed, bool floating)
@@ -817,6 +963,10 @@ public class Upatcher
                 DataType = InDataType.UWORD;
             }
 
+        }
+        else if (elementSize == 3)
+        {
+            DataType = InDataType.UINT32;
         }
         else if (elementSize == 4)
         {
@@ -959,25 +1109,38 @@ public class Upatcher
 
     public static string[] LoadHeaderFromTable(TableData headerTd, int count, PcmFile pcm)
     {
-        if (headerTd == null)
-            return null;
-
-        uint step = (uint)(GetBits(headerTd.DataType) / 8);
-        uint addr = (uint)(headerTd.addrInt + headerTd.Offset + headerTd.ExtraOffset);
-        string[] retVal = new string[count];
-        for (int a = 0; a < count; a++)
+        try
         {
-            string formatStr = "0.####";
-            if (headerTd.Units.Contains("%"))
-                formatStr = "0";
-            string header = "";
-            if (!string.IsNullOrEmpty(headerTd.Units))
-                header = headerTd.Units.Trim() + " ";
-            header += GetValue(pcm.buf, addr, headerTd, 0, pcm).ToString(formatStr).Replace(",", ".");
-            retVal[a] = header;
-            addr += step;
+            if (headerTd == null)
+                return new string[0];
+
+            uint step = (uint)(GetBits(headerTd.DataType) / 8);
+            uint addr = (uint)(headerTd.addrInt + headerTd.Offset + headerTd.ExtraOffset);
+            string[] retVal = new string[count];
+            for (int a = 0; a < count; a++)
+            {
+                string formatStr = "0.####";
+                if (headerTd.Units.Contains("%"))
+                    formatStr = "0";
+                string header = "";
+                if (!string.IsNullOrEmpty(headerTd.Units))
+                    header = headerTd.Units.Trim() + " ";
+                header += GetValue(pcm.buf, addr, headerTd, 0, pcm).ToString(formatStr).Replace(",", ".");
+                retVal[a] = header;
+                addr += step;
+            }
+            return retVal;
         }
-        return retVal;
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
+        }
+        return new string[0];
     }
 
     public static double[] LoadHeaderValuesFromTable(TableData headerTd, int count, PcmFile pcm)
@@ -2484,10 +2647,10 @@ public class Upatcher
                 FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.xml");
             if (!File.Exists(FileName))
                 return;
-            pidDescriptions = new List<PidInfo>();
+            PidDescriptions = new List<PidInfo>();
             System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
             System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-            pidDescriptions = (List<PidInfo>)reader.Deserialize(file);
+            PidDescriptions = (List<PidInfo>)reader.Deserialize(file);
             file.Close();
         }
         catch (Exception ex)
@@ -2565,7 +2728,7 @@ public class Upatcher
                     }
                 }
             }
-            Logger("Executing command: \"" + psi.FileName + " " + psi.Arguments);
+            Logger("Executing command: \"" + psi.FileName + " " + psi.Arguments + "\"");
             Process.Start(psi);
         }
         catch (Exception ex)
@@ -2574,6 +2737,7 @@ public class Upatcher
         }
     }
 
+ 
     public static void SetDtcCode(ref byte[] buffer, uint bufferOffset, int codeIndex, DtcCode dtc, PcmFile PCM)
     {
         if (dtc.P10)

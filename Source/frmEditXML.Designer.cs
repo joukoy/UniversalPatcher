@@ -42,6 +42,8 @@ namespace UniversalPatcher
             this.cutRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.insertRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testMathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSave = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,11 +52,13 @@ namespace UniversalPatcher
             this.saveCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.convertToDataTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.scalingConversionFactorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.labelHelp = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.insertRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtSearch = new System.Windows.Forms.TextBox();
+            this.comboFilterBy = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -86,9 +90,10 @@ namespace UniversalPatcher
             this.cutRowToolStripMenuItem,
             this.copyRowToolStripMenuItem,
             this.pasteRowToolStripMenuItem,
-            this.insertRowToolStripMenuItem});
+            this.insertRowToolStripMenuItem,
+            this.testMathToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 202);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 224);
             // 
             // editToolStripMenuItem1
             // 
@@ -138,6 +143,21 @@ namespace UniversalPatcher
             this.pasteRowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.pasteRowToolStripMenuItem.Text = "Paste row";
             this.pasteRowToolStripMenuItem.Click += new System.EventHandler(this.pasteRowToolStripMenuItem_Click);
+            // 
+            // insertRowToolStripMenuItem
+            // 
+            this.insertRowToolStripMenuItem.Name = "insertRowToolStripMenuItem";
+            this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.insertRowToolStripMenuItem.Text = "Insert row";
+            this.insertRowToolStripMenuItem.Click += new System.EventHandler(this.insertRowToolStripMenuItem_Click);
+            // 
+            // testMathToolStripMenuItem
+            // 
+            this.testMathToolStripMenuItem.Enabled = false;
+            this.testMathToolStripMenuItem.Name = "testMathToolStripMenuItem";
+            this.testMathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testMathToolStripMenuItem.Text = "Test math";
+            this.testMathToolStripMenuItem.Click += new System.EventHandler(this.testMathToolStripMenuItem_Click);
             // 
             // btnSave
             // 
@@ -197,7 +217,8 @@ namespace UniversalPatcher
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.convertToDataTypeToolStripMenuItem});
+            this.convertToDataTypeToolStripMenuItem,
+            this.scalingConversionFactorToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -206,9 +227,17 @@ namespace UniversalPatcher
             // 
             this.convertToDataTypeToolStripMenuItem.Enabled = false;
             this.convertToDataTypeToolStripMenuItem.Name = "convertToDataTypeToolStripMenuItem";
-            this.convertToDataTypeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.convertToDataTypeToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.convertToDataTypeToolStripMenuItem.Text = "Convert to DataType";
             this.convertToDataTypeToolStripMenuItem.Visible = false;
+            // 
+            // scalingConversionFactorToolStripMenuItem
+            // 
+            this.scalingConversionFactorToolStripMenuItem.Enabled = false;
+            this.scalingConversionFactorToolStripMenuItem.Name = "scalingConversionFactorToolStripMenuItem";
+            this.scalingConversionFactorToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.scalingConversionFactorToolStripMenuItem.Text = "Scaling => ConversionFactor";
+            this.scalingConversionFactorToolStripMenuItem.Click += new System.EventHandler(this.scalingConversionFactorToolStripMenuItem_Click);
             // 
             // importToolStripMenuItem
             // 
@@ -246,18 +275,28 @@ namespace UniversalPatcher
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // insertRowToolStripMenuItem
+            // txtSearch
             // 
-            this.insertRowToolStripMenuItem.Name = "insertRowToolStripMenuItem";
-            this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.insertRowToolStripMenuItem.Text = "Insert row";
-            this.insertRowToolStripMenuItem.Click += new System.EventHandler(this.insertRowToolStripMenuItem_Click);
+            this.txtSearch.Location = new System.Drawing.Point(181, 4);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(129, 20);
+            this.txtSearch.TabIndex = 8;
+            // 
+            // comboFilterBy
+            // 
+            this.comboFilterBy.FormattingEnabled = true;
+            this.comboFilterBy.Location = new System.Drawing.Point(317, 4);
+            this.comboFilterBy.Name = "comboFilterBy";
+            this.comboFilterBy.Size = new System.Drawing.Size(114, 21);
+            this.comboFilterBy.TabIndex = 9;
             // 
             // frmEditXML
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(651, 457);
+            this.Controls.Add(this.comboFilterBy);
+            this.Controls.Add(this.txtSearch);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.labelHelp);
             this.Controls.Add(this.btnSave);
@@ -303,5 +342,9 @@ namespace UniversalPatcher
         private ToolStripMenuItem copyRowToolStripMenuItem;
         private ToolStripMenuItem pasteRowToolStripMenuItem;
         private ToolStripMenuItem insertRowToolStripMenuItem;
+        private ToolStripMenuItem scalingConversionFactorToolStripMenuItem;
+        private TextBox txtSearch;
+        private ComboBox comboFilterBy;
+        private ToolStripMenuItem testMathToolStripMenuItem;
     }
 }

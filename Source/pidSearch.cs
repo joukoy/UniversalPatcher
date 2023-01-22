@@ -70,7 +70,7 @@ namespace UniversalPatcher
                     }
                 }
             }
-            throw new Exception("PID search not implemented for this file type");
+            Logger("PID search not implemented for this file type");
         }
 
         public class PID
@@ -99,7 +99,8 @@ namespace UniversalPatcher
                 }
             }
 
-            public ushort Bytes { get; set; }
+            //public ushort Bytes { get; set; }
+            public InDataType DataType { get; set; }
             public string  Subroutine
             {
                 get
@@ -152,7 +153,7 @@ namespace UniversalPatcher
             public string Name { get; set; }
             public string ConversionFactor { get; set; }
             public string Description { get; set; }
-            public bool Signed { get; set; }
+            //public bool Signed { get; set; }
             public string Unit { get; set; }
             public string Scaling { get; set; }
         }
@@ -189,9 +190,8 @@ namespace UniversalPatcher
         {
             PID pid = new PID();
             pid.pidNumberInt = PCM.ReadUInt16(addr);
-            pid.Bytes = (ushort)(PCM.buf[addr + 2] + 1);
-            if (pid.Bytes == 3)
-                pid.Bytes = 4;
+            int bytes = (ushort)(PCM.buf[addr + 2] + 1);
+            pid.DataType = ConvertToDataType(bytes, false, false);
             pid.SubroutineInt = PCM.ReadUInt32(addr + 4);
             uint ramStoreAddr = SearchBytes(PCM, "10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr == uint.MaxValue)
@@ -200,7 +200,7 @@ namespace UniversalPatcher
             {
                 pid.RamAddressInt = PCM.ReadUInt16(ramStoreAddr + 2);
             }
-            PidInfo pi = pidDescriptions.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
+            PidInfo pi = PidDescriptions.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
             if (pi != null)
             {
                 pid.Name = pi.PidName;
@@ -208,7 +208,8 @@ namespace UniversalPatcher
                 pid.Description = pi.Description;
                 pid.Scaling = pi.Scaling;
                 pid.Unit = pi.Unit;
-                pid.Signed = pi.Signed;
+                pid.DataType = pi.DataType;
+                //pid.Signed = pi.Signed;
             }
             return pid;
         }
@@ -217,12 +218,13 @@ namespace UniversalPatcher
         {
             PID pid = new PID();
             pid.pidNumberInt = PCM.ReadUInt16(addr);
-            pid.Bytes = (ushort)(PCM.buf[addr + 2]);
-            if (pid.Bytes > 4)
-                pid.Bytes = 0;
+            int bytes = (ushort)(PCM.buf[addr + 2]);
+            if (bytes > 4)
+                bytes = 0;
+            pid.DataType = ConvertToDataType(bytes, false, false);
             pid.SubroutineInt = PCM.ReadUInt32(addr + 6);
             pid.RamAddressInt = SearchRamAddressDiesel(pid.SubroutineInt);
-            PidInfo pi = pidDescriptions.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
+            PidInfo pi = PidDescriptions.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
             if (pi != null)
             {
                 pid.Name = pi.PidName;
@@ -230,7 +232,8 @@ namespace UniversalPatcher
                 pid.Description = pi.Description;
                 pid.Scaling = pi.Scaling;
                 pid.Unit = pi.Unit;
-                pid.Signed = pi.Signed;
+                pid.DataType = pi.DataType;
+                //pid.Signed = pi.Signed;
             }
             return pid;
         }

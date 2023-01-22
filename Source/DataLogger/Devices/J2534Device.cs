@@ -45,6 +45,10 @@ namespace UniversalPatcher
         private int periodigMsgId = -1;
         private int periodigMsgId2 = -1;
         public const string DeviceType = "J2534";
+        ulong timeDiff = long.MaxValue;
+        long lastTstamp = long.MaxValue;
+        readonly ulong ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
+
         /// <summary>
         /// global error variable for reading/writing. (Could be done on the fly)
         /// TODO, keep record of all errors for debug
@@ -75,6 +79,7 @@ namespace UniversalPatcher
             this.MaxReceiveSize = 2048 + 12; // J2534 Standard is 4KB
             this.Supports4X = true;
             this.LogDeviceType = DataLogger.LoggingDevType.Other;
+            ChannelID = -1;
             ChannelID2 = -1;
         }
 
@@ -96,6 +101,42 @@ namespace UniversalPatcher
             return this.InitializeInternal(j2534Init);
         }
 
+        private void SetTimeDiff()
+        {
+            try
+            {
+                ClearMessageBuffer();
+                //byte[] queryMsg = { Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x20 };
+                //bool m = SendMessage(new OBDMessage(queryMsg), 1);
+
+                for (int retry=0;retry<1000;retry++)
+                {
+                    int NumMessages = 1;
+                    List<PassThruMsg> rxMsgs = new List<PassThruMsg>();
+                    J2534Err jErr = J2534Port.Functions.ReadMsgs((int)ChannelID, ref rxMsgs, ref NumMessages, 1000);
+                    if (jErr == J2534Err.STATUS_NOERROR)
+                    {
+                        if (NumMessages > 0)
+                        {
+                            timeDiff = (ulong)DateTime.Now.Ticks - ((ulong)rxMsgs.Last().Timestamp * ticksPerMicrosecond);
+                            Debug.WriteLine("Time diff (function): " + timeDiff.ToString() + " retries: " + retry.ToString());
+                        }
+                        lastTstamp = rxMsgs.Last().Timestamp;
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
+            }
+        }
+
         // This returns 'bool' for the sake of readability. That bool needs to be
         // wrapped in a Task object for the public Initialize method.
         private bool InitializeInternal(LoggerUtils.J2534InitParameters j2534Init)
@@ -114,16 +155,20 @@ namespace UniversalPatcher
                 //Debug.WriteLine(J2534Port.Functions.ToString());
 
                 //Check not already loaded
-                if (IsLoaded == true)
+                //if (IsLoaded == true)
+                if (DetectLibrary())
                 {
                     Debug.WriteLine("DLL already loaded, unloading before proceeding");
-                    m2 = CloseLibrary();
-                    if (m2.Status != ResponseStatus.Success)
+                    bool result = CloseLibrary();
+                    if (!result)
                     {
                         Logger("Error closing loaded DLL");
-                        return false;
+                        //return false;
                     }
-                    Debug.WriteLine("Existing DLL successfully unloaded.");
+                    else
+                    {
+                        Debug.WriteLine("Existing DLL successfully unloaded.");
+                    }
                 }
 
                 //Connect to requested DLL
@@ -185,16 +230,56 @@ namespace UniversalPatcher
                 }
                 Debug.WriteLine("Protocol Set");
                 J2534FunctionsIsLoaded = true;
-
+                //receiveTask = Task.Factory.StartNew(() => DataReceiver());
+                //SetTimeDiff();
+                this.Connected = true;
                 Logger("Device initialization complete.");
                 return true;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return false;
         }
+
+        //Not in use
+        private void DataReceiver()
+        {
+            try
+            {
+                Thread.CurrentThread.IsBackground = true;
+                Debug.WriteLine("J2534 receive loop started");
+                while (true)
+                {
+                    if (ChannelID < 0)
+                    {
+                        Debug.WriteLine("Port closed, exit J2534 loop");
+                        return;
+                    }
+                    Receive();
+                    if (ChannelID2 > -1)
+                    { 
+                        Receive2(); 
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// Set J2534 parameters
@@ -260,7 +345,7 @@ namespace UniversalPatcher
                     byte[] data = j2534Init.PerodicMsg.Replace(" ", "").ToBytes();
                     PassThruMsg txMsg = new PassThruMsg(j2534Init.Protocol, 0, data);
                     int pMsgId = -1;
-                    J2534Err jErr = J2534Port.Functions.StartPeriodicMsg(ChID, txMsg, ref pMsgId, j2534Init.PriodicInterval);
+                    J2534Err jErr = J2534Port.Functions.StartPeriodicMsg(ChID, txMsg, ref pMsgId, j2534Init.PeriodicInterval);
                     if (jErr != J2534Err.STATUS_NOERROR)
                     {
                         Logger("Periodic message error: " + jErr.ToString());
@@ -381,14 +466,28 @@ namespace UniversalPatcher
                 List<PassThruMsg> rxMsgs = new List<PassThruMsg>();
                 J2534Err jErr;
                 Application.DoEvents();
+                ulong tNow = (ulong)DateTime.Now.Ticks;
                 jErr = J2534Port.Functions.ReadMsgs((int)ChannelID, ref rxMsgs, ref NumMessages, ReadTimeout);
                 if (jErr == J2534Err.STATUS_NOERROR)
                 {
+                    if (timeDiff == long.MaxValue)
+                    {
+                        SetTimeDiff();
+                    }
+                    if (rxMsgs.Last().Timestamp < lastTstamp && NumMessages > 0)
+                    {
+                        timeDiff = tNow - ((ulong)rxMsgs.Last().Timestamp * ticksPerMicrosecond);
+                        Debug.WriteLine("Time diff: " + timeDiff.ToString());
+                    }
+                    lastTstamp = rxMsgs.Last().Timestamp;
                     for (int m = 0; m < rxMsgs.Count; m++)
                     {
                         //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
                         //this.Enqueue(new OBDMessage(rxMsgs[m].Data, (ulong)rxMsgs[m].Timestamp, (ulong)OBDError));
-                        this.Enqueue(new OBDMessage(rxMsgs[m].Data, (ulong)DateTime.Now.Ticks, (ulong)OBDError));
+                        OBDMessage oMsg = new OBDMessage(rxMsgs[m].Data, (ulong)tNow, (ulong)OBDError);
+                        oMsg.DevTimeStamp = (ulong)rxMsgs[m].Timestamp * ticksPerMicrosecond;
+                        oMsg.TimeStamp = (ulong)(oMsg.DevTimeStamp + timeDiff);
+                        this.Enqueue(oMsg);
                     }
                 }
                 else
@@ -401,9 +500,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
-
         }
 
         /// <summary>
@@ -443,9 +546,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
-
         }
 
         /// <summary>
@@ -467,6 +574,7 @@ namespace UniversalPatcher
                 PassThruMsg TempMsg = new PassThruMsg(proto, TxFlag.NONE, message.GetBytes());
                 int NumMsgs = 1;
 
+                message.DevTimeStamp = (ulong)DateTime.Now.Ticks - timeDiff;
                 this.MessageSent(message);
                 Application.DoEvents();
                 OBDError = J2534Port.Functions.WriteMsgs((int)chid, TempMsg, ref NumMsgs, WriteTimeout);
@@ -483,7 +591,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return false;
         }
@@ -497,6 +610,11 @@ namespace UniversalPatcher
             {
                 ToolName = TempDevice.Name;
                 J2534Port.LoadedDevice = TempDevice;
+                if (DetectLibrary())
+                {
+                    Debug.WriteLine("Library already loaded");
+                    return Response.Create(ResponseStatus.Success, true);
+                }
                 if (J2534Port.Functions.LoadLibrary(J2534Port.LoadedDevice))
                 {
                     return Response.Create(ResponseStatus.Success, true);
@@ -508,33 +626,78 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, false);
 
         }
 
         /// <summary>
-        /// unload dll
+        /// Check if dll is loaded in memory
         /// </summary>
-        private Response<bool> CloseLibrary()
+        private bool DetectLibrary()
         {
             try
             {
-                if (J2534Port.Functions.FreeLibrary())
+
+                Process proc = Process.GetCurrentProcess();
+                foreach (ProcessModule dll in proc.Modules)
                 {
-                    return Response.Create(ResponseStatus.Success, true);
-                }
-                else
-                {
-                    return Response.Create(ResponseStatus.Error, false);
+                    if (dll.FileName == J2534Port.LoadedDevice.FunctionLibrary)
+                    {
+                        return true;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
-            return Response.Create(ResponseStatus.Error, false);
+            return false;
+        }
+
+        /// <summary>
+        /// unload dll
+        /// </summary>
+        private bool CloseLibrary()
+        {
+            try
+            {
+                if (!DetectLibrary())
+                {
+                    Debug.WriteLine("Library not loaded");
+                    return true; //Not loaded
+                }
+                Debug.WriteLine("Library loaded, unloading");
+                if (J2534Port.Functions.FreeLibrary())
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
+            }
+            return false;
         }
 
         /// <summary>
@@ -562,7 +725,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
         }
@@ -578,7 +746,14 @@ namespace UniversalPatcher
                 {
                     Response.Create(ResponseStatus.Success, OBDError);
                 }
-                OBDError = J2534Port.Functions.Disconnect((int)ChannelID);
+                if (ChannelID2 > -1)
+                {
+                    DisconnectFromSecondProtocol();
+                }
+                if (ChannelID > -1)
+                {
+                    DisconnectFromProtocol();
+                }
                 if (OBDError != J2534Err.STATUS_NOERROR)
                 {
                     Debug.WriteLine("J2534 Disconnect: " + OBDError.ToString());
@@ -588,12 +763,18 @@ namespace UniversalPatcher
                 {
                     Debug.WriteLine("J2534 Close: " + OBDError.ToString());
                 }
-                J2534Port.Functions.FreeLibrary();
+                //J2534Port.Functions.FreeLibrary();
+                CloseLibrary();
                 return Response.Create(ResponseStatus.Success, OBDError);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
         }
@@ -628,7 +809,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
         }
@@ -649,13 +835,19 @@ namespace UniversalPatcher
                 }
 
                 OBDError = J2534Port.Functions.Disconnect((int)ChannelID);
+                ChannelID = -1;
                 if (OBDError != J2534Err.STATUS_NOERROR) return Response.Create(ResponseStatus.Error, OBDError);
                 IsProtocolOpen = false;
                 return Response.Create(ResponseStatus.Success, OBDError);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
         }
@@ -684,7 +876,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
         }
@@ -734,7 +931,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return false;
         }
@@ -756,15 +958,20 @@ namespace UniversalPatcher
                 else
                 {
                     Volts = VoltsAsInt / 1000.0;
+
                     return Response.Create(ResponseStatus.Success, Volts);
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, (double)0);
-
         }
 
         /// <summary>
@@ -791,10 +998,14 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
-
         }
 
         /// <summary>
@@ -819,7 +1030,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
         }
@@ -866,7 +1082,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return false;
         }
@@ -880,9 +1101,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
-
         }
 
         public override bool DisConnectSecondaryProtocol()
@@ -948,7 +1173,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (datalogger.useVPWFilters == false)
+                if (AppSettings.LoggerUseFilters == false)
                 {
                     RemoveFilters();
                     this.CurrentFilter = "logging";
@@ -973,7 +1198,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return false;
         }
@@ -1000,7 +1230,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return false;
         }
@@ -1025,7 +1260,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return false;
         }

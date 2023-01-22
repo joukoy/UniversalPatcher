@@ -283,9 +283,12 @@
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pIDSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pIDDescriptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deviceNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.functionNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cVNDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -296,7 +299,6 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
-            this.btnImportCsv = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -661,6 +663,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDebug.HideSelection = false;
             this.txtDebug.Location = new System.Drawing.Point(2, 24);
             this.txtDebug.Name = "txtDebug";
             this.txtDebug.Size = new System.Drawing.Size(835, 309);
@@ -1294,7 +1297,6 @@
             // 
             // tabPIDList
             // 
-            this.tabPIDList.Controls.Add(this.btnImportCsv);
             this.tabPIDList.Controls.Add(this.btnClearPidList);
             this.tabPIDList.Controls.Add(this.btnSavePidList);
             this.tabPIDList.Controls.Add(this.dataGridPIDlist);
@@ -3094,9 +3096,12 @@
             this.fileTypesToolStripMenuItem,
             this.dTCSearchToolStripMenuItem,
             this.pIDSearchToolStripMenuItem,
+            this.pIDDescriptionsToolStripMenuItem,
             this.tableSeekToolStripMenuItem,
             this.segmentSeekToolStripMenuItem,
             this.oBD2CodesToolStripMenuItem,
+            this.deviceNamesToolStripMenuItem,
+            this.functionNamesToolStripMenuItem,
             this.cVNDatabaseToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
@@ -3168,6 +3173,13 @@
             this.pIDSearchToolStripMenuItem.Text = "PID Search";
             this.pIDSearchToolStripMenuItem.Click += new System.EventHandler(this.pIDSearchToolStripMenuItem_Click);
             // 
+            // pIDDescriptionsToolStripMenuItem
+            // 
+            this.pIDDescriptionsToolStripMenuItem.Name = "pIDDescriptionsToolStripMenuItem";
+            this.pIDDescriptionsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.pIDDescriptionsToolStripMenuItem.Text = "PID Descriptions";
+            this.pIDDescriptionsToolStripMenuItem.Click += new System.EventHandler(this.pIDDescriptionsToolStripMenuItem_Click);
+            // 
             // tableSeekToolStripMenuItem
             // 
             this.tableSeekToolStripMenuItem.Name = "tableSeekToolStripMenuItem";
@@ -3188,6 +3200,20 @@
             this.oBD2CodesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.oBD2CodesToolStripMenuItem.Text = "OBD2 Codes";
             this.oBD2CodesToolStripMenuItem.Click += new System.EventHandler(this.oBD2CodesToolStripMenuItem_Click);
+            // 
+            // deviceNamesToolStripMenuItem
+            // 
+            this.deviceNamesToolStripMenuItem.Name = "deviceNamesToolStripMenuItem";
+            this.deviceNamesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.deviceNamesToolStripMenuItem.Text = "Device Names";
+            this.deviceNamesToolStripMenuItem.Click += new System.EventHandler(this.deviceNamesToolStripMenuItem_Click);
+            // 
+            // functionNamesToolStripMenuItem
+            // 
+            this.functionNamesToolStripMenuItem.Name = "functionNamesToolStripMenuItem";
+            this.functionNamesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.functionNamesToolStripMenuItem.Text = "Function Names";
+            this.functionNamesToolStripMenuItem.Click += new System.EventHandler(this.functionNamesToolStripMenuItem_Click);
             // 
             // cVNDatabaseToolStripMenuItem
             // 
@@ -3271,16 +3297,6 @@
             // timerDebug
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
-            // 
-            // btnImportCsv
-            // 
-            this.btnImportCsv.Location = new System.Drawing.Point(170, 3);
-            this.btnImportCsv.Name = "btnImportCsv";
-            this.btnImportCsv.Size = new System.Drawing.Size(75, 23);
-            this.btnImportCsv.TabIndex = 5;
-            this.btnImportCsv.Text = "Import";
-            this.btnImportCsv.UseVisualStyleBackColor = true;
-            this.btnImportCsv.Click += new System.EventHandler(this.btnImportCsv_Click);
             // 
             // FrmPatcher
             // 
@@ -3657,6 +3673,8 @@
         public System.Windows.Forms.CheckBox chkDebug;
         private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
         private System.Windows.Forms.Timer timerDebug;
-        private System.Windows.Forms.Button btnImportCsv;
+        private System.Windows.Forms.ToolStripMenuItem deviceNamesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem functionNamesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pIDDescriptionsToolStripMenuItem;
     }
 }

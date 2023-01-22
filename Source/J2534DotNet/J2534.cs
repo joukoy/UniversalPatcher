@@ -37,6 +37,11 @@ namespace J2534DotNet
         private J2534DllWrapper m_wrapper;
         private readonly object devLock = new object();
 
+        ~J2534()
+        {
+            FreeLibrary();
+        }
+
         public bool LoadLibrary(J2534Device device)
         {
             m_device = device;
@@ -50,7 +55,10 @@ namespace J2534DotNet
             {
                 lock (devLock)
                 {
-                    return m_wrapper.FreeLibrary();
+                    if (isDllLoaded())
+                        return m_wrapper.FreeLibrary();
+                    return
+                        true;
                 }
             }
             catch (Exception ex)
@@ -164,7 +172,10 @@ namespace J2534DotNet
             {
                 lock (devLock)
                 {
-                    return (J2534Err)m_wrapper.Disconnect(channelId);
+                    if (channelId < 0)
+                        return J2534Err.STATUS_NOERROR;
+                    else
+                        return (J2534Err)m_wrapper.Disconnect(channelId);
                 }
             }
             catch (Exception ex)

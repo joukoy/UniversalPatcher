@@ -95,6 +95,8 @@ namespace UniversalPatcher
         public string mafAddress;
         public List<V6Table> v6tables;
         public V6Table v6VeTable;
+        public string v6CalStart;
+        public string v6OSCrc;
         public List<osAddresses> osAddressList;
         public List<SegmentConfig> Segments;
         public List<FoundTable> foundTables;
@@ -1404,6 +1406,48 @@ namespace UniversalPatcher
                 }
             }
         }
+
+        private void FindV6CalStart_OSCrc()
+        {
+            string searchStr;
+            if (fsize == (512 * 1024))
+            {
+                searchStr = "B0 B9 * * * * 65 08 B0 B9 * * * * 63 10 B0 B9 @ @ @ @ 65 2C";
+            }
+            else if (fsize == (1024 * 1024))
+            {
+                searchStr = "65 0A 22 0A B2 B9 * * * * 63 14 22 0A B2 B9 @ @ @ @ 65";
+            }
+            else
+            {
+                return;
+            }
+            uint start = 0x8000;
+            uint addr1 = GetAddrbySearchString(this,searchStr,ref start,fsize).Addr;
+            if (addr1 < uint.MaxValue)
+            {
+                uint calStart = ReadUInt32(addr1);
+                v6CalStart = calStart.ToString("X4");
+                Debug.WriteLine("Found V6 Cal start: " + v6CalStart);
+                uint crcEnd = calStart - 1; //6e2ff
+                uint calcSize = 0x4000 + crcEnd - 0x8000 +1;
+                byte[] calcBuf = new byte[calcSize];
+                Array.Copy(buf, 0, calcBuf, 0, 0x4000);
+                Array.Copy(buf, 0x8000, calcBuf, 0x4000, crcEnd - 0x8000 + 1);
+                Debug.WriteLine("V6 OS CRC: 0 - 3FFF, 8000 - " + crcEnd.ToString("X4") +", " + calcSize.ToString("X4") + " bytes");                
+                Crc32 crc = new Crc32();
+                uint cksum = crc.ComputeChecksum(calcBuf);
+                v6OSCrc = cksum.ToString("X8");
+                Debug.WriteLine("V6 OS CRC: " + v6OSCrc);
+            }
+            else
+            {
+                Debug.WriteLine("V6 Cal start not found");
+            }
+        }
+
+
+
         private AddressData GMV6(string Line, int SegNr)
         {
             uint BufSize = (uint)buf.Length;
@@ -1434,6 +1478,7 @@ namespace UniversalPatcher
             FindV6MAFAddress();
             FindV6VeTable();
             FindV6OtherTables();
+            FindV6CalStart_OSCrc();
 
             AD.Address = FindV6checksumAddress();
             if (AD.Address < uint.MaxValue)
@@ -2100,7 +2145,18 @@ namespace UniversalPatcher
                 else if (header.ToLower().StartsWith("table:"))
                 {
                     string tbName = header.Substring(6).Trim();
-                    headerTd = tableDatas.Where(x => x.TableName == tbName).First();
+                    headerTd = tableDatas.Where(x => x.TableName == tbName).FirstOrDefault();
+                    if (headerTd == null)
+                    {
+                        foreach (TableData td in tableDatas)
+                        {
+                            if (td.TableName.StartsWith(tbName +"*"))
+                            {
+                                headerTd = td;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)

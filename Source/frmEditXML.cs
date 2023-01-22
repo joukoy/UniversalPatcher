@@ -12,6 +12,8 @@ using UniversalPatcher.Properties;
 using System.Diagnostics;
 using static UniversalPatcher.ExtensionMethods;
 using static Helpers;
+using static UniversalPatcher.Analyzer;
+using static LoggerUtils;
 
 namespace UniversalPatcher
 {
@@ -23,6 +25,26 @@ namespace UniversalPatcher
             DrawingControl.SetDoubleBuffered(dataGridView1);
         }
 
+        private enum XMLTYPE
+        {
+            autodetect,
+            tableseek,
+            tabledata,
+            segmentseek,
+            cvn,
+            dtcsearchconfig,
+            pidsearchconfig,
+            piddescriptions,
+            units,
+            filetypes,
+            segmentconfig,
+            obdresponses,
+            devicenames,
+            funcnames,
+            obd2codes
+        }
+
+        private XMLTYPE xmlType = XMLTYPE.autodetect;
         private BindingSource bindingSource = new BindingSource();
         private bool starting = true;
         private string sortBy = "";
@@ -35,13 +57,16 @@ namespace UniversalPatcher
         private List<CVN> sCVN;
         private List<DtcSearchConfig> dtcSC;
         private List<PidSearchConfig> pidSC;
+        private List<PidInfo> piddescriptions;
         private List<Units> units;
         private List<FileType> fileTypes;
         private List<DetectRule> detectrules;
         private List<SegmentConfig> segmentconfig;
         public List<ObdEmu.OBDResponse> obdresponses;
+        private List<IdName> devicenames;
+        private List<IdName> funcnames;
         private object currentObj;
-        List<object> ClipBrd;
+        private object currentList;
 
         private void frmEditXML_Load(object sender, EventArgs e)
         {
@@ -61,19 +86,9 @@ namespace UniversalPatcher
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
             dataGridView1.DataError += DataGridView1_DataError;
             dataGridView1.KeyPress += DataGridView1_KeyPress;
+            txtSearch.TextChanged += TxtSearch_TextChanged;
             //dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
         }
-
-        private void DataGridView1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            dataGridView1.BeginEdit(true);
-        }
-
-        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            Debug.WriteLine(e.Exception);
-        }
-
 
         private void frmEditXML_FormClosing(object sender, EventArgs e)
         {
@@ -94,8 +109,44 @@ namespace UniversalPatcher
             }
         }
 
+        private void TxtSearch_TextChanged(object sender, EventArgs e)
+        {
+            FilterTables();
+        }
+
+        private void DataGridView1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            dataGridView1.BeginEdit(true);
+        }
+
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            Debug.WriteLine(e.Exception);
+        }
+
+        private void FillFilterBy()
+        {
+            foreach (var prop in currentObj.GetType().GetProperties())
+            {
+                if (string.IsNullOrEmpty(sortBy))
+                {
+                    sortBy = prop.Name;
+                    comboFilterBy.Text = sortBy;
+                }
+                //Add to filter by-combo
+                comboFilterBy.Items.Add(prop.Name);
+            }
+            comboFilterBy.SelectedIndexChanged += ComboFilterBy_SelectedIndexChanged;
+        }
+
+        private void ComboFilterBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FilterTables();
+        }
+
         public void LoadRules()
         {
+            xmlType = XMLTYPE.autodetect;
             detectrules = new List<DetectRule>();
             currentObj = new DetectRule();
             for (int i=0;i<DetectRules.Count;i++)
@@ -107,11 +158,14 @@ namespace UniversalPatcher
             bindingSource.DataSource = detectrules;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+            currentList = detectrules;
             UseComboBoxForEnums(dataGridView1);
+            FillFilterBy();
         }
 
         public void LoadStockCVN()
         {
+            xmlType = XMLTYPE.cvn;
             this.Text = "Edit stock CVN list";
             sCVN = new List<CVN>();
             currentObj = new CVN();
@@ -125,9 +179,12 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
+            FillFilterBy();
         }
+
         public void LoadDTCSearchConfig()
         {
+            xmlType = XMLTYPE.dtcsearchconfig;
             this.Text = "Edit DTC Search config";
             dtcSC = new List<DtcSearchConfig>();
             currentObj = new DtcSearchConfig();
@@ -142,9 +199,12 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
             dataGridView1.Columns["ConditionalOffset"].ToolTipText = "Possible values:code,status,mil (Multiple values allowed)";
             UseComboBoxForEnums(dataGridView1);
+            FillFilterBy();
         }
+
         public void LoadPIDSearchConfig()
         {
+            xmlType = XMLTYPE.pidsearchconfig;
             this.Text = "Edit PID Search config";
             pidSC = new List<PidSearchConfig>();
             currentObj = new PidSearchConfig();
@@ -158,10 +218,33 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
+            FillFilterBy();
         }
-       
+
+        public void LoadPIDDescriptions()
+        {
+            xmlType = XMLTYPE.piddescriptions;
+            this.Text = "Edit PID Descriptions";
+            piddescriptions = new List<PidInfo>();
+            currentObj = new PidInfo();
+            for (int i = 0; i < PidDescriptions.Count; i++)
+            {
+                PidInfo pi = PidDescriptions[i].ShallowCopy();
+                piddescriptions.Add(pi);
+            }
+            scalingConversionFactorToolStripMenuItem.Enabled = true;
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = piddescriptions;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            UseComboBoxForEnums(dataGridView1);
+            testMathToolStripMenuItem.Enabled = true;
+            FillFilterBy();
+        }
+
         public void LoadTableSeek(string fname)
         {
+            xmlType = XMLTYPE.tableseek;
             fileName = fname;
             this.Text = "Edit Table Seek config";
             currentObj = new TableSeek();
@@ -170,10 +253,12 @@ namespace UniversalPatcher
             else
                 tSeeks = new List<TableSeek>();
             RefreshTableSeek();
+            FillFilterBy();
         }
 
         public void LoadSegmentSeek(string fname)
         {
+            xmlType = XMLTYPE.segmentseek;
             fileName = fname;
             this.Text = "Edit Segment Seek config";
             currentObj = new SegmentSeek();
@@ -182,10 +267,12 @@ namespace UniversalPatcher
             else
                 sSeeks = new List<SegmentSeek>();
             RefreshSegmentSeek();
+            FillFilterBy();
         }
 
         public void LoadObdResponses(string fname)
         {
+            xmlType = XMLTYPE.obdresponses;
             fileName = fname;
             this.Text = "Edit OBD Responses";
             currentObj = new ObdEmu.OBDResponse();
@@ -194,10 +281,12 @@ namespace UniversalPatcher
             else
                 obdresponses = new List<ObdEmu.OBDResponse>();
             RefreshObdResponses();
+            FillFilterBy();
         }
 
         public void LoadTableData()
         {
+            xmlType = XMLTYPE.tabledata;
             this.Text = "Table data";
             currentObj = new TableData();
             bindingSource.DataSource = null;
@@ -207,10 +296,12 @@ namespace UniversalPatcher
             btnSave.Visible = false;
             dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
             UseComboBoxForEnums(dataGridView1);
+            FillFilterBy();
         }
 
-        public void LoadSegemtConfig(PcmFile PCM)
+        public void LoadSegmentConfig(PcmFile PCM)
         {
+            xmlType = XMLTYPE.segmentconfig;
             this.PCM = PCM;
             segmentconfig = new List<SegmentConfig>();
             currentObj = new SegmentConfig();
@@ -229,10 +320,12 @@ namespace UniversalPatcher
                 dataGridView1.Rows[r].Cells["CS1Method"].ToolTipText = "For backward compatibility. Ignore";
                 dataGridView1.Rows[r].Cells["CS2Method"].ToolTipText = "For backward compatibility. Ignore";
             }
+            FillFilterBy();
         }
 
         public void LoadFileTypes()
         {
+            xmlType = XMLTYPE.filetypes;
             this.Text = "File Types";
             fileTypes = new List<FileType>();
             currentObj = new FileType();
@@ -254,9 +347,11 @@ namespace UniversalPatcher
             bindingSource.DataSource = fileTypes;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+            FillFilterBy();
         }
         public void LoadUnits()
         {
+            xmlType = XMLTYPE.units;
             this.Text = "Units";
             units = new List<Units>();
             currentObj = new Units();
@@ -269,14 +364,91 @@ namespace UniversalPatcher
             bindingSource.DataSource = units;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+            FillFilterBy();
+        }
+
+        public void LoadDeviceNames()
+        {
+            xmlType = XMLTYPE.devicenames;
+            this.Text = "Device names";
+            devicenames = new List<IdName>();
+            currentObj = new IdName();
+            if (DeviceNames == null || DeviceNames.Count == 0)
+            {
+                if (analyzer == null)
+                {
+                    analyzer = new Analyzer();
+                }
+                for (byte b = 0; b < 0xFF; b++)
+                {
+                    if (analyzer.PhysAddresses.ContainsKey(b))
+                    {
+                        IdName idn = new IdName(b, analyzer.PhysAddresses[b]);
+                        devicenames.Add(idn);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < DeviceNames.Count; i++)
+                {
+                    IdName d = DeviceNames[i].ShallowCopy();
+                    devicenames.Add(d);
+                }
+            }
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = devicenames;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            dataGridView1.Columns[0].DefaultCellStyle.Format = "X2";
+            FillFilterBy();
+        }
+
+        public void LoadFuncNames()
+        {
+            xmlType = XMLTYPE.funcnames;
+            this.Text = "Function names";
+            funcnames = new List<IdName>();
+            currentObj = new IdName();
+            if (FuncNames == null || FuncNames.Count == 0)
+            {
+                if (analyzer == null)
+                {
+                    analyzer = new Analyzer();
+                }
+                for (byte b = 0; b < 0xFF; b++)
+                {
+                    if (analyzer.FuncAddresses.ContainsKey(b))
+                    {
+                        IdName idn = new IdName(b, analyzer.FuncAddresses[b]);
+                        funcnames.Add(idn);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < FuncNames.Count; i++)
+                {
+                    IdName d = FuncNames[i].ShallowCopy();
+                    funcnames.Add(d);
+                }
+            }
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = funcnames;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            dataGridView1.Columns[0].DefaultCellStyle.Format = "X2";
+            FillFilterBy();
         }
 
         public void LoadOBD2CodeList()
         {
+            xmlType = XMLTYPE.obd2codes;
             this.Text = "Edit OBD2 Codes";
             currentObj = new OBD2Code();
             LoadOBD2Codes();
             RefreshOBD2Codes();
+            FillFilterBy();
         }
 
         private void Refreshdgrid()
@@ -339,149 +511,179 @@ namespace UniversalPatcher
             {
                 dataGridView1.NotifyCurrentCellDirty(true);
                 dataGridView1.EndEdit();
-                if (this.Text.Contains("CVN"))
+                switch (xmlType)
                 {
-                    Logger("Saving file stockcvn.xml", false);
-                    if (fName.Length == 0)
-                        fName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
-                    using (FileStream stream = new FileStream(fName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
-                        writer.Serialize(stream, sCVN);
-                        stream.Close();
-                    }
-                    StockCVN = sCVN;
-                    Logger(" [OK]");
-                }
-                else if (this.Text.Contains("File Types"))
-                {
-                    Logger("Saving file filetypes.xml", false);
-                    if (fName.Length == 0)
-                        fName = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
-                    using (FileStream stream = new FileStream(fName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
-                        writer.Serialize(stream, fileTypes);
-                        stream.Close();
-                    }
-                    fileTypeList = fileTypes;
-                    Logger(" [OK]");
-                }
-                else if (this.Text.Contains("DTC"))
-                {
-                    Logger("Saving file DtcSearch.xml", false);
-                    if (fName.Length == 0)
-                        fName = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
-                    using (FileStream stream = new FileStream(fName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
-                        writer.Serialize(stream, dtcSC);
-                        stream.Close();
-                    }
-                    dtcSearchConfigs = dtcSC;
-                    Logger(" [OK]");
-                }
-                else if (this.Text.Contains("PID"))
-                {
-                    Logger("Saving file PidSearch.xml", false);
-                    if (fName.Length == 0)
-                        fName = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
-                    using (FileStream stream = new FileStream(fName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
-                        writer.Serialize(stream, pidSC);
-                        stream.Close();
-                    }
-                    pidSearchConfigs = pidSC;
-                    Logger(" [OK]");
-                }
-                else if (this.Text.Contains("Responses"))
-                {
-                    Logger("Saving file " + fName, false);
-                    if (fName.Length == 0)
-                        fName = Path.Combine(Application.StartupPath, "Logger", "Responses.xml");
-                    using (FileStream stream = new FileStream(fName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<ObdEmu.OBDResponse>));
-                        writer.Serialize(stream, obdresponses);
-                        stream.Close();
-                    }
-                    Logger(" [OK]");
-                }
-                else if (this.Text.Contains("OBD2"))
-                {
-                    SaveOBD2Codes();
-                }
-                else if (this.Text.ToLower().Contains("table seek"))
-                {
-                    if (fName.Length == 0)
-                        fName = SelectSaveFile(XmlFilter,"new-tableseek.xml");
-                    if (fName.Length == 0)
-                        return;
-                    Logger("Saving file " + fName, false);
-                    using (FileStream stream = new FileStream(fName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
-                        writer.Serialize(stream, tSeeks);
-                        stream.Close();
-                    }
-                    tableSeeks = tSeeks;
-                    Logger(" [OK]");
-                }
-                else if (this.Text.ToLower().Contains("segment seek"))
-                {
-                    if (fName.Length == 0)
-                        fName = SelectSaveFile(XmlFilter, "new-segmentseek.xml");
-                    if (fName.Length == 0)
-                        return;
-                    Logger("Saving file " + fName, false);
-                    using (FileStream stream = new FileStream(fileName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentSeek>));
-                        writer.Serialize(stream, sSeeks);
-                        stream.Close();
-                    }
-                    segmentSeeks = sSeeks;
-                    Logger(" [OK]");
-                }
-                else if (this.Text.Contains("Units"))
-                {
-                    if (fName.Length == 0)
-                        fName = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
-                    Logger("Saving file " + fName, false);
-                    using (FileStream stream = new FileStream(fileName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
-                        writer.Serialize(stream, units);
-                        stream.Close();
-                    }
-                    unitList = units;
-                    Logger(" [OK]");
-                }
-                else if (this.Text.Contains("Segment Config"))
-                {
-                    if (fName.Length == 0)
-                        fName = PCM.segmentFile;
-                    Logger("Saving file " + fName, false);
-                    PCM.Segments = segmentconfig;
-                    PCM.SaveConfigFile(fName);
-                    Logger(" [OK]");
-                }
-                else
-                {
-                    Logger("Saving file autodetect.xml", false);
-                    if (fName.Length == 0)
-                        fName = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
-                    using (FileStream stream = new FileStream(fName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
-                        writer.Serialize(stream, detectrules);
-                        stream.Close();
-                    }
-                    DetectRules = detectrules;
-                    Logger(" [OK]");
-
-                }
+                    case XMLTYPE.cvn:
+                        Logger("Saving file stockcvn.xml", false);
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
+                            writer.Serialize(stream, sCVN);
+                            stream.Close();
+                        }
+                        StockCVN = sCVN;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.filetypes:
+                        Logger("Saving file filetypes.xml", false);
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
+                            writer.Serialize(stream, fileTypes);
+                            stream.Close();
+                        }
+                        fileTypeList = fileTypes;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.dtcsearchconfig:
+                        Logger("Saving file DtcSearch.xml", false);
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
+                            writer.Serialize(stream, dtcSC);
+                            stream.Close();
+                        }
+                        dtcSearchConfigs = dtcSC;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.pidsearchconfig:
+                        Logger("Saving file PidSearch.xml", false);
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
+                            writer.Serialize(stream, pidSC);
+                            stream.Close();
+                        }
+                        pidSearchConfigs = pidSC;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.piddescriptions:
+                        Logger("Saving file PidDescriptions.xml", false);
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "PidDescriptions.xml");
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
+                            writer.Serialize(stream, piddescriptions);
+                            stream.Close();
+                        }
+                        PidDescriptions = piddescriptions;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.obdresponses:
+                        Logger("Saving file " + fName, false);
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "Logger", "Responses.xml");
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<ObdEmu.OBDResponse>));
+                            writer.Serialize(stream, obdresponses);
+                            stream.Close();
+                        }
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.obd2codes:
+                        SaveOBD2Codes();
+                        break;
+                    case XMLTYPE.tableseek:
+                        if (fName.Length == 0)
+                            fName = SelectSaveFile(XmlFilter, "new-tableseek.xml");
+                        if (fName.Length == 0)
+                            return;
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
+                            writer.Serialize(stream, tSeeks);
+                            stream.Close();
+                        }
+                        tableSeeks = tSeeks;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.segmentseek:
+                        if (fName.Length == 0)
+                            fName = SelectSaveFile(XmlFilter, "new-segmentseek.xml");
+                        if (fName.Length == 0)
+                            return;
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentSeek>));
+                            writer.Serialize(stream, sSeeks);
+                            stream.Close();
+                        }
+                        segmentSeeks = sSeeks;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.units:
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
+                            writer.Serialize(stream, units);
+                            stream.Close();
+                        }
+                        unitList = units;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.funcnames:
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "functionnames.xml");
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<IdName>));
+                            writer.Serialize(stream, funcnames);
+                            stream.Close();
+                        }
+                        FuncNames = funcnames;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.devicenames:
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "devicenames.xml");
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<IdName>));
+                            writer.Serialize(stream, devicenames);
+                            stream.Close();
+                        }
+                        DeviceNames = devicenames;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.segmentconfig:
+                        if (fName.Length == 0)
+                            fName = PCM.segmentFile;
+                        Logger("Saving file " + fName, false);
+                        PCM.Segments = segmentconfig;
+                        PCM.SaveConfigFile(fName);
+                        Logger(" [OK]");
+                        break;
+                    default:
+                        Logger("Saving file autodetect.xml", false);
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
+                            writer.Serialize(stream, detectrules);
+                            stream.Close();
+                        }
+                        DetectRules = detectrules;
+                        Logger(" [OK]");
+                        break;
+                }            
             }
             catch (Exception ex)
             {
@@ -708,41 +910,82 @@ namespace UniversalPatcher
         {
             try
             {
+                switch(xmlType)
+                {
+                    case XMLTYPE.autodetect:
+                        List<DetectRule> compareList = detectrules.Where(t => typeof(DetectRule).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
+                        if (strSortOrder == SortOrder.Ascending)
+                            compareList = compareList.OrderBy(x => typeof(DetectRule).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        else
+                            compareList = compareList.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        bindingSource.DataSource = compareList;
+                        break;
+                    case XMLTYPE.cvn:
+                        List<CVN> compareCvnList = sCVN.Where(t => typeof(CVN).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
+                        if (strSortOrder == SortOrder.Ascending)
+                            compareCvnList = compareCvnList.OrderBy(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        else
+                            compareCvnList = compareCvnList.OrderByDescending(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        bindingSource.DataSource = compareCvnList;
+                        break;
+                    case XMLTYPE.devicenames:
+                        break;
+                    case XMLTYPE.dtcsearchconfig:
+                        break;
+                    case XMLTYPE.filetypes:
+                        break;
+                    case XMLTYPE.funcnames:
+                        break;
+                    case XMLTYPE.obd2codes:
+
+                    case XMLTYPE.tableseek:
+                        break;
+                    case XMLTYPE.tabledata:
+                        break;
+                    case XMLTYPE.segmentseek:
+                        break;
+                    case XMLTYPE.pidsearchconfig:
+                        break;
+                    case XMLTYPE.piddescriptions:
+                        break;
+                    case XMLTYPE.segmentconfig:
+                        break;
+                    case XMLTYPE.units:
+                        break;
+                }
+
                 if (this.Text.Contains("Table Seek"))
                 {
-                    List<TableSeek> compareList = new List<TableSeek>();
+                    List<TableSeek> compareTSeekList = tSeeks.Where(t => typeof(TableSeek).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                     if (strSortOrder == SortOrder.Ascending)
-                        compareList = tSeeks.OrderBy(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareTSeekList = compareTSeekList.OrderBy(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
                     else
-                        compareList = tSeeks.OrderByDescending(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
-                    bindingSource.DataSource = compareList;
+                        compareTSeekList = compareTSeekList.OrderByDescending(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    bindingSource.DataSource = compareTSeekList;
                 }
                 else if (this.Text.Contains("Autodetect"))
                 {
-                    List<DetectRule> compareList = new List<DetectRule>();
-                    if (strSortOrder == SortOrder.Ascending)
-                        compareList = detectrules.OrderBy(x => typeof(DetectRule).GetProperty(sortBy).GetValue(x, null)).ToList();
-                    else
-                        compareList = detectrules.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
-                    bindingSource.DataSource = compareList;
                 }
                 else if (this.Text.Contains("stock CVN"))
                 {
-                    List<CVN> compareList = new List<CVN>();
-                    if (strSortOrder == SortOrder.Ascending)
-                        compareList = sCVN.OrderBy(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
-                    else
-                        compareList = sCVN.OrderByDescending(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
-                    bindingSource.DataSource = compareList;
                 }
                 else if (this.Text.Contains("DTC Search"))
                 {
-                    List<DtcSearchConfig> compareList = new List<DtcSearchConfig>();
+                    List<DtcSearchConfig> compareDTCSearchList = dtcSC.Where(t => typeof(DtcSearchConfig).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                     if (strSortOrder == SortOrder.Ascending)
-                        compareList = dtcSC.OrderBy(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareDTCSearchList = compareDTCSearchList.OrderBy(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
                     else
-                        compareList = dtcSC.OrderByDescending(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
-                    bindingSource.DataSource = compareList;
+                        compareDTCSearchList = compareDTCSearchList.OrderByDescending(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    bindingSource.DataSource = compareDTCSearchList;
+                }
+                else if (this.Text.Contains("PID Descriptions"))
+                {
+                    List<PidInfo> comparePidDescrList = piddescriptions.Where(t => typeof(PidInfo).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
+                    if (strSortOrder == SortOrder.Ascending)
+                        comparePidDescrList = comparePidDescrList.OrderBy(x => typeof(PidInfo).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    else
+                        comparePidDescrList = comparePidDescrList.OrderByDescending(x => typeof(PidInfo).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    bindingSource.DataSource = comparePidDescrList;
                 }
                 dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
             }
@@ -756,7 +999,7 @@ namespace UniversalPatcher
         {
             if (e.Button == MouseButtons.Left)
             {
-                sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
+                sortBy = dataGridView1.Columns[e.ColumnIndex].HeaderText;
                 sortIndex = e.ColumnIndex;
                 strSortOrder = GetSortOrder(sortIndex);
                 FilterTables();
@@ -1010,10 +1253,26 @@ namespace UniversalPatcher
                 }
                 int row = dataGridView1.SelectedCells[0].RowIndex;
                 //currentObj = Activator.CreateInstance(currentObj.GetType());
+                object testObj = ClipBrd[0];
+                bool isTableData = false;
+                if (xmlType == XMLTYPE.tableseek && testObj.GetType() == typeof(TableData))
+                {
+                    isTableData = true;
+                }
                 for (int i = 0; i < ClipBrd.Count; i++)
                 {
                     //bindingSource.Insert(row, currentObj);
-                    bindingSource.Insert(row, ClipBrd[i]);
+                    if (isTableData)
+                    {
+                        TableData newTd = (TableData)ClipBrd[i];
+                        TableSeek newTs = new TableSeek();
+                        newTs.ImportTableData(newTd);
+                        bindingSource.Insert(row, newTs);
+                    }
+                    else
+                    {
+                        bindingSource.Insert(row, ClipBrd[i]);
+                    }
                     dataGridView1.Rows[row].Cells[0].Selected = true;
                     //PasteClipboardValue();
                 }
@@ -1049,5 +1308,102 @@ namespace UniversalPatcher
                 Debug.WriteLine(ex.Message);
             }
         }
+
+        private void scalingConversionFactorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.Columns[dataGridView1.Columns.Count - 1].HeaderText != "Std")
+            {
+                dataGridView1.Columns.Add("Std", "Std");
+            }
+            frmLogger fl = new frmLogger();
+            fl.LoadStdParams();
+            for (int r=0;r<piddescriptions.Count;r++)
+            {
+                PidInfo pi = piddescriptions[r];
+                string math = MathConverter.ScalingToConversionFactor(pi);
+                if (!string.IsNullOrEmpty(math) && math != "X/X" && math != "X*X")
+                pi.ConversionFactor = math;
+                PidConfig pc = fl.GetConversionFromStd((ushort)pi.PidNumber);
+                if (pc != null && dataGridView1.Rows.Count > r)
+                {
+                    dataGridView1.Rows[r].Cells["Std"].Value = pc.Math;
+                }
+                //else
+                //Debug.WriteLine(dataGridView1.Rows[r].Cells["PidNumber"].Value.ToString());
+            }
+            dataGridView1.EndEdit();
+            bindingSource.EndEdit();
+            dataGridView1.Refresh();
+            this.Refresh();
+        }
+
+        private void testMathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int row = dataGridView1.CurrentCell.RowIndex;
+                PidInfo pi = (PidInfo)dataGridView1.Rows[row].DataBoundItem;
+                FrmAsk fa = new FrmAsk();
+                fa.Text = "Raw value";
+                fa.labelAsk.Text = "Raw value (HEX):";
+                if (fa.ShowDialog() == DialogResult.OK)
+                {
+                    if (HexToUint(fa.TextBox1.Text, out UInt32 val))
+                    {
+                        PidConfig pc = new PidConfig();
+                        pc.Math = pi.ConversionFactor;
+                        string result = pc.GetCalculatedValue(val, 0);
+                        Logger("Result: " + result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
+        }
+
+
+        /*        private void pidDatatypesToolStripMenuItem_Click(object sender, EventArgs e)
+                {
+                    for (int i=0; i< piddescriptions.Count; i++)
+                    {
+                        PidInfo pi = piddescriptions[i];
+                        switch (pi.Bytes)
+                        {
+                            case 1:
+                                if (pi.Signed)
+                                    piddescriptions[i].DataType = InDataType.SBYTE;
+                                else
+                                    piddescriptions[i].DataType = InDataType.UBYTE;
+                                break;
+                            case 2:
+                                if (pi.Signed)
+                                    piddescriptions[i].DataType = InDataType.SWORD;
+                                else
+                                    piddescriptions[i].DataType = InDataType.UWORD;
+                                break;
+                            case 3:
+                                if (pi.Signed)
+                                    piddescriptions[i].DataType = InDataType.THREEBYTES;
+                                else
+                                    piddescriptions[i].DataType = InDataType.THREEBYTES;
+                                break;
+                            case 4:
+                                if (pi.Signed)
+                                    piddescriptions[i].DataType = InDataType.INT32;
+                                else
+                                    piddescriptions[i].DataType = InDataType.UINT32;
+                                break;
+                        }
+                    }
+                    dataGridView1.EndEdit();
+                    bindingSource.EndEdit();
+                    dataGridView1.Refresh();
+                    this.Refresh();
+
+                }
+        */
     }
 }

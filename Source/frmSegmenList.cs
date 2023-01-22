@@ -225,7 +225,7 @@ namespace UniversalPatcher
             {
                 frmEditXML fex = new frmEditXML();
                 fex.Show();
-                fex.LoadSegemtConfig(PCM);
+                fex.LoadSegmentConfig(PCM);
             }
             catch (Exception ex)
             {

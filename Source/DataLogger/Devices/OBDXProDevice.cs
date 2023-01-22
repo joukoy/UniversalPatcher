@@ -152,7 +152,7 @@ namespace UniversalPatcher
                 Logger("Filter setup failed.");
                 return false;
             }
-
+            this.Connected = true;
             Logger("Device Successfully Initialized and Ready");
             return true;
         }
@@ -314,7 +314,7 @@ namespace UniversalPatcher
                     //if (!TimeStampsEnabled)
 
                     OBDMessage rMsg = new OBDMessage(StrippedFrame, (ulong)rx.TimeStamp, 0);
-                    rMsg.SysTimeStamp = (ulong)rx.TimeStamp;
+                    rMsg.DevTimeStamp = (ulong)rx.TimeStamp;
                     this.Enqueue(rMsg);
                     /*                if (!TimeStampsEnabled)
                                         timestampmicro = (ulong)rx.TimeStamp;
@@ -560,6 +560,15 @@ namespace UniversalPatcher
         /// </remarks>
         public override void Receive()
         {
+            if (this.Port == null || !Port.PortOpen())
+            {
+                Debug.WriteLine("Port closed, disposing OBDX Pro device");
+                OBDMessage oMsg = new OBDMessage(new byte[] { 0 });
+                oMsg.Error = 0x99;
+                this.Enqueue(oMsg);
+                return;
+            }
+
             ReadDVIPacket(ReadTimeout);
         }
 

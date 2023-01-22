@@ -50,6 +50,11 @@ namespace UniversalPatcher
             return this.name;
         }
 
+        bool IPort.PortOpen()
+        {
+            return port.IsOpen;
+        }
+
         void IPort.ClosePort()
         {
             //ev.Set();

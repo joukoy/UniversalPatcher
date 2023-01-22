@@ -12,6 +12,7 @@ namespace UniversalPatcher
     class CanLogToBin
     {
         private byte[] buf;
+        private byte[] compareBuf;
         private int FileSize;
         private int row = 0;
         private byte PCMid;
@@ -86,6 +87,10 @@ namespace UniversalPatcher
                     if (!SizeOnly)
                     {
                         Array.Copy(lineData, 5, buf, addr, copyLen);
+                        for (int c = addr; c < addr + copyLen; c++)
+                        {
+                            compareBuf[c] = 0;
+                        }
                     }
                     addr += 7;
                 }
@@ -129,7 +134,7 @@ namespace UniversalPatcher
                 {
                     row++;
                     ParseLine(Line, true);
-                    if (row % 1000 == 0)
+                    if (row % 10000 == 0)
                     {
                         Logger(".", false);
                         Application.DoEvents();
@@ -145,9 +150,11 @@ namespace UniversalPatcher
                     return;
                 }
                 buf = new byte[FileSize];
+                compareBuf = new byte[FileSize];
                 for (int a = 0; a < FileSize; a++)
                 {
                     buf[a] = 0xFF;
+                    compareBuf[a] = 0xFF;
                 }
 
                 Logger("Parsing file ... ", false);
@@ -159,12 +166,45 @@ namespace UniversalPatcher
                 {
                     row++;
                     ParseLine(Line, false);
-                    if (row % 1000 == 0)
+                    if (row % 10000 == 0)
                     {
                         Logger(".", false);
                         Application.DoEvents();
                     }
                 }
+                Logger(" [Done]");
+                List<string> skipped = new List<string>();
+                string range = "";
+                for (int a = 0; a < FileSize; a++)
+                {
+                    if (compareBuf[a] == 0xFF)
+                    {
+                        if (range.Length == 0)
+                        {
+                            range = a.ToString("X4");
+                        }
+                    }
+                    else if (range.Length > 0)
+                    {
+                        range += " - " + a.ToString("X4");
+                        skipped.Add(range);
+                        range = "";
+                    }
+                }
+                if (range.Length > 0)
+                {
+                    range += " - " + FileSize.ToString("X4");
+                    skipped.Add(range);
+                }
+                if (skipped.Count > 0)
+                {
+                    Logger("Missed parts in log:");
+                    foreach (string r in skipped)
+                    {
+                        Logger(r);
+                    }
+                }
+
                 Logger(" [OK]");
                 Logger("Writing to file: " + FileName + ".bin");
                 WriteBinToFile(FileName + ".bin", buf);

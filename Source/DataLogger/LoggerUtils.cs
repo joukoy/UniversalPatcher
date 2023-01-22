@@ -11,11 +11,14 @@ using System.Diagnostics;
 using J2534DotNet;
 using System.IO;
 using System.Threading;
+using System.Drawing;
 
 public static class LoggerUtils
 {
     public static List<OBDMessage> analyzerData { get; set; }
     public static Dictionary<byte, string> PcmResponses;
+
+
     public class Parameter
     {
         public Parameter()
@@ -110,11 +113,26 @@ public static class LoggerUtils
         public J2534InitParameters()
         {
             this.VPWLogger = false;
-            this.Kinit = KInit.None;
+            Protocol = ProtocolID.J1850VPW;
+            Baudrate = "";
+            Sconfigs = "";
+            Kinit = KInit.None;
+            InitBytes = "";
+            Connectflag = ConnectFlag.NONE;
+            PerodicMsg = "";
+            PassFilters = "";
         }
         public J2534InitParameters(bool VpwLogger)
         {
             this.VPWLogger = VpwLogger;
+            Protocol = ProtocolID.J1850VPW;
+            Baudrate = "";
+            Sconfigs = "";
+            Kinit = KInit.None;
+            InitBytes = "";
+            Connectflag = ConnectFlag.NONE;
+            PerodicMsg = "";
+            PassFilters = "";
         }
         public bool VPWLogger { get; set; }
         public ProtocolID Protocol { get; set; }
@@ -124,7 +142,7 @@ public static class LoggerUtils
         public string InitBytes { get; set; }
         public ConnectFlag Connectflag { get; set; }
         public string PerodicMsg { get; set; }
-        public int PriodicInterval { get; set; }
+        public int PeriodicInterval { get; set; }
         public string PassFilters { get; set; }
     }
 
@@ -222,8 +240,11 @@ public static class LoggerUtils
             SBYTE = 1,              //SIGNED INTEGER - 8 BIT
             UWORD = 2,              //UNSIGNED INTEGER - 16 BIT
             SWORD = 3,              //SIGNED INTEGER - 16 BIT
+            INT32 = 4,              //SIGNED DWORD - 32 bit
+            UINT32 = 5,             //UNSIGNED DWORD - 32 bit
+            //THREEBYTES = 6,
             UNKNOWN
-        }
+    }
 
         public static ProfileDataType ConvertToDataType(PidDataType pid)
         {
@@ -237,7 +258,11 @@ public static class LoggerUtils
                     return ProfileDataType.UWORD;
                 case PidDataType.int16:
                     return ProfileDataType.SWORD;
-                default:
+                case PidDataType.uint32:
+                    return ProfileDataType.UINT32;
+                case PidDataType.int32:
+                    return ProfileDataType.INT32;
+            default:
                     return ProfileDataType.UBYTE;
             }
         }
@@ -331,27 +356,243 @@ public static class LoggerUtils
     
         public bool GetBitmappedBoolValue(double value)
         {
-            string[] vals = Math.Split(',');
+            //string[] vals = Math.Split(',');
             int bits = (int)value;
             bits = bits >> BitIndex;
             bool flag = (bits & 1) != 0;
             return flag;
         }
 
+        public static string ParseEnumValue(string eVals, double value1)
+        {
+            if (eVals.ToLower().StartsWith("enum:"))
+                eVals = eVals.Substring(5).Trim();
+            List<double> enumVals = new List<double>();
+            string[] posVals = eVals.Split(',');
+            bool hexVals = false;
+            for (int r = 0; r < posVals.Length; r++)
+            {
+                string[] parts = posVals[r].Split(':');
+                if (parts[0].StartsWith("$") || (!double.TryParse(parts[0], out double _d) && HexToUint64(parts[0], out UInt64 _u)))
+                {
+                    hexVals = true;
+                    break;
+                }
+            }
+
+            for (int r = 0; r < posVals.Length; r++)
+            {
+                string[] parts = posVals[r].Split(':');
+                double val = 0;
+                if (parts[0].StartsWith("$") || hexVals)
+                {
+                    if (HexToUint64(parts[0].Replace("$", ""), out UInt64 uVal))
+                        val = (double)uVal;
+                }
+                else
+                {
+                    double.TryParse(parts[0], out val);
+                }
+                string txt = posVals[r];
+                if (!enumVals.Contains(val))
+                    enumVals.Add(val);
+                if (val == value1)
+                    return txt;
+            }
+            return "";
+        }
+
+        private bool GetBitStatus(double value, int bitposition)
+        {
+            int bits = (int)value;
+            bits = bits >> bitposition;
+            bool flag = (bits & 1) != 0;
+            return flag;
+        }
+
+        public string ParseBitsValue(double value1)
+        {
+            string retVal = "";
+            string trueVal = "On";
+            string falseVal = "Off";
+            string[] doubleBitVals = { "fail", "indeterminate", "indeterminate", "pass" };
+
+            if (Math.Contains("(") && Math.Contains(")"))
+            {
+                int pos1 = Math.IndexOf("(") + 1;
+                int pos2 = Math.IndexOf(")",pos1);
+                string onOff = Math.Substring(pos1, pos2 - pos1);
+                string[] onOffParts = onOff.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (onOffParts.Length < 2)
+                    onOffParts = onOff.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (onOffParts.Length > 1)
+                {
+                    foreach(string s1 in onOffParts)
+                    {
+                        string s = s1.Trim();
+                        if (s.StartsWith("1="))
+                            trueVal = s.Substring(2);
+                        else if (s.StartsWith("0="))
+                            falseVal = s.Substring(2);
+                    }
+                }
+            }
+            if (Math.Contains("[") && Math.Contains("]"))
+            {
+                int pos1 = Math.IndexOf("[");
+                int pos2 = Math.IndexOf("]", pos1);
+                string onOff = Math.ToUpper().Substring(pos1, pos2 - pos1);
+                string[] onOffParts = onOff.ToLower().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (onOffParts.Length > 1)
+                {
+                    foreach (string s in onOffParts)
+                    {
+                        if (s.StartsWith("10 or 01") || s.StartsWith("01 or 10"))
+                        {
+                            doubleBitVals[0b10] = s.Substring(8);
+                            doubleBitVals[0b01] = s.Substring(8);
+                        }
+                        else if (s.StartsWith("00"))
+                        {
+                            doubleBitVals[0b00] = s.Substring(8);
+                        }
+                        else if (s.StartsWith("01"))
+                        {
+                            doubleBitVals[0b01] = s.Substring(8);
+                        }
+                        else if (s.StartsWith("10"))
+                        {
+                            doubleBitVals[0b10] = s.Substring(8);
+                        }
+                        else if (s.StartsWith("11"))
+                        {
+                            doubleBitVals[0b11] = s.Substring(8);
+                        }
+                    }
+                }
+            }
+            string[] bitVals = Math.Substring(5).Trim().ToUpper().Split(new string[] {"BIT " }, StringSplitOptions.RemoveEmptyEntries);
+            foreach(string b in bitVals)
+            {
+                string[] bitPosStr = b.Split(new char[] { ':', '=', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                int bitPos = 0;
+                if (!string.IsNullOrWhiteSpace(bitPosStr[0]) && (bitPosStr[0].Contains("-") || int.TryParse(bitPosStr[0], out bitPos)))
+                {
+                    string nextChar = b.Substring(1, 1);
+                    if (nextChar == "-")
+                    {
+                        string[] pairParts = b.Substring(0,3).Split('-');
+                        if (pairParts.Length == 2)
+                        {
+                            if (int.TryParse(pairParts[0], out int bit1Pos) && int.TryParse(pairParts[1], out int bit2Pos))
+                            {
+                                int bits = (int)value1;
+                                bits = bits >> bit1Pos;
+                                byte flag1 = (byte)(bits & 1);
+                                bits = (int)value1;
+                                bits = bits >> bit2Pos;
+                                byte flag2 = (byte)(bits & 1);
+                                int dVal = (flag1 << 1) | flag2;
+                                retVal += doubleBitVals[dVal] +"-";
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        if (b.Contains("(") && b.Contains(")"))
+                        {
+                            int pos1 = b.IndexOf("(");
+                            int pos2 = b.IndexOf(")", pos1);
+                            string onOff = b.Substring(pos1, pos2 - pos1);
+                            string[] onOffParts = onOff.Split(new char[] { ',', '(',')' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (onOffParts.Length < 2)
+                                onOffParts = onOff.Split(new char[] { ' ', '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            if (onOffParts.Length > 1)
+                            {
+                                foreach (string s1 in onOffParts)
+                                {
+                                    string s = s1.Trim();
+                                    if (s.StartsWith("1="))
+                                        trueVal = s.Substring(2);
+                                    else if (s.StartsWith("0="))
+                                        falseVal = s.Substring(2);
+                                    else if (s.StartsWith("1 ="))
+                                        trueVal = s.Substring(3);
+                                    else if (s.StartsWith("0 ="))
+                                        falseVal = s.Substring(3);
+                                }
+                            }
+                        }
+
+                        if (GetBitStatus(value1,bitPos))
+                        {
+                            retVal += trueVal + "-";
+                        }
+                        else
+                        {
+                            retVal += falseVal +"-";
+                        }
+                    }
+                }
+            }
+            return retVal.Trim('-');
+        }
+
+        private string ParseBytesValue(double value1)
+        {
+            string retVal = "";
+            for (int byteNr=1; byteNr<=4; byteNr++)
+            {
+                if (Math.ToLower().Contains("byte " + byteNr.ToString()))
+                {
+
+                    byte tmpVal = (byte)((UInt32)value1 >> (4-byteNr) * 8);
+                    retVal += tmpVal.ToString("X2") +"-";
+                }
+            }
+            return retVal.Trim('-');
+        }
+
         public string GetCalculatedValue(double value1, double value2)
         {
             try
             {
-                if (IsBitMapped)
+                if (Math.ToLower().StartsWith("circuitstatus"))
+                {
+                    //BYTES 1-2 ARE THE DTC ENCODED AS BCD (PO443 = $04 $43) BYTE 3 BIT 7 PCM CONTROLLED STATE OF THE OUTPUT (1=ON 2=OFF)
+                    byte b1 = (byte)((UInt32)value1 >> 16);
+                    byte b2 = (byte)((UInt32)value1 >> 8);
+                    byte b3 = (byte)((UInt32)value1);
+                    string retVal = "P" + b1.ToString("X2") + b2.ToString("X2") + ":";
+                    if ((b3 & 0x80) == 0)
+                        retVal += "OFF";
+                    else
+                        retVal += "ON";
+                    return retVal;
+                }
+                else if (Math.ToLower().StartsWith("enum:"))
+                {
+                    return ParseEnumValue(Math, value1);
+                }
+                else if (Math.ToLower().StartsWith("bits:"))
+                {
+                    return ParseBitsValue(value1);
+                }
+                else if (Math.ToLower().StartsWith("bytes:"))
+                {
+                    return ParseBytesValue(value1);
+                }
+                else if (IsBitMapped)
                 {
                     return GetBitmappedValue(value1);
                 }
                 else
                 {
-                    string assigneMath = Math.ToLower().Replace("x", value1.ToString());
+                    string assignedMath = Math.ToLower().Replace("x", value1.ToString());
                     if (Math.Contains("y") && value2 > double.MinValue)
-                        assigneMath = assigneMath.ToLower().Replace("y", value2.ToString());
-                    double calcVal = parser.Parse(assigneMath);
+                        assignedMath = assignedMath.ToLower().Replace("y", value2.ToString());
+                    double calcVal = parser.Parse(assignedMath);
                     return calcVal.ToString();
                 }
             }
@@ -371,7 +612,11 @@ public static class LoggerUtils
         {
             try
             {
-                if (IsBitMapped)
+                if (Math.ToLower().StartsWith("enum:") || Math.ToLower().StartsWith("bits:"))
+                {
+                    return value1;
+                }
+                else if (IsBitMapped)
                 {
                     bool val = GetBitmappedBoolValue(value1);
                     if (val)
@@ -468,6 +713,7 @@ public static class LoggerUtils
             LoggerBold("Error, SaveProfile line " + line + ": " + ex.Message +", " + ex.InnerException);
         }
     }
+
 
     public static void initPcmResponses()
     {

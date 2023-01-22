@@ -574,3 +574,25 @@
 - Tuner: Navigator assigned to tablelist, if have multiple tablelists/bin-file
 - Tuner: Fixes & improvements to navigator
 - XML file updates
+
+0.22.00
+- Logger: Fixed bug, sent messages not displayed in VPW console unless write to log enabled
+- Logger: Fixed bug, crash if select "Filter pids by bin-file" and bin is not supported
+- Logger: More device id's added, show ID number with Device name
+- Logger: Added DTC -> Query devices
+- Logger: Added DTC -> Query modules
+- Logger: Added DTC -> Query Freeze frames
+- Logger: Device & Function ID/Name moved hardcoded => XML
+- Logger: Support for simple variables, for example: $PCM=10 
+- Logger: Script: Set expected responses by "defaultresponses:<number>"
+- Logger: Fixed bugs in timestamps
+- Patcher: New columns and sorting to V6-info
+- Patcher: Checksum research: fixed bug: if no Checksum address defined, assumed to be 0 and skipped in calculation
+- Logger: Run J2534 in external process to avoid crashes
+- XML Editor: "Paste row" allows TableData import to Tableseek list
+- Logger: Fixed bug in FTDI detection after plugging in new device ("Unknown: Failure" in device list)
+- Logger: Detecting device disconnects and disconnecting automatically (Not with Bluetooth devices)
+- Other minor updates & bug fixes
+
+
+

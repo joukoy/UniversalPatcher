@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -27,9 +28,9 @@ namespace UniversalPatcher
         private ulong timestamp;
 
         /// <summary>
-        /// When the message was created (System time).
+        /// When the message was created (From device timestamp).
         /// </summary>
-        private ulong systimestamp;
+        private ulong devtimestamp;
 
         /// <summary>
         /// Error code, if applicable.
@@ -65,7 +66,7 @@ namespace UniversalPatcher
         {
             this.message = message;
             this.timestamp = (ulong)DateTime.Now.Ticks;
-            this.systimestamp = (ulong)DateTime.Now.Ticks;
+            this.devtimestamp = (ulong)DateTime.Now.Ticks;
             SecondaryProtocol = false;
         }
 
@@ -76,13 +77,13 @@ namespace UniversalPatcher
         {
             this.message = message;
             this.timestamp = timestamp;
-            this.systimestamp = (ulong)DateTime.Now.Ticks;
+            this.devtimestamp = (ulong)DateTime.Now.Ticks;
             this.error = error;
             SecondaryProtocol = false;
         }
 
         /// <summary>
-        /// When the message was created or recevied (tool time).
+        /// When the message was created or recevied (System time).
         /// </summary>
         public ulong TimeStamp
         {
@@ -91,12 +92,12 @@ namespace UniversalPatcher
         }
 
         /// <summary>
-        /// When the message was created or recevied (System time).
+        /// When the message was created or received (Device time).
         /// </summary>
-        public ulong SysTimeStamp
+        public ulong DevTimeStamp
         {
-            get { return this.systimestamp; }
-            set { this.systimestamp = value; }
+            get { return this.devtimestamp; }
+            set { this.devtimestamp = value; }
         }
 
         /// <summary>
@@ -127,6 +128,34 @@ namespace UniversalPatcher
         public override string ToString()
         {
             return string.Join(" ", Array.ConvertAll(message, b => b.ToString("X2")));
+        }
+
+        /// <summary>
+        /// When sending message in named pipe (byte array) it is organized: timestamp, devtimestamp, Elmrompt, Secondaryprotocol, message data 
+        /// </summary>
+        public void FromPipeMessage(byte[] msg)
+        {
+            int ulen = sizeof(ulong);
+            if (msg.Length > ((2 * ulen) + 2))
+            {
+                timestamp = BitConverter.ToUInt64(msg, 0);
+                devtimestamp = BitConverter.ToUInt64(msg, ulen);
+                ElmPrompt = Convert.ToBoolean(msg[2 * ulen]);
+                SecondaryProtocol = Convert.ToBoolean(msg[2 * ulen + 1]);
+                message = new byte[msg.Length - (2 * ulen) - 2];
+                Array.Copy(msg, (2 * ulen) + 2, message, 0, message.Length);
+            }
+        }
+
+        public byte[] ToPipeMessage()
+        {
+            List<byte> msg = new List<byte>();
+            msg.AddRange(BitConverter.GetBytes(timestamp));
+            msg.AddRange(BitConverter.GetBytes(devtimestamp));
+            msg.Add(Convert.ToByte(ElmPrompt));
+            msg.Add(Convert.ToByte(SecondaryProtocol));
+            msg.AddRange(message);
+            return msg.ToArray();
         }
 
         public bool ElmPrompt { get; set; }

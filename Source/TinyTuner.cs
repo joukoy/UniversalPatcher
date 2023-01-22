@@ -142,7 +142,7 @@ namespace UniversalPatcher
                     {
                         ts.RowHeaders = ConvertByHeader(ts.RowHeaders,ts.Rows);
                     }
-                    ts.SavingMath = "X/" + row["Factor"].ToString();
+                    //ts.SavingMath = "X/" + row["Factor"].ToString();
                     ts.Category = row["MainCategory"].ToString();
                     ts.Units = row["Units"].ToString();
                     ts.RowMajor = false;

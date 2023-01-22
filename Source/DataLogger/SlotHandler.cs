@@ -66,6 +66,12 @@ namespace UniversalPatcher
                         return 2;
                     case ProfileDataType.SWORD:
                         return 2;
+                    //case ProfileDataType.THREEBYTES:
+                      //  return 3;
+                    case ProfileDataType.UINT32:
+                        return 4;
+                    case ProfileDataType.INT32:
+                        return 4;
                     default:
                         return 1;
                 }
@@ -522,8 +528,10 @@ namespace UniversalPatcher
                     {
                         int pidNr = slot.Pids[p];
                         //Debug.Write(pidNr.ToString("X2") + " ");
-                        byte elementSize = slot.PidSize(p);
-                        if (msg.Length >= (pos + elementSize))
+                        //byte elementSize = slot.PidSize(p);
+                        int dataLen = msg.Length - pos;
+                        //if (msg.Length >= (pos + elementSize))
+                        if (dataLen > 0)
                         {
                             //Debug.WriteLine("Received pid (index): " + pid);
                             double val = 0;
@@ -551,11 +559,30 @@ namespace UniversalPatcher
                                     val = itmp;
                                     pos += 2;
                                     break;
+                                case ProfileDataType.UINT32:
+                                    if (dataLen == 4)
+                                    {
+                                        val = BitConverter.ToUInt32(msg.GetBytes(), pos);
+                                        pos += 4;
+                                    }
+                                    else if (dataLen == 3)
+                                    {
+                                        UInt16 tmp3 = (UInt16)(msg.GetBytes()[pos] << 16);
+                                        tmp3 += (UInt16)(msg.GetBytes()[pos + 1] << 8);
+                                        tmp3 += (byte)msg.GetBytes()[pos + 2];
+                                        val = tmp3;
+                                        pos += 3;
+                                    }
+                                    break;
+                                case ProfileDataType.INT32:
+                                    val = BitConverter.ToInt32  (msg.GetBytes(), pos);
+                                    pos += 4;
+                                    break;
                             }
                             ReadValue rv = new ReadValue();
                             rv.PidNr = pidNr;
                             rv.TimeStamp = msg.TimeStamp;
-                            rv.SysTimeStamp = msg.SysTimeStamp;
+                            rv.DevTimeStamp = msg.DevTimeStamp;
                             rv.PidValue = val;
                             retVal.Add(rv);
                         }
@@ -622,7 +649,7 @@ namespace UniversalPatcher
                         LogData ld = new LogData(LastPidValues.Length);
                         //ld.TimeStamp = newReadValues[0].TimeStamp;
                         ld.TimeStamp = oMsg.TimeStamp;
-                        ld.SysTimeStamp = oMsg.SysTimeStamp;
+                        ld.DevTimeStamp = oMsg.DevTimeStamp;
                         Array.Copy(LastPidValues, ld.Values, ld.Values.Length);
                         lock (datalogger.LogFileQueue)
                         {
@@ -662,7 +689,7 @@ namespace UniversalPatcher
                     {
                         LogData ld = new LogData(newPidValues.Length);
                         ld.TimeStamp = newReadValues[0].TimeStamp;
-                        ld.SysTimeStamp = newReadValues[0].SysTimeStamp;
+                        ld.DevTimeStamp = newReadValues[0].DevTimeStamp;
                         Array.Copy(newPidValues, ld.Values, ld.Values.Length);
                         lock (datalogger.LogFileQueue)
                         {

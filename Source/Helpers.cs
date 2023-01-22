@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using UniversalPatcher;
 using static Upatcher;
 
@@ -29,6 +32,9 @@ public static class Helpers
     public static UPLogger uPLogger = new UPLogger();
     public static DataLogger.LogDataEvents LoggerDataEvents = new DataLogger.LogDataEvents();
 
+    public static List<object> ClipBrd;
+    private static int? _processId;
+
     public static void Logger(string LogText, Boolean NewLine = true, bool Bold= false)
     {
         uPLogger.Add(LogText, NewLine, Bold);
@@ -37,7 +43,20 @@ public static class Helpers
     {
         Logger(LogText, NewLine, true);
     }
-
+    public static int ProcessId
+    {
+        get
+        {
+            if (_processId == null)
+            {
+                using (var thisProcess = System.Diagnostics.Process.GetCurrentProcess())
+                {
+                    _processId = thisProcess.Id;
+                }
+            }
+            return _processId.Value;
+        }
+    }
 
     public static byte[] ReadBin(string FileName)
     {
@@ -701,5 +720,163 @@ public static class Helpers
         return retVal;
     }
 
+    public class Utf8StringWriter : StringWriter
+    {
+        // Use UTF8 encoding but write no BOM to the wire
+        public override Encoding Encoding
+        {
+            get { return new UTF8Encoding(false); } // in real code I'll cache this encoding.
+        }
+    }
+    public static string SerializeObjectToXML<T>(this T toSerialize)
+    {
+        XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
+
+        using (Utf8StringWriter textWriter = new Utf8StringWriter())
+        {
+            xmlSerializer.Serialize(textWriter, toSerialize);
+            return textWriter.ToString();
+        }
+    }
+
+    public static T XmlDeserializeFromString<T>(this string objectData)
+    {
+        return (T)XmlDeserializeFromString(objectData, typeof(T));
+    }
+
+    public static object XmlDeserializeFromString(this string objectData, Type type)
+    {
+        var serializer = new XmlSerializer(type);
+        object result;
+
+        using (TextReader reader = new StringReader(objectData))
+        {
+            result = serializer.Deserialize(reader);
+        }
+
+        return result;
+    }
+
+    public static byte[] ObjectToByteArray(object obj)
+    {
+        if (obj == null)
+            return null;
+        BinaryFormatter bf = new BinaryFormatter();
+        using (MemoryStream ms = new MemoryStream())
+        {
+            bf.Serialize(ms, obj);
+            return ms.ToArray();
+        }
+    }
+
+    public static Object ByteArrayToObject(byte[] arrBytes)
+    {
+        try
+        {
+            MemoryStream memStream = new MemoryStream();
+            BinaryFormatter binForm = new BinaryFormatter();
+            memStream.Write(arrBytes, 0, arrBytes.Length);
+            memStream.Seek(0, SeekOrigin.Begin);
+            Object obj = (Object)binForm.Deserialize(memStream);
+
+            return obj;
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            //LoggerBold("Error, Helpers line " + line + ": " + ex.Message);
+        }
+        return null;
+    }
+
+    public static void SaveCsvDatagridview(DataGridView dgv)
+    {
+        try
+        {
+            string FileName = SelectSaveFile(CsvFilter);
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < dgv.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dgv.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dgv.Rows.Count - 1); r++)
+                {
+                    row = "";
+                    for (int i = 0; i < dgv.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (dgv.Rows[r].Cells[i].Value != null)
+                            row += dgv.Rows[r].Cells[i].Value.ToString();
+                    }
+                    row = row.Replace(Environment.NewLine, ":");
+                    row = row.Replace(",", " ");
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+        }
+        catch (Exception ex)
+        {
+            LoggerBold(ex.Message);
+        }
+    }
+
+    public static void LoadCsvDatagridview(DataGridView dgv)
+    {
+        try
+        {
+            string FileName = SelectFile("Select CSV file", CsvFilter);
+            if (FileName.Length == 0)
+                return;
+            List<int> colPositions = new List<int>();
+            StreamReader sr = new StreamReader(FileName);
+            string line = sr.ReadLine();
+            string[] lineparts = line.Split(';');
+            foreach(string part in lineparts)
+            {
+                for (int c=0;c<dgv.Columns.Count;c++)
+                {
+                    if (part == dgv.Columns[c].Name)
+                    {
+                        colPositions.Add(c);
+                        break;
+                    }
+                }
+            }
+
+            while ((line = sr.ReadLine()) != null)
+            {
+                int row = dgv.Rows.Add();
+                lineparts = line.Split(';');
+                for (int c = 0; c < lineparts.Length; c++)
+                {
+                    if (colPositions.Contains(c))
+                    {
+                        int dgvCol = colPositions[c];
+                        dgv.Rows[row].Cells[dgvCol].Value = lineparts[c];
+                    }
+                }
+            }
+
+            sr.Close();
+        }
+        catch (Exception ex)
+        {
+            LoggerBold(ex.Message);
+        }
+    }
 
 }

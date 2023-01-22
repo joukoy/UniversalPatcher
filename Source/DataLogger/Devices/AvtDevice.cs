@@ -136,6 +136,7 @@ namespace UniversalPatcher
             }
             AVTSetup();
             SetLoggingFilter();
+            this.Connected = true;
             return true;
         }
 
@@ -287,7 +288,7 @@ namespace UniversalPatcher
             //Debug.WriteLine("Total Length=" + length + " RX: " + packet.ToHex());
             OBDMessage rMsg = new OBDMessage(packet);
             rMsg.TimeStamp = (ulong)rx.TimeStamp;
-            rMsg.SysTimeStamp = rMsg.TimeStamp;
+            rMsg.DevTimeStamp = (ulong)rMsg.TimeStamp;
             return Response.Create(ResponseStatus.Success, rMsg);
 
             //return Response.Create(ResponseStatus.Success, new OBDMessage(packet));
@@ -370,7 +371,15 @@ namespace UniversalPatcher
 
         public override void Receive()
         {
-           
+            if (this.Port == null)
+            {
+                Debug.WriteLine("Port closed, disposing AVT device");
+                OBDMessage oMsg = new OBDMessage(new byte[] { 0 });
+                oMsg.Error = 0x99;
+                this.Enqueue(oMsg);
+                return;
+            }
+
             Response<OBDMessage> response = ReadAVTPacket();
             if (response.Status == ResponseStatus.Success)
             {

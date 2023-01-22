@@ -329,6 +329,7 @@ namespace UniversalPatcher
                 if (AppSettings.TunerShowTableCount)
                     txt += " [" + filteredtables.Count.ToString() + "]";
                 Tnode tn = new Tnode(txt, "All", NType.Root, "explorer.ico");
+                tn.filteredTds = filteredtables;
                 tn.Isroot = true; 
                 tn.Node.ImageKey = "explorer.ico";
                 tn.Node.SelectedImageKey = "explorer.ico";

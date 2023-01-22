@@ -38,6 +38,7 @@ namespace UniversalPatcher
         List<string> scriptrows;
         int currentrow = 0;
         public bool SecondaryProtocol { get; set; }
+        int defaultResponses = 1;
 
         /// <summary>
         /// Calc checksum for byte array for all messages to/from device
@@ -59,11 +60,27 @@ namespace UniversalPatcher
             {
                 return false;
             }
+            Line = Line.Trim();
             if (Line.Length > 1)
             {
                 if (Line.StartsWith("#"))
                 {
                     Debug.WriteLine(Line);
+                }
+                else if (Line.StartsWith("$"))
+                {
+                    string[] lParts = Line.Split('=');
+                    if (lParts.Length == 2)
+                    {
+                        Variable v = new Variable();
+                        v.Name = lParts[0];
+                        v.Size = 1;
+                        if (HexToUint(lParts[1], out uint val))
+                        {
+                            v.Value = val;
+                            variables.Add(v);
+                        }
+                    }
                 }
                 else if (Line.ToLower().StartsWith("setvariable"))
                 {
@@ -110,6 +127,14 @@ namespace UniversalPatcher
                     if (int.TryParse(parts[1], out globaldelay))
                     {
                         Debug.WriteLine("Set global delay to:" + globaldelay.ToString());
+                    }
+                }
+                else if (Line.ToLower().StartsWith("defaultresponses:"))
+                {
+                    string[] parts = Line.Split(':');
+                    if (int.TryParse(parts[1], out defaultResponses))
+                    {
+                        Debug.WriteLine("Set default responses to:" + defaultResponses.ToString());
                     }
                 }
                 else if (Line.ToLower().StartsWith("setspeed:"))
@@ -245,7 +270,7 @@ namespace UniversalPatcher
                         newMsg[newMsg.Length - 1] = (byte)(chk);
                         msg = newMsg;
                     }
-                    int responses = 1;
+                    int responses = defaultResponses;
                     if (msg.Length > 3 && msg[3] == 0x3f)
                     {
                         responses = 0;
@@ -254,6 +279,7 @@ namespace UniversalPatcher
                     {
                         int.TryParse(parts[1], out responses);
                     }
+                    Debug.WriteLine("Waiting {0} responses", responses);
                     int timeout = 50;
                     if (parts.Length > 2)
                     {
@@ -307,6 +333,11 @@ namespace UniversalPatcher
                         if (DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(timeout))
                         {
                             Debug.WriteLine("Timeout: " + timeout.ToString() + " ms");
+                            break;
+                        }
+                        if (device.LogDeviceType == DataLogger.LoggingDevType.Elm && device.ReceivedMessageCount == 0)
+                        {
+                            Debug.WriteLine("Elm device, no messages in queue");
                             break;
                         }
                         Application.DoEvents();

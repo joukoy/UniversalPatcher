@@ -22,41 +22,7 @@ namespace UniversalPatcher
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-                Upatcher.StartupSettings(args);
-
-                if (args.Length > 1)
-                {
-                    if (args[1].ToLower().Contains("launcher"))
-                    {
-                        Application.Run(new FrmMain());
-                    }
-                    else if (args[1].ToLower().Contains("tuner"))
-                    {
-                        PcmFile pcm = new PcmFile();
-                        Application.Run(new FrmTuner(pcm));
-                    }
-                    else if (args[1].ToLower().Contains("patcher"))
-                    {
-                        Application.Run(new FrmPatcher());
-                    }
-                    else if (args[1].ToLower().Contains("logger"))
-                    {
-                        Application.Run(new frmLogger());
-                    }
-                    else
-                    {
-                        //Application.Run(new FrmPatcher());
-                        PcmFile pcm = new PcmFile();
-                        Application.Run(new FrmTuner(pcm));
-                    }
-                }
-                else
-                {
-                    PcmFile pcm = new PcmFile();
-                    Application.Run(new FrmTuner(pcm));
-                    //Application.Run(new FrmPatcher());
-                }
-
+                Upatcher.Startup(args);
             }
             catch (Exception ex)
             {

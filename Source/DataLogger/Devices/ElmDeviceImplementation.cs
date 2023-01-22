@@ -24,6 +24,8 @@ namespace UniversalPatcher
 
         public bool Supports4X { get; protected set; }
 
+        public double Voltage { get; protected set; }
+
         public TimeoutScenario TimeoutScenario { get; set; }
 
         protected readonly Action<OBDMessage> enqueue;
@@ -83,6 +85,10 @@ namespace UniversalPatcher
 
             string voltage = this.SendRequest("AT RV").Data;             // Get Voltage
             Logger("Voltage: " + voltage);
+            if (double.TryParse(voltage, out double volts))
+            {
+                this.Voltage = volts;
+            }
 
             // First we check for known-bad ELM clones.
             string elmID = this.SendRequest("AT I").Data;                // Identify (ELM)
@@ -207,12 +213,21 @@ namespace UniversalPatcher
             // Use StringBuilder to collect the bytes.
             StringBuilder builtString = new StringBuilder();
 
+            //Build list of timestamps, one for each row
+            List<long> tStamps = new List<long>();
+            bool newRow = true;
+
             //for (int i = 0; i < maxPayload; i++)
             while (true)
             {
                 // Receive a single byte.
                 this.Port.Receive(buffer, 0, 1);
 
+                if (newRow)
+                {
+                    newRow = false;
+                    tStamps.Add(buffer.TimeStamp);
+                }
                 // Is it the prompt '>'.
                 if (buffer.Data[0] == '>') // || buffer.Data[0] == '?')
                 {
@@ -230,6 +245,7 @@ namespace UniversalPatcher
                         //Handle multiple lines as one message
                         // CR found, replace with space.
                         buffer.Data[0] = 32;
+                        newRow = true;
                     }
                     else if (!string.IsNullOrEmpty(builtString.ToString()) && !string.IsNullOrWhiteSpace(builtString.ToString()))
                     {
@@ -248,6 +264,7 @@ namespace UniversalPatcher
 
             // Convert to string, trim and return
             SerialString serialStr = new SerialString(builtString.ToString().Trim(), buffer.TimeStamp, Prompt);
+            serialStr.TimeStamps = tStamps;
             //Debug.WriteLine("Elm line: " + serialStr.Data);
             return serialStr;
         }
@@ -262,7 +279,7 @@ namespace UniversalPatcher
             byte[] message = response.Data.ToBytes();
             OBDMessage rMsg = new OBDMessage(message);
             rMsg.TimeStamp = (ulong)response.TimeStamp;
-            rMsg.SysTimeStamp = (ulong)response.TimeStamp;
+            rMsg.DevTimeStamp = (ulong)response.TimeStamp;
             rMsg.ElmPrompt = response.Prompt;
             return Response.Create(ResponseStatus.Success, rMsg);
 
@@ -283,7 +300,7 @@ namespace UniversalPatcher
                 //if (rawResponse.Data.StartsWith("6C") || rawResponse.Data.StartsWith("8C"))
                   //  response = new OBDMessage(rawResponse.Data.ToBytes());
                 response.TimeStamp = (ulong)rawResponse.TimeStamp;
-                response.SysTimeStamp = (ulong)rawResponse.TimeStamp;
+                response.DevTimeStamp = (ulong)rawResponse.TimeStamp;
                 response.ElmPrompt = true;
                 this.enqueue(response);
                 return true;
@@ -319,6 +336,7 @@ namespace UniversalPatcher
             {
                 if (segment.IsHex())
                 {
+                    int s = 0;
                     string[] hexResponses = segment.Split(' ');
                     foreach (string singleHexResponse in hexResponses)
                     {
@@ -328,13 +346,14 @@ namespace UniversalPatcher
                             Array.Resize(ref deviceResponseBytes, deviceResponseBytes.Length - 1); // remove checksum byte
                         }
                         Debug.WriteLine("RX: " + deviceResponseBytes.ToHex());
+                        //Debug.WriteLine("Timestamp " + s.ToString() +": "+ rawResponse.TimeStamps[s].ToString());
                         OBDMessage response = new OBDMessage(deviceResponseBytes);
+                        response.DevTimeStamp = (ulong)rawResponse.TimeStamps[s];
+                        response.TimeStamp = (ulong)rawResponse.TimeStamps[s];
                         response.ElmPrompt = rawResponse.Prompt;
-
-                        response.TimeStamp = (ulong)rawResponse.TimeStamp;
                         this.enqueue(response);
+                        s++;
                     }
-
                     return true;
                 }
 

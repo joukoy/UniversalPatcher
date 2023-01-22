@@ -173,6 +173,11 @@ namespace UniversalPatcher
         public bool Enable4xReadWrite { get; set; }
 
         /// <summary>
+        /// Connection status
+        /// </summary>
+        public bool Connected { get; set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         public Device()
@@ -182,6 +187,7 @@ namespace UniversalPatcher
             this.MaxReceiveSize = 100;
             this.Supports4X = false;
             this.Speed = VpwSpeed.Standard;
+            Connected = false;
         }
 
         /// <summary>
@@ -197,6 +203,7 @@ namespace UniversalPatcher
         /// </summary>
         public virtual void Dispose()
         {
+            Connected = false;
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }

@@ -171,7 +171,7 @@ namespace UniversalPatcher
             fwdToolStripMenuItem.MouseHover += RevToolStripMenuItem_MouseHover;
             revToolStripMenuItem.MouseDown += NaviMenuItem_MouseDown; 
             fwdToolStripMenuItem.MouseDown += NaviMenuItem_MouseDown;
-            txtSearchTableSeek.TextChanged += txtSearchTableSeek_TextChanged;
+            txtFilter.TextChanged += txFilter_TextChanged;
         }
 
         private void frmTuner_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -610,7 +610,8 @@ namespace UniversalPatcher
                 Application.DoEvents();
                 FilterTables(RestorePath);
                 treeView1.SelectedNodes.Clear();
-                TreeParts.AddNodes(treeView1.Nodes, PCM,PCM.tableDatas,true);
+                treeView1.Nodes.Clear();
+                TreeParts.AddNodes(treeView1.Nodes, PCM, filteredTableDatas.ToList(), true);
 
             }
             catch (Exception ex)
@@ -761,9 +762,9 @@ namespace UniversalPatcher
 
                 IEnumerable<TableData> results = compareList;
 
-                if (txtSearchTableSeek.Text.Length > 0)
+                if (txtFilter.Text.Length > 0)
                 {
-                    string newStr = txtSearchTableSeek.Text.Replace("OR", "|");
+                    string newStr = txtFilter.Text.Replace("OR", "|");
                     if (newStr.StartsWith("%difference:"))
                     {
                         string[] dparts = newStr.Split(':');
@@ -848,7 +849,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        newStr = txtSearchTableSeek.Text.Replace("AND", "&");
+                        newStr = txtFilter.Text.Replace("AND", "&");
                         string[] andStr = newStr.Split('&');
                         if (comboFilterBy.Text == "All")
                         {
@@ -1025,7 +1026,7 @@ namespace UniversalPatcher
                 int rowindex = dataGridView1.CurrentCell.RowIndex;
                 for (int i = rowindex + 1; i < dataGridView1.RowCount; i++)
                 {
-                    if (dataGridView1.Rows[i].Cells["TableName"].Value != null && dataGridView1.Rows[i].Cells["TableName"].Value.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()))
+                    if (dataGridView1.Rows[i].Cells["TableName"].Value != null && dataGridView1.Rows[i].Cells["TableName"].Value.ToString().ToLower().Contains(txtFilter.Text.ToLower()))
                     {
                         dataGridView1.ClearSelection();
                         dataGridView1.CurrentCell = dataGridView1.Rows[i].Cells[0];
@@ -1503,7 +1504,7 @@ namespace UniversalPatcher
 
         }
 
-        private void txtSearchTableSeek_TextChanged(object sender, EventArgs e)
+        private void txFilter_TextChanged(object sender, EventArgs e)
         {
             //filterTables();
             keyDelayCounter = 0;
@@ -1630,7 +1631,7 @@ namespace UniversalPatcher
         private void comboFilterBy_SelectedIndexChanged(object sender, EventArgs e)
         {
             Debug.WriteLine("comboFilterBy_SelectedIndexChanged");
-            if (!string.IsNullOrEmpty(txtSearchTableSeek.Text))
+            if (!string.IsNullOrEmpty(txtFilter.Text))
                 FilterTables(true);
         }
 
@@ -3224,7 +3225,8 @@ namespace UniversalPatcher
                 timerFilter.Enabled = false;
                 keyDelayCounter = 0;
                 Navigating = true;
-                FilterTables(true);
+                //FilterTables(true);
+                RefreshTablelist(true);
                 Navigating = false;
             }
         }
@@ -3812,6 +3814,10 @@ namespace UniversalPatcher
         private void TreeView1_AfterExpand(object sender, TreeViewEventArgs e)
         {
             Tnode tnode1 = (Tnode)e.Node.Tag;
+            if (e.Node.Name == "All")
+            {
+                TreeParts.AddTablesToTree(e.Node);
+            }
             if (e.Node.Name != "All")
             { 
                 TreeParts.AddChildNodes(e.Node, PCM);
@@ -4047,7 +4053,7 @@ namespace UniversalPatcher
                 {
                     td = tnode.Td;
                 }
-                Navi navi = new Navi(tab, path, txtSearchTableSeek.Text, comboFilterBy.Text, td);
+                Navi navi = new Navi(tab, path, txtFilter.Text, comboFilterBy.Text, td);
                 Navi naviPrev = PCM.Navigator.LastOrDefault();
                 if (naviPrev != null && naviPrev.Path != null && naviPrev.Path.Count > 0 && navi.Tab != null && navi.Tab.Name != null)
                 {
@@ -5870,10 +5876,10 @@ namespace UniversalPatcher
                     else
 */
                     {
-                        txtSearchTableSeek.TextChanged -= txtSearchTableSeek_TextChanged;
-                        txtSearchTableSeek.Text = "";
+                        txtFilter.TextChanged -= txFilter_TextChanged;
+                        txtFilter.Text = "";
                         comboFilterBy.Text = navi.FilterBy;
-                        txtSearchTableSeek.Text = navi.Filter;
+                        txtFilter.Text = navi.Filter;
                         FilterTables(false);
                         RestoreNodePath(tv, navi.Path, PCM);
                         if (DisplayMode == DispMode.List)
@@ -5889,7 +5895,7 @@ namespace UniversalPatcher
                             }
                         }
                         Application.DoEvents();
-                        txtSearchTableSeek.TextChanged += txtSearchTableSeek_TextChanged;
+                        txtFilter.TextChanged += txFilter_TextChanged;
                     }
                 }
                 Navigating = false;
@@ -5984,11 +5990,11 @@ namespace UniversalPatcher
                 TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
                 List<string> path = GetCurrentNodePath(tv);
                 path[0] = hTd.TableName;    //Replace last node with axis-table
-                txtSearchTableSeek.TextChanged -= txtSearchTableSeek_TextChanged;
-                txtSearchTableSeek.Text = hTd.TableName + " | " + lastSelectTd.TableName;
+                txtFilter.TextChanged -= txFilter_TextChanged;
+                txtFilter.Text = hTd.TableName + " | " + lastSelectTd.TableName;
                 comboFilterBy.Text = "TableName";
                 FilterTables(false);
-                txtSearchTableSeek.TextChanged += txtSearchTableSeek_TextChanged;
+                txtFilter.TextChanged += txFilter_TextChanged;
                 Debug.WriteLine("Restoring node");
                 StringBuilder dbgStr = new StringBuilder("Restoring " + tv.Name + ": ");
                 for (int i = 0; i < path.Count; i++)
@@ -6148,6 +6154,42 @@ namespace UniversalPatcher
 
         private void groupNavigator_Enter(object sender, EventArgs e)
         {
+
+        }
+
+        private void copyRowToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                for (int c = 0; c < dataGridView1.SelectedCells.Count; c++)
+                    dataGridView1.Rows[dataGridView1.SelectedCells[c].RowIndex].Selected = true;
+            }
+            ClipBrd = new List<object>();
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            {
+                object obj = row.DataBoundItem;
+                ClipBrd.Add(obj);
+            }
+        }
+
+        private void pasteRowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                int row = dataGridView1.SelectedCells[0].RowIndex;
+                for (int i = 0; i < ClipBrd.Count; i++)
+                {
+                    TableData newTd = ((TableData)ClipBrd[i]).ShallowCopy(true);
+                    PCM.tableDatas.Add(newTd);
+                }
+                RefreshTablelist(true);
+                dataGridView1.CurrentCell = dataGridView1.Rows[row].Cells[0];
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
 
         }
     }

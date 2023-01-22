@@ -97,7 +97,7 @@ namespace UniversalPatcher
             public double[] Values { get; set; }
             public double[] CalculatedValues { get; set; }
             public ulong TimeStamp { get; set; }
-            public ulong SysTimeStamp { get; set; }
+            public ulong DevTimeStamp { get; set; }
         }
 
         public class ReadValue
@@ -109,7 +109,7 @@ namespace UniversalPatcher
             public double PidValue { get; set; }
             public int PidNr { get; set; }
             public ulong TimeStamp { get; set; }
-            public ulong SysTimeStamp { get; set; }
+            public ulong DevTimeStamp { get; set; }
         }
 
         public class DTCCodeStatus
@@ -317,7 +317,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    string tStamp = new DateTime((long)ld.SysTimeStamp).ToString(AppSettings.LoggerTimestampFormat);
+                    string tStamp = new DateTime((long)ld.TimeStamp).ToString(AppSettings.LoggerTimestampFormat);
                     //tStamp += " [" + ld.TimeStamp.ToString() + "]";
                     WriteLog(slothandler.CalculatePidValues(ld.Values), tStamp );
                 }
@@ -525,8 +525,9 @@ namespace UniversalPatcher
                 Debug.WriteLine("Devices on bus?");
                 LogDevice.ClearMessageBuffer();
                 LogDevice.ClearMessageQueue();
+                //LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
                 byte[] queryMsg = { Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x20 };
-                bool m = LogDevice.SendMessage(new OBDMessage(queryMsg) ,1);
+                bool m = LogDevice.SendMessage(new OBDMessage(queryMsg) ,100);
                 if (m)
                 {
                     //Debug.WriteLine("OK" );
@@ -539,16 +540,26 @@ namespace UniversalPatcher
                 }
                 if (waitanswer)
                 {
-                    Thread.Sleep(10);
-                    while (LogDevice.ReceivedMessageCount > 0)
+                    Logger("Waiting for devices", false);
+                    for (int wait = 0; wait < 3; wait++)
                     {
-                        //Just in case there is more data
-                        OBDMessage resp = LogDevice.ReceiveMessage();
-                        byte module = resp.GetBytes()[2];
-                        if (!retVal.Contains(module))
-                            retVal.Add(module);
-                        Debug.WriteLine("Response: " + resp.ToString());
+                        Thread.Sleep(100);
+                        LogDevice.Receive();
+                        while (LogDevice.ReceivedMessageCount > 0)
+                        {
+                            OBDMessage resp = LogDevice.ReceiveMessage();
+                            if (resp.GetBytes().Length > 3 && resp.GetBytes()[1] == DeviceId.Tool && resp.GetBytes()[3] == 0x60)
+                            {
+                                byte module = resp.GetBytes()[2];
+                                if (!retVal.Contains(module))
+                                    retVal.Add(module);
+                                Debug.WriteLine("Response: " + resp.ToString());
+                            }
+                        }
+                        Logger(".", false);
+                        Application.DoEvents();
                     }
+                    Logger(" [Done]");
                 }
                 return new Response<List<byte>>(ResponseStatus.Success, retVal);
             }
@@ -559,7 +570,104 @@ namespace UniversalPatcher
             return new Response<List<byte>>(ResponseStatus.Error, retVal);
         }
 
-        public  void ClearTroubleCodes(byte module)
+        public Response<List<OBDMessage>> QueryModules(int DevCount)
+        {
+            List<OBDMessage> retVal = new List<OBDMessage>();
+            try
+            {
+                Debug.WriteLine("Modules?");
+                LogDevice.ClearMessageBuffer();
+                LogDevice.ClearMessageQueue();
+                Receiver.SetReceiverPaused(true);
+                Logger("Querying modules", false);
+                Application.DoEvents();
+                for (byte modId = 0; modId < 0xFF; modId++)
+                {
+                    byte[] queryMsg = { Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x3c, modId };
+                    //LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
+                    LogDevice.SendMessage(new OBDMessage(queryMsg), DevCount + 5);
+                    if (modId % 10 == 0)
+                    {
+                        Logger(".", false);
+                        Application.DoEvents();
+                    }
+                }
+                Thread.Sleep(100);
+                OBDMessage resp = null;
+                for (int retry = 0; retry < 300 && (resp == null || resp.Length <= 6); retry++)
+                {
+                    Thread.Sleep(10);
+                    resp = LogDevice.ReceiveMessage();
+                }
+                while (resp != null)
+                {
+                    if (resp.GetBytes().Length == 11 && resp.GetBytes()[1] == DeviceId.Tool && resp.GetBytes()[3] == 0x7c)
+                    {
+                        retVal.Add(resp);
+                        Debug.WriteLine("Response: " + resp.ToString());
+                    }
+                    resp = LogDevice.ReceiveMessage();
+                }
+                Logger(" [Done]");
+            }
+            catch (Exception ex)
+            {
+                LoggerBold("Query devices on bus: " + ex.Message);
+                return new Response<List<OBDMessage>>(ResponseStatus.Error, retVal);
+            }
+            Receiver.SetReceiverPaused(false);
+            return new Response<List<OBDMessage>>(ResponseStatus.Success, retVal);
+        }
+
+        public Response<List<OBDMessage>> QueryFreezeFrames(byte module)
+        {
+            List<OBDMessage> retVal = new List<OBDMessage>();
+            try
+            {
+                Debug.WriteLine("Freeze frames?");
+                LogDevice.ClearMessageBuffer();
+                LogDevice.ClearMessageQueue();
+                Receiver.SetReceiverPaused(true);
+                Logger("Querying freeze frames", false);
+                //LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
+                //LogDevice.SetReadTimeout(500);
+                Application.DoEvents();
+                for (byte x = 0; x < 6; x++)
+                {
+                    byte[] queryMsg = { Priority.Physical0High, module, DeviceId.Tool, 0x12, x, 0xFF, 0xFF };
+                    LogDevice.SendMessage(new OBDMessage(queryMsg), 500);
+                    Logger(".", false);
+                    Application.DoEvents();
+                }
+                Logger(" [Done]");
+                Logger("Waiting answer...", false);
+                OBDMessage resp = null;
+                for (int retry=0; retry<300 && (resp == null || resp.Length <= 6); retry++)
+                {
+                    Thread.Sleep(10);
+                    resp = LogDevice.ReceiveMessage();
+                } 
+                while (resp != null)
+                {
+                    if (resp != null && resp.Length > 6 && resp.GetBytes()[3] == 0x52)
+                    {
+                        retVal.Add(resp);
+                        Debug.WriteLine("Response: " + resp.ToString());
+                    }
+                    resp = LogDevice.ReceiveMessage();
+                }
+                Logger(" [Done]");
+            }
+            catch (Exception ex)
+            {
+                LoggerBold("Query devices on bus: " + ex.Message);
+                return new Response<List<OBDMessage>>(ResponseStatus.Error, retVal);
+            }
+            Receiver.SetReceiverPaused(false);
+            return new Response<List<OBDMessage>>(ResponseStatus.Success, retVal);
+        }
+
+        public void ClearTroubleCodes(byte module)
         {
             try
             {
@@ -936,7 +1044,7 @@ namespace UniversalPatcher
                         }
                         if ((stat & 0x10) == 0x80)
                         {
-                            dcs.Status += "STORED TROUBLE CODE (FREEZE FRAMD DATA AVAILABLE),";
+                            dcs.Status += "STORED TROUBLE CODE (FREEZE FRAME DATA AVAILABLE),";
                         }
                         if ((stat & 0x08) == 0x80)
                         {
@@ -1021,7 +1129,7 @@ namespace UniversalPatcher
                 Logger("Requesting DTC codes for " + moduleStr);
                 Receiver.SetReceiverPaused(true);
                 OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
-                bool m = LogDevice.SendMessage(msg, -50);
+                bool m = LogDevice.SendMessage(msg, -500);
                 if (!m)
                 {
                     Debug.WriteLine("Error sending request, continue anyway");
@@ -1264,177 +1372,6 @@ namespace UniversalPatcher
 
             return true;
         }
-               
-        private bool SendQueuedCommand()
-        {
-            if (queuedCommands.Count == 0)
-            {
-                return true;
-            }
-            QueuedCommand command;
-            lock (queuedCommands)
-            {
-                command = queuedCommands.Dequeue();
-            }
-
-            Application.DoEvents();
-            SetBusQuiet();
-            Thread.Sleep(10);
-            datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
-            Thread.Sleep(10);
-            SetBusQuiet();
-/*            OBDMessage resp = LogDevice.ReceiveMessage();
-            while (resp != null)
-            {
-                resp = LogDevice.ReceiveMessage();
-            }
-*/
-            switch (command.Cmd)
-            {
-                case QueueCmd.Getdtc:
-                    RequestDTCCodes(command.param1, command.param2);
-                    break;
-                case QueueCmd.GetVin:
-                    QueryVIN();
-                    break;
-                case QueueCmd.Custom:
-                    Logger("Sending queued command: " + command.Description);
-                    LogDevice.SendMessage(command.CustomMsg, 1);
-                    LogDevice.ReceiveMessage();
-                    break;
-            }
-            if (passive)
-            {
-                maxSlotsPerMessage = 4;
-                LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
-                AllSlotsRequested = false;
-                RequestPassiveModeSlots();
-            }
-            else
-            {
-                if (LogDevice.LogDeviceType != LoggingDevType.Obdlink)
-                {
-                    LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
-                }
-
-            }
-            return true;
-        }
-
-        public void DataLoggingLoop()
-        {
-            Thread.CurrentThread.IsBackground = true;
-            int totalSlots = 0;
-            ulong prevSlotTime = 0;
-
-            AllSlotsRequested = false;
-
-            Logger("Logging started");
-            //PcmDevice.ClearMessageBuffer();
-            //PcmDevice.ClearMessageQueue();
-            
-            //while (!stopLogLoop)
-            
-            while (!logToken.IsCancellationRequested)
-            {
-                try
-                {
-                    int SlotCount = 0;
-                    while ( SlotCount < maxSlotsPerRequest && !stopLogLoop) //Loop there until requested Slots are handled
-                    {
-                        if (LogDevice == null || !Connected)
-                        {
-                            break;
-                        }
-
-                        OBDMessage oMsg = LogDevice.ReceiveLogMessage();
-                        if (oMsg == null)
-                        {
-                            continue;
-                        }
-                        Debug.WriteLine("Received: " + oMsg.ToString() +", Elmprompt: " + oMsg.ElmPrompt);
-                        if (oMsg.ElmPrompt)
-                        {
-                            ELMPromptReceived();
-                            continue;
-                        }
-                        if (!ValidateMessage(oMsg,ref SlotCount))
-                        {
-                            continue;
-                        }
-                        //We really have received a Slot!
-                        SlotCount++;
-                        totalSlots++;
-                        if (totalSlots == 10)
-                        {
-                            prevSlotTime = oMsg.TimeStamp;
-                        }
-                        if (totalSlots == 110)
-                        {
-                            ulong tLast = oMsg.TimeStamp;
-                            ulong SlotDelay = tLast - prevSlotTime;
-                            Debug.WriteLine("Time for 100 Slots: " + (SlotDelay / 10000).ToString() + " ms");
-                        }
-                        if (passive)
-                        {
-                            SendTesterPresent(false);
-                        }
-                        slothandler.HandleSlotMessage(oMsg);
-                    } //Inner logloop
-
-                    if (LogDevice.LogDeviceType == LoggingDevType.Other)
-                    {
-                        if (!SendQueuedCommand())
-                        {
-                            return;     //If receieved Stop-command, return
-                        }
-                    }
-                    Application.DoEvents();
-                    if (passive)
-                    {
-                        if (maxSlotsPerRequest < maxPassiveSlotsPerMsg) //Started with fewer Slots
-                        {
-                            if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
-                            {
-                                //Started with 4 Slots, now asking 50 more
-                                RequestNextSlots();
-                            }
-                            Debug.WriteLine("Set Slots per request to: " + maxPassiveSlotsPerMsg);
-                            maxSlotsPerRequest = maxPassiveSlotsPerMsg;
-                        }
-                        SendTesterPresent(false);
-                    }
-                    else //SendOnce
-                    {
-                        if (!RequestNextSlots())    //Works with Obdlink, because we know how many Slots are coming
-                            throw new Exception("Error in Slot request");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var st = new StackTrace(ex, true);
-                    // Get the top stack frame
-                    var frame = st.GetFrame(st.FrameCount - 1);
-                    // Get the line number from the stack frame
-                    var line = frame.GetFileLineNumber();
-                    Debug.WriteLine("Error, logLoop line " + line + ": " + ex.Message);
-                    if (LogDevice == null || !Connected)
-                    {
-                        return;
-                    }
-                }
-            } //Logloop
-            Logger("Logging stopped");
-            if (LogDevice != null && Connected)
-            { 
-                SetBusQuiet();
-                SetBusQuiet();
-                LogDevice.SetTimeout(TimeoutScenario.Maximum);
-            }
-            LogRunning = false;
-            return;
-        }
-
         public void LoadLogFile(string LogFile)
         {
             try
@@ -1528,6 +1465,178 @@ namespace UniversalPatcher
                 LoggerBold("Error, LoadLogFile line " + line + ": " + ex.Message);
             }
         }
+
+        private bool SendQueuedCommand()
+        {
+            if (queuedCommands.Count == 0)
+            {
+                return true;
+            }
+            QueuedCommand command;
+            lock (queuedCommands)
+            {
+                command = queuedCommands.Dequeue();
+            }
+
+            Application.DoEvents();
+            SetBusQuiet();
+            Thread.Sleep(10);
+            datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+            Thread.Sleep(10);
+            SetBusQuiet();
+/*            OBDMessage resp = LogDevice.ReceiveMessage();
+            while (resp != null)
+            {
+                resp = LogDevice.ReceiveMessage();
+            }
+*/
+            switch (command.Cmd)
+            {
+                case QueueCmd.Getdtc:
+                    RequestDTCCodes(command.param1, command.param2);
+                    break;
+                case QueueCmd.GetVin:
+                    QueryVIN();
+                    break;
+                case QueueCmd.Custom:
+                    Logger("Sending queued command: " + command.Description);
+                    LogDevice.SendMessage(command.CustomMsg, 1);
+                    LogDevice.ReceiveMessage();
+                    break;
+            }
+            if (passive)
+            {
+                maxSlotsPerMessage = 4;
+                LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
+                AllSlotsRequested = false;
+                RequestPassiveModeSlots();
+            }
+            else
+            {
+                if (LogDevice.LogDeviceType != LoggingDevType.Obdlink)
+                {
+                    LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                }
+
+            }
+            return true;
+        }
+
+        public void DataLoggingLoop()
+        {
+            Thread.CurrentThread.IsBackground = true;
+            int totalSlots = 0;
+            ulong prevSlotTime = 0;
+
+            AllSlotsRequested = false;
+
+            Logger("Logging started");
+            //PcmDevice.ClearMessageBuffer();
+            //PcmDevice.ClearMessageQueue();
+            
+            //while (!stopLogLoop)
+            
+            while (!logToken.IsCancellationRequested)
+            {
+                try
+                {
+                    int SlotCount = 0;
+                    while ( SlotCount < maxSlotsPerRequest && !stopLogLoop) //Loop there until requested Slots are handled
+                    {
+                        if (LogDevice == null || !Connected)
+                        {
+                            break;
+                        }
+
+                        OBDMessage oMsg = LogDevice.ReceiveLogMessage();
+                        if (oMsg == null)
+                        {
+                            Debug.WriteLine("Received null message");
+                            continue;
+                        }
+                        Debug.WriteLine("Received: " + oMsg.ToString() +", Elmprompt: " + oMsg.ElmPrompt + " Slot count: " +SlotCount.ToString());
+                        if (oMsg.ElmPrompt)
+                        {
+                            ELMPromptReceived();
+                            continue;
+                        }
+                        if (!ValidateMessage(oMsg,ref SlotCount))
+                        {
+                            continue;
+                        }
+                        //We really have received a Slot!
+                        SlotCount++;
+                        totalSlots++;
+                        if (totalSlots == 10)
+                        {
+                            prevSlotTime = oMsg.TimeStamp;
+                        }
+                        if (totalSlots == 110)
+                        {
+                            ulong tLast = oMsg.TimeStamp;
+                            ulong SlotDelay = tLast - prevSlotTime;
+                            Debug.WriteLine("Time for 100 Slots: " + (SlotDelay / 10000).ToString() + " ms");
+                        }
+                        if (passive)
+                        {
+                            SendTesterPresent(false);
+                        }
+                        slothandler.HandleSlotMessage(oMsg);
+                        Application.DoEvents();
+                    } //Inner logloop
+
+                    if (LogDevice.LogDeviceType == LoggingDevType.Other)
+                    {
+                        if (!SendQueuedCommand())
+                        {
+                            return;     //If receieved Stop-command, return
+                        }
+                    }
+                    if (passive)
+                    {
+                        if (maxSlotsPerRequest < maxPassiveSlotsPerMsg) //Started with fewer Slots
+                        {
+                            if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
+                            {
+                                //Started with 4 Slots, now asking 50 more
+                                RequestNextSlots();
+                            }
+                            Debug.WriteLine("Set Slots per request to: " + maxPassiveSlotsPerMsg);
+                            maxSlotsPerRequest = maxPassiveSlotsPerMsg;
+                        }
+                        SendTesterPresent(false);
+                    }
+                    else //SendOnce
+                    {
+                        if (!RequestNextSlots())    //Works with Obdlink, because we know how many Slots are coming
+                            throw new Exception("Error in Slot request");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var st = new StackTrace(ex, true);
+                    // Get the top stack frame
+                    var frame = st.GetFrame(st.FrameCount - 1);
+                    // Get the line number from the stack frame
+                    var line = frame.GetFileLineNumber();
+                    Debug.WriteLine("Error, logLoop line " + line + ": " + ex.Message);
+                    if (LogDevice == null || !Connected)
+                    {
+                        return;
+                    }
+                }
+            } //Logloop
+            Logger("Logging stopped");
+            if (LogDevice != null && Connected)
+            { 
+                SetBusQuiet();
+                SetBusQuiet();
+                LogDevice.SetTimeout(TimeoutScenario.Maximum);
+            }
+            LogRunning = false;
+            return;
+        }
+
 
     }
 }

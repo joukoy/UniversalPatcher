@@ -52,6 +52,11 @@ namespace UniversalPatcher
             return this.name;
         }
 
+        bool IPort.PortOpen()
+        {
+            return port.IsOpen;
+        }
+
         void IPort.ClosePort()
         {
             Debug.WriteLine("Closing port (ClosePort)");
@@ -175,6 +180,11 @@ namespace UniversalPatcher
         {
             // Using the BaseStream causes data to be lost.
             //return this.port.Read(buffer, offset, count);
+            if (this.port != null && !this.port.IsOpen)
+            {
+                this.Dispose();
+                return 0;
+            }
             int rCount = 0;
             int pos = offset;
             DateTime startTime = DateTime.Now;
@@ -231,8 +241,15 @@ namespace UniversalPatcher
         /// </summary>
         public void SetTimeout(int milliseconds)
         {
-            this.port.ReadTimeout = milliseconds;
-            //RTimeout = milliseconds;
+            try
+            {
+                this.port.ReadTimeout = milliseconds;
+                //RTimeout = milliseconds;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>

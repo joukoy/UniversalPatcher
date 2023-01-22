@@ -28,7 +28,7 @@ namespace UniversalPatcher
             {
                 this.device = dev;
                 this.port = port;
-                if ( ReceiveLoopRunning)
+                if (ReceiveLoopRunning)
                 {
                     return;
                 }
@@ -95,7 +95,7 @@ namespace UniversalPatcher
         {
             if (Pause)
             {
-                if (!ReceiveLoopRunning)
+                if (!ReceiveLoopRunning) 
                 {
                     return true;
                 }
@@ -142,6 +142,12 @@ namespace UniversalPatcher
             {
                 try
                 {
+                    if (!device.Connected && AppSettings.LoggerAutoDisconnect)
+                    {                   
+                        LoggerBold("Device disconnected, stopping receiver");
+                        device.Dispose();
+                        return;
+                    }
                     if (msg != null && msg.ElmPrompt)
                     {
                         Debug.WriteLine("Resetting analyzer filter");
@@ -164,7 +170,5 @@ namespace UniversalPatcher
             Debug.WriteLine("Receive loop end");
             ReceiveLoopRunning = false;
         }
-
-
     }
 }

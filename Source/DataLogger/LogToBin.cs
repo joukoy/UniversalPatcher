@@ -17,10 +17,13 @@ namespace UniversalPatcher
         }
 
         private byte[] buf;
+        private byte[] compareBuf;
         private int FileSize;
         private bool corrupted = false;
         byte[] waitingBytes =  new byte[3];
         int row;
+        private byte PCMid;
+        private byte toolId;
 
         /// <summary>
         /// Calc checksum for byte array for all messages to/from device
@@ -40,13 +43,23 @@ namespace UniversalPatcher
         {
             try
             {
-                int pos = Line.IndexOf("]");
+                int pos = Line.LastIndexOf("]");
                 if (pos > 0)
                 {
                     Line = Line.Substring(pos + 1).Trim();
                 }
                 byte[] tmp = Line.Replace(" ", "").ToBytes();
-                if (tmp[1] == 0xf0 && tmp[2] == 0x10 && tmp[3] == 0x36)
+                if ((tmp.Length == 9 && tmp[3] == 0x35) ||(tmp.Length == 10 && tmp[3] == 0x34) || (tmp.Length == 7 && tmp[3] == 0x27))
+                {
+                    if (toolId == 0)
+                    {
+                        toolId = tmp[1];
+                        PCMid = tmp[2];
+                        Logger("PCM: " + PCMid.ToString("X2") + ", Tool: " + toolId.ToString("X2"));
+                    }
+
+                }
+                if (tmp[1] == PCMid && tmp[2] == toolId && tmp[3] == 0x36)
                 {
                     int len = ReadInt16(tmp, 5, true);
                     if ((len + 12) != tmp.Length && SizeOnly)
@@ -77,20 +90,24 @@ namespace UniversalPatcher
                     else
                     {
                         Array.Copy(payload, 0, buf, addr, len);
+                        for (uint c=addr;c<addr+len;c++)
+                        {
+                            compareBuf[c] = 0;
+                        }
                     }
                 }
-                else if (tmp[2] == 0xF0 && tmp[3] == 0x23)
+                else if (tmp[2] == PCMid && tmp[3] == 0x23)
                 {
                     waitingBytes[0] = tmp[4];
                     waitingBytes[1] = tmp[5];
                     waitingBytes[2] = tmp[6];
                 }
-                else if (tmp.Length > 9 && tmp[1] == 0xF0 && tmp[3] == 0x63 && tmp[4] == waitingBytes[1] && tmp[5] == waitingBytes[2])
+                else if (tmp.Length > 9 && tmp[1] == PCMid && tmp[3] == 0x63 && tmp[4] == waitingBytes[1] && tmp[5] == waitingBytes[2])
                 {
                     int addr = waitingBytes[0] << 16 | waitingBytes[1] << 8 | waitingBytes[2];
                     if (SizeOnly)
                     {
-                        if (addr > FileSize)
+                        if ((addr+4) > FileSize)
                         {
                             FileSize = addr + 4;
                         }
@@ -101,11 +118,21 @@ namespace UniversalPatcher
                         buf[addr + 1] = tmp[7];
                         buf[addr + 2] = tmp[8];
                         buf[addr + 3] = tmp[9];
+                        compareBuf[addr] = 0;
+                        compareBuf[addr+1] = 0;
+                        compareBuf[addr+2] = 0;
+                        compareBuf[addr+3] = 0;
                     }
                 }
             }
             catch(Exception ex)
             {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, LogToBin line " + line + ": " + ex.Message);
                 LoggerBold(ex.Message);
             }
         }
@@ -142,15 +169,48 @@ namespace UniversalPatcher
                     return;
                 }
                 buf = new byte[FileSize];
+                compareBuf = new byte[FileSize];
                 for (int a = 0; a < FileSize; a++)
                 {
                     buf[a] = 0xFF;
+                    compareBuf[a] = 0xFF;
                 }
 
                 //Parse again but get data this time:
                 foreach (string Line in lines)
                 {
                     ParseLine(Line, false);
+                }
+                List<string> skipped = new List<string>();
+                string range = "";
+                for (int a=0;a<FileSize;a++)
+                {
+                    if (compareBuf[a] == 0xFF)
+                    {
+                        if (range.Length == 0)
+                        {
+                            range = a.ToString("X4");
+                        }
+                    }
+                    else if (range.Length > 0)
+                    {
+                        range += " - " + a.ToString("X4");
+                        skipped.Add(range);
+                        range = "";
+                    }
+                }
+                if (range.Length > 0)
+                {
+                    range += " - " + FileSize.ToString("X4");
+                    skipped.Add(range);
+                }
+                if (skipped.Count > 0)
+                {
+                    Logger("Missed parts in log:");
+                    foreach(string r in skipped)
+                    {
+                        Logger(r);
+                    }
                 }
                 if (corrupted)
                 {

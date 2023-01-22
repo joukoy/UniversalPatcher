@@ -16,6 +16,8 @@ namespace UniversalPatcher
         public string Data { get; internal set; }
         public long TimeStamp { get; internal set; }
         public bool Prompt { get; internal set; }
+        //If one string have multiple messages, store timestamps here
+        public List<long> TimeStamps { get; set; }  
     }
     public class SerialByte
     {

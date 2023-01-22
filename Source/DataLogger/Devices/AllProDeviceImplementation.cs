@@ -83,7 +83,6 @@ namespace UniversalPatcher
                 Debug.WriteLine(exception.ToString());
                 return false;
             }
-
             return true;
         }
 
