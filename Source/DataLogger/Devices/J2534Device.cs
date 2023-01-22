@@ -101,30 +101,13 @@ namespace UniversalPatcher
             return this.InitializeInternal(j2534Init);
         }
 
-        private void SetTimeDiff()
+        private void SetTimeDiff(PassThruMsg rxMsg)
         {
             try
             {
-                ClearMessageBuffer();
-                //byte[] queryMsg = { Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x20 };
-                //bool m = SendMessage(new OBDMessage(queryMsg), 1);
-
-                for (int retry=0;retry<1000;retry++)
-                {
-                    int NumMessages = 1;
-                    List<PassThruMsg> rxMsgs = new List<PassThruMsg>();
-                    J2534Err jErr = J2534Port.Functions.ReadMsgs((int)ChannelID, ref rxMsgs, ref NumMessages, 1000);
-                    if (jErr == J2534Err.STATUS_NOERROR)
-                    {
-                        if (NumMessages > 0)
-                        {
-                            timeDiff = (ulong)DateTime.Now.Ticks - ((ulong)rxMsgs.Last().Timestamp * ticksPerMicrosecond);
-                            Debug.WriteLine("Time diff (function): " + timeDiff.ToString() + " retries: " + retry.ToString());
-                        }
-                        lastTstamp = rxMsgs.Last().Timestamp;
-                        break;
-                    }
-                }
+                timeDiff = (ulong)DateTime.Now.Ticks - ((ulong)rxMsg.Timestamp * ticksPerMicrosecond);
+                Debug.WriteLine("Time diff (function): " + timeDiff.ToString() );
+                lastTstamp = rxMsg.Timestamp;
             }
             catch (Exception ex)
             {
@@ -472,7 +455,7 @@ namespace UniversalPatcher
                 {
                     if (timeDiff == long.MaxValue)
                     {
-                        SetTimeDiff();
+                        SetTimeDiff(rxMsgs.Last());
                     }
                     if (rxMsgs.Last().Timestamp < lastTstamp && NumMessages > 0)
                     {
