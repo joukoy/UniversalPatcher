@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+<ArrayOfIdName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IdName>
+    <ID>11</ID>
+    <Name>(C) Eng Air Intake</Name>
+  </IdName>
+  <IdName>
+    <ID>18</ID>
+    <Name>(C) Fuel</Name>
+  </IdName>
+  <IdName>
+    <ID>19</ID>
+    <Name>(S) Fuel</Name>
+  </IdName>
+  <IdName>
+    <ID>20</ID>
+    <Name>(C) AC Clutch</Name>
+  </IdName>
+  <IdName>
+    <ID>21</ID>
+    <Name>(S) AC Clutch</Name>
+  </IdName>
+  <IdName>
+    <ID>26</ID>
+    <Name>(C) Engine RPM</Name>
+  </IdName>
+  <IdName>
+    <ID>27</ID>
+    <Name>(S) Engine RPM</Name>
+  </IdName>
+  <IdName>
+    <ID>36</ID>
+    <Name>(C) Wheels</Name>
+  </IdName>
+  <IdName>
+    <ID>37</ID>
+    <Name>(S) Wheels</Name>
+  </IdName>
+  <IdName>
+    <ID>40</ID>
+    <Name>(C) Vehicle Speed</Name>
+  </IdName>
+  <IdName>
+    <ID>41</ID>
+    <Name>(S) Vehicle Speed</Name>
+  </IdName>
+  <IdName>
+    <ID>42</ID>
+    <Name>(C) Traction Control</Name>
+  </IdName>
+  <IdName>
+    <ID>43</ID>
+    <Name>(S) Traction Control</Name>
+  </IdName>
+  <IdName>
+    <ID>50</ID>
+    <Name>(C) Brakes</Name>
+  </IdName>
+  <IdName>
+    <ID>51</ID>
+    <Name>(S) Brakes</Name>
+  </IdName>
+  <IdName>
+    <ID>52</ID>
+    <Name>(C) Steering</Name>
+  </IdName>
+  <IdName>
+    <ID>53</ID>
+    <Name>(S) Steering</Name>
+  </IdName>
+  <IdName>
+    <ID>58</ID>
+    <Name>(C) Trans</Name>
+  </IdName>
+  <IdName>
+    <ID>59</ID>
+    <Name>(S) Trans</Name>
+  </IdName>
+  <IdName>
+    <ID>72</ID>
+    <Name>(C) Eng Coolant</Name>
+  </IdName>
+  <IdName>
+    <ID>73</ID>
+    <Name>(S) Eng Coolant</Name>
+  </IdName>
+  <IdName>
+    <ID>74</ID>
+    <Name>(C) Eng Oil</Name>
+  </IdName>
+  <IdName>
+    <ID>75</ID>
+    <Name>(S) Eng Oil</Name>
+  </IdName>
+  <IdName>
+    <ID>82</ID>
+    <Name>(C) Engine Sys</Name>
+  </IdName>
+  <IdName>
+    <ID>83</ID>
+    <Name>(S) Engine Sys</Name>
+  </IdName>
+  <IdName>
+    <ID>88</ID>
+    <Name>(C) Suspension</Name>
+  </IdName>
+  <IdName>
+    <ID>89</ID>
+    <Name>(S) Suspension</Name>
+  </IdName>
+  <IdName>
+    <ID>98</ID>
+    <Name>(C) Cruise Control</Name>
+  </IdName>
+  <IdName>
+    <ID>99</ID>
+    <Name>(S) Cruise Control</Name>
+  </IdName>
+  <IdName>
+    <ID>114</ID>
+    <Name>(C) Charging System</Name>
+  </IdName>
+  <IdName>
+    <ID>115</ID>
+    <Name>(S) Charging System</Name>
+  </IdName>
+  <IdName>
+    <ID>122</ID>
+    <Name>(C) Odometer</Name>
+  </IdName>
+  <IdName>
+    <ID>123</ID>
+    <Name>(S) Odometer</Name>
+  </IdName>
+  <IdName>
+    <ID>130</ID>
+    <Name>(C) Fuel System</Name>
+  </IdName>
+  <IdName>
+    <ID>131</ID>
+    <Name>(S) Fuel System</Name>
+  </IdName>
+  <IdName>
+    <ID>132</ID>
+    <Name>(C) Vehicle Motion</Name>
+  </IdName>
+  <IdName>
+    <ID>133</ID>
+    <Name>(S) Vehicle Motion</Name>
+  </IdName>
+  <IdName>
+    <ID>134</ID>
+    <Name>(C) Ign Switch</Name>
+  </IdName>
+  <IdName>
+    <ID>135</ID>
+    <Name>(S) Ign Switch</Name>
+  </IdName>
+  <IdName>
+    <ID>146</ID>
+    <Name>(C) Veh Security</Name>
+  </IdName>
+  <IdName>
+    <ID>147</ID>
+    <Name>(S) Veh Security</Name>
+  </IdName>
+  <IdName>
+    <ID>150</ID>
+    <Name>(C) Chimes</Name>
+  </IdName>
+  <IdName>
+    <ID>151</ID>
+    <Name>(S) Chimes</Name>
+  </IdName>
+  <IdName>
+    <ID>198</ID>
+    <Name>(C) Extern Access</Name>
+  </IdName>
+  <IdName>
+    <ID>199</ID>
+    <Name>(S) Extern Access</Name>
+  </IdName>
+  <IdName>
+    <ID>206</ID>
+    <Name>(C) MFG Specific</Name>
+  </IdName>
+  <IdName>
+    <ID>207</ID>
+    <Name>(S) MFG Specific</Name>
+  </IdName>
+  <IdName>
+    <ID>210</ID>
+    <Name>(C) Restraints</Name>
+  </IdName>
+  <IdName>
+    <ID>211</ID>
+    <Name>(S) Restraints</Name>
+  </IdName>
+  <IdName>
+    <ID>218</ID>
+    <Name>(C) Exterior Lamps</Name>
+  </IdName>
+  <IdName>
+    <ID>219</ID>
+    <Name>(S) Exterior Lamps</Name>
+  </IdName>
+  <IdName>
+    <ID>222</ID>
+    <Name>(C) Interior Lamps</Name>
+  </IdName>
+  <IdName>
+    <ID>223</ID>
+    <Name>(S) Interior Lamps</Name>
+  </IdName>
+  <IdName>
+    <ID>228</ID>
+    <Name>(C) Tires</Name>
+  </IdName>
+  <IdName>
+    <ID>229</ID>
+    <Name>(S) Tires</Name>
+  </IdName>
+  <IdName>
+    <ID>230</ID>
+    <Name>(C) Defrost</Name>
+  </IdName>
+  <IdName>
+    <ID>231</ID>
+    <Name>(S) Defrost</Name>
+  </IdName>
+  <IdName>
+    <ID>234</ID>
+    <Name>(C) MFG Specific</Name>
+  </IdName>
+  <IdName>
+    <ID>235</ID>
+    <Name>(S) MFG Specific</Name>
+  </IdName>
+  <IdName>
+    <ID>242</ID>
+    <Name>(C) Ext Environment</Name>
+  </IdName>
+  <IdName>
+    <ID>243</ID>
+    <Name>(S) Ext Environment</Name>
+  </IdName>
+  <IdName>
+    <ID>250</ID>
+    <Name>(C) VIN</Name>
+  </IdName>
+  <IdName>
+    <ID>251</ID>
+    <Name>(S) VIN</Name>
+  </IdName>
+  <IdName>
+    <ID>254</ID>
+    <Name>(C) Network Control</Name>
+  </IdName>
+</ArrayOfIdName>
