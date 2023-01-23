@@ -802,6 +802,7 @@ namespace UniversalPatcher
 
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
                 LogDevice.SetReadTimeout(100);
+                LogDevice.SetWriteTimeout(AppSettings.LoggerWriteTimeout);
 
                 if (QueryDevicesOnBus(false).Status != ResponseStatus.Success)
                     return false;
@@ -833,7 +834,7 @@ namespace UniversalPatcher
                 {
                     lastPresent = DateTime.Now;
                     //elmStopTreshold = 1000;
-                    LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
+                    LogDevice.SetTimeout(AppSettings.LoggerPassiveReadTimeout);
                     if (!RequestPassiveModeSlots())
                     {
                         LoggerBold("Error requesting Slots");
@@ -845,11 +846,11 @@ namespace UniversalPatcher
                     //elmStopTreshold = 50;
                     if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
                     {
-                        LogDevice.SetTimeout(TimeoutScenario.Minimum);
+                        LogDevice.SetTimeout(AppSettings.LoggerActiveReadTimeoutObdlink);
                     }
                     else
                     {
-                        LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                        LogDevice.SetTimeout(AppSettings.LoggerActiveReadTimeout);
                     }
                     RequestNextSlots();
                 }
@@ -1632,6 +1633,8 @@ namespace UniversalPatcher
                 SetBusQuiet();
                 SetBusQuiet();
                 LogDevice.SetTimeout(TimeoutScenario.Maximum);
+                LogDevice.SetReadTimeout(AppSettings.LoggerReadTimeout);
+                LogDevice.SetWriteTimeout(AppSettings.LoggerWriteTimeout);
             }
             LogRunning = false;
             return;

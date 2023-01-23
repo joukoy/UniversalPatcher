@@ -108,8 +108,9 @@ namespace UniversalPatcher
             receiverTokenSource = new CancellationTokenSource();
             receiverToken = receiverTokenSource.Token;
 
-            this.port.BaseStream.ReadTimeout = this.port.ReadTimeout;
-            this.port.WriteTimeout = 500;
+            this.port.BaseStream.ReadTimeout = AppSettings.LoggerPortReadTimeout;
+            this.port.ReadTimeout = AppSettings.LoggerPortReadTimeout;
+            this.port.WriteTimeout = AppSettings.LoggerPortWriteTimeout;
             this.port.ErrorReceived += Port_ErrorReceived;
             this.port.DataReceived += DataReceived;
             //Task receiveTask = Task.Factory.StartNew(() => DataReceiverLoop());
@@ -197,6 +198,7 @@ namespace UniversalPatcher
                 if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(RTimeout))
                 {
                     //Debug.WriteLine("RS232 waiting for: " + count + ", available: " + this.internalQueue.Count);
+                    Debug.WriteLine("RS232 port timeout: " + RTimeout.ToString());
                     throw new TimeoutException();
                 }
                 if (receiverToken.IsCancellationRequested)
@@ -244,6 +246,7 @@ namespace UniversalPatcher
             try
             {
                 this.port.ReadTimeout = milliseconds;
+                this.port.BaseStream.ReadTimeout = milliseconds;
                 //RTimeout = milliseconds;
             }
             catch (Exception ex)
@@ -257,7 +260,7 @@ namespace UniversalPatcher
         /// </summary>
         public void SetWriteTimeout(int milliseconds)
         {
-            Debug.WriteLine("Setting write timeout to: " + milliseconds.ToString());
+            Debug.WriteLine("Setting port write timeout to: " + milliseconds.ToString());
             this.port.WriteTimeout = milliseconds;
         }
 
@@ -266,7 +269,7 @@ namespace UniversalPatcher
         /// </summary>
         public void SetReadTimeout(int milliseconds)
         {
-            Debug.WriteLine("Setting read timeout to: " + milliseconds.ToString());
+            Debug.WriteLine("Setting port read timeout to: " + milliseconds.ToString());
             RTimeout = milliseconds;
         }
 

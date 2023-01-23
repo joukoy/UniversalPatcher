@@ -36,6 +36,10 @@ namespace UniversalPatcher
 
         public DataLogger.LoggingDevType LogDeviceType { get; protected set; }
 
+        public int ReadTimeout = 1000;
+
+        public int WriteTimeout = 1000;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -125,6 +129,22 @@ namespace UniversalPatcher
            int parameter = Math.Min(Math.Max(1, (milliseconds / 4)), 255);
            string value = parameter.ToString("X2");
            return this.SendAndVerify("AT ST " + value, "OK");
+        }
+
+        /// <summary>
+        /// Set the write timeout to the device. 
+        /// </summary>
+        public virtual void SetWriteTimeoutMilliseconds(int milliseconds)
+        {
+            WriteTimeout = milliseconds;
+        }
+
+        /// <summary>
+        /// Set the Read timeout to the device. 
+        /// </summary>
+        public virtual void SetReadTimeoutMilliseconds(int milliseconds)
+        {
+            ReadTimeout = milliseconds;
         }
 
         /// <summary>
@@ -233,6 +253,7 @@ namespace UniversalPatcher
                 {
                     // Prompt found, we're done.
                     //Debug.WriteLine("Elm prompt: " + builtString.ToString());
+                    Debug.WriteLine("Elm promt received at " + DateTime.Now.ToString("HH.mm.ss.ffff"));
                     Prompt = true;
                     break;
                 }

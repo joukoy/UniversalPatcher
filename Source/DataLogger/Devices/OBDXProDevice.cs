@@ -153,6 +153,8 @@ namespace UniversalPatcher
                 return false;
             }
             this.Connected = true;
+            Port.SetReadTimeout(AppSettings.LoggerPortReadTimeout);
+            Port.SetWriteTimeout(AppSettings.LoggerPortWriteTimeout);
             Logger("Device Successfully Initialized and Ready");
             return true;
         }
@@ -174,7 +176,6 @@ namespace UniversalPatcher
 
         public override void SetReadTimeout(int timeout)
         {
-            Port.SetReadTimeout(timeout);
             ReadTimeout = timeout;
             //Port.SetTimeout(timeout + 1000);
         }

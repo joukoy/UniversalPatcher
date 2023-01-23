@@ -594,5 +594,9 @@
 - Logger: Detecting device disconnects and disconnecting automatically (Not with Bluetooth devices)
 - Other minor updates & bug fixes
 
+0.22.01
+- Tuner: Fixed bug in XDF export
+- Logger: J2534 external process handling improved
+- Logger: Settings for timeouts
 
 

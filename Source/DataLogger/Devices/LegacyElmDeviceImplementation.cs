@@ -250,13 +250,13 @@ namespace UniversalPatcher
             if (header != this.currentHeader)
             {
                 SerialString setHeaderResponse = this.SendRequest("AT SH " + header, getResponse);
-                Debug.WriteLine("Set header response (1): " + setHeaderResponse.Data);
+                Debug.WriteLine("Set header response (1): " + setHeaderResponse.Data +", time: " + DateTime.Now.ToString("HH.mm.ss.ffff"));
 
                 if (setHeaderResponse.Data != "OK")
                 {
                     // Does it help to retry once?
                     setHeaderResponse = this.SendRequest("AT SH " + header);
-                    Debug.WriteLine("Set header response (2): " + setHeaderResponse.Data);
+                    Debug.WriteLine("Set header response (2): " + setHeaderResponse.Data + ", time: " + DateTime.Now.ToString("HH.mm.ss.ffff"));
                 }
 
                 if (!this.ProcessResponse(setHeaderResponse, "set-header command", !getResponse))
@@ -268,7 +268,7 @@ namespace UniversalPatcher
             }
 
             payload = payload.Replace(" ", "");
-            //Debug.WriteLine("TX: " + payload);
+            Debug.WriteLine("TX: " + payload + ", time: " + DateTime.Now.ToString("HH.mm.ss.ffff"));
             SerialString sendMessageResponse = this.SendRequest(payload + " ", getResponse);
             if (!this.ProcessResponse(sendMessageResponse, "message content", !getResponse))
             {
@@ -313,6 +313,18 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("Timeout during receive.");
             }
+        }
+
+        public override void SetWriteTimeoutMilliseconds(int timeout)
+        {
+            Debug.WriteLine("Setting write timeout to: " + timeout.ToString());
+            WriteTimeout = timeout;
+        }
+
+        public override void SetReadTimeoutMilliseconds(int timeout)
+        {
+            Debug.WriteLine("Setting read timeout to: " + timeout.ToString());
+            ReadTimeout = timeout;
         }
 
     }

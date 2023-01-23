@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using static Upatcher;
@@ -21,10 +22,22 @@ namespace UniversalPatcher
     }
     public static class CANQuery
     {
-        public static void Query(Device device, MessageReceiver receiver)
+        public static void Query(Device device)
         {
-            byte[] queryMsg = { 0x00, 0x00, 0x01, 0x01, 0xFE, 0x02, 0x1A, 0xB0, 0x00, 0x00, 0x00, 0x00 };
-            bool m = device.SendMessage(new OBDMessage(queryMsg), 0);
+            try
+            {
+                byte[] queryMsg = { 0x00, 0x00, 0x01, 0x01, 0xFE, 0x02, 0x1A, 0xB0, 0x00, 0x00, 0x00, 0x00 };
+                bool m = device.SendMessage(new OBDMessage(queryMsg), 0);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, CANQuery line " + line + ": " + ex.Message);
+            }
         }
 
         public static CANDevice DecodeMsg(byte[] rcv)

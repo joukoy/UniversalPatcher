@@ -961,7 +961,7 @@ namespace UniversalPatcher
                     tableText.Replace("REPLACE-MAXVALUE", basefile.OS);
                     tableText.Replace("REPLACE-TABLEADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
                     //tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
-                    string cat = "    <CATEGORYMEM index=\"0\" category=" + (basefile.OSSegment + 1).ToString("X") + " />" + Environment.NewLine;
+                    string cat = "    <CATEGORYMEM index=\"0\" category=\"" + (basefile.OSSegment + 1).ToString("X") + "\" />" + Environment.NewLine;
                     tableText.Replace("REPLACE-CATEGORIES", cat);
                     xdfText.Append(tableText);
                 }

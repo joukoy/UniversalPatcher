@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Helpers;
@@ -34,7 +35,10 @@ namespace UniversalPatcher
         private void FrmJ2534Server_FormClosing(object sender, FormClosingEventArgs e)
         {
             jServer.running = false;
+            Logger("J2534 Server Quits");
             Application.DoEvents();
+            Application.DoEvents();
+            Thread.Sleep(5000);
             Environment.Exit(0);
         }
 

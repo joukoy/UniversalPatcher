@@ -89,25 +89,27 @@ namespace UniversalPatcher
                 }
                 lock (cmdPipe)
                 {
-                    bool result = Task.Factory.StartNew(() =>
-                    {
-                        cmdPipe.Write(sendBuf.ToArray(), 0, sendBuf.Count);
-                        cmdPipe.Flush();
-                    }).Wait(30000);
-                    if (result)
-                    {
-                        Application.DoEvents();
-                        retVal = ReceiveFromPipe(responsePipe);
-                        if (retVal.Length == 0)
-                        {
-                            retVal = new byte[] { 0 }; //false
-                        }
-                    }
-                    else
-                    {
-                        Debug.WriteLine("J2534 client pipe send failed");
-                    }
+                    //bool result = Task.Factory.StartNew(() =>
+                    //{
+                    cmdPipe.Write(sendBuf.ToArray(), 0, sendBuf.Count);
+                    cmdPipe.Flush();
+                    retVal = ReceiveFromPipe(responsePipe);
+                    //}).Wait(30000);
+                    /*                    if (result)
+                                        {
+                                            Application.DoEvents();
+                                            retVal = ReceiveFromPipe(responsePipe);
+                                            if (retVal.Length == 0)
+                                            {
+                                                retVal = new byte[] { 0 }; //false
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Debug.WriteLine("J2534 client pipe send failed");
+                                        }
                     Application.DoEvents();
+                    */
                 }
             }
             catch (Exception ex)

@@ -213,8 +213,9 @@ namespace UniversalPatcher
         /// </summary>
         public override bool SetTimeoutMilliseconds(int milliseconds)
         {
-           return this.SendAndVerify("STPTO " + milliseconds, "OK");
+            return this.SendAndVerify("STPTO " + milliseconds, "OK");
         }
+
 
         /// <summary>
         /// Send a message, do not expect a response.
@@ -266,6 +267,9 @@ namespace UniversalPatcher
                                     Debug.WriteLine("ELM tester present");
                                 }
                 */
+
+                builder.AppendFormat(", T:{0}", WriteTimeout.ToString());
+
                 bool getResponse = true;
                 if (responses < 1)
                 {

@@ -132,6 +132,9 @@ namespace UniversalPatcher
                 this.Supports4X = this.implementation.Supports4X;
                 this.LogDeviceType = this.implementation.LogDeviceType;
 
+                this.Port.SetReadTimeout(AppSettings.LoggerPortReadTimeout);
+                this.Port.SetWriteTimeout(AppSettings.LoggerPortWriteTimeout);
+
                 SetLoggingFilter();
                 this.Connected = true;
                 return true;
@@ -153,16 +156,18 @@ namespace UniversalPatcher
 
         public override void SetWriteTimeout(int timeout)
         {
-            Port.SetWriteTimeout(timeout + 1000);
+            //Port.SetWriteTimeout(timeout + AppSettings.LoggerPortWriteTimeout);
+            //Port.SetWriteTimeout(timeout + 1000);
             //Port.SetTimeout(timeout + 1000);
-            //this.implementation.SetTimeoutMilliseconds(timeout);
+            this.implementation.SetWriteTimeoutMilliseconds(timeout);
         }
 
         public override void SetReadTimeout(int timeout)
         {
-            Port.SetTimeout(timeout + 1000);
+            //Port.SetTimeout(timeout + AppSettings.LoggerPortReadTimeout);
             //Port.SetTimeout(timeout + 1000);
             this.implementation.SetTimeoutMilliseconds(timeout);
+            //this.implementation.SetReadTimeoutMilliseconds(timeout);
         }
 
         /// <summary>

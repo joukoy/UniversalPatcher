@@ -58,6 +58,14 @@ namespace UniversalPatcher
             LoggerStartJ2534Process = true;
             LoggerJ2534ProcessVisible = false;
             LoggerAutoDisconnect = true;
+            LoggerActiveReadTimeout = TimeoutScenario.DataLogging3;
+            LoggerActiveReadTimeoutObdlink = TimeoutScenario.Minimum;
+            LoggerPassiveReadTimeout = TimeoutScenario.DataLogging4;
+            LoggerLoggingWriteTimeout = 100;
+            LoggerReadTimeout = 100;
+            LoggerWriteTimeout = 100;
+            LoggerPortReadTimeout = 1000;
+            LoggerPortWriteTimeout = 1000;
 
             TableEditorFont = new SerializableFont(new Font("Consolas", 8));
             TableExplorerFont = new SerializableFont(new Font("Arial", 8));
@@ -204,6 +212,15 @@ namespace UniversalPatcher
         public bool LoggerStartJ2534Process { get; set; }
         public bool LoggerJ2534ProcessVisible { get; set; }
         public bool LoggerAutoDisconnect { get; set; }
+        public TimeoutScenario LoggerActiveReadTimeout { get; set; }
+        public TimeoutScenario LoggerActiveReadTimeoutObdlink { get; set; }
+        public TimeoutScenario LoggerPassiveReadTimeout { get; set; }
+        public int LoggerLoggingWriteTimeout { get; set; }
+        public int LoggerPortReadTimeout { get; set; }
+        public int LoggerPortWriteTimeout { get; set; }
+        public int LoggerReadTimeout { get; set; }
+        public int LoggerWriteTimeout { get; set; }
+
 
         public SerializableFont TableEditorFont { get; set; }
         public SerializableFont TableExplorerFont { get; set; }

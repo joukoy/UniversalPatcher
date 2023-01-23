@@ -3148,6 +3148,11 @@ namespace UniversalPatcher
         {
             try
             {
+                if (compareFiles == null || compareFiles.Count == 0)
+                {
+                    Debug.WriteLine("No files in comparelist");
+                    return;
+                }
                 CompareFile selectedFile = compareFiles[currentFile];
                 TableData td = selectedFile.tableInfos[0].td;
                 PcmFile pcm = selectedFile.pcm;
@@ -3170,7 +3175,7 @@ namespace UniversalPatcher
                     else
                         return;
                 }
-                CleanUp();
+                //CleanUp();
                 PrepareTable(pcm, tunerSelectedTables[currentTunerTd], null, tuner.currentBin);
                 LoadTable();
                 SetUpDownToolTips();

@@ -78,6 +78,23 @@ namespace UniversalPatcher
             this.label3 = new System.Windows.Forms.Label();
             this.dataGridLogData = new System.Windows.Forms.DataGridView();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.groupTimeouts = new System.Windows.Forms.GroupBox();
+            this.comboOBDLinkTimeout = new System.Windows.Forms.ComboBox();
+            this.label47 = new System.Windows.Forms.Label();
+            this.comboActiveTimeout = new System.Windows.Forms.ComboBox();
+            this.comboPassiveTimeout = new System.Windows.Forms.ComboBox();
+            this.numWriteTimeout = new System.Windows.Forms.NumericUpDown();
+            this.numReadTimeout = new System.Windows.Forms.NumericUpDown();
+            this.label46 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label40 = new System.Windows.Forms.Label();
+            this.numPortWriteTimeout = new System.Windows.Forms.NumericUpDown();
+            this.numPortReadTimeout = new System.Windows.Forms.NumericUpDown();
+            this.numLoggingWriteTimeout = new System.Windows.Forms.NumericUpDown();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
+            this.label41 = new System.Windows.Forms.Label();
             this.groupHWSettings = new System.Windows.Forms.GroupBox();
             this.categories = new System.Windows.Forms.GroupBox();
             this.j2534RadioButton = new System.Windows.Forms.RadioButton();
@@ -94,6 +111,7 @@ namespace UniversalPatcher
             this.label4 = new System.Windows.Forms.Label();
             this.btnConnect2 = new System.Windows.Forms.Button();
             this.groupAdvanced = new System.Windows.Forms.GroupBox();
+            this.chkAutoDisconnect = new System.Windows.Forms.CheckBox();
             this.chkJ2534ServerVisible = new System.Windows.Forms.CheckBox();
             this.chkStartJ2534Process = new System.Windows.Forms.CheckBox();
             this.chkFilterParamsByOS = new System.Windows.Forms.CheckBox();
@@ -111,6 +129,7 @@ namespace UniversalPatcher
             this.radioParamRam = new System.Windows.Forms.RadioButton();
             this.radioParamStd = new System.Windows.Forms.RadioButton();
             this.dataGridPidNames = new System.Windows.Forms.DataGridView();
+            this.btnQueyPid2 = new System.Windows.Forms.Button();
             this.btnQueryPid = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.dataGridLogProfile = new System.Windows.Forms.DataGridView();
@@ -301,8 +320,8 @@ namespace UniversalPatcher
             this.timerWaitCANQuery = new System.Windows.Forms.Timer(this.components);
             this.timerPlayback = new System.Windows.Forms.Timer(this.components);
             this.timerDeviceStatus = new System.Windows.Forms.Timer(this.components);
-            this.btnQueyPid2 = new System.Windows.Forms.Button();
-            this.chkAutoDisconnect = new System.Windows.Forms.CheckBox();
+            this.btnResetTimeouts = new System.Windows.Forms.Button();
+            this.btnApplyTimeouts = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -311,6 +330,12 @@ namespace UniversalPatcher
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
             this.tabSettings.SuspendLayout();
+            this.groupTimeouts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numWriteTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numReadTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numPortWriteTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numPortReadTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numLoggingWriteTimeout)).BeginInit();
             this.groupHWSettings.SuspendLayout();
             this.categories.SuspendLayout();
             this.j2534OptionsGroupBox.SuspendLayout();
@@ -696,6 +721,7 @@ namespace UniversalPatcher
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupTimeouts);
             this.tabSettings.Controls.Add(this.groupHWSettings);
             this.tabSettings.Controls.Add(this.btnConnect2);
             this.tabSettings.Controls.Add(this.groupAdvanced);
@@ -705,6 +731,189 @@ namespace UniversalPatcher
             this.tabSettings.TabIndex = 3;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // groupTimeouts
+            // 
+            this.groupTimeouts.Controls.Add(this.btnApplyTimeouts);
+            this.groupTimeouts.Controls.Add(this.btnResetTimeouts);
+            this.groupTimeouts.Controls.Add(this.comboOBDLinkTimeout);
+            this.groupTimeouts.Controls.Add(this.label47);
+            this.groupTimeouts.Controls.Add(this.comboActiveTimeout);
+            this.groupTimeouts.Controls.Add(this.comboPassiveTimeout);
+            this.groupTimeouts.Controls.Add(this.numWriteTimeout);
+            this.groupTimeouts.Controls.Add(this.label40);
+            this.groupTimeouts.Controls.Add(this.numReadTimeout);
+            this.groupTimeouts.Controls.Add(this.label46);
+            this.groupTimeouts.Controls.Add(this.label45);
+            this.groupTimeouts.Controls.Add(this.numPortWriteTimeout);
+            this.groupTimeouts.Controls.Add(this.numPortReadTimeout);
+            this.groupTimeouts.Controls.Add(this.numLoggingWriteTimeout);
+            this.groupTimeouts.Controls.Add(this.label44);
+            this.groupTimeouts.Controls.Add(this.label43);
+            this.groupTimeouts.Controls.Add(this.label42);
+            this.groupTimeouts.Controls.Add(this.label41);
+            this.groupTimeouts.Location = new System.Drawing.Point(375, 178);
+            this.groupTimeouts.Name = "groupTimeouts";
+            this.groupTimeouts.Size = new System.Drawing.Size(391, 254);
+            this.groupTimeouts.TabIndex = 35;
+            this.groupTimeouts.TabStop = false;
+            this.groupTimeouts.Text = "Timeouts";
+            // 
+            // comboOBDLinkTimeout
+            // 
+            this.comboOBDLinkTimeout.FormattingEnabled = true;
+            this.comboOBDLinkTimeout.Location = new System.Drawing.Point(214, 50);
+            this.comboOBDLinkTimeout.Name = "comboOBDLinkTimeout";
+            this.comboOBDLinkTimeout.Size = new System.Drawing.Size(121, 21);
+            this.comboOBDLinkTimeout.TabIndex = 17;
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(13, 50);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(173, 16);
+            this.label47.TabIndex = 16;
+            this.label47.Text = "Active mode read, OBDLink";
+            // 
+            // comboActiveTimeout
+            // 
+            this.comboActiveTimeout.FormattingEnabled = true;
+            this.comboActiveTimeout.Location = new System.Drawing.Point(214, 25);
+            this.comboActiveTimeout.Name = "comboActiveTimeout";
+            this.comboActiveTimeout.Size = new System.Drawing.Size(121, 21);
+            this.comboActiveTimeout.TabIndex = 15;
+            // 
+            // comboPassiveTimeout
+            // 
+            this.comboPassiveTimeout.FormattingEnabled = true;
+            this.comboPassiveTimeout.Location = new System.Drawing.Point(214, 73);
+            this.comboPassiveTimeout.Name = "comboPassiveTimeout";
+            this.comboPassiveTimeout.Size = new System.Drawing.Size(121, 21);
+            this.comboPassiveTimeout.TabIndex = 14;
+            // 
+            // numWriteTimeout
+            // 
+            this.numWriteTimeout.Location = new System.Drawing.Point(214, 147);
+            this.numWriteTimeout.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numWriteTimeout.Name = "numWriteTimeout";
+            this.numWriteTimeout.Size = new System.Drawing.Size(120, 22);
+            this.numWriteTimeout.TabIndex = 13;
+            // 
+            // numReadTimeout
+            // 
+            this.numReadTimeout.Location = new System.Drawing.Point(214, 122);
+            this.numReadTimeout.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numReadTimeout.Name = "numReadTimeout";
+            this.numReadTimeout.Size = new System.Drawing.Size(120, 22);
+            this.numReadTimeout.TabIndex = 12;
+            // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(13, 146);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(104, 16);
+            this.label46.TabIndex = 11;
+            this.label46.Text = "Script/DTC write";
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(13, 121);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(105, 16);
+            this.label45.TabIndex = 10;
+            this.label45.Text = "Script/DTC read";
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(13, 73);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(126, 16);
+            this.label40.TabIndex = 0;
+            this.label40.Text = "Passive mode read";
+            // 
+            // numPortWriteTimeout
+            // 
+            this.numPortWriteTimeout.Location = new System.Drawing.Point(214, 199);
+            this.numPortWriteTimeout.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numPortWriteTimeout.Name = "numPortWriteTimeout";
+            this.numPortWriteTimeout.Size = new System.Drawing.Size(120, 22);
+            this.numPortWriteTimeout.TabIndex = 9;
+            // 
+            // numPortReadTimeout
+            // 
+            this.numPortReadTimeout.Location = new System.Drawing.Point(214, 173);
+            this.numPortReadTimeout.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numPortReadTimeout.Name = "numPortReadTimeout";
+            this.numPortReadTimeout.Size = new System.Drawing.Size(120, 22);
+            this.numPortReadTimeout.TabIndex = 8;
+            // 
+            // numLoggingWriteTimeout
+            // 
+            this.numLoggingWriteTimeout.Location = new System.Drawing.Point(214, 98);
+            this.numLoggingWriteTimeout.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numLoggingWriteTimeout.Name = "numLoggingWriteTimeout";
+            this.numLoggingWriteTimeout.Size = new System.Drawing.Size(120, 22);
+            this.numLoggingWriteTimeout.TabIndex = 7;
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(13, 198);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(62, 16);
+            this.label44.TabIndex = 4;
+            this.label44.Text = "Port write";
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(13, 172);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(63, 16);
+            this.label43.TabIndex = 3;
+            this.label43.Text = "Port read";
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(13, 95);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(87, 16);
+            this.label42.TabIndex = 2;
+            this.label42.Text = "Logging write";
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(13, 25);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(114, 16);
+            this.label41.TabIndex = 1;
+            this.label41.Text = "Active mode read";
             // 
             // groupHWSettings
             // 
@@ -877,11 +1086,21 @@ namespace UniversalPatcher
             this.groupAdvanced.Controls.Add(this.comboResponseMode);
             this.groupAdvanced.Location = new System.Drawing.Point(375, 4);
             this.groupAdvanced.Name = "groupAdvanced";
-            this.groupAdvanced.Size = new System.Drawing.Size(318, 223);
+            this.groupAdvanced.Size = new System.Drawing.Size(392, 166);
             this.groupAdvanced.TabIndex = 34;
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced settings";
             this.groupAdvanced.Enter += new System.EventHandler(this.groupAdvanced_Enter);
+            // 
+            // chkAutoDisconnect
+            // 
+            this.chkAutoDisconnect.AutoSize = true;
+            this.chkAutoDisconnect.Location = new System.Drawing.Point(9, 95);
+            this.chkAutoDisconnect.Name = "chkAutoDisconnect";
+            this.chkAutoDisconnect.Size = new System.Drawing.Size(259, 20);
+            this.chkAutoDisconnect.TabIndex = 39;
+            this.chkAutoDisconnect.Text = "Auto disconnect if device disconnected";
+            this.chkAutoDisconnect.UseVisualStyleBackColor = true;
             // 
             // chkJ2534ServerVisible
             // 
@@ -1106,6 +1325,16 @@ namespace UniversalPatcher
             this.dataGridPidNames.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridPidNames.Size = new System.Drawing.Size(364, 401);
             this.dataGridPidNames.TabIndex = 1;
+            // 
+            // btnQueyPid2
+            // 
+            this.btnQueyPid2.Location = new System.Drawing.Point(1, 349);
+            this.btnQueyPid2.Name = "btnQueyPid2";
+            this.btnQueyPid2.Size = new System.Drawing.Size(33, 27);
+            this.btnQueyPid2.TabIndex = 5;
+            this.btnQueyPid2.Text = "? <";
+            this.btnQueyPid2.UseVisualStyleBackColor = true;
+            this.btnQueyPid2.Click += new System.EventHandler(this.btnQueyPid2_Click);
             // 
             // btnQueryPid
             // 
@@ -3127,25 +3356,25 @@ namespace UniversalPatcher
             this.timerDeviceStatus.Interval = 3000;
             this.timerDeviceStatus.Tick += new System.EventHandler(this.timerDeviceStatus_Tick);
             // 
-            // btnQueyPid2
+            // btnResetTimeouts
             // 
-            this.btnQueyPid2.Location = new System.Drawing.Point(1, 349);
-            this.btnQueyPid2.Name = "btnQueyPid2";
-            this.btnQueyPid2.Size = new System.Drawing.Size(33, 27);
-            this.btnQueyPid2.TabIndex = 5;
-            this.btnQueyPid2.Text = "? <";
-            this.btnQueyPid2.UseVisualStyleBackColor = true;
-            this.btnQueyPid2.Click += new System.EventHandler(this.btnQueyPid2_Click);
+            this.btnResetTimeouts.Location = new System.Drawing.Point(16, 225);
+            this.btnResetTimeouts.Name = "btnResetTimeouts";
+            this.btnResetTimeouts.Size = new System.Drawing.Size(75, 23);
+            this.btnResetTimeouts.TabIndex = 18;
+            this.btnResetTimeouts.Text = "Reset";
+            this.btnResetTimeouts.UseVisualStyleBackColor = true;
+            this.btnResetTimeouts.Click += new System.EventHandler(this.btnResetTimeouts_Click);
             // 
-            // chkAutoDisconnect
+            // btnApplyTimeouts
             // 
-            this.chkAutoDisconnect.AutoSize = true;
-            this.chkAutoDisconnect.Location = new System.Drawing.Point(9, 95);
-            this.chkAutoDisconnect.Name = "chkAutoDisconnect";
-            this.chkAutoDisconnect.Size = new System.Drawing.Size(259, 20);
-            this.chkAutoDisconnect.TabIndex = 39;
-            this.chkAutoDisconnect.Text = "Auto disconnect if device disconnected";
-            this.chkAutoDisconnect.UseVisualStyleBackColor = true;
+            this.btnApplyTimeouts.Location = new System.Drawing.Point(259, 227);
+            this.btnApplyTimeouts.Name = "btnApplyTimeouts";
+            this.btnApplyTimeouts.Size = new System.Drawing.Size(75, 23);
+            this.btnApplyTimeouts.TabIndex = 19;
+            this.btnApplyTimeouts.Text = "Apply";
+            this.btnApplyTimeouts.UseVisualStyleBackColor = true;
+            this.btnApplyTimeouts.Click += new System.EventHandler(this.btnApplyTimeouts_Click);
             // 
             // frmLogger
             // 
@@ -3172,6 +3401,13 @@ namespace UniversalPatcher
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).EndInit();
             this.tabSettings.ResumeLayout(false);
+            this.groupTimeouts.ResumeLayout(false);
+            this.groupTimeouts.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numWriteTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numReadTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numPortWriteTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numPortReadTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numLoggingWriteTimeout)).EndInit();
             this.groupHWSettings.ResumeLayout(false);
             this.categories.ResumeLayout(false);
             this.categories.PerformLayout();
@@ -3495,6 +3731,25 @@ namespace UniversalPatcher
         private System.Windows.Forms.Timer timerDeviceStatus;
         private System.Windows.Forms.Button btnQueyPid2;
         private System.Windows.Forms.CheckBox chkAutoDisconnect;
+        private System.Windows.Forms.GroupBox groupTimeouts;
+        private System.Windows.Forms.NumericUpDown numPortWriteTimeout;
+        private System.Windows.Forms.NumericUpDown numPortReadTimeout;
+        private System.Windows.Forms.NumericUpDown numLoggingWriteTimeout;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.NumericUpDown numWriteTimeout;
+        private System.Windows.Forms.NumericUpDown numReadTimeout;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.ComboBox comboActiveTimeout;
+        private System.Windows.Forms.ComboBox comboPassiveTimeout;
+        private System.Windows.Forms.ComboBox comboOBDLinkTimeout;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.Button btnResetTimeouts;
+        private System.Windows.Forms.Button btnApplyTimeouts;
     }
 }
 

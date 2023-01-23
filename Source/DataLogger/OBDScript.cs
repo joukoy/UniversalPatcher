@@ -293,8 +293,11 @@ namespace UniversalPatcher
                     OBDMessage oMsg = new OBDMessage(msg);
                     oMsg.SecondaryProtocol = SecondaryProtocol;
                     device.ClearMessageQueue();
+                    Debug.WriteLine("Sending message at " + DateTime.Now.ToString("HH.mm.ss.ffff"));
                     device.SendMessage(oMsg, responses);
+                    Debug.WriteLine("Done sending message at " + DateTime.Now.ToString("HH.mm.ss.ffff"));
                     Thread.Sleep(globaldelay);
+                    Debug.WriteLine("globaldelay done at " + DateTime.Now.ToString("HH.mm.ss.ffff"));
                     DateTime starttime = DateTime.Now;
                     for (int r = 0; r < responses;)
                     {

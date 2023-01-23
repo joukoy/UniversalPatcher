@@ -47,15 +47,6 @@ namespace UniversalPatcher
             loggerPipe = new NamedPipeServerStream(ProcessId.ToString() + "j2534loggerpipe", PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.WriteThrough);
         }
 
-        private void SendToPipe(NamedPipeServerStream pipe, byte[] msg)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                pipe.Write(msg, 0, msg.Length);
-                pipe.Flush();
-            }).Wait(5000);
-        }
-
         private byte[] ReceiveFromPipe(NamedPipeServerStream pipe)
         {
             List<byte> msg = new List<byte>();
@@ -131,7 +122,7 @@ namespace UniversalPatcher
                                         break;
                                     case j2534Command.Initialize:
                                         string initparms = Encoding.ASCII.GetString(data);
-                                        J2534InitParameters j2534Init = (J2534InitParameters)Helpers.XmlDeserializeFromString<J2534InitParameters>(initparms);
+                                        J2534InitParameters j2534Init = Helpers.XmlDeserializeFromString<J2534InitParameters>(initparms);
                                         //Logger("Filters: " + j2534Init.PassFilters);
                                         //Logger("Initializing...");
                                         Application.DoEvents();
@@ -142,7 +133,6 @@ namespace UniversalPatcher
                                             running = false;
                                             retVal = failMessage;
                                         }
-                                        Logger("Initialized");
                                         Application.DoEvents();
                                         break;
                                     case j2534Command.SetWriteTimeout:
@@ -228,7 +218,7 @@ namespace UniversalPatcher
                                         retVal = failMessage;
                                         break;
                                 }
-                                SendToPipe(responsePipeServer, retVal);
+                                responsePipeServer.Write(retVal, 0, retVal.Length);
                             }
                             catch (Exception ex)
                             {
@@ -240,7 +230,10 @@ namespace UniversalPatcher
                                 {
                                     break;
                                 }
-                                SendToPipe(responsePipeServer, failMessage);
+                                else
+                                {
+                                    responsePipeServer.Write(failMessage, 0, failMessage.Length);
+                                }
                             }
                         }
                     }
@@ -254,8 +247,8 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 Logger("Error, j2534Server line " + line + ": " + ex.Message);
             }
+            Logger("J2534 Server Quits");
             Application.DoEvents();
-            Logger("Server Quits");
             Thread.Sleep(5000);
             Environment.Exit(0);
         }

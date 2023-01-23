@@ -120,6 +120,7 @@ namespace UniversalPatcher
             chkJConsole4x.Enter += ChkConsole4x_Enter;
             txtJConsolePassFilters.Enter += TxtPassFilters_Enter;
             txtJConsolePassFilters2.Enter += TxtPassFilters_Enter;
+
         }
 
         private void TxtPassFilters_Enter(object sender, EventArgs e)
@@ -898,6 +899,16 @@ namespace UniversalPatcher
 
                 LoadPorts(true);
                 LoadJPorts();
+                for (int i = 1; i <= 4; i++)
+                {
+                    string scenario = "DataLogging" + i.ToString();
+                    comboActiveTimeout.Items.Add(scenario);
+                    comboPassiveTimeout.Items.Add(scenario);
+                    comboOBDLinkTimeout.Items.Add(scenario);
+                }
+                comboActiveTimeout.Items.Add("Minimum");
+                comboPassiveTimeout.Items.Add("Minimum");
+                comboOBDLinkTimeout.Items.Add("Minimum");
 
                 //chkAdvanced.Checked = AppSettings.LoggerShowAdvanced;
                 chkVPWFilters.Checked = AppSettings.LoggerUseFilters;
@@ -912,6 +923,15 @@ namespace UniversalPatcher
                 chkStartJ2534Process.Checked = AppSettings.LoggerStartJ2534Process;
                 chkJ2534ServerVisible.Checked = AppSettings.LoggerJ2534ProcessVisible;
                 chkAutoDisconnect.Checked = AppSettings.LoggerAutoDisconnect;
+
+                comboActiveTimeout.Text = AppSettings.LoggerActiveReadTimeout.ToString();
+                comboOBDLinkTimeout.Text = AppSettings.LoggerActiveReadTimeoutObdlink.ToString();
+                comboPassiveTimeout.Text = AppSettings.LoggerPassiveReadTimeout.ToString();
+                numLoggingWriteTimeout.Value = AppSettings.LoggerLoggingWriteTimeout;
+                numReadTimeout.Value = AppSettings.LoggerReadTimeout;
+                numWriteTimeout.Value = AppSettings.LoggerWriteTimeout;
+                numPortReadTimeout.Value = AppSettings.LoggerPortReadTimeout;
+                numPortWriteTimeout.Value = AppSettings.LoggerPortWriteTimeout;
 
                 if (AppSettings.LoggerConsoleFont != null)
                 {
@@ -1652,6 +1672,7 @@ namespace UniversalPatcher
             AppSettings.LoggerStartJ2534Process = chkStartJ2534Process.Checked;
             AppSettings.LoggerJ2534ProcessVisible = chkJ2534ServerVisible.Checked;
             AppSettings.LoggerAutoDisconnect = chkAutoDisconnect.Checked;
+
             AppSettings.Save();
 
         }
@@ -1721,7 +1742,7 @@ namespace UniversalPatcher
                         datalogger.LogDevice = new J2534Client(dev);
                     else
                         datalogger.LogDevice = new J2534Device(dev);
-                    datalogger.LogDevice.SetReadTimeout(100);
+                    //datalogger.LogDevice.SetReadTimeout(100);
                 }
                 datalogger.LogDevice.MsgReceived += LogDevice_DTC_MsgReceived;
                 if (chkEnableConsole.Checked)
@@ -1741,10 +1762,13 @@ namespace UniversalPatcher
                 oscript = new OBDScript(datalogger.LogDevice, datalogger.Receiver);
                 datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
 
+                datalogger.LogDevice.SetReadTimeout(AppSettings.LoggerReadTimeout);
+                datalogger.LogDevice.SetWriteTimeout(AppSettings.LoggerWriteTimeout);
+
                 if (serialRadioButton.Checked)
                 {
-                    datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
-                    datalogger.LogDevice.SetReadTimeout(2000);
+                    //datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                    //datalogger.LogDevice.SetReadTimeout(2000);
                 }
                 string os = "";
                 if (ShowOs)
@@ -1928,7 +1952,8 @@ namespace UniversalPatcher
                     return false;
                 }
                 jConsole.JDevice.Enable4xReadWrite = chkJConsole4x.Checked;
-                jConsole.JDevice.SetReadTimeout(100);
+                jConsole.JDevice.SetReadTimeout(AppSettings.LoggerReadTimeout);
+                jConsole.JDevice.SetWriteTimeout(AppSettings.LoggerWriteTimeout);
                 labelJconsoleConnected.Text = "Connected";
                 jConsole.Connected = true;
                 SaveSettings();
@@ -3517,6 +3542,7 @@ namespace UniversalPatcher
         private void queryCANDevicesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //CANqueryCounter = 0;
+            ConnectJConsole();
             canQuietResponses = 0;
             canDeviceResponses = -1;
             lastResponseTime = DateTime.Now;
@@ -3540,7 +3566,7 @@ namespace UniversalPatcher
                 if (canDeviceResponses < 0)
                 {
                     canDeviceResponses = 0;
-                    CANQuery.Query(jConsole.JDevice,jConsole.Receiver);
+                    CANQuery.Query(jConsole.JDevice);
                 }
                 else
                 {
@@ -4126,6 +4152,34 @@ namespace UniversalPatcher
                 PidConfig pc = (PidConfig)dataGridLogProfile.Rows[selectedRows[r]].DataBoundItem;
                 QueryPid(pc);
             }
+        }
+
+        private void btnResetTimeouts_Click(object sender, EventArgs e)
+        {
+            comboActiveTimeout.Text = "DataLogging3";
+            comboOBDLinkTimeout.Text = "Minimum";
+            comboPassiveTimeout.Text = "DataLogging4";
+            numLoggingWriteTimeout.Value = 100;
+            numReadTimeout.Value = 100;
+            numWriteTimeout.Value = 100;
+            numPortReadTimeout.Value = 1000;
+            numPortWriteTimeout.Value = 1000;
+
+        }
+
+        private void btnApplyTimeouts_Click(object sender, EventArgs e)
+        {
+            AppSettings.LoggerActiveReadTimeout = (TimeoutScenario)Enum.Parse(typeof(TimeoutScenario), comboActiveTimeout.Text);
+            AppSettings.LoggerPassiveReadTimeout = (TimeoutScenario)Enum.Parse(typeof(TimeoutScenario), comboPassiveTimeout.Text);
+            AppSettings.LoggerActiveReadTimeoutObdlink = (TimeoutScenario)Enum.Parse(typeof(TimeoutScenario), comboOBDLinkTimeout.Text);
+            AppSettings.LoggerLoggingWriteTimeout = (int)numLoggingWriteTimeout.Value;
+            AppSettings.LoggerReadTimeout = (int)numReadTimeout.Value;
+            AppSettings.LoggerWriteTimeout = (int)numWriteTimeout.Value;
+            AppSettings.LoggerPortReadTimeout = (int)numPortReadTimeout.Value;
+            AppSettings.LoggerPortWriteTimeout = (int)numPortWriteTimeout.Value;
+
+            AppSettings.Save();
+
         }
     }
 }
