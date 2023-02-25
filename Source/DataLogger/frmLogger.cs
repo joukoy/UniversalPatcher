@@ -21,6 +21,7 @@ using J2534DotNet;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Globalization;
 using static UniversalPatcher.ExtensionMethods;
+using System.Runtime.InteropServices;
 
 //using FTD2XX_NET;
 //using SAE.J2534;
@@ -70,11 +71,73 @@ namespace UniversalPatcher
         private frmLoggerGraphics GraphicsForm;
         private frmHistogram HstForm;
         private ToolTip ScrollTip = new ToolTip();
-        private PcmFile PCM;
+        public PcmFile PCM;
         private string CurrentPortName;
+        private string jConsoleFilters;
+        private string jConsoleFilters2;
+        private int ScrollPos1 = -1;
+        private int ScrollPos2 = -1;
+
+        [DllImport("user32.dll")]
+        public static extern bool LockWindowUpdate(IntPtr hWndLock);
+
+        [DllImport("user32.dll")]
+        static extern int SetScrollPos(IntPtr hWnd, int nBar, int nPos, bool bRedraw);
+
+        [DllImport("user32.dll")]
+        public static extern int GetScrollPos(IntPtr hwnd, int nBar);
+
+        [DllImport("User32.Dll", EntryPoint = "PostMessageA")]
+        static extern bool PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+
+        [DllImport("user32.dll")]
+        static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref Point lParam);
+
+        [DllImport("user32")]
+        static extern int GetScrollInfo(IntPtr hwnd, int nBar, ref SCROLLINFO scrollInfo);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        public struct SCROLLINFO
+        {
+            public int cbSize;
+            public int fMask;
+            public int min;
+            public int max;
+            public int nPage;
+            public int nPos;
+            public int nTrackPos;
+        }
+
+        const int WM_USER = 0x400;
+        const int EM_GETSCROLLPOS = WM_USER + 221;
+        const int EM_SETSCROLLPOS = WM_USER + 222;
+        const int EM_SCROLL = 0xB5;
+        const int SB_LINEDOWN = 1;
+        const int SB_LINEUP = 0;
+        private uint WM_VSCROLL = 0x115;
+
+        private class LogText
+        {
+            public LogText() { }
+            public LogText(Color Color, string LogTxt) 
+            {
+                this.color = Color;
+                this.Txt = LogTxt;
+            }
+            public Color color { get; set; }
+            public string Txt { get; set; }
+        }
+        List<LogText> logTexts;
+        int lastLogRowCount = 0;
+        List<LogText> jconsolelogTexts;
+        int jconsolelastLogRowCount = 0;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
+            logTexts = new List<LogText>();
+            jconsolelogTexts = new List<LogText>();
             datalogger = new DataLogger();
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             if (!string.IsNullOrEmpty(datalogger.OS))
@@ -118,17 +181,188 @@ namespace UniversalPatcher
             txtJConsoleSend.KeyPress += TxtJConsoleSend_KeyPress;
             chkConsole4x.Enter += ChkConsole4x_Enter;
             chkJConsole4x.Enter += ChkConsole4x_Enter;
-            txtJConsolePassFilters.Enter += TxtPassFilters_Enter;
-            txtJConsolePassFilters2.Enter += TxtPassFilters_Enter;
-
+            chkVpwBuffered.Checked = true;
+            chkJconsoleUsebuffer.Checked = true;
+            if (PCM != null && !string.IsNullOrEmpty(PCM.OS))
+            {
+                FilterPidsByBin(PCM);
+            }
         }
 
-        private void TxtPassFilters_Enter(object sender, EventArgs e)
+        private void RichVPWmessages_KeyDown(object sender, KeyEventArgs e)
         {
-            ToolTip tt = new ToolTip();
-            string ttTxt = "Usage: mask:pattern:type | mask:pattern:type\r\nType: Pass | Block | Flow";
-            TextBox txt = (TextBox)sender;
-            tt.Show(ttTxt, txt, 3000);
+            try
+            {
+                int index = richVPWmessages.SelectionStart;
+                int line = richVPWmessages.GetLineFromCharIndex(index);
+                int lastline = GetRichBoxDisplayableLines(richVPWmessages);
+                if (e.KeyCode == Keys.Down && line >= lastline && vScrollBarVpwConsole.Value < vScrollBarVpwConsole.Maximum)
+                {
+                    vScrollBarVpwConsole.Value++;
+                    VPWConsoleScroll();
+                }
+                else if (e.KeyCode == Keys.Up && line == 0 && vScrollBarVpwConsole.Value > 0)
+                {
+                    vScrollBarVpwConsole.Value--;
+                    VPWConsoleScroll();
+                    richVPWmessages.Select(index, 0);
+                }
+                else if (e.KeyCode == Keys.PageDown)                    
+                {
+                    if (vScrollBarVpwConsole.Value < (vScrollBarVpwConsole.Maximum - lastline))
+                        vScrollBarVpwConsole.Value += lastline;
+                    else
+                        vScrollBarVpwConsole.Value = vScrollBarVpwConsole.Maximum;
+                    VPWConsoleScroll();
+                }
+                else if (e.KeyCode == Keys.PageUp) 
+                {
+                    if (vScrollBarVpwConsole.Value > lastline)
+                        vScrollBarVpwConsole.Value -= lastline;
+                    else
+                        vScrollBarVpwConsole.Value = 0;
+                    VPWConsoleScroll();
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void RichJConsole_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                int index = richJConsole.SelectionStart;
+                int line = richJConsole.GetLineFromCharIndex(index);
+                int lastline = GetRichBoxDisplayableLines(richJConsole);
+                if (e.KeyCode == Keys.Down && line >= lastline && vScrollBarJConsole.Value < vScrollBarJConsole.Maximum)
+                {
+                    vScrollBarJConsole.Value++;
+                    JConsoleScroll();
+                }
+                else if (e.KeyCode == Keys.Up && line == 0 && vScrollBarJConsole.Value > 0)
+                {
+                    vScrollBarJConsole.Value--;
+                    JConsoleScroll();
+                    richJConsole.Select(index, 0);
+                }
+                else if (e.KeyCode == Keys.PageDown) 
+                {
+                    if (vScrollBarJConsole.Value < (vScrollBarJConsole.Maximum - lastline))
+                        vScrollBarJConsole.Value += lastline;
+                    else
+                        vScrollBarJConsole.Value = vScrollBarJConsole.Maximum;
+                    JConsoleScroll();
+                }
+                else if (e.KeyCode == Keys.PageUp) 
+                {
+                    if (vScrollBarJConsole.Value > lastline)
+                        vScrollBarJConsole.Value -= lastline;
+                    else
+                        vScrollBarJConsole.Value = 0;
+                    JConsoleScroll();
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void RichVPWmessages_MouseWheel(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (e.Delta < 0) 
+                {
+                    if (vScrollBarVpwConsole.Value < vScrollBarVpwConsole.Maximum)
+                    {
+                        vScrollBarVpwConsole.Value++;
+                        VPWConsoleScroll();
+                    }
+                }
+                else 
+                {
+                    if (vScrollBarVpwConsole.Value > 0)
+                    {
+                        vScrollBarVpwConsole.Value--;
+                        VPWConsoleScroll();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void RichJConsole_MouseWheel(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (e.Delta < 0) 
+                {
+                    if (vScrollBarJConsole.Value < vScrollBarJConsole.Maximum)
+                    {
+                        vScrollBarJConsole.Value++;
+                        JConsoleScroll();
+                    }
+                }
+                else
+                {
+                    if (vScrollBarJConsole.Value > 0)
+                    {
+                        vScrollBarJConsole.Value--;
+                        JConsoleScroll();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void ShowLogText(Color Color, string LogTxt)
+        {
+            logTexts.Add(new LogText(Color, LogTxt));
+            if (!chkVpwBuffered.Checked)
+            {
+                richVPWmessages.SelectionColor = Color;
+                richVPWmessages.AppendText(LogTxt);
+            }
+        }
+
+        private void ShowJconsoleLogText(Color Color, string LogTxt)
+        {
+            jconsolelogTexts.Add(new LogText(Color, LogTxt));
+            if (!chkJconsoleUsebuffer.Checked)
+            {
+                richJConsole.SelectionColor = Color;
+                richJConsole.AppendText(LogTxt);
+            }
         }
 
         private void ChkConsole4x_Enter(object sender, EventArgs e)
@@ -171,19 +405,25 @@ namespace UniversalPatcher
                         return;
                     }
                     MessageReceiver receiver = jConsole.Receiver;
+                    joscript.SecondaryProtocol = radioJConsoleProto2.Checked;
                     if (radioJConsoleProto2.Checked)
                     {
                         receiver = jConsole.Receiver2;
-                        joscript.SecondaryProtocol = true;
                     }
+                    joscript.stopscript = false;
                     HandleConsoleCommand(jConsole.JDevice, receiver, txtJConsoleSend.Text, joscript);
                     e.Handled = true;
-                    richJConsole.AppendText(Environment.NewLine);
+                    //richJConsole.AppendText(Environment.NewLine);
                 }
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -241,16 +481,17 @@ namespace UniversalPatcher
                             if (chkVpwConsoleDevTimestampConvert.Checked)
                                 sMsg.Append("[" + new DateTime((long)e.Msg.DevTimeStamp).ToString("HH:mm:ss.fff") + "] ");
                             else
-                                sMsg.Append("[" + e.Msg.DevTimeStamp.ToString() + "] ");
+                                sMsg.Append("[" + e.Msg.DevTimeStamp.ToString("D20") + "] ");
                         }
                     }
                     //sMsg.Append(" Diff: " + new DateTime((long)(e.Msg.TimeStamp - (ulong)e.Msg.DevTimeStamp)).ToString("yyyy MM dd HH:mm:ss.fff") + "| ");
-                    sMsg.Append(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                    sMsg.Append(e.Msg.ToString() + Environment.NewLine);
 
                     if (chkVpwToScreen.Checked)
                     {
-                        richVPWmessages.SelectionColor = Color.DarkGreen;
-                        richVPWmessages.AppendText(sMsg.ToString());
+                        //richVPWmessages.SelectionColor = Color.DarkGreen;
+                        //richVPWmessages.AppendText(sMsg.ToString());
+                        ShowLogText(Color.DarkGreen, sMsg.ToString());
                     }
                     if (chkVpwToFile.Checked && vpwConsoleStream != null)
                     {
@@ -288,7 +529,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -311,18 +557,20 @@ namespace UniversalPatcher
                     {
                         logTxt.Append("[" + e.Msg.DevTimeStamp.ToString("D20") + "] ");
                     }
-                    logTxt.Append(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                    logTxt.Append(e.Msg.ToString() + Environment.NewLine);
                     if (chkJconsoleToScreen.Checked)
                     {
                         if (e.Msg.SecondaryProtocol)
                         {
-                            richJConsole.SelectionColor = Color.Aquamarine;
+                            //richJConsole.SelectionColor = Color.Aquamarine;
+                            ShowJconsoleLogText(Color.Aquamarine, logTxt.ToString());
                         }
                         else
                         {
-                            richJConsole.SelectionColor = Color.DarkGreen;
+                            //richJConsole.SelectionColor = Color.DarkGreen;
+                            ShowJconsoleLogText(Color.DarkGreen, logTxt.ToString());
                         }
-                        richJConsole.AppendText(logTxt.ToString());
+                        //richJConsole.AppendText(logTxt.ToString());
                     }
                     if (chkJConsoleToFile.Checked && jConsoleStream != null)
                     {
@@ -374,7 +622,8 @@ namespace UniversalPatcher
                                     if (cDev != null)
                                     {
                                         canDevs.Add(cDev);
-                                        richJConsole.AppendText(cDev.ToString() + Environment.NewLine);
+                                        //richJConsole.AppendText(cDev.ToString() + Environment.NewLine);
+                                        ShowJconsoleLogText(Color.Black, cDev.ToString() + Environment.NewLine);
                                     }
                                 }
                             }
@@ -384,7 +633,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -406,14 +660,15 @@ namespace UniversalPatcher
                             if (chkVpwConsoleDevTimestampConvert.Checked)
                                 logTxt.Append("[" + new DateTime((long)e.Msg.DevTimeStamp).ToString("HH:mm:ss.fff") + "] ");
                             else
-                                logTxt.Append("[" + e.Msg.DevTimeStamp.ToString() + "] ");
+                                logTxt.Append("[" + e.Msg.DevTimeStamp.ToString("D20") + "] ");
                         }
                     }
-                    logTxt.Append(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                    logTxt.Append(e.Msg.ToString() + Environment.NewLine);
                     if (chkVpwToScreen.Checked)
                     {
-                        richVPWmessages.SelectionColor = Color.Red;
-                        richVPWmessages.AppendText(logTxt.ToString());
+                        //richVPWmessages.SelectionColor = Color.Red;
+                        //richVPWmessages.AppendText(logTxt.ToString());
+                        ShowLogText(Color.Red, logTxt.ToString());
                     }
                     if (chkVpwToFile.Checked && vpwConsoleStream != null)
                     {
@@ -423,7 +678,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -445,18 +705,20 @@ namespace UniversalPatcher
                     {
                         logTxt.Append( "[" + e.Msg.DevTimeStamp.ToString("D20") + "] ");
                     }
-                    logTxt.Append(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                    logTxt.Append(e.Msg.ToString() + Environment.NewLine);
                     if (chkJconsoleToScreen.Checked)
                     {
                         if (e.Msg.SecondaryProtocol)
                         {
-                            richJConsole.SelectionColor = Color.Purple;
+                            //richJConsole.SelectionColor = Color.Purple;
+                            ShowJconsoleLogText(Color.Purple, logTxt.ToString());
                         }
                         else
                         {
-                            richJConsole.SelectionColor = Color.Red;
+                            //richJConsole.SelectionColor = Color.Red;
+                            ShowJconsoleLogText(Color.Red, logTxt.ToString());
                         }
-                        richJConsole.AppendText(logTxt.ToString());
+                        //richJConsole.AppendText(logTxt.ToString());
                     }
                     if (chkJConsoleToFile.Checked && jConsoleStream != null)
                     {
@@ -474,7 +736,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -494,6 +761,7 @@ namespace UniversalPatcher
                     {
                         return;
                     }
+                    oscript.stopscript = false;
                     HandleConsoleCommand(datalogger.LogDevice, datalogger.Receiver, txtSendBus.Text, oscript);
                     e.Handled = true;
                     richVPWmessages.AppendText(Environment.NewLine);
@@ -588,18 +856,30 @@ namespace UniversalPatcher
 
         private void SerialPortService_PortsChanged(object sender, PortsChangedArgs e)
         {
-            Debug.WriteLine("Ports modified. Current port: " + CurrentPortName);
-            //if (chkFTDI.Checked)
+            try
             {
-                this.Invoke((MethodInvoker)delegate ()
+                Debug.WriteLine("Ports modified. Current port: " + CurrentPortName);
+                //if (chkFTDI.Checked)
                 {
-                    LoadPorts(false);
-                    if (chkFTDI.Checked && datalogger.Connected && serialRadioButton.Checked && !comboSerialPort.Items.Contains(CurrentPortName))
+                    this.Invoke((MethodInvoker)delegate ()
                     {
-                        LoggerBold("FTDI Device disconnected");
-                        Disconnect();
-                    }
-                });
+                        LoadPorts(false);
+                        if (chkFTDI.Checked && datalogger.Connected && serialRadioButton.Checked && !comboSerialPort.Items.Contains(CurrentPortName))
+                        {
+                            LoggerBold("FTDI Device disconnected");
+                            Disconnect();
+                        }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -703,29 +983,36 @@ namespace UniversalPatcher
                 comboSerialPort.Items.Clear();
                 if (chkFTDI.Checked)
                 {
-                    string[] ftdiDevs = FTDI_Finder.FindFtdiDevices().ToArray();
-                    for (int retry = 0; retry < 30; retry++)
+                    string[] ftdiDevs = new string[0];
+                    Task.Factory.StartNew(() =>
                     {
-                        if (!ftdiDevs.Contains("Unknown: Failure"))
-                        {
-                            Debug.WriteLine("FTDI list ok after " + retry.ToString() + " retries");
-                            break; 
-                        }
-                        Thread.Sleep(retry * 100);
                         ftdiDevs = FTDI_Finder.FindFtdiDevices().ToArray();
-                    }
-                    if (ftdiDevs.Length > 0)
-                    {
-                        comboSerialPort.Items.AddRange(ftdiDevs);
-                        if (LoadDefaults && !string.IsNullOrEmpty(AppSettings.LoggerFTDIPort) && comboSerialPort.Items.Contains(AppSettings.LoggerFTDIPort))
-                            comboSerialPort.Text = AppSettings.LoggerFTDIPort;
-                        else
-                            comboSerialPort.Text = comboSerialPort.Items[0].ToString();
-                    }
-                    else
-                    {
-                        comboSerialPort.Text = "";
-                    }
+                        for (int retry = 0; retry < 100; retry++)
+                        {
+                            if (!ftdiDevs.Contains("Unknown: Failure"))
+                            {
+                                Debug.WriteLine("FTDI list ok after " + retry.ToString() + " retries");
+                                break;
+                            }
+                            Thread.Sleep(retry * 100);
+                            ftdiDevs = FTDI_Finder.FindFtdiDevices().ToArray();
+                        }
+                        this.Invoke((MethodInvoker)delegate ()
+                        {
+                            if (ftdiDevs.Length > 0)
+                            {
+                                comboSerialPort.Items.AddRange(ftdiDevs);
+                                if (LoadDefaults && !string.IsNullOrEmpty(AppSettings.LoggerFTDIPort) && comboSerialPort.Items.Contains(AppSettings.LoggerFTDIPort))
+                                    comboSerialPort.Text = AppSettings.LoggerFTDIPort;
+                                else
+                                    comboSerialPort.Text = comboSerialPort.Items[0].ToString();
+                            }
+                            else
+                            {
+                                comboSerialPort.Text = "";
+                            }
+                        });
+                    });
                 }
                 else
                 {
@@ -788,7 +1075,7 @@ namespace UniversalPatcher
 
                 comboJ2534Init.Items.Clear();
                 comboJ2534Init2.Items.Clear();
-                foreach (string item in Enum.GetNames(typeof(LoggerUtils.KInit)))
+                foreach (string item in Enum.GetNames(typeof(KInit)))
                 {
                     comboJ2534Init.Items.Add(item);
                     comboJ2534Init2.Items.Add(item);
@@ -899,16 +1186,6 @@ namespace UniversalPatcher
 
                 LoadPorts(true);
                 LoadJPorts();
-                for (int i = 1; i <= 4; i++)
-                {
-                    string scenario = "DataLogging" + i.ToString();
-                    comboActiveTimeout.Items.Add(scenario);
-                    comboPassiveTimeout.Items.Add(scenario);
-                    comboOBDLinkTimeout.Items.Add(scenario);
-                }
-                comboActiveTimeout.Items.Add("Minimum");
-                comboPassiveTimeout.Items.Add("Minimum");
-                comboOBDLinkTimeout.Items.Add("Minimum");
 
                 //chkAdvanced.Checked = AppSettings.LoggerShowAdvanced;
                 chkVPWFilters.Checked = AppSettings.LoggerUseFilters;
@@ -923,15 +1200,8 @@ namespace UniversalPatcher
                 chkStartJ2534Process.Checked = AppSettings.LoggerStartJ2534Process;
                 chkJ2534ServerVisible.Checked = AppSettings.LoggerJ2534ProcessVisible;
                 chkAutoDisconnect.Checked = AppSettings.LoggerAutoDisconnect;
-
-                comboActiveTimeout.Text = AppSettings.LoggerActiveReadTimeout.ToString();
-                comboOBDLinkTimeout.Text = AppSettings.LoggerActiveReadTimeoutObdlink.ToString();
-                comboPassiveTimeout.Text = AppSettings.LoggerPassiveReadTimeout.ToString();
-                numLoggingWriteTimeout.Value = AppSettings.LoggerLoggingWriteTimeout;
-                numReadTimeout.Value = AppSettings.LoggerReadTimeout;
-                numWriteTimeout.Value = AppSettings.LoggerWriteTimeout;
-                numPortReadTimeout.Value = AppSettings.LoggerPortReadTimeout;
-                numPortWriteTimeout.Value = AppSettings.LoggerPortWriteTimeout;
+                numRetryDelay.Value = AppSettings.RetryWriteDelay;
+                numRetryTimes.Value = AppSettings.RetryWriteTimes;
 
                 if (AppSettings.LoggerConsoleFont != null)
                 {
@@ -1696,10 +1966,7 @@ namespace UniversalPatcher
                 //btnGetVINCode.Enabled = true;
                 if (!disconnect)
                 {
-                    //if (datalogger.AnalyzerRunning || chkConsoleAutorefresh.Checked)
-                    { 
-                        datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
-                    }
+                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false,datalogger.AnalyzerRunning);
                 }               
             }
             catch (Exception ex)
@@ -1739,7 +2006,7 @@ namespace UniversalPatcher
                     J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
                     //passThru.LoadLibrary(dev);
                     if (chkStartJ2534Process.Checked)
-                        datalogger.LogDevice = new J2534Client(dev);
+                        datalogger.LogDevice = new J2534Client(j2534DeviceList.SelectedIndex);
                     else
                         datalogger.LogDevice = new J2534Device(dev);
                     //datalogger.LogDevice.SetReadTimeout(100);
@@ -1759,11 +2026,11 @@ namespace UniversalPatcher
                     datalogger.LogDevice.Dispose();
                     return false;
                 }
-                oscript = new OBDScript(datalogger.LogDevice, datalogger.Receiver);
+                oscript = new OBDScript(datalogger.LogDevice);
                 datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
 
-                datalogger.LogDevice.SetReadTimeout(AppSettings.LoggerReadTimeout);
-                datalogger.LogDevice.SetWriteTimeout(AppSettings.LoggerWriteTimeout);
+                datalogger.LogDevice.SetReadTimeout(AppSettings.TimeoutReceive);
+                datalogger.LogDevice.SetWriteTimeout(AppSettings.TimeoutScriptWrite);
 
                 if (serialRadioButton.Checked)
                 {
@@ -1791,12 +2058,13 @@ namespace UniversalPatcher
                 }
                 if (StartReceiver)
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
+                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false,datalogger.AnalyzerRunning);
                 }
                 Application.DoEvents();
                 groupHWSettings.Enabled = false;
                 j2534OptionsGroupBox.Enabled = false;
                 timerDeviceStatus.Enabled = true;
+                timerShowLogTxt.Interval = AppSettings.LoggerConsoleDisplayInterval;
                 return true;
             }
             catch (Exception ex)
@@ -1843,7 +2111,7 @@ namespace UniversalPatcher
             }
             initParameters.PerodicMsg = txtJ2534PeriodicMsg.Text;
             initParameters.PeriodicInterval = (int)numJ2534PeriodicMsgInterval.Value;
-            initParameters.PassFilters = txtJConsolePassFilters.Text;
+            initParameters.PassFilters = jConsoleFilters;
             return initParameters;
         }
 
@@ -1878,7 +2146,9 @@ namespace UniversalPatcher
             }
             initParameters.PerodicMsg = txtJ2534PeriodicMsg2.Text;
             initParameters.PeriodicInterval = (int)numJ2534PeriodicMsgInterval2.Value;
-            initParameters.PassFilters = txtJConsolePassFilters2.Text;
+            initParameters.PassFilters = jConsoleFilters2;
+            initParameters.Secondary = true;
+            initParameters.UsePrimaryChannel = chkUsePrimaryChannel.Checked;
             return initParameters;
         }
 
@@ -1898,7 +2168,7 @@ namespace UniversalPatcher
             txtJ2534InitBytes.Text = initParameters.InitBytes;
             txtJ2534PeriodicMsg.Text = initParameters.PerodicMsg;
             numJ2534PeriodicMsgInterval.Value = initParameters.PeriodicInterval;
-            txtJConsolePassFilters.Text = initParameters.PassFilters;
+            jConsoleFilters = initParameters.PassFilters;
         }
 
         private void LoadJ2534InitParameters2(J2534InitParameters initParameters)
@@ -1917,7 +2187,7 @@ namespace UniversalPatcher
             txtJ2534InitBytes2.Text = initParameters.InitBytes;
             txtJ2534PeriodicMsg2.Text = initParameters.PerodicMsg;
             numJ2534PeriodicMsgInterval2.Value = initParameters.PeriodicInterval;
-            txtJConsolePassFilters2.Text = initParameters.PassFilters;
+            jConsoleFilters2 = initParameters.PassFilters;
         }
 
         private bool ConnectJConsole()
@@ -1940,7 +2210,7 @@ namespace UniversalPatcher
                 initParameters = CreateJ2534InitParameters();
                 J2534DotNet.J2534Device dev = jDevList[comboJ2534DLL.SelectedIndex];
                 if (AppSettings.LoggerStartJ2534Process)
-                    jConsole.JDevice = new J2534Client(dev);
+                    jConsole.JDevice = new J2534Client(comboJ2534DLL.SelectedIndex);
                 else
                     jConsole.JDevice = new J2534Device(dev);
                 //jConsole.JDevice.SetProtocol(protocol, baudrate, flag);
@@ -1952,17 +2222,17 @@ namespace UniversalPatcher
                     return false;
                 }
                 jConsole.JDevice.Enable4xReadWrite = chkJConsole4x.Checked;
-                jConsole.JDevice.SetReadTimeout(AppSettings.LoggerReadTimeout);
-                jConsole.JDevice.SetWriteTimeout(AppSettings.LoggerWriteTimeout);
+                jConsole.JDevice.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
                 labelJconsoleConnected.Text = "Connected";
                 jConsole.Connected = true;
                 SaveSettings();
-                jConsole.Receiver.StartReceiveLoop(jConsole.JDevice, null);
-                joscript = new OBDScript(jConsole.JDevice, jConsole.Receiver);
+                jConsole.Receiver.StartReceiveLoop(jConsole.JDevice, null, false, false);
+                joscript = new OBDScript(jConsole.JDevice);
                 Application.DoEvents();
                 //groupJ2534Options.Enabled = false;
                 btnJConsoleConnectSecondProtocol.Enabled = true;
                 timerDeviceStatus.Enabled = true;
+                timerJconsoleShowLogText.Interval = AppSettings.LoggerConsoleDisplayInterval;
                 return true;
             }
             catch (Exception ex)
@@ -2222,7 +2492,7 @@ namespace UniversalPatcher
                 datalogger.AnalyzerRunning = true;
                 if (!datalogger.Receiver.ReceiveLoopRunning)
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
+                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false, true);
                 }
                 //groupDTC.Enabled = false;
             }
@@ -2359,7 +2629,7 @@ namespace UniversalPatcher
             {
                 this.Invoke((MethodInvoker)delegate ()
                 {
-                    if (tabControl1.SelectedTab != tabDTC)
+                    if (e.Msg == null)
                     {
                         return;
                     }
@@ -2893,11 +3163,20 @@ namespace UniversalPatcher
                 return;
             }
             Logger("Sending file: " + fName);
-            oscript = new OBDScript(datalogger.LogDevice, datalogger.Receiver);
-            btnStopScript.Enabled = true;
-            oscript.UploadScript(fName);
-            btnStopScript.Enabled = false;
-            Logger("Done");
+            oscript = new OBDScript(datalogger.LogDevice);
+            datalogger.LogDevice.ClearMessageBuffer();
+            datalogger.Receiver.SetReceiverPaused(true);
+            Task.Factory.StartNew(() =>
+            {
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    btnStopScript.Enabled = true;
+                    oscript.UploadScript(fName);
+                    btnStopScript.Enabled = false;
+                    Logger("Done");
+                    datalogger.Receiver.SetReceiverPaused(false);
+                });
+            });
         }
 
         private void btnDtcCustom_Click(object sender, EventArgs e)
@@ -3010,17 +3289,17 @@ namespace UniversalPatcher
 
         private void comboJ2534Init_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboJ2534Init.Text  == LoggerUtils.KInit.FastInit_J1979.ToString())
+            if (comboJ2534Init.Text  == KInit.FastInit_J1979.ToString())
             {
                 txtJ2534InitBytes.Text = "C1 33 F1 81";
             }
-            else if (comboJ2534Init.Text == LoggerUtils.KInit.FastInit_GMDelco.ToString())
+            else if (comboJ2534Init.Text == KInit.FastInit_GMDelco.ToString())
             {
                 txtJ2534InitBytes.Text = "81 11 F1 81";
                 txtJ2534PeriodicMsg.Text = "80 11 F1 01 3E";
                 //0x80, 0x11, 0xF1, 0x01, 0x3E
             }
-            else if (comboJ2534Init.Text == LoggerUtils.KInit.FastInit_ME7_5.ToString())
+            else if (comboJ2534Init.Text == KInit.FastInit_ME7_5.ToString())
             {
                 txtJ2534InitBytes.Text = "81 01 F1 81";
                 txtJ2534PeriodicMsg.Text = "02 3E 01";
@@ -3052,7 +3331,7 @@ namespace UniversalPatcher
             string FileName = SelectFile("Select J2534 settings", XmlFilter,defName);
             if (FileName.Length == 0)
                 return;
-            Logger("Loading file: " + FileName);
+            //Logger("Loading file: " + FileName);
             J2534InitParameters JSettings = LoadJ2534Settings(FileName);
             LoadJ2534InitParameters(JSettings);
             AppSettings.LoggerJ2534SettingsFile = FileName;
@@ -3092,12 +3371,35 @@ namespace UniversalPatcher
                 return;
             }
             Logger("Sending file: " + fName);
-            joscript = new OBDScript(jConsole.JDevice, jConsole.Receiver);
+            joscript = new OBDScript(jConsole.JDevice);
             joscript.SecondaryProtocol = radioJConsoleProto2.Checked;
-            btnJconsoleStopScript.Enabled = true;
-            joscript.UploadScript(fName);
-            btnJconsoleStopScript.Enabled = false;
-            Logger("Done");
+            jConsole.JDevice.ClearMessageBuffer();
+            if (radioJConsoleProto2.Checked)
+            {
+                jConsole.Receiver2.SetReceiverPaused(true);
+            }
+            else
+            {
+                jConsole.Receiver.SetReceiverPaused(true);
+            }
+            Task.Factory.StartNew(() =>
+            {
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    btnJconsoleStopScript.Enabled = true;
+                    joscript.UploadScript(fName);
+                    btnJconsoleStopScript.Enabled = false;
+                    Logger("Done");
+                    if (radioJConsoleProto2.Checked)
+                    {
+                        jConsole.Receiver2.SetReceiverPaused(false);
+                    }
+                    else
+                    {
+                        jConsole.Receiver.SetReceiverPaused(false);
+                    }
+                });
+            });
         }
 
         private void numJConsoleScriptDelay_ValueChanged(object sender, EventArgs e)
@@ -3322,17 +3624,19 @@ namespace UniversalPatcher
         {
             if (jConsole.Connected2)
             {
-                return;
+                //return;
             }
             J2534InitParameters JSettings = CreateJ2534InitParameters2();
             if (jConsole.JDevice.ConnectSecondaryProtocol(JSettings))
             {
                 groupJConsoleProto.Enabled = true;
+                if (!jConsole.Connected2)
+                {
+                    jConsole.Receiver2 = new MessageReceiver();
+                    jConsole.Receiver2.StartReceiveLoop(jConsole.JDevice, jConsole.port, true, false);
+                }
                 jConsole.Connected2 = true;
-                jConsole.Receiver2 = new MessageReceiver();
-                jConsole.Receiver2.SecondaryProtocol = true;
-                jConsole.Receiver2.StartReceiveLoop(jConsole.JDevice,jConsole.port);
-                btnJConsoleConnectSecondProtocol.Enabled = false;
+                //btnJConsoleConnectSecondProtocol.Enabled = false;
             }
         }
 
@@ -3388,16 +3692,16 @@ namespace UniversalPatcher
 
         private void comboJ2534Init2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboJ2534Init2.Text == LoggerUtils.KInit.FastInit_J1979.ToString())
+            if (comboJ2534Init2.Text == KInit.FastInit_J1979.ToString())
             {
                 txtJ2534InitBytes2.Text = "C1 33 F1 81";
             }
-            else if (comboJ2534Init2.Text == LoggerUtils.KInit.FastInit_GMDelco.ToString())
+            else if (comboJ2534Init2.Text == KInit.FastInit_GMDelco.ToString())
             {
                 txtJ2534InitBytes2.Text = "81 11 F1 81";
                 txtJ2534PeriodicMsg2.Text = "80 11 F1 01 3E";
             }
-            else if (comboJ2534Init2.Text == LoggerUtils.KInit.FastInit_ME7_5.ToString())
+            else if (comboJ2534Init2.Text == KInit.FastInit_ME7_5.ToString())
             {
                 txtJ2534InitBytes2.Text = "81 01 F1 81";
                 txtJ2534PeriodicMsg2.Text = "02 3E 01";
@@ -3485,28 +3789,13 @@ namespace UniversalPatcher
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            richJConsole.AppendText("Default" + Environment.NewLine);
-            richJConsole.SelectionColor = Color.Aquamarine;
-            richJConsole.AppendText("Aquamarine" + Environment.NewLine);
-            richJConsole.SelectionColor = Color.DarkGreen;
-            richJConsole.AppendText("DarkGreen" + Environment.NewLine);
-
-            richJConsole.SelectionColor = Color.Red;
-            richJConsole.AppendText("Red" + Environment.NewLine);
-            richJConsole.SelectionColor = Color.Purple;
-            richJConsole.AppendText("Purple" + Environment.NewLine);
-
-        }
-
         private void btnJconsoleConfigFilters_Click(object sender, EventArgs e)
         {
             if (jConsole == null || jConsole.JDevice == null)
             {
                 return;
             }
-            jConsole.JDevice.SetupFilters(txtJConsolePassFilters.Text, false);
+            jConsole.JDevice.SetupFilters(jConsoleFilters, false);
         }
 
         private void btnJconsoleConfigFilters2_Click(object sender, EventArgs e)
@@ -3515,7 +3804,7 @@ namespace UniversalPatcher
             {
                 return;
             }
-            jConsole.JDevice.SetupFilters(txtJConsolePassFilters2.Text, true);
+            jConsole.JDevice.SetupFilters(jConsoleFilters2, true);
         }
 
         private void btnDateTimeHelp_Click(object sender, EventArgs e)
@@ -3541,16 +3830,23 @@ namespace UniversalPatcher
 
         private void queryCANDevicesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //CANqueryCounter = 0;
-            ConnectJConsole();
-            canQuietResponses = 0;
-            canDeviceResponses = -1;
-            lastResponseTime = DateTime.Now;
-            timerKeepBusQuiet.Enabled = true;
-            timerWaitCANQuery.Enabled = true;
-            canDevs = new List<CANDevice>();
-            dataGridCANDevices.DataSource = null;
-            jConsole.SetCANBusQuiet();
+            try
+            {
+                //CANqueryCounter = 0;
+                ConnectJConsole();
+                canQuietResponses = 0;
+                canDeviceResponses = -1;
+                lastResponseTime = DateTime.Now;
+                timerKeepBusQuiet.Enabled = true;
+                timerWaitCANQuery.Enabled = true;
+                canDevs = new List<CANDevice>();
+                dataGridCANDevices.DataSource = null;
+                jConsole.SetCANBusQuiet();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void timerKeepBusQuiet_Tick(object sender, EventArgs e)
@@ -3566,7 +3862,9 @@ namespace UniversalPatcher
                 if (canDeviceResponses < 0)
                 {
                     canDeviceResponses = 0;
+                    jConsole.Receiver.SetReceiverPaused(true);
                     CANQuery.Query(jConsole.JDevice);
+                    jConsole.Receiver.SetReceiverPaused(false);
                 }
                 else
                 {
@@ -3577,6 +3875,7 @@ namespace UniversalPatcher
                     dataGridCANDevices.Columns[1].DefaultCellStyle.Format = "X4";
                     dataGridCANDevices.Columns[2].DefaultCellStyle.Format = "X4";
                     dataGridCANDevices.Columns[3].DefaultCellStyle.Format = "X2";
+                    Logger("Done");
                 }
             }
         }
@@ -4154,32 +4453,413 @@ namespace UniversalPatcher
             }
         }
 
-        private void btnResetTimeouts_Click(object sender, EventArgs e)
+
+        private void label44_Click(object sender, EventArgs e)
         {
-            comboActiveTimeout.Text = "DataLogging3";
-            comboOBDLinkTimeout.Text = "Minimum";
-            comboPassiveTimeout.Text = "DataLogging4";
-            numLoggingWriteTimeout.Value = 100;
-            numReadTimeout.Value = 100;
-            numWriteTimeout.Value = 100;
-            numPortReadTimeout.Value = 1000;
-            numPortWriteTimeout.Value = 1000;
 
         }
 
-        private void btnApplyTimeouts_Click(object sender, EventArgs e)
+        private void txtJConsolePassFilters_TextChanged(object sender, EventArgs e)
         {
-            AppSettings.LoggerActiveReadTimeout = (TimeoutScenario)Enum.Parse(typeof(TimeoutScenario), comboActiveTimeout.Text);
-            AppSettings.LoggerPassiveReadTimeout = (TimeoutScenario)Enum.Parse(typeof(TimeoutScenario), comboPassiveTimeout.Text);
-            AppSettings.LoggerActiveReadTimeoutObdlink = (TimeoutScenario)Enum.Parse(typeof(TimeoutScenario), comboOBDLinkTimeout.Text);
-            AppSettings.LoggerLoggingWriteTimeout = (int)numLoggingWriteTimeout.Value;
-            AppSettings.LoggerReadTimeout = (int)numReadTimeout.Value;
-            AppSettings.LoggerWriteTimeout = (int)numWriteTimeout.Value;
-            AppSettings.LoggerPortReadTimeout = (int)numPortReadTimeout.Value;
-            AppSettings.LoggerPortWriteTimeout = (int)numPortWriteTimeout.Value;
 
+        }
+
+        private void btnTimeouts_Click(object sender, EventArgs e)
+        {
+            frmPropertyEditor fpe = new frmPropertyEditor();
+            UpatcherSettings tmpSettings = AppSettings.ShallowCopy();
+            fpe.resetToDefaultValueToolStripMenuItem.Enabled = true;
+            fpe.txtFilter.Text = "timeout";
+            fpe.LoadObject(tmpSettings);
+            if (fpe.ShowDialog() == DialogResult.OK)
+            {
+                AppSettings = tmpSettings;
+                AppSettings.Save();
+                Logger("Settings saved");
+            }
+
+        }
+
+        private void btnCanFilters_Click(object sender, EventArgs e)
+        {
+            frmPropertyEditor fpe = new frmPropertyEditor();
+            UpatcherSettings tmpSettings = AppSettings.ShallowCopy();
+            fpe.resetToDefaultValueToolStripMenuItem.Enabled = true;
+            fpe.txtFilter.Text = "loggerfilter";
+            fpe.LoadObject(tmpSettings);
+            if (fpe.ShowDialog() == DialogResult.OK)
+            {
+                AppSettings = tmpSettings;
+                AppSettings.Save();
+                Logger("Settings saved");
+            }
+        }
+
+        private void btnJconsoleEditFilters_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmJ2534Filters fjf = new frmJ2534Filters();
+                fjf.LoadTxtFilter(jConsoleFilters);
+                if (fjf.ShowDialog() == DialogResult.OK)
+                {
+                    jConsoleFilters = fjf.GetFinalFilter();
+                    JFilters jf = new JFilters(jConsoleFilters, 0);
+                    labelJconsoleFilters.Text = "Filters: (" + jf.MessageFilters.Count.ToString() + ")";
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnJconsoleEDitFilters2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmJ2534Filters fjf = new frmJ2534Filters();
+                fjf.LoadTxtFilter(jConsoleFilters2);
+                if (fjf.ShowDialog() == DialogResult.OK)
+                {
+                    jConsoleFilters2 = fjf.GetFinalFilter();
+                    JFilters jf = new JFilters(jConsoleFilters2, 0);
+                    labelJconsoleFilters2.Text = "Filters: (" + jf.MessageFilters.Count.ToString() + ")";
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void radioJConsoleProto2_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioJConsoleProto1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSaveProtocols_Click(object sender, EventArgs e)
+        {
+            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xmlx");
+            string FileName = SelectSaveFile(XmlXFilter, defName);
+            if (FileName.Length == 0)
+                return;
+            Logger("Saving file: " + FileName);
+            J2534InitParameters JSettings = CreateJ2534InitParameters();
+            J2534InitParameters JSettings2 = CreateJ2534InitParameters2();
+            List<J2534InitParameters> jsl = new List<J2534InitParameters>();
+            jsl.Add(JSettings);
+            jsl.Add(JSettings2);
+            LoggerUtils.SaveJ2534SettingsList(FileName, jsl);
+            AppSettings.LoggerJ2534SettingsFile = "";
+            AppSettings.LoggerJ2534SettingsFile2 = "";
             AppSettings.Save();
+            Logger("[OK]");
+        }
+
+        private void btnLoadProtocols_Click(object sender, EventArgs e)
+        {
+            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xmlx");
+            string FileName = SelectFile("Select J2534 settings", XmlXFilter, defName);
+            if (FileName.Length == 0)
+                return;
+            //Logger("Loading file: " + FileName);
+            List<J2534InitParameters> JSettings = LoadJ2534SettingsList(FileName);
+            LoadJ2534InitParameters(JSettings[0]);
+            LoadJ2534InitParameters2(JSettings[1]);
+            AppSettings.Save();
+            Logger("[OK]");
 
         }
+
+        private void timerShowLogTxt_Tick(object sender, EventArgs e)
+        {
+            if (lastLogRowCount == logTexts.Count)
+            {
+                return;
+            }
+
+            int displayableLines = GetRichBoxDisplayableLines(richVPWmessages);
+            int start = 0;
+            if (logTexts.Count > displayableLines)
+            {
+                start = logTexts.Count - displayableLines;
+            }
+            richVPWmessages.Text = "";
+            for (int i = start; i < logTexts.Count; i++)
+            {
+                richVPWmessages.SelectionColor = logTexts[i].color;
+                richVPWmessages.AppendText(logTexts[i].Txt);
+            }
+            if (logTexts.Count > displayableLines)
+            {
+                vScrollBarVpwConsole.Maximum = logTexts.Count - displayableLines;
+                vScrollBarVpwConsole.Value = logTexts.Count - displayableLines;
+            }
+            lastLogRowCount = logTexts.Count;
+        }
+
+        private void chkLogQueue_CheckedChanged(object sender, EventArgs e)
+        {
+            timerShowLogTxt.Enabled = chkVpwToScreen.Checked;
+        }
+
+        private void VPWConsoleScroll()
+        {
+            try
+            {
+                int start = vScrollBarVpwConsole.Value;
+                int displayableLines = GetRichBoxDisplayableLines(richVPWmessages);
+                if (logTexts.Count < displayableLines || (start + displayableLines) > logTexts.Count)
+                {
+                    return;
+                }
+                if ((start + displayableLines) > logTexts.Count)
+                {
+                    start = logTexts.Count - displayableLines;
+                }
+                LockWindowUpdate(richVPWmessages.Handle);
+                richVPWmessages.Text = "";
+                for (int i = start; i < (start + displayableLines); i++)
+                {
+                    richVPWmessages.SelectionColor = logTexts[i].color;
+                    richVPWmessages.AppendText(logTexts[i].Txt);
+                }
+                LockWindowUpdate(IntPtr.Zero);
+                Application.DoEvents();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void vScrollBarVpwConsole_Scroll(object sender, ScrollEventArgs e)
+        {
+            VPWConsoleScroll();
+        }
+
+        private void chkJconsoleToScreen_CheckedChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void timerJconsoleShowLogText_Tick(object sender, EventArgs e)
+        {
+            if (jconsolelastLogRowCount == jconsolelogTexts.Count)
+            {
+                return;
+            }
+            int displayableLines = GetRichBoxDisplayableLines(richJConsole);
+            int start = 0;
+            if (jconsolelogTexts.Count > displayableLines)
+            {
+                start = jconsolelogTexts.Count - displayableLines;
+            }
+            richJConsole.Text = "";
+            for (int i = start; i < jconsolelogTexts.Count; i++)
+            {
+                richJConsole.SelectionColor = jconsolelogTexts[i].color;
+                richJConsole.AppendText(jconsolelogTexts[i].Txt);
+            }
+            if (jconsolelogTexts.Count > displayableLines)
+            {
+                vScrollBarJConsole.Maximum = jconsolelogTexts.Count - displayableLines;
+                vScrollBarJConsole.Value = jconsolelogTexts.Count - displayableLines;
+            }
+            jconsolelastLogRowCount = jconsolelogTexts.Count;
+        }
+
+        private void JConsoleScroll()
+        {
+            try
+            {
+                int start = vScrollBarJConsole.Value;
+                int displayableLines = GetRichBoxDisplayableLines(richJConsole);
+                if (jconsolelogTexts.Count < displayableLines || (start + displayableLines) > jconsolelogTexts.Count)
+                {
+                    return;
+                }
+                LockWindowUpdate(richJConsole.Handle);
+                richJConsole.Text = "";
+                for (int i = start; i < (start + displayableLines); i++)
+                {
+                    richJConsole.SelectionColor = jconsolelogTexts[i].color;
+                    richJConsole.AppendText(jconsolelogTexts[i].Txt);
+                }
+                LockWindowUpdate(IntPtr.Zero);
+                Application.DoEvents();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void vScrollBarJConsole_Scroll(object sender, ScrollEventArgs e)
+        {
+            JConsoleScroll();
+        } 
+
+        private void saveVPWConsoleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string fName = SelectSaveFile(RtfFilter);
+                if (fName.Length == 0)
+                {
+                    return;
+                }
+                Logger("Saving to file " + fName, false);
+                RichTextBox rtb = new RichTextBox();
+                Application.DoEvents();
+                for (int r = 0; r < logTexts.Count; r++)
+                {
+                    if (r % 300 == 0)
+                    {
+                        Logger(".", false);
+                        Application.DoEvents();
+                    }
+                    rtb.SelectionColor = logTexts[r].color;
+                    rtb.AppendText(logTexts[r].Txt);
+                }
+                rtb.SaveFile(fName);
+                Logger(" [OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void saveJConsoleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string fName = SelectSaveFile(RtfFilter);
+                if (fName.Length == 0)
+                {
+                    return;
+                }
+                Logger("Saving to file " + fName, false);
+                Application.DoEvents();
+                RichTextBox rtb = new RichTextBox();
+                for (int r = 0; r < jconsolelogTexts.Count; r++)
+                {
+                    if (r%300 == 0)
+                    {
+                        Logger(".", false);
+                        Application.DoEvents();
+                    }
+                    rtb.SelectionColor = jconsolelogTexts[r].color;
+                    rtb.AppendText(jconsolelogTexts[r].Txt);
+                }
+                rtb.SaveFile(fName);
+                Logger(" [OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void chkVpwBuffered_CheckedChanged(object sender, EventArgs e)
+        {
+            timerShowLogTxt.Enabled = chkVpwBuffered.Checked;
+            vScrollBarVpwConsole.Visible = chkVpwBuffered.Checked;
+            if (chkVpwBuffered.Checked)
+            {
+                richVPWmessages.KeyDown += RichVPWmessages_KeyDown;
+                richVPWmessages.MouseWheel += RichVPWmessages_MouseWheel;
+            }
+            else
+            {
+                richVPWmessages.KeyDown -= RichVPWmessages_KeyDown;
+                richVPWmessages.MouseWheel -= RichVPWmessages_MouseWheel;
+                LockWindowUpdate(richVPWmessages.Handle);
+                richVPWmessages.Text = "";
+                for (int i = 0; i < logTexts.Count; i++)
+                {
+                    richVPWmessages.SelectionColor = logTexts[i].color;
+                    richVPWmessages.AppendText(logTexts[i].Txt);
+                }
+                LockWindowUpdate(IntPtr.Zero);
+            }
+        }
+
+        private void chkVpwToScreen_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkJconsoleUsebuffer_CheckedChanged(object sender, EventArgs e)
+        {
+            timerJconsoleShowLogText.Enabled = chkJconsoleUsebuffer.Checked;
+            vScrollBarJConsole.Visible = chkJconsoleUsebuffer.Checked;
+            if (chkJconsoleUsebuffer.Checked)
+            {
+                richJConsole.MouseWheel += RichJConsole_MouseWheel;
+                richJConsole.KeyDown += RichJConsole_KeyDown;
+            }
+            else
+            {
+                richJConsole.MouseWheel -= RichJConsole_MouseWheel;
+                richJConsole.KeyDown -= RichJConsole_KeyDown;
+                LockWindowUpdate(richJConsole.Handle);
+                richJConsole.Text = "";
+                for (int i = 0; i < jconsolelogTexts.Count; i++)
+                {
+                    richJConsole.SelectionColor = jconsolelogTexts[i].color;
+                    richJConsole.AppendText(jconsolelogTexts[i].Txt);
+                }
+                LockWindowUpdate(IntPtr.Zero);
+            }
+        }
+
+        private void numRetryTimes_ValueChanged(object sender, EventArgs e)
+        {
+            AppSettings.RetryWriteTimes = (int)numRetryTimes.Value;
+        }
+
+        private void numRetryDelay_ValueChanged(object sender, EventArgs e)
+        {
+            AppSettings.RetryWriteDelay = (int)numRetryDelay.Value;
+        }
+
     }
 }

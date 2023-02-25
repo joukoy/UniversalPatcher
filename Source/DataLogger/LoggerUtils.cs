@@ -18,7 +18,6 @@ public static class LoggerUtils
     public static List<OBDMessage> analyzerData { get; set; }
     public static Dictionary<byte, string> PcmResponses;
 
-
     public class Parameter
     {
         public Parameter()
@@ -81,6 +80,14 @@ public static class LoggerUtils
         Math = 4
     }
 
+    public enum FilterMode
+    {
+        None,
+        Analyzer,
+        Logging,
+        Custom
+    }
+
     public static readonly List<string> SupportedBaudRates = new List<string>
     {
         "300",
@@ -98,52 +105,240 @@ public static class LoggerUtils
         "921600"
     };
 
-    public enum KInit
+    public class MsgFilter
     {
-        None,
-        FastInit_GMDelco,
-        FastInit_ME7_5,
-        FastInit_J1979,
-        FiveBaudInit_J1979
+        private ProtocolID proto;
+        public MsgFilter()
+        {
+            this.FilterName = DateTime.Now.ToString("yy-MM-dd-HH-mm-ss");
+            FilterType = FilterType.PASS_FILTER;
+            Mask = new PassThruMsg();
+            Pattern = new PassThruMsg();
+            FlowControl = new PassThruMsg();
+        }
+        public MsgFilter(JFilter jf)
+        {
+            FromString(jf.Filter);
+            this.FilterName = jf.FilterName;
+        }
+        public MsgFilter(string Filters, ProtocolID Proto)
+        {
+            proto = Proto;
+            FromString(Filters);
+        }
+
+        public string FilterName { get; set; }
+        public FilterType FilterType { get; set; }
+        public PassThruMsg Mask { get; set; }
+        public PassThruMsg Pattern { get; set; }
+        public PassThruMsg FlowControl { get; set; }
+
+        private void FromString(string Filters)
+        {
+            Mask = new PassThruMsg();
+            Pattern = new PassThruMsg();
+            FlowControl = new PassThruMsg();
+            PassThruMsg pMsg;
+            string[] rows = Filters.Split(new char[] { '+', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string row in rows)
+            {
+                pMsg = new PassThruMsg();
+                pMsg.ProtocolID = proto;
+                string[] rowParts = row.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string setting in rowParts)
+                {
+                    string[] msgParts = setting.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (msgParts.Length == 2)
+                    {
+                        string prop = msgParts[0].ToLower().Trim();
+                        string val = msgParts[1].ToUpper().Trim();
+                        switch (prop)
+                        {
+                            case "type":
+                                if (Enum.TryParse<FilterType>(val, out FilterType f))
+                                {
+                                    FilterType = f;
+                                }
+                                break;
+                            case "name":
+                                FilterName = val;
+                                break;
+                            case "mask":
+                                pMsg.Data = val.Replace(" ", "").ToBytes();
+                                Mask = pMsg;
+                                break;
+                            case "pattern":
+                                pMsg.Data = val.Replace(" ", "").ToBytes();
+                                Pattern = pMsg;
+                                break;
+                            case "flowcontrol":
+                                pMsg.Data = val.Replace(" ", "").ToBytes();
+                                FlowControl = pMsg;
+                                break;
+                            case "rxstatus":
+                                pMsg.RxStatus = ParseRxStatus(val);
+                                break;
+                            case "txflags":
+                                pMsg.TxFlags = ParseTxFLags(val);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Type:" + FilterType.ToString());
+            if (FilterName != null)
+                sb.Append(",Name:" + FilterName);
+            sb.Append(Environment.NewLine);
+            if (Mask.Data == null || Mask.Data.Length == 0)
+                sb.Append("Mask:,");
+            else
+                sb.Append("Mask:" + BitConverter.ToString(Mask.Data).Replace("-", "") + ",");
+            sb.Append("RxStatus:" + Mask.RxStatus.ToString().Replace(",", "|") + ",");
+            sb.Append("TxFlags:" + Mask.TxFlags.ToString().Replace(",", "|") + Environment.NewLine);
+            if (Pattern.Data == null || Pattern.Data.Length == 0)
+                sb.Append("Pattern:,");
+            else
+                sb.Append("Pattern:" + BitConverter.ToString(Pattern.Data).Replace("-", "") + ",");
+            sb.Append("RxStatus:" + Pattern.RxStatus.ToString().Replace(",", "|") + ",");
+            sb.Append("TxFlags:" + Pattern.TxFlags.ToString().Replace(",", "|") + Environment.NewLine);
+            if (FilterType == FilterType.FLOW_CONTROL_FILTER && FlowControl.Data != null && FlowControl.Data.Length > 0)
+            {
+                sb.Append("FlowControl:" + BitConverter.ToString(FlowControl.Data).Replace("-", "") + ",");
+                sb.Append("RxStatus:" + FlowControl.RxStatus.ToString().Replace(",", "|") + ",");
+                sb.Append("TxFlags:" + FlowControl.TxFlags.ToString().Replace(",", "|") + Environment.NewLine);
+            }
+            return sb.ToString();
+        }
+
+    }
+    public class JFilter
+    {
+        public JFilter()
+        {
+            this.FilterName = DateTime.Now.ToString("yy-MM-dd-HH-mm-ss");
+        }
+        public JFilter(string Filter)
+        {
+            MsgFilter mf = new MsgFilter(Filter, ProtocolID.J1850VPW);
+            this.FilterName = mf.FilterName;
+            this.Filter = mf.ToString();
+        }
+        public JFilter(string FilterName, string Filter)
+        {
+            this.FilterName = FilterName;
+            this.Filter = Filter;
+        }
+        public string FilterName { get; set; }
+        public string Filter { get; set; }
     }
 
-    [Serializable]
-    public class J2534InitParameters
+    public class JFilters
     {
-        public J2534InitParameters()
+        public List<MsgFilter> MessageFilters { get; set; }
+
+        public JFilters()
         {
-            this.VPWLogger = false;
-            Protocol = ProtocolID.J1850VPW;
-            Baudrate = "";
-            Sconfigs = "";
-            Kinit = KInit.None;
-            InitBytes = "";
-            Connectflag = ConnectFlag.NONE;
-            PerodicMsg = "";
-            PassFilters = "";
+            MessageFilters = new List<MsgFilter>();
         }
-        public J2534InitParameters(bool VpwLogger)
+        public override string ToString()
         {
-            this.VPWLogger = VpwLogger;
-            Protocol = ProtocolID.J1850VPW;
-            Baudrate = "";
-            Sconfigs = "";
-            Kinit = KInit.None;
-            InitBytes = "";
-            Connectflag = ConnectFlag.NONE;
-            PerodicMsg = "";
-            PassFilters = "";
+            StringBuilder sb = new StringBuilder();
+            foreach (MsgFilter mf in MessageFilters)
+            {
+                sb.Append(mf.ToString() + Environment.NewLine);
+            }
+            return sb.ToString();
         }
-        public bool VPWLogger { get; set; }
-        public ProtocolID Protocol { get; set; }
-        public string Baudrate { get; set; }
-        public string Sconfigs { get; set; }
-        public KInit Kinit { get; set; }
-        public string InitBytes { get; set; }
-        public ConnectFlag Connectflag { get; set; }
-        public string PerodicMsg { get; set; }
-        public int PeriodicInterval { get; set; }
-        public string PassFilters { get; set; }
+
+        public JFilters(string Filters, ProtocolID Proto)
+        {
+            MessageFilters = new List<MsgFilter>();
+            PassThruMsg pMsg;
+            MsgFilter msgfilter = new MsgFilter();
+            string[] rows = Filters.Split(new char[] { '+','\n' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string row in rows)
+            {
+                pMsg = new PassThruMsg();
+                pMsg.ProtocolID = Proto;
+                string[] rowParts = row.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string setting in rowParts)
+                {
+                    string[] msgParts = setting.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (msgParts.Length == 2)
+                    {
+                        string prop = msgParts[0].ToLower().Trim();
+                        string val = msgParts[1].ToUpper().Trim();
+                        switch (prop)
+                        {
+                            case "type":
+                                if (Enum.TryParse<FilterType>(val, out FilterType f))
+                                {
+                                    msgfilter = new MsgFilter();
+                                    msgfilter.FilterType = f;
+                                    MessageFilters.Add(msgfilter);
+                                }
+                                break;
+                            case "name":
+                                msgfilter.FilterName = val;
+                                break;
+                            case "mask":
+                                pMsg.Data = val.Replace(" ", "").ToBytes();
+                                msgfilter.Mask = pMsg;
+                                break;
+                            case "pattern":
+                                pMsg.Data = val.Replace(" ", "").ToBytes();
+                                msgfilter.Pattern = pMsg;
+                                break;
+                            case "flowcontrol":
+                                pMsg.Data = val.Replace(" ", "").ToBytes();
+                                msgfilter.FlowControl = pMsg;
+                                break;
+                            case "rxstatus":
+                                pMsg.RxStatus = ParseRxStatus(val);
+                                break;
+                            case "txflags":
+                                pMsg.TxFlags = ParseTxFLags(val);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static TxFlag ParseTxFLags(string EnumString)
+    {
+        TxFlag retVal = TxFlag.NONE;
+        string[] txs = EnumString.Split('|');
+        foreach (string tx in txs)
+        {
+            if (Enum.TryParse<TxFlag>(tx, out TxFlag t))
+            {
+                retVal = retVal | t;
+            }
+        }
+        return retVal;
+    }
+
+    public static RxStatus ParseRxStatus(string EnumString)
+    {
+        RxStatus retVal = RxStatus.NONE;
+        string[] rxs = EnumString.Split('|');
+        foreach (string rx in rxs)
+        {
+            if (Enum.TryParse<RxStatus>(rx, out RxStatus r))
+            {
+                retVal = retVal | r;
+            }
+        }
+        return retVal;
     }
 
     public class Conversion
@@ -687,7 +882,31 @@ public static class LoggerUtils
             var frame = st.GetFrame(st.FrameCount - 1);
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
-            LoggerBold("Error, LoadProfile line " + line + ": " + ex.Message);
+            LoggerBold("Error, LoggerUtils line " + line + ": " + ex.Message);
+            return null;
+        }
+    }
+
+    public static List<J2534InitParameters> LoadJ2534SettingsList(string FileName)
+    {
+        try
+        {
+            Logger("Loading combined J2534 settings from file: " + FileName);
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<J2534InitParameters>));
+            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+            List<J2534InitParameters> JSettings = (List<J2534InitParameters>)reader.Deserialize(file);
+            file.Close();
+            Logger("[OK]");
+            return JSettings;
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, LoggerUtils line " + line + ": " + ex.Message);
             return null;
         }
     }
@@ -714,6 +933,27 @@ public static class LoggerUtils
         }
     }
 
+    public static void SaveJ2534SettingsList(string FileName, List<J2534InitParameters> JSettings)
+    {
+        try
+        {
+            using (FileStream stream = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<J2534InitParameters>));
+                writer.Serialize(stream, JSettings);
+                stream.Close();
+            }
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, SaveProfile line " + line + ": " + ex.Message + ", " + ex.InnerException);
+        }
+    }
 
     public static void initPcmResponses()
     {

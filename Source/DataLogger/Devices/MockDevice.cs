@@ -44,7 +44,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Initialize the device. It's just a no-op for this device type.
         /// </summary>
-        public override bool Initialize(int Baudrate, LoggerUtils.J2534InitParameters j2534Init)
+        public override bool Initialize(int Baudrate, J2534InitParameters j2534Init)
         {
             this.Connected = true;
             return true;

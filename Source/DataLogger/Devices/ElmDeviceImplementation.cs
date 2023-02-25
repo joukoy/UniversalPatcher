@@ -32,7 +32,7 @@ namespace UniversalPatcher
 
         protected readonly Action<OBDMessage> MessageSent;
 
-        protected readonly Func<int> getRecievedMessageCount;
+        protected readonly Func<int> getReceivedMessageCount;
 
         public DataLogger.LoggingDevType LogDeviceType { get; protected set; }
 
@@ -45,12 +45,12 @@ namespace UniversalPatcher
         /// </summary>
         public ElmDeviceImplementation(
             Action<OBDMessage> enqueue,
-            Func<int> getRecievedMessageCount,
+            Func<int> getReceivedMessageCount,
             IPort port,
             Action<OBDMessage> MessageSent)
         {
             this.enqueue = enqueue;
-            this.getRecievedMessageCount = getRecievedMessageCount;
+            this.getReceivedMessageCount = getReceivedMessageCount;
             this.Port = port;
             this.MessageSent = MessageSent;
             // These are only relevant for device initialization.
@@ -233,7 +233,7 @@ namespace UniversalPatcher
             // Use StringBuilder to collect the bytes.
             StringBuilder builtString = new StringBuilder();
 
-            //Build list of timestamps, one for each row
+            //Build list of timestamps, one for each row/message
             List<long> tStamps = new List<long>();
             bool newRow = true;
 
@@ -260,7 +260,7 @@ namespace UniversalPatcher
 
                 // Is it a CR
                 if (buffer.Data[0] == 13)
-                {                    
+                {
                     if (MultiLine)
                     {
                         //Handle multiple lines as one message
@@ -269,10 +269,10 @@ namespace UniversalPatcher
                         newRow = true;
                     }
                     else if (!string.IsNullOrEmpty(builtString.ToString()) && !string.IsNullOrWhiteSpace(builtString.ToString()))
-                    {
-                        //Receiving multiple messages at once, message/row without prompt
+                    {                        
                         break;
                     }
+
                 }
 
                 // Printable characters only.
@@ -317,7 +317,7 @@ namespace UniversalPatcher
                 //We have received prompt
                 Debug.WriteLine("Processresponse with prompt: " + rawResponse.Data);
                 OBDMessage response = new OBDMessage(new byte[0]);
-                response.ElmLine = rawResponse.Data;
+                //response.ElmLine = rawResponse.Data;
                 //if (rawResponse.Data.StartsWith("6C") || rawResponse.Data.StartsWith("8C"))
                   //  response = new OBDMessage(rawResponse.Data.ToBytes());
                 response.TimeStamp = (ulong)rawResponse.TimeStamp;

@@ -454,7 +454,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -648,7 +653,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
             RefreshPidList();
         }
@@ -798,7 +808,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger("Error: " + ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
 
         }
@@ -880,7 +895,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -916,7 +936,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
 
         }
@@ -1161,7 +1186,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger("Error: " + ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
 
         }
@@ -1187,7 +1217,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger("Error: " + ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1230,7 +1265,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1248,7 +1288,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Error");
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
 
         }
@@ -1266,7 +1311,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1304,7 +1354,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1374,7 +1429,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1464,7 +1524,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1544,7 +1609,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1605,7 +1675,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1635,9 +1710,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void autodetectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1651,7 +1730,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1716,9 +1800,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger("Error: " + ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1779,9 +1867,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void stockCVNToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1794,7 +1886,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2050,7 +2147,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
         private void btnExtractSegments_Click(object sender, EventArgs e)
@@ -2069,7 +2171,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2107,7 +2214,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2155,7 +2267,15 @@ namespace UniversalPatcher
                 }
                 frmSw.Dispose();
             }
-            catch (Exception ex) { LoggerBold(ex.Message); }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
+            }
         }
 
         private void FixFileChecksum(string fileName)
@@ -2173,9 +2293,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
         private void btnFixFilesChecksum_Click(object sender, EventArgs e)
         {
@@ -2270,7 +2394,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2299,7 +2428,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2325,9 +2459,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -2340,7 +2478,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2393,9 +2536,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnSaveSearchedTables_Click(object sender, EventArgs e)
@@ -2420,9 +2567,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
 
@@ -2517,7 +2668,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2535,9 +2691,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnCustomFindAll_Click(object sender, EventArgs e)
@@ -2565,7 +2725,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2682,9 +2847,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnClearDTC_Click(object sender, EventArgs e)
@@ -2745,7 +2914,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
         private void dataGridDTC_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -2768,7 +2942,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2822,7 +3001,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2842,7 +3026,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2873,7 +3062,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2958,7 +3152,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3022,9 +3221,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnLoadPatch_Click(object sender, EventArgs e)
@@ -3054,9 +3257,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void pIDSearchToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3069,9 +3276,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private UInt64 csUtilCalcCS(bool calcOnly, UInt64 oldVal)
@@ -3205,7 +3416,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3245,7 +3461,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3270,9 +3491,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnAddPatch_Click(object sender, EventArgs e)
@@ -3292,7 +3517,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3307,7 +3537,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3498,7 +3733,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
             btnFakeCVN.Text = "Go";
         }
@@ -3585,7 +3825,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3604,9 +3849,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void numFakeCvnBytesFromEnd_ValueChanged(object sender, EventArgs e)
@@ -3620,7 +3869,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3646,7 +3900,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3682,15 +3941,32 @@ namespace UniversalPatcher
 
         private void ClearFakeCVN()
         {
-            comboFakeCvnSegment.Items.Clear();
-            comboFakeCvnSegment.Text = "";
-            for (int s = 0; s < basefile.Segments.Count; s++)
-                comboFakeCvnSegment.Items.Add(basefile.Segments[s].Name);
-            txtTargetCVN.Text = "";
-            txtFreeAddress.Text = "";
-            numFakeCvnBytes.Value = 4;
-            radioFakeCVNRelativeAddr.Checked = true;
-            radioFakeCvnSingleSegment.Checked = true;
+            try
+            {
+                comboFakeCvnSegment.Items.Clear();
+                comboFakeCvnSegment.Text = "";
+                for (int s = 0; s < basefile.Segments.Count; s++)
+                {
+                    if (basefile.Segments[s].Name != null)
+                    {
+                        comboFakeCvnSegment.Items.Add(basefile.Segments[s].Name);
+                    }
+                }
+                txtTargetCVN.Text = "";
+                txtFreeAddress.Text = "";
+                numFakeCvnBytes.Value = 4;
+                radioFakeCVNRelativeAddr.Checked = true;
+                radioFakeCvnSingleSegment.Checked = true;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
+            }
         }
         private void btnOpenBrowser_Click(object sender, EventArgs e)
         {
@@ -3703,7 +3979,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -3754,9 +4035,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnRebuild_Click(object sender, EventArgs e)
@@ -3858,7 +4143,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -4033,9 +4323,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnDisplayFileInfo_Click(object sender, EventArgs e)
@@ -4068,9 +4362,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void loadPlatformConfigToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4110,7 +4408,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -4132,7 +4435,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
 
@@ -4374,10 +4682,29 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
-
         }
+
+        private void allSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmPropertyEditor fpe = new frmPropertyEditor();
+            UpatcherSettings tmpSettings = AppSettings.ShallowCopy();
+            fpe.LoadObject(tmpSettings);
+            fpe.resetToDefaultValueToolStripMenuItem.Enabled = true;
+            if (fpe.ShowDialog() == DialogResult.OK)
+            {
+                AppSettings = tmpSettings;
+                AppSettings.Save();
+                Logger("Settings saved");
+            }
+        }
+
     }
 }
 

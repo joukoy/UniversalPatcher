@@ -347,7 +347,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, LoadProfile line " + line + ": " + ex.Message);
+                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
             }            
         }
 
@@ -390,7 +390,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, LoadProfile line " + line + ": " + ex.Message);
+                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
             }
             return tStamps;
         }
@@ -523,8 +523,8 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Devices on bus?");
-                LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
+                //LogDevice.ClearMessageBuffer();
+                //LogDevice.ClearMessageQueue();
                 //LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
                 byte[] queryMsg = { Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x20 };
                 bool m = LogDevice.SendMessage(new OBDMessage(queryMsg) ,100);
@@ -565,7 +565,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold("Query devices on bus: " + ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
             }
             return new Response<List<byte>>(ResponseStatus.Error, retVal);
         }
@@ -576,8 +581,8 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Modules?");
-                LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
+                //LogDevice.ClearMessageBuffer();
+                //LogDevice.ClearMessageQueue();
                 Receiver.SetReceiverPaused(true);
                 Logger("Querying modules", false);
                 Application.DoEvents();
@@ -612,9 +617,15 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold("Query devices on bus: " + ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
                 return new Response<List<OBDMessage>>(ResponseStatus.Error, retVal);
             }
+
             Receiver.SetReceiverPaused(false);
             return new Response<List<OBDMessage>>(ResponseStatus.Success, retVal);
         }
@@ -625,8 +636,8 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Freeze frames?");
-                LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
+                //LogDevice.ClearMessageBuffer();
+                //LogDevice.ClearMessageQueue();
                 Receiver.SetReceiverPaused(true);
                 Logger("Querying freeze frames", false);
                 //LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
@@ -660,7 +671,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold("Query devices on bus: " + ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
                 return new Response<List<OBDMessage>>(ResponseStatus.Error, retVal);
             }
             Receiver.SetReceiverPaused(false);
@@ -801,8 +817,8 @@ namespace UniversalPatcher
                 }
 
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
-                LogDevice.SetReadTimeout(100);
-                LogDevice.SetWriteTimeout(AppSettings.LoggerWriteTimeout);
+                LogDevice.SetReadTimeout(AppSettings.TimeoutLoggingReceive);
+                LogDevice.SetWriteTimeout(AppSettings.TimeoutLoggingWrite);
 
                 if (QueryDevicesOnBus(false).Status != ResponseStatus.Success)
                     return false;
@@ -834,7 +850,7 @@ namespace UniversalPatcher
                 {
                     lastPresent = DateTime.Now;
                     //elmStopTreshold = 1000;
-                    LogDevice.SetTimeout(AppSettings.LoggerPassiveReadTimeout);
+                    LogDevice.SetTimeout(AppSettings.TimeoutLoggingPassive);
                     if (!RequestPassiveModeSlots())
                     {
                         LoggerBold("Error requesting Slots");
@@ -846,11 +862,11 @@ namespace UniversalPatcher
                     //elmStopTreshold = 50;
                     if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
                     {
-                        LogDevice.SetTimeout(AppSettings.LoggerActiveReadTimeoutObdlink);
+                        LogDevice.SetTimeout(AppSettings.TimeoutLoggingActiveObdlink);
                     }
                     else
                     {
-                        LogDevice.SetTimeout(AppSettings.LoggerActiveReadTimeout);
+                        LogDevice.SetTimeout(AppSettings.TimeoutLoggingActive);
                     }
                     RequestNextSlots();
                 }
@@ -896,8 +912,8 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("OS?");
-                LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
+                //LogDevice.ClearMessageBuffer();
+                //LogDevice.ClearMessageQueue();
                 byte[] queryMsg = { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, Mode.ReadBlock, 0x0A }; //6C 10 F0 3C 0A
                 bool m = LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
                 if (!m)
@@ -972,8 +988,8 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("VIN?");
                 Receiver.SetReceiverPaused(true);
-                LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
+                //LogDevice.ClearMessageBuffer();
+                //LogDevice.ClearMessageQueue();
                 byte[] vinbytes = new byte[3*6];
                 for (byte v = 0; v < 3; v++)
                 {
@@ -1185,7 +1201,7 @@ namespace UniversalPatcher
             return true;
         }
 
-        public  ReadValue ParseSinglePidMessage(OBDMessage msg, ProfileDataType datatype)
+        public ReadValue ParseSinglePidMessage(OBDMessage msg, ProfileDataType datatype)
         {
             ReadValue retVal = new ReadValue();
             try
@@ -1629,12 +1645,13 @@ namespace UniversalPatcher
             } //Logloop
             Logger("Logging stopped");
             if (LogDevice != null && Connected)
-            { 
+            {
+                LogDevice.ClearLogQueue();
                 SetBusQuiet();
                 SetBusQuiet();
                 LogDevice.SetTimeout(TimeoutScenario.Maximum);
-                LogDevice.SetReadTimeout(AppSettings.LoggerReadTimeout);
-                LogDevice.SetWriteTimeout(AppSettings.LoggerWriteTimeout);
+                LogDevice.SetReadTimeout(AppSettings.TimeoutReceive);
+                LogDevice.SetWriteTimeout(AppSettings.TimeoutScriptWrite);
             }
             LogRunning = false;
             return;

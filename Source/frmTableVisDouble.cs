@@ -15,7 +15,7 @@ namespace UniversalPatcher
 {
     public partial class frmTableVisDouble : Form
     {
-        public frmTableVisDouble(PcmFile PCM1,TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
+        public frmTableVisDouble()
         {
             InitializeComponent();
             richTableData1.MouseWheel += RichTableData_MouseWheel;
@@ -37,9 +37,7 @@ namespace UniversalPatcher
                 c++;
             }
             richTableData1.EnableContextMenu();
-            this.Show();
-
-            ShowTables(PCM1, td1, PCM2, td2, selectedByte);
+            //ShowTables(PCM1, td1, PCM2, td2, selectedByte);
         }
 
 

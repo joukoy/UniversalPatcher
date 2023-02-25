@@ -32,10 +32,10 @@ namespace UniversalPatcher
         /// </summary>
         public AllProDeviceImplementation(
             Action<OBDMessage> enqueue,
-            Func<int> getRecievedMessageCount,
+            Func<int> getReceivedMessageCount,
             IPort port,
             Action<OBDMessage> MessageSent) :
-            base(enqueue, getRecievedMessageCount, port, MessageSent)
+            base(enqueue, getReceivedMessageCount, port, MessageSent)
         {
             // Please keep the left side easy to read in hex. Then add 12 bytes for VPW overhead.
             this.MaxSendSize = 1024 + 12;

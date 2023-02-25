@@ -44,6 +44,8 @@ namespace UniversalPatcher
         {
             get
             {
+                if (this.message == null)
+                    return 0;
                 return this.message.Length;
             }
         }
@@ -57,6 +59,16 @@ namespace UniversalPatcher
             {
                 return this.message[index];
             }
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public OBDMessage()
+        {
+            this.timestamp = (ulong)DateTime.Now.Ticks;
+            this.devtimestamp = (ulong)DateTime.Now.Ticks;
+            SecondaryProtocol = false;
         }
 
         /// <summary>
@@ -110,6 +122,15 @@ namespace UniversalPatcher
         }
 
         /// <summary>
+        /// Message can't be serialized without public access to data...
+        /// </summary>
+        public byte[] Data
+        {
+            get { return this.message; }
+            set { this.message = value; }
+        }
+
+        /// <summary>
         /// Get the raw bytes.
         /// </summary>
         /// <returns></returns>
@@ -132,6 +153,7 @@ namespace UniversalPatcher
 
         /// <summary>
         /// When sending message in named pipe (byte array) it is organized: timestamp, devtimestamp, Elmrompt, Secondaryprotocol, message data 
+        /// NOT IN USE
         /// </summary>
         public void FromPipeMessage(byte[] msg)
         {
@@ -147,6 +169,7 @@ namespace UniversalPatcher
             }
         }
 
+        /// NOT IN USE
         public byte[] ToPipeMessage()
         {
             List<byte> msg = new List<byte>();
@@ -158,8 +181,26 @@ namespace UniversalPatcher
             return msg.ToArray();
         }
 
+        /// <summary>
+        /// When Elm device is waiting for new command, it shows prompt >
+        /// </summary>
         public bool ElmPrompt { get; set; }
-        public string ElmLine { get; set; }
+
+        //public string ElmLine { get; set; }
+
+        /// <summary>
+        /// J2534 Console can connect to two protocols
+        /// </summary>
         public bool SecondaryProtocol { get; set; }
+
+        /// <summary>
+        /// J2534 TxFlags
+        /// </summary>
+        public J2534DotNet.TxFlag Txflag { get; set; }
+
+        /// <summary>
+        /// J2534 RxStatus
+        /// </summary>
+        public J2534DotNet.RxStatus Rxstatus { get; set; }
     }
 }

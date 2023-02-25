@@ -16,10 +16,13 @@ namespace UniversalPatcher
     public partial class frmJ2534Server : Form
     {
         private string DeviceName;
+        private J2534DotNet.J2534Device jDevice;
         private J2534Server jServer;
-        public frmJ2534Server(string DevName)
+
+        public frmJ2534Server(J2534DotNet.J2534Device jDevice)
         {
-            DeviceName = DevName;
+            DeviceName = jDevice.Name;
+            this.jDevice = jDevice;
             InitializeComponent();
         }
 
@@ -27,7 +30,7 @@ namespace UniversalPatcher
         {
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             this.FormClosing += FrmJ2534Server_FormClosing;
-            jServer = new J2534Server(DeviceName);
+            jServer = new J2534Server(jDevice);
             Task.Factory.StartNew(() => jServer.ServerLoop());
             this.Text = "J2534 Server [" + DeviceName + "]";
         }
@@ -38,7 +41,7 @@ namespace UniversalPatcher
             Logger("J2534 Server Quits");
             Application.DoEvents();
             Application.DoEvents();
-            Thread.Sleep(5000);
+            Thread.Sleep(1000);
             Environment.Exit(0);
         }
 

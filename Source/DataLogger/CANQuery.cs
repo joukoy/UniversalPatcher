@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using static Upatcher;
+using static Helpers;
+
 namespace UniversalPatcher
 {
     public class CANDevice
@@ -26,6 +28,7 @@ namespace UniversalPatcher
         {
             try
             {
+                Logger("Sending CAN device query");
                 byte[] queryMsg = { 0x00, 0x00, 0x01, 0x01, 0xFE, 0x02, 0x1A, 0xB0, 0x00, 0x00, 0x00, 0x00 };
                 bool m = device.SendMessage(new OBDMessage(queryMsg), 0);
             }

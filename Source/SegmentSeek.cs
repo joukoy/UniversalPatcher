@@ -308,7 +308,6 @@ namespace UniversalPatcher
             try
             {
 
-                PCM.foundSegments = new List<FoundSegment>();
                 segmentSeeks = new List<SegmentSeek>();
 
                 string fileName = PCM.SegmentSeekFile;
@@ -475,12 +474,12 @@ namespace UniversalPatcher
                                 Debug.WriteLine("seekTables: New address:" + sAddr.Addr.ToString("X"));
                             }
 
-                            if (sAddr.Addr < PCM.fsize)
+                            if ((sAddr.Addr + segmentSeeks[s].Offset) < PCM.fsize)
                             {
                                 hit++;
                                 Debug.WriteLine("Found: " + sAddr.Addr.ToString("X") + ", Hit: " + hit.ToString() + " of " + wantedHit);
                             }
-                            if (hit == wantedHit && sAddr.Addr < PCM.fsize)
+                            if (hit == wantedHit && (sAddr.Addr + segmentSeeks[s].Offset) < PCM.fsize)
                             {
                                 FoundSegment fs = new FoundSegment(PCM);
                                 fs.Name = segmentSeeks[s].Name.Replace("£", (wHit + 1).ToString());

@@ -58,14 +58,26 @@ namespace UniversalPatcher
             LoggerStartJ2534Process = true;
             LoggerJ2534ProcessVisible = false;
             LoggerAutoDisconnect = true;
-            LoggerActiveReadTimeout = TimeoutScenario.DataLogging3;
-            LoggerActiveReadTimeoutObdlink = TimeoutScenario.Minimum;
-            LoggerPassiveReadTimeout = TimeoutScenario.DataLogging4;
-            LoggerLoggingWriteTimeout = 100;
-            LoggerReadTimeout = 100;
-            LoggerWriteTimeout = 100;
-            LoggerPortReadTimeout = 1000;
-            LoggerPortWriteTimeout = 1000;
+            LoggerFilterStartOfMessage = true;
+            LoggerFilterTXIndication = true;
+            LoggerFilterRxStatusCustom = "";
+            LoggerConsoleDisplayInterval = 200;
+            RetryWriteTimes = 3;
+            RetryWriteDelay = 10;
+
+            TimeoutLoggingActive = TimeoutScenario.DataLogging3;
+            TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
+            TimeoutLoggingPassive = TimeoutScenario.DataLogging4;
+            TimeoutReceive = 100;
+            TimeoutLoggingReceive = 100;
+            TimeoutScriptRead = 100;
+            TimeoutScriptWrite = 100;
+            TimeoutPortRead = 1000;
+            TimeoutAnalyzerReceive = 3000;
+            TimeoutConsoleReceive = 100;
+            TimeoutLoggingWrite = 100;
+            //TimeoutJconsoleWrite = 100;
+            //TimeoutJ2534DeviceRead = 20;
 
             TableEditorFont = new SerializableFont(new Font("Consolas", 8));
             TableExplorerFont = new SerializableFont(new Font("Arial", 8));
@@ -212,15 +224,26 @@ namespace UniversalPatcher
         public bool LoggerStartJ2534Process { get; set; }
         public bool LoggerJ2534ProcessVisible { get; set; }
         public bool LoggerAutoDisconnect { get; set; }
-        public TimeoutScenario LoggerActiveReadTimeout { get; set; }
-        public TimeoutScenario LoggerActiveReadTimeoutObdlink { get; set; }
-        public TimeoutScenario LoggerPassiveReadTimeout { get; set; }
-        public int LoggerLoggingWriteTimeout { get; set; }
-        public int LoggerPortReadTimeout { get; set; }
-        public int LoggerPortWriteTimeout { get; set; }
-        public int LoggerReadTimeout { get; set; }
-        public int LoggerWriteTimeout { get; set; }
+        public bool LoggerFilterStartOfMessage { get; set; }
+        public bool LoggerFilterTXIndication { get; set; }
+        public string LoggerFilterRxStatusCustom { get; set; }
+        public int LoggerConsoleDisplayInterval { get; set; }
+        public int RetryWriteTimes { get; set; }
+        public int RetryWriteDelay { get; set; }
 
+        public TimeoutScenario TimeoutLoggingActive { get; set; }
+        public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }
+        public TimeoutScenario TimeoutLoggingPassive { get; set; }
+        public int TimeoutScriptRead { get; set; }
+        public int TimeoutPortRead { get; set; }
+        public int TimeoutAnalyzerReceive { get; set; }
+        public int TimeoutReceive { get; set; }
+        public int TimeoutLoggingReceive { get; set; }
+        public int TimeoutScriptWrite { get; set; }
+        public int TimeoutConsoleReceive { get; set; }
+        public int TimeoutLoggingWrite { get; set; }
+        //public int TimeoutJconsoleWrite { get; set; }
+        //public int TimeoutJ2534DeviceRead { get; set; }
 
         public SerializableFont TableEditorFont { get; set; }
         public SerializableFont TableExplorerFont { get; set; }
@@ -238,6 +261,11 @@ namespace UniversalPatcher
                 stream.Close();
             }
         }
+        public UpatcherSettings ShallowCopy()
+        {
+            return (UpatcherSettings)this.MemberwiseClone();
+        }
+
     }
     /// <summary>
     /// Font descriptor, that can be xml-serialized
@@ -262,6 +290,22 @@ namespace UniversalPatcher
             Style = f.Style;
         }
 
+        public SerializableFont(string f)
+        {
+            string[] parts = f.Split(';');
+            if (parts.Length == 3)
+            {
+                FontFamily = parts[0];
+                if (float.TryParse(parts[1], out float s))
+                    Size = s;
+                if (Enum.TryParse<FontStyle>(parts[2], out FontStyle fs))
+                    Style = fs;
+                GraphicsUnit = GraphicsUnit.Point;
+                //if (Enum.TryParse<GraphicsUnit>(parts[3], out GraphicsUnit gu))
+                  //  GraphicsUnit = gu;
+            }
+        }
+
         public static SerializableFont FromFont(Font f)
         {
             return new SerializableFont(f);
@@ -275,6 +319,16 @@ namespace UniversalPatcher
             }
             return new Font(FontFamily, Size, Style, GraphicsUnit);
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder(FontFamily);
+            sb.Append(";" + Size.ToString());
+            sb.Append(";" + Style.ToString());
+            //sb.Append(";" + GraphicsUnit.ToString());
+            return sb.ToString();
+        }
+
     }
     
 }

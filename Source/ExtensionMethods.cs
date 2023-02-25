@@ -64,10 +64,12 @@ namespace UniversalPatcher
                 tsmiFont.Click += (sender, e) => TsmiFont_Click(sender, e, rtb);
                 cms.Items.Add(tsmiFont);
 
-                ToolStripMenuItem tsmiSavefile = new ToolStripMenuItem("Save...");
-                tsmiSavefile.Click += (sender, e) => TsmiSavefile_Click(sender, e, rtb);
-                cms.Items.Add(tsmiSavefile);
-
+                if (rtb.Name != "richJConsole" && rtb.Name != "richVPWmessages")
+                {
+                    ToolStripMenuItem tsmiSavefile = new ToolStripMenuItem("Save...");
+                    tsmiSavefile.Click += (sender, e) => TsmiSavefile_Click(sender, e, rtb);
+                    cms.Items.Add(tsmiSavefile);
+                }
                 ToolStripMenuItem tsmiSearch = new ToolStripMenuItem("Search...");
                 tsmiSearch.Click += (sender, e) => TsmiSearch_Click(sender, e, rtb);
                 cms.Items.Add(tsmiSearch);

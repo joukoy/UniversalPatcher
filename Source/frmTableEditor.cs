@@ -14,6 +14,7 @@ using System.IO;
 using System.Windows.Forms.DataVisualization.Charting;
 using static UniversalPatcher.ExtensionMethods;
 using static Helpers;
+using System.Threading.Tasks;
 
 namespace UniversalPatcher
 {
@@ -424,7 +425,12 @@ namespace UniversalPatcher
                 if (!tData.Math.StartsWith("DTC"))
                     labelInfo.Text += " Address: " + tCell.addr.ToString("X");
                 if (ftvd != null && ftvd.Visible)
-                    ftvd.ChangeSelection(tCell.addr);
+                {
+                    this.Invoke((MethodInvoker)delegate ()
+                    {
+                        ftvd.ChangeSelection(tCell.addr);
+                    });
+                }
                 //ftv.displayData(tCell.addr, compareFiles[0].buf);
 
             }
@@ -1696,7 +1702,10 @@ namespace UniversalPatcher
                 Debug.WriteLine("LoadTable time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
                 if (ftvd != null && ftvd.Visible)
                 {
-                    ftvd.UpdateDisplay();
+                    this.Invoke((MethodInvoker)delegate ()
+                    {
+                        ftvd.UpdateDisplay();
+                    });
                 }
 
                 if (this.Parent == null) //Not docked
@@ -1953,7 +1962,12 @@ namespace UniversalPatcher
                     }
                 }
                 if (ftvd != null && ftvd.Visible)
-                    ftvd.UpdateDisplay();
+                {
+                    this.Invoke((MethodInvoker)delegate ()
+                    {
+                        ftvd.UpdateDisplay();
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -3005,14 +3019,24 @@ namespace UniversalPatcher
                     TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
                     addr = tCell.addr;
                 }
-                ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td,null,null,addr);
-                ftvd.Show();
+                //ftvd = new frmTableVisDouble();
+                //ftvd.Show();
+                //ftvd.ShowTables(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr);
                 //ftv.DisplayData(addr, compareFiles[currentFile].buf);
+                Task.Factory.StartNew(() => StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr));
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
             }
+        }
+
+        [STAThread]
+        private void StartVisualizer(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
+        {
+            ftvd = new frmTableVisDouble();
+            ftvd.ShowTables(PCM1, td1, PCM2, td2, SelectedByte);
+            Application.Run(ftvd);
         }
 
         private void showHistogramToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3043,9 +3067,10 @@ namespace UniversalPatcher
                         TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
                         addr = tCell.addr;
                     }
-                    ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr);
-                    ftvd.Show();
-                    ftvd.tuner = tuner;
+                    //ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr);
+                    //ftvd.Show();
+                    //ftvd.tuner = tuner;
+                    Task.Factory.StartNew(() => StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr));
                 }
             }
             catch (Exception ex)

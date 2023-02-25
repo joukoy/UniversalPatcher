@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -21,6 +23,7 @@ public static class Helpers
     public static string BinFilter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
     public static string CsvFilter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
     public static string XmlFilter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string XmlXFilter = "XMLX files (*.xmlx)|*.xmlx|All files (*.*)|*.*";
     public static string TxtFilter = "TXT files (*.txt)|*.txt|All files (*.*)|*.*";
     public static string XdfFilter = "XDF files (*.xdf)|*.xdf|All files (*.*)|*.*";
     public static string RtfFilter = "RTF files (*.rtf)|*.rtf|All files (*.*)|*.*";
@@ -728,7 +731,7 @@ public static class Helpers
             get { return new UTF8Encoding(false); } // in real code I'll cache this encoding.
         }
     }
-    public static string SerializeObjectToXML<T>(this T toSerialize)
+    public static string SerializeObjectToXML<T>(T toSerialize)
     {
         XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
 
@@ -877,6 +880,37 @@ public static class Helpers
         {
             LoggerBold(ex.Message);
         }
+    }
+
+    public class EnumWithName<T>
+    {
+        public string Name { get; set; }
+        public T Value { get; set; }
+        //public int Value { get; set; }
+
+        public static EnumWithName<T>[] ParseEnum()
+        {
+            List<EnumWithName<T>> list = new List<EnumWithName<T>>();
+
+            foreach (object o in Enum.GetValues(typeof(T)))
+            {
+                list.Add(new EnumWithName<T>
+                {
+                    Name = Enum.GetName(typeof(T), o).Replace('_', ' '),
+                    Value = (T)o
+                });
+            }
+
+            return list.ToArray();
+        }
+    }
+
+    public static int GetRichBoxDisplayableLines(RichTextBox rtb)
+    {
+        Size s = TextRenderer.MeasureText("A", rtb.Font, rtb.Size, TextFormatFlags.WordBreak);
+        int letterHeight = s.Height;
+        int displayableLines = rtb.Height / letterHeight - 3;
+        return displayableLines;
     }
 
 }

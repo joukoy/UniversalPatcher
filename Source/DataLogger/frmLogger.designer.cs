@@ -78,23 +78,11 @@ namespace UniversalPatcher
             this.label3 = new System.Windows.Forms.Label();
             this.dataGridLogData = new System.Windows.Forms.DataGridView();
             this.tabSettings = new System.Windows.Forms.TabPage();
-            this.groupTimeouts = new System.Windows.Forms.GroupBox();
-            this.comboOBDLinkTimeout = new System.Windows.Forms.ComboBox();
-            this.label47 = new System.Windows.Forms.Label();
-            this.comboActiveTimeout = new System.Windows.Forms.ComboBox();
-            this.comboPassiveTimeout = new System.Windows.Forms.ComboBox();
-            this.numWriteTimeout = new System.Windows.Forms.NumericUpDown();
-            this.numReadTimeout = new System.Windows.Forms.NumericUpDown();
-            this.label46 = new System.Windows.Forms.Label();
-            this.label45 = new System.Windows.Forms.Label();
-            this.label40 = new System.Windows.Forms.Label();
-            this.numPortWriteTimeout = new System.Windows.Forms.NumericUpDown();
-            this.numPortReadTimeout = new System.Windows.Forms.NumericUpDown();
-            this.numLoggingWriteTimeout = new System.Windows.Forms.NumericUpDown();
-            this.label44 = new System.Windows.Forms.Label();
-            this.label43 = new System.Windows.Forms.Label();
-            this.label42 = new System.Windows.Forms.Label();
-            this.label41 = new System.Windows.Forms.Label();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.numRetryDelay = new System.Windows.Forms.NumericUpDown();
+            this.numRetryTimes = new System.Windows.Forms.NumericUpDown();
+            this.label35 = new System.Windows.Forms.Label();
+            this.label34 = new System.Windows.Forms.Label();
             this.groupHWSettings = new System.Windows.Forms.GroupBox();
             this.categories = new System.Windows.Forms.GroupBox();
             this.j2534RadioButton = new System.Windows.Forms.RadioButton();
@@ -111,6 +99,7 @@ namespace UniversalPatcher
             this.label4 = new System.Windows.Forms.Label();
             this.btnConnect2 = new System.Windows.Forms.Button();
             this.groupAdvanced = new System.Windows.Forms.GroupBox();
+            this.btnTimeouts = new System.Windows.Forms.Button();
             this.chkAutoDisconnect = new System.Windows.Forms.CheckBox();
             this.chkJ2534ServerVisible = new System.Windows.Forms.CheckBox();
             this.chkStartJ2534Process = new System.Windows.Forms.CheckBox();
@@ -174,6 +163,7 @@ namespace UniversalPatcher
             this.saveCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabVPWConsole = new System.Windows.Forms.TabPage();
+            this.vScrollBarVpwConsole = new System.Windows.Forms.VScrollBar();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.txtEmulatorId = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
@@ -185,6 +175,7 @@ namespace UniversalPatcher
             this.chkVpwConsoleDevTimestampConvert = new System.Windows.Forms.CheckBox();
             this.chkVpwConsoleDevTimestamps = new System.Windows.Forms.CheckBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.chkVpwBuffered = new System.Windows.Forms.CheckBox();
             this.chkVpwToFile = new System.Windows.Forms.CheckBox();
             this.chkVpwToScreen = new System.Windows.Forms.CheckBox();
             this.btnStopScript = new System.Windows.Forms.Button();
@@ -197,16 +188,19 @@ namespace UniversalPatcher
             this.chkConsoleTimestamps = new System.Windows.Forms.CheckBox();
             this.richVPWmessages = new System.Windows.Forms.RichTextBox();
             this.tabJConsole = new System.Windows.Forms.TabPage();
+            this.vScrollBarJConsole = new System.Windows.Forms.VScrollBar();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.chkJconsoleUsebuffer = new System.Windows.Forms.CheckBox();
             this.chkJConsoleToFile = new System.Windows.Forms.CheckBox();
             this.chkJconsoleToScreen = new System.Windows.Forms.CheckBox();
             this.labelJconsoleConnected = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.btnJconsoleConfigFilters2 = new System.Windows.Forms.Button();
+            this.chkUsePrimaryChannel = new System.Windows.Forms.CheckBox();
+            this.btnJconsoleEditFilters2 = new System.Windows.Forms.Button();
+            this.btnJconsoleApplyFilters2 = new System.Windows.Forms.Button();
             this.btnJconsoleSecProtoDisconnect = new System.Windows.Forms.Button();
             this.btnJConsoleReset2 = new System.Windows.Forms.Button();
-            this.txtJConsolePassFilters2 = new System.Windows.Forms.TextBox();
-            this.label35 = new System.Windows.Forms.Label();
+            this.labelJconsoleFilters2 = new System.Windows.Forms.Label();
             this.btnJConsoleAddConfig2 = new System.Windows.Forms.Button();
             this.label22 = new System.Windows.Forms.Label();
             this.comboJConsoleConfig2 = new System.Windows.Forms.ComboBox();
@@ -232,10 +226,13 @@ namespace UniversalPatcher
             this.comboJ2534Protocol2 = new System.Windows.Forms.ComboBox();
             this.label33 = new System.Windows.Forms.Label();
             this.groupJ2534Options = new System.Windows.Forms.GroupBox();
-            this.btnJconsoleConfigFilters = new System.Windows.Forms.Button();
+            this.btnLoadProtocols = new System.Windows.Forms.Button();
+            this.btnJconsoleEditFilters = new System.Windows.Forms.Button();
+            this.btnSaveProtocols = new System.Windows.Forms.Button();
+            this.btnCanFilters = new System.Windows.Forms.Button();
+            this.btnJconsoleApplyFilters = new System.Windows.Forms.Button();
             this.btnJConsoleReset = new System.Windows.Forms.Button();
-            this.txtJConsolePassFilters = new System.Windows.Forms.TextBox();
-            this.label34 = new System.Windows.Forms.Label();
+            this.labelJconsoleFilters = new System.Windows.Forms.Label();
             this.btnJConsoleAddConfig = new System.Windows.Forms.Button();
             this.label29 = new System.Windows.Forms.Label();
             this.comboJConsoleConfig = new System.Windows.Forms.ComboBox();
@@ -301,6 +298,8 @@ namespace UniversalPatcher
             this.newProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.playbackLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveVPWConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveJConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filterSupportedPidsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -320,8 +319,8 @@ namespace UniversalPatcher
             this.timerWaitCANQuery = new System.Windows.Forms.Timer(this.components);
             this.timerPlayback = new System.Windows.Forms.Timer(this.components);
             this.timerDeviceStatus = new System.Windows.Forms.Timer(this.components);
-            this.btnResetTimeouts = new System.Windows.Forms.Button();
-            this.btnApplyTimeouts = new System.Windows.Forms.Button();
+            this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
+            this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -330,12 +329,9 @@ namespace UniversalPatcher
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
             this.tabSettings.SuspendLayout();
-            this.groupTimeouts.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numWriteTimeout)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numReadTimeout)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numPortWriteTimeout)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numPortReadTimeout)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numLoggingWriteTimeout)).BeginInit();
+            this.groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRetryTimes)).BeginInit();
             this.groupHWSettings.SuspendLayout();
             this.categories.SuspendLayout();
             this.j2534OptionsGroupBox.SuspendLayout();
@@ -410,7 +406,7 @@ namespace UniversalPatcher
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(906, 461);
+            this.tabControl1.Size = new System.Drawing.Size(974, 507);
             this.tabControl1.TabIndex = 3;
             // 
             // tabLog
@@ -422,7 +418,7 @@ namespace UniversalPatcher
             this.tabLog.Location = new System.Drawing.Point(4, 22);
             this.tabLog.Name = "tabLog";
             this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(898, 435);
+            this.tabLog.Size = new System.Drawing.Size(966, 481);
             this.tabLog.TabIndex = 0;
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
@@ -457,7 +453,7 @@ namespace UniversalPatcher
             this.groupLogSettings.Controls.Add(this.label3);
             this.groupLogSettings.Location = new System.Drawing.Point(-1, 26);
             this.groupLogSettings.Name = "groupLogSettings";
-            this.groupLogSettings.Size = new System.Drawing.Size(438, 413);
+            this.groupLogSettings.Size = new System.Drawing.Size(438, 459);
             this.groupLogSettings.TabIndex = 31;
             this.groupLogSettings.TabStop = false;
             // 
@@ -470,7 +466,7 @@ namespace UniversalPatcher
             this.groupPlayback.Controls.Add(this.hScrollPlayback);
             this.groupPlayback.Controls.Add(this.btnPlay);
             this.groupPlayback.Controls.Add(this.btnPause);
-            this.groupPlayback.Location = new System.Drawing.Point(10, 320);
+            this.groupPlayback.Location = new System.Drawing.Point(10, 366);
             this.groupPlayback.Name = "groupPlayback";
             this.groupPlayback.Size = new System.Drawing.Size(417, 83);
             this.groupPlayback.TabIndex = 31;
@@ -482,7 +478,7 @@ namespace UniversalPatcher
             this.label39.AutoSize = true;
             this.label39.Location = new System.Drawing.Point(129, 26);
             this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(52, 16);
+            this.label39.Size = new System.Drawing.Size(41, 13);
             this.label39.TabIndex = 4;
             this.label39.Text = "Speed:";
             // 
@@ -501,7 +497,7 @@ namespace UniversalPatcher
             0,
             131072});
             this.numPlaybackSpeed.Name = "numPlaybackSpeed";
-            this.numPlaybackSpeed.Size = new System.Drawing.Size(72, 22);
+            this.numPlaybackSpeed.Size = new System.Drawing.Size(72, 20);
             this.numPlaybackSpeed.TabIndex = 3;
             this.numPlaybackSpeed.Value = new decimal(new int[] {
             1,
@@ -564,7 +560,7 @@ namespace UniversalPatcher
             // 
             this.txtDecimalSeparator.Location = new System.Drawing.Point(57, 71);
             this.txtDecimalSeparator.Name = "txtDecimalSeparator";
-            this.txtDecimalSeparator.Size = new System.Drawing.Size(30, 22);
+            this.txtDecimalSeparator.Size = new System.Drawing.Size(30, 20);
             this.txtDecimalSeparator.TabIndex = 31;
             this.txtDecimalSeparator.Text = ";";
             // 
@@ -573,7 +569,7 @@ namespace UniversalPatcher
             this.label37.AutoSize = true;
             this.label37.Location = new System.Drawing.Point(6, 74);
             this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(61, 16);
+            this.label37.Size = new System.Drawing.Size(48, 13);
             this.label37.TabIndex = 18;
             this.label37.Text = "Decimal:";
             // 
@@ -591,7 +587,7 @@ namespace UniversalPatcher
             // 
             this.txtTstampFormat.Location = new System.Drawing.Point(286, 71);
             this.txtTstampFormat.Name = "txtTstampFormat";
-            this.txtTstampFormat.Size = new System.Drawing.Size(90, 22);
+            this.txtTstampFormat.Size = new System.Drawing.Size(90, 20);
             this.txtTstampFormat.TabIndex = 16;
             // 
             // label36
@@ -599,7 +595,7 @@ namespace UniversalPatcher
             this.label36.AutoSize = true;
             this.label36.Location = new System.Drawing.Point(187, 75);
             this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(119, 16);
+            this.label36.Size = new System.Drawing.Size(93, 13);
             this.label36.TabIndex = 15;
             this.label36.Text = "Timestamp format:";
             // 
@@ -609,9 +605,9 @@ namespace UniversalPatcher
             this.chkWriteLog.AutoSize = true;
             this.chkWriteLog.Checked = true;
             this.chkWriteLog.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkWriteLog.Location = new System.Drawing.Point(334, 17);
+            this.chkWriteLog.Location = new System.Drawing.Point(346, 17);
             this.chkWriteLog.Name = "chkWriteLog";
-            this.chkWriteLog.Size = new System.Drawing.Size(80, 20);
+            this.chkWriteLog.Size = new System.Drawing.Size(68, 17);
             this.chkWriteLog.TabIndex = 9;
             this.chkWriteLog.Text = "Write log";
             this.chkWriteLog.UseVisualStyleBackColor = true;
@@ -631,7 +627,7 @@ namespace UniversalPatcher
             // 
             this.txtLogSeparator.Location = new System.Drawing.Point(144, 71);
             this.txtLogSeparator.Name = "txtLogSeparator";
-            this.txtLogSeparator.Size = new System.Drawing.Size(30, 22);
+            this.txtLogSeparator.Size = new System.Drawing.Size(30, 20);
             this.txtLogSeparator.TabIndex = 14;
             this.txtLogSeparator.Text = ",";
             this.txtLogSeparator.TextChanged += new System.EventHandler(this.txtLogSeparator_TextChanged);
@@ -641,7 +637,7 @@ namespace UniversalPatcher
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(6, 26);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(68, 16);
+            this.label2.Size = new System.Drawing.Size(54, 13);
             this.label2.TabIndex = 11;
             this.label2.Text = "Logfolder:";
             // 
@@ -650,7 +646,7 @@ namespace UniversalPatcher
             this.labelSeparator.AutoSize = true;
             this.labelSeparator.Location = new System.Drawing.Point(93, 74);
             this.labelSeparator.Name = "labelSeparator";
-            this.labelSeparator.Size = new System.Drawing.Size(56, 16);
+            this.labelSeparator.Size = new System.Drawing.Size(45, 13);
             this.labelSeparator.TabIndex = 13;
             this.labelSeparator.Text = "Column:";
             // 
@@ -660,7 +656,7 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtLogFolder.Location = new System.Drawing.Point(6, 42);
             this.txtLogFolder.Name = "txtLogFolder";
-            this.txtLogFolder.Size = new System.Drawing.Size(370, 22);
+            this.txtLogFolder.Size = new System.Drawing.Size(370, 20);
             this.txtLogFolder.TabIndex = 10;
             // 
             // listProfiles
@@ -671,7 +667,7 @@ namespace UniversalPatcher
             this.listProfiles.FormattingEnabled = true;
             this.listProfiles.Location = new System.Drawing.Point(6, 130);
             this.listProfiles.Name = "listProfiles";
-            this.listProfiles.Size = new System.Drawing.Size(423, 186);
+            this.listProfiles.Size = new System.Drawing.Size(423, 225);
             this.listProfiles.TabIndex = 29;
             this.listProfiles.SelectedIndexChanged += new System.EventHandler(this.listProfiles_SelectedIndexChanged);
             // 
@@ -680,7 +676,7 @@ namespace UniversalPatcher
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(6, 113);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(49, 16);
+            this.label3.Size = new System.Drawing.Size(39, 13);
             this.label3.TabIndex = 30;
             this.label3.Text = "Profile:";
             // 
@@ -716,204 +712,73 @@ namespace UniversalPatcher
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridLogData.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridLogData.Size = new System.Drawing.Size(452, 429);
+            this.dataGridLogData.Size = new System.Drawing.Size(520, 475);
             this.dataGridLogData.TabIndex = 8;
             // 
             // tabSettings
             // 
-            this.tabSettings.Controls.Add(this.groupTimeouts);
+            this.tabSettings.Controls.Add(this.groupBox10);
             this.tabSettings.Controls.Add(this.groupHWSettings);
             this.tabSettings.Controls.Add(this.btnConnect2);
             this.tabSettings.Controls.Add(this.groupAdvanced);
             this.tabSettings.Location = new System.Drawing.Point(4, 22);
             this.tabSettings.Name = "tabSettings";
-            this.tabSettings.Size = new System.Drawing.Size(898, 435);
+            this.tabSettings.Size = new System.Drawing.Size(966, 481);
             this.tabSettings.TabIndex = 3;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
-            // groupTimeouts
+            // groupBox10
             // 
-            this.groupTimeouts.Controls.Add(this.btnApplyTimeouts);
-            this.groupTimeouts.Controls.Add(this.btnResetTimeouts);
-            this.groupTimeouts.Controls.Add(this.comboOBDLinkTimeout);
-            this.groupTimeouts.Controls.Add(this.label47);
-            this.groupTimeouts.Controls.Add(this.comboActiveTimeout);
-            this.groupTimeouts.Controls.Add(this.comboPassiveTimeout);
-            this.groupTimeouts.Controls.Add(this.numWriteTimeout);
-            this.groupTimeouts.Controls.Add(this.label40);
-            this.groupTimeouts.Controls.Add(this.numReadTimeout);
-            this.groupTimeouts.Controls.Add(this.label46);
-            this.groupTimeouts.Controls.Add(this.label45);
-            this.groupTimeouts.Controls.Add(this.numPortWriteTimeout);
-            this.groupTimeouts.Controls.Add(this.numPortReadTimeout);
-            this.groupTimeouts.Controls.Add(this.numLoggingWriteTimeout);
-            this.groupTimeouts.Controls.Add(this.label44);
-            this.groupTimeouts.Controls.Add(this.label43);
-            this.groupTimeouts.Controls.Add(this.label42);
-            this.groupTimeouts.Controls.Add(this.label41);
-            this.groupTimeouts.Location = new System.Drawing.Point(375, 178);
-            this.groupTimeouts.Name = "groupTimeouts";
-            this.groupTimeouts.Size = new System.Drawing.Size(391, 254);
-            this.groupTimeouts.TabIndex = 35;
-            this.groupTimeouts.TabStop = false;
-            this.groupTimeouts.Text = "Timeouts";
+            this.groupBox10.Controls.Add(this.numRetryDelay);
+            this.groupBox10.Controls.Add(this.numRetryTimes);
+            this.groupBox10.Controls.Add(this.label35);
+            this.groupBox10.Controls.Add(this.label34);
+            this.groupBox10.Location = new System.Drawing.Point(381, 177);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(368, 50);
+            this.groupBox10.TabIndex = 35;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Write retry";
             // 
-            // comboOBDLinkTimeout
+            // numRetryDelay
             // 
-            this.comboOBDLinkTimeout.FormattingEnabled = true;
-            this.comboOBDLinkTimeout.Location = new System.Drawing.Point(214, 50);
-            this.comboOBDLinkTimeout.Name = "comboOBDLinkTimeout";
-            this.comboOBDLinkTimeout.Size = new System.Drawing.Size(121, 21);
-            this.comboOBDLinkTimeout.TabIndex = 17;
+            this.numRetryDelay.Location = new System.Drawing.Point(288, 15);
+            this.numRetryDelay.Name = "numRetryDelay";
+            this.numRetryDelay.Size = new System.Drawing.Size(74, 20);
+            this.numRetryDelay.TabIndex = 3;
+            this.numRetryDelay.ValueChanged += new System.EventHandler(this.numRetryDelay_ValueChanged);
             // 
-            // label47
+            // numRetryTimes
             // 
-            this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(13, 50);
-            this.label47.Name = "label47";
-            this.label47.Size = new System.Drawing.Size(173, 16);
-            this.label47.TabIndex = 16;
-            this.label47.Text = "Active mode read, OBDLink";
-            // 
-            // comboActiveTimeout
-            // 
-            this.comboActiveTimeout.FormattingEnabled = true;
-            this.comboActiveTimeout.Location = new System.Drawing.Point(214, 25);
-            this.comboActiveTimeout.Name = "comboActiveTimeout";
-            this.comboActiveTimeout.Size = new System.Drawing.Size(121, 21);
-            this.comboActiveTimeout.TabIndex = 15;
-            // 
-            // comboPassiveTimeout
-            // 
-            this.comboPassiveTimeout.FormattingEnabled = true;
-            this.comboPassiveTimeout.Location = new System.Drawing.Point(214, 73);
-            this.comboPassiveTimeout.Name = "comboPassiveTimeout";
-            this.comboPassiveTimeout.Size = new System.Drawing.Size(121, 21);
-            this.comboPassiveTimeout.TabIndex = 14;
-            // 
-            // numWriteTimeout
-            // 
-            this.numWriteTimeout.Location = new System.Drawing.Point(214, 147);
-            this.numWriteTimeout.Maximum = new decimal(new int[] {
-            100000,
+            this.numRetryTimes.Location = new System.Drawing.Point(106, 15);
+            this.numRetryTimes.Maximum = new decimal(new int[] {
+            10000,
             0,
             0,
             0});
-            this.numWriteTimeout.Name = "numWriteTimeout";
-            this.numWriteTimeout.Size = new System.Drawing.Size(120, 22);
-            this.numWriteTimeout.TabIndex = 13;
+            this.numRetryTimes.Name = "numRetryTimes";
+            this.numRetryTimes.Size = new System.Drawing.Size(74, 20);
+            this.numRetryTimes.TabIndex = 2;
+            this.numRetryTimes.ValueChanged += new System.EventHandler(this.numRetryTimes_ValueChanged);
             // 
-            // numReadTimeout
+            // label35
             // 
-            this.numReadTimeout.Location = new System.Drawing.Point(214, 122);
-            this.numReadTimeout.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numReadTimeout.Name = "numReadTimeout";
-            this.numReadTimeout.Size = new System.Drawing.Size(120, 22);
-            this.numReadTimeout.TabIndex = 12;
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(192, 17);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(63, 13);
+            this.label35.TabIndex = 1;
+            this.label35.Text = "Retry delay:";
             // 
-            // label46
+            // label34
             // 
-            this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(13, 146);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(104, 16);
-            this.label46.TabIndex = 11;
-            this.label46.Text = "Script/DTC write";
-            // 
-            // label45
-            // 
-            this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(13, 121);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(105, 16);
-            this.label45.TabIndex = 10;
-            this.label45.Text = "Script/DTC read";
-            // 
-            // label40
-            // 
-            this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(13, 73);
-            this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(126, 16);
-            this.label40.TabIndex = 0;
-            this.label40.Text = "Passive mode read";
-            // 
-            // numPortWriteTimeout
-            // 
-            this.numPortWriteTimeout.Location = new System.Drawing.Point(214, 199);
-            this.numPortWriteTimeout.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numPortWriteTimeout.Name = "numPortWriteTimeout";
-            this.numPortWriteTimeout.Size = new System.Drawing.Size(120, 22);
-            this.numPortWriteTimeout.TabIndex = 9;
-            // 
-            // numPortReadTimeout
-            // 
-            this.numPortReadTimeout.Location = new System.Drawing.Point(214, 173);
-            this.numPortReadTimeout.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numPortReadTimeout.Name = "numPortReadTimeout";
-            this.numPortReadTimeout.Size = new System.Drawing.Size(120, 22);
-            this.numPortReadTimeout.TabIndex = 8;
-            // 
-            // numLoggingWriteTimeout
-            // 
-            this.numLoggingWriteTimeout.Location = new System.Drawing.Point(214, 98);
-            this.numLoggingWriteTimeout.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numLoggingWriteTimeout.Name = "numLoggingWriteTimeout";
-            this.numLoggingWriteTimeout.Size = new System.Drawing.Size(120, 22);
-            this.numLoggingWriteTimeout.TabIndex = 7;
-            // 
-            // label44
-            // 
-            this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(13, 198);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(62, 16);
-            this.label44.TabIndex = 4;
-            this.label44.Text = "Port write";
-            // 
-            // label43
-            // 
-            this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(13, 172);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(63, 16);
-            this.label43.TabIndex = 3;
-            this.label43.Text = "Port read";
-            // 
-            // label42
-            // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(13, 95);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(87, 16);
-            this.label42.TabIndex = 2;
-            this.label42.Text = "Logging write";
-            // 
-            // label41
-            // 
-            this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(13, 25);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(114, 16);
-            this.label41.TabIndex = 1;
-            this.label41.Text = "Active mode read";
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(10, 17);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(84, 13);
+            this.label34.TabIndex = 0;
+            this.label34.Text = "Retry times (ms):";
             // 
             // groupHWSettings
             // 
@@ -942,7 +807,7 @@ namespace UniversalPatcher
             this.j2534RadioButton.AutoSize = true;
             this.j2534RadioButton.Location = new System.Drawing.Point(7, 46);
             this.j2534RadioButton.Name = "j2534RadioButton";
-            this.j2534RadioButton.Size = new System.Drawing.Size(107, 20);
+            this.j2534RadioButton.Size = new System.Drawing.Size(91, 17);
             this.j2534RadioButton.TabIndex = 1;
             this.j2534RadioButton.Text = "&J2534 Device";
             this.j2534RadioButton.UseVisualStyleBackColor = true;
@@ -954,7 +819,7 @@ namespace UniversalPatcher
             this.serialRadioButton.Checked = true;
             this.serialRadioButton.Location = new System.Drawing.Point(7, 20);
             this.serialRadioButton.Name = "serialRadioButton";
-            this.serialRadioButton.Size = new System.Drawing.Size(134, 20);
+            this.serialRadioButton.Size = new System.Drawing.Size(110, 17);
             this.serialRadioButton.TabIndex = 0;
             this.serialRadioButton.TabStop = true;
             this.serialRadioButton.Text = "&Serial Port Device";
@@ -987,7 +852,7 @@ namespace UniversalPatcher
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(8, 21);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(86, 16);
+            this.label5.Size = new System.Drawing.Size(68, 13);
             this.label5.TabIndex = 0;
             this.label5.Text = "&Device Type";
             // 
@@ -1020,7 +885,7 @@ namespace UniversalPatcher
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(8, 92);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(66, 16);
+            this.label7.Size = new System.Drawing.Size(53, 13);
             this.label7.TabIndex = 19;
             this.label7.Text = "Baudrate:";
             // 
@@ -1029,7 +894,7 @@ namespace UniversalPatcher
             this.chkFTDI.AutoSize = true;
             this.chkFTDI.Location = new System.Drawing.Point(10, 19);
             this.chkFTDI.Name = "chkFTDI";
-            this.chkFTDI.Size = new System.Drawing.Size(85, 20);
+            this.chkFTDI.Size = new System.Drawing.Size(72, 17);
             this.chkFTDI.TabIndex = 18;
             this.chkFTDI.Text = "Use FTDI";
             this.chkFTDI.UseVisualStyleBackColor = true;
@@ -1049,7 +914,7 @@ namespace UniversalPatcher
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(8, 40);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 16);
+            this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Port:";
             // 
@@ -1058,7 +923,7 @@ namespace UniversalPatcher
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(8, 66);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(86, 16);
+            this.label4.Size = new System.Drawing.Size(68, 13);
             this.label4.TabIndex = 16;
             this.label4.Text = "Device Type";
             // 
@@ -1074,6 +939,7 @@ namespace UniversalPatcher
             // 
             // groupAdvanced
             // 
+            this.groupAdvanced.Controls.Add(this.btnTimeouts);
             this.groupAdvanced.Controls.Add(this.chkAutoDisconnect);
             this.groupAdvanced.Controls.Add(this.chkJ2534ServerVisible);
             this.groupAdvanced.Controls.Add(this.chkStartJ2534Process);
@@ -1086,18 +952,28 @@ namespace UniversalPatcher
             this.groupAdvanced.Controls.Add(this.comboResponseMode);
             this.groupAdvanced.Location = new System.Drawing.Point(375, 4);
             this.groupAdvanced.Name = "groupAdvanced";
-            this.groupAdvanced.Size = new System.Drawing.Size(392, 166);
+            this.groupAdvanced.Size = new System.Drawing.Size(375, 166);
             this.groupAdvanced.TabIndex = 34;
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced settings";
             this.groupAdvanced.Enter += new System.EventHandler(this.groupAdvanced_Enter);
+            // 
+            // btnTimeouts
+            // 
+            this.btnTimeouts.Location = new System.Drawing.Point(229, 124);
+            this.btnTimeouts.Name = "btnTimeouts";
+            this.btnTimeouts.Size = new System.Drawing.Size(75, 23);
+            this.btnTimeouts.TabIndex = 40;
+            this.btnTimeouts.Text = "Timeouts";
+            this.btnTimeouts.UseVisualStyleBackColor = true;
+            this.btnTimeouts.Click += new System.EventHandler(this.btnTimeouts_Click);
             // 
             // chkAutoDisconnect
             // 
             this.chkAutoDisconnect.AutoSize = true;
             this.chkAutoDisconnect.Location = new System.Drawing.Point(9, 95);
             this.chkAutoDisconnect.Name = "chkAutoDisconnect";
-            this.chkAutoDisconnect.Size = new System.Drawing.Size(259, 20);
+            this.chkAutoDisconnect.Size = new System.Drawing.Size(213, 17);
             this.chkAutoDisconnect.TabIndex = 39;
             this.chkAutoDisconnect.Text = "Auto disconnect if device disconnected";
             this.chkAutoDisconnect.UseVisualStyleBackColor = true;
@@ -1109,7 +985,7 @@ namespace UniversalPatcher
             this.chkJ2534ServerVisible.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkJ2534ServerVisible.Location = new System.Drawing.Point(200, 75);
             this.chkJ2534ServerVisible.Name = "chkJ2534ServerVisible";
-            this.chkJ2534ServerVisible.Size = new System.Drawing.Size(68, 20);
+            this.chkJ2534ServerVisible.Size = new System.Drawing.Size(56, 17);
             this.chkJ2534ServerVisible.TabIndex = 38;
             this.chkJ2534ServerVisible.Text = "Visible";
             this.chkJ2534ServerVisible.UseVisualStyleBackColor = true;
@@ -1122,7 +998,7 @@ namespace UniversalPatcher
             this.chkStartJ2534Process.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkStartJ2534Process.Location = new System.Drawing.Point(166, 57);
             this.chkStartJ2534Process.Name = "chkStartJ2534Process";
-            this.chkStartJ2534Process.Size = new System.Drawing.Size(140, 20);
+            this.chkStartJ2534Process.Size = new System.Drawing.Size(117, 17);
             this.chkStartJ2534Process.TabIndex = 37;
             this.chkStartJ2534Process.Text = "Start j2534 process";
             this.chkStartJ2534Process.UseVisualStyleBackColor = true;
@@ -1135,7 +1011,7 @@ namespace UniversalPatcher
             this.chkFilterParamsByOS.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkFilterParamsByOS.Location = new System.Drawing.Point(166, 19);
             this.chkFilterParamsByOS.Name = "chkFilterParamsByOS";
-            this.chkFilterParamsByOS.Size = new System.Drawing.Size(168, 20);
+            this.chkFilterParamsByOS.Size = new System.Drawing.Size(135, 17);
             this.chkFilterParamsByOS.TabIndex = 36;
             this.chkFilterParamsByOS.Text = "Filter parameters by OS";
             this.chkFilterParamsByOS.UseVisualStyleBackColor = true;
@@ -1145,7 +1021,7 @@ namespace UniversalPatcher
             this.chkVPWFilters.AutoSize = true;
             this.chkVPWFilters.Location = new System.Drawing.Point(9, 57);
             this.chkVPWFilters.Name = "chkVPWFilters";
-            this.chkVPWFilters.Size = new System.Drawing.Size(125, 20);
+            this.chkVPWFilters.Size = new System.Drawing.Size(103, 17);
             this.chkVPWFilters.TabIndex = 35;
             this.chkVPWFilters.Text = "Use VPW Filters";
             this.chkVPWFilters.UseVisualStyleBackColor = true;
@@ -1156,7 +1032,7 @@ namespace UniversalPatcher
             this.chkPriority.AutoSize = true;
             this.chkPriority.Location = new System.Drawing.Point(166, 37);
             this.chkPriority.Name = "chkPriority";
-            this.chkPriority.Size = new System.Drawing.Size(96, 20);
+            this.chkPriority.Size = new System.Drawing.Size(79, 17);
             this.chkPriority.TabIndex = 34;
             this.chkPriority.Text = "Use Priority";
             this.chkPriority.UseVisualStyleBackColor = true;
@@ -1167,7 +1043,7 @@ namespace UniversalPatcher
             this.chkRawValues.AutoSize = true;
             this.chkRawValues.Location = new System.Drawing.Point(9, 19);
             this.chkRawValues.Name = "chkRawValues";
-            this.chkRawValues.Size = new System.Drawing.Size(97, 20);
+            this.chkRawValues.Size = new System.Drawing.Size(82, 17);
             this.chkRawValues.TabIndex = 26;
             this.chkRawValues.Text = "Raw values";
             this.chkRawValues.UseVisualStyleBackColor = true;
@@ -1179,7 +1055,7 @@ namespace UniversalPatcher
             this.chkReverseSlotNumbers.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkReverseSlotNumbers.Location = new System.Drawing.Point(9, 37);
             this.chkReverseSlotNumbers.Name = "chkReverseSlotNumbers";
-            this.chkReverseSlotNumbers.Size = new System.Drawing.Size(182, 20);
+            this.chkReverseSlotNumbers.Size = new System.Drawing.Size(149, 17);
             this.chkReverseSlotNumbers.TabIndex = 27;
             this.chkReverseSlotNumbers.Text = "Slot numbers start from FE";
             this.chkReverseSlotNumbers.UseVisualStyleBackColor = true;
@@ -1189,7 +1065,7 @@ namespace UniversalPatcher
             this.labelResponseMode.AutoSize = true;
             this.labelResponseMode.Location = new System.Drawing.Point(9, 115);
             this.labelResponseMode.Name = "labelResponseMode";
-            this.labelResponseMode.Size = new System.Drawing.Size(112, 16);
+            this.labelResponseMode.Size = new System.Drawing.Size(88, 13);
             this.labelResponseMode.TabIndex = 24;
             this.labelResponseMode.Text = "Response Mode:";
             // 
@@ -1207,7 +1083,7 @@ namespace UniversalPatcher
             this.tabProfile.Controls.Add(this.splitContainer1);
             this.tabProfile.Location = new System.Drawing.Point(4, 22);
             this.tabProfile.Name = "tabProfile";
-            this.tabProfile.Size = new System.Drawing.Size(898, 435);
+            this.tabProfile.Size = new System.Drawing.Size(966, 481);
             this.tabProfile.TabIndex = 2;
             this.tabProfile.Text = "Profile";
             this.tabProfile.UseVisualStyleBackColor = true;
@@ -1230,8 +1106,8 @@ namespace UniversalPatcher
             this.splitContainer1.Panel2.Controls.Add(this.btnAdd);
             this.splitContainer1.Panel2.Controls.Add(this.dataGridLogProfile);
             this.splitContainer1.Panel2.Controls.Add(this.btnRemove);
-            this.splitContainer1.Size = new System.Drawing.Size(898, 435);
-            this.splitContainer1.SplitterDistance = 364;
+            this.splitContainer1.Size = new System.Drawing.Size(966, 481);
+            this.splitContainer1.SplitterDistance = 391;
             this.splitContainer1.TabIndex = 4;
             // 
             // groupBox2
@@ -1250,7 +1126,7 @@ namespace UniversalPatcher
             // 
             this.txtParamSearch.Location = new System.Drawing.Point(203, 8);
             this.txtParamSearch.Name = "txtParamSearch";
-            this.txtParamSearch.Size = new System.Drawing.Size(154, 22);
+            this.txtParamSearch.Size = new System.Drawing.Size(154, 20);
             this.txtParamSearch.TabIndex = 3;
             this.txtParamSearch.Text = "Search...";
             // 
@@ -1259,7 +1135,7 @@ namespace UniversalPatcher
             this.radioParamMath.AutoSize = true;
             this.radioParamMath.Location = new System.Drawing.Point(135, 9);
             this.radioParamMath.Name = "radioParamMath";
-            this.radioParamMath.Size = new System.Drawing.Size(55, 20);
+            this.radioParamMath.Size = new System.Drawing.Size(49, 17);
             this.radioParamMath.TabIndex = 2;
             this.radioParamMath.TabStop = true;
             this.radioParamMath.Text = "Math";
@@ -1271,7 +1147,7 @@ namespace UniversalPatcher
             this.radioParamRam.AutoSize = true;
             this.radioParamRam.Location = new System.Drawing.Point(80, 9);
             this.radioParamRam.Name = "radioParamRam";
-            this.radioParamRam.Size = new System.Drawing.Size(56, 20);
+            this.radioParamRam.Size = new System.Drawing.Size(49, 17);
             this.radioParamRam.TabIndex = 1;
             this.radioParamRam.Text = "RAM";
             this.radioParamRam.UseVisualStyleBackColor = true;
@@ -1283,7 +1159,7 @@ namespace UniversalPatcher
             this.radioParamStd.Checked = true;
             this.radioParamStd.Location = new System.Drawing.Point(6, 9);
             this.radioParamStd.Name = "radioParamStd";
-            this.radioParamStd.Size = new System.Drawing.Size(81, 20);
+            this.radioParamStd.Size = new System.Drawing.Size(68, 17);
             this.radioParamStd.TabIndex = 0;
             this.radioParamStd.TabStop = true;
             this.radioParamStd.Text = "Standard";
@@ -1323,7 +1199,7 @@ namespace UniversalPatcher
             dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridPidNames.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridPidNames.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridPidNames.Size = new System.Drawing.Size(364, 401);
+            this.dataGridPidNames.Size = new System.Drawing.Size(391, 447);
             this.dataGridPidNames.TabIndex = 1;
             // 
             // btnQueyPid2
@@ -1389,7 +1265,7 @@ namespace UniversalPatcher
             dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridLogProfile.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
-            this.dataGridLogProfile.Size = new System.Drawing.Size(488, 432);
+            this.dataGridLogProfile.Size = new System.Drawing.Size(529, 478);
             this.dataGridLogProfile.TabIndex = 0;
             // 
             // contextMenuStrip1
@@ -1451,7 +1327,7 @@ namespace UniversalPatcher
             this.tabAnalyzer.Controls.Add(this.dataGridAnalyzer);
             this.tabAnalyzer.Location = new System.Drawing.Point(4, 22);
             this.tabAnalyzer.Name = "tabAnalyzer";
-            this.tabAnalyzer.Size = new System.Drawing.Size(898, 435);
+            this.tabAnalyzer.Size = new System.Drawing.Size(966, 481);
             this.tabAnalyzer.TabIndex = 4;
             this.tabAnalyzer.Text = "Analyzer";
             this.tabAnalyzer.UseVisualStyleBackColor = true;
@@ -1459,7 +1335,7 @@ namespace UniversalPatcher
             // btnStartStopAnalyzer
             // 
             this.btnStartStopAnalyzer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStartStopAnalyzer.Location = new System.Drawing.Point(763, 3);
+            this.btnStartStopAnalyzer.Location = new System.Drawing.Point(831, 3);
             this.btnStartStopAnalyzer.Name = "btnStartStopAnalyzer";
             this.btnStartStopAnalyzer.Size = new System.Drawing.Size(127, 23);
             this.btnStartStopAnalyzer.TabIndex = 8;
@@ -1504,7 +1380,7 @@ namespace UniversalPatcher
             this.chkHideHeartBeat.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkHideHeartBeat.Location = new System.Drawing.Point(8, 8);
             this.chkHideHeartBeat.Name = "chkHideHeartBeat";
-            this.chkHideHeartBeat.Size = new System.Drawing.Size(119, 20);
+            this.chkHideHeartBeat.Size = new System.Drawing.Size(98, 17);
             this.chkHideHeartBeat.TabIndex = 4;
             this.chkHideHeartBeat.Text = "Hide Heartbeat";
             this.chkHideHeartBeat.UseVisualStyleBackColor = true;
@@ -1545,7 +1421,7 @@ namespace UniversalPatcher
             dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridAnalyzer.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
-            this.dataGridAnalyzer.Size = new System.Drawing.Size(896, 406);
+            this.dataGridAnalyzer.Size = new System.Drawing.Size(964, 452);
             this.dataGridAnalyzer.TabIndex = 3;
             // 
             // tabDTC
@@ -1554,7 +1430,7 @@ namespace UniversalPatcher
             this.tabDTC.Controls.Add(this.dataGridDtcCodes);
             this.tabDTC.Location = new System.Drawing.Point(4, 22);
             this.tabDTC.Name = "tabDTC";
-            this.tabDTC.Size = new System.Drawing.Size(898, 435);
+            this.tabDTC.Size = new System.Drawing.Size(966, 481);
             this.tabDTC.TabIndex = 5;
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
@@ -1616,7 +1492,7 @@ namespace UniversalPatcher
             // 
             this.txtDtcCustomModule.Location = new System.Drawing.Point(143, 368);
             this.txtDtcCustomModule.Name = "txtDtcCustomModule";
-            this.txtDtcCustomModule.Size = new System.Drawing.Size(39, 22);
+            this.txtDtcCustomModule.Size = new System.Drawing.Size(39, 20);
             this.txtDtcCustomModule.TabIndex = 14;
             this.txtDtcCustomModule.Text = "10";
             this.txtDtcCustomModule.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -1626,7 +1502,7 @@ namespace UniversalPatcher
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(23, 368);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(104, 16);
+            this.label10.Size = new System.Drawing.Size(82, 13);
             this.label10.TabIndex = 13;
             this.label10.Text = "Custom module:";
             // 
@@ -1634,7 +1510,7 @@ namespace UniversalPatcher
             // 
             this.txtDtcCustomMode.Location = new System.Drawing.Point(143, 344);
             this.txtDtcCustomMode.Name = "txtDtcCustomMode";
-            this.txtDtcCustomMode.Size = new System.Drawing.Size(39, 22);
+            this.txtDtcCustomMode.Size = new System.Drawing.Size(39, 20);
             this.txtDtcCustomMode.TabIndex = 12;
             this.txtDtcCustomMode.Text = "10";
             this.txtDtcCustomMode.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -1654,7 +1530,7 @@ namespace UniversalPatcher
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(23, 347);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(77, 16);
+            this.label6.Size = new System.Drawing.Size(63, 13);
             this.label6.TabIndex = 9;
             this.label6.Text = "Custom dtc:";
             // 
@@ -1701,7 +1577,7 @@ namespace UniversalPatcher
             this.chkDtcAllModules.AutoSize = true;
             this.chkDtcAllModules.Location = new System.Drawing.Point(88, 11);
             this.chkDtcAllModules.Name = "chkDtcAllModules";
-            this.chkDtcAllModules.Size = new System.Drawing.Size(97, 20);
+            this.chkDtcAllModules.Size = new System.Drawing.Size(79, 17);
             this.chkDtcAllModules.TabIndex = 6;
             this.chkDtcAllModules.Text = "All modules";
             this.chkDtcAllModules.UseVisualStyleBackColor = true;
@@ -1712,7 +1588,7 @@ namespace UniversalPatcher
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(23, 37);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(56, 16);
+            this.label8.Size = new System.Drawing.Size(45, 13);
             this.label8.TabIndex = 3;
             this.label8.Text = "Module:";
             // 
@@ -1766,7 +1642,7 @@ namespace UniversalPatcher
             dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridDtcCodes.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
-            this.dataGridDtcCodes.Size = new System.Drawing.Size(686, 434);
+            this.dataGridDtcCodes.Size = new System.Drawing.Size(754, 480);
             this.dataGridDtcCodes.TabIndex = 7;
             // 
             // Module
@@ -1825,16 +1701,28 @@ namespace UniversalPatcher
             // 
             // tabVPWConsole
             // 
+            this.tabVPWConsole.Controls.Add(this.vScrollBarVpwConsole);
             this.tabVPWConsole.Controls.Add(this.groupBox6);
             this.tabVPWConsole.Controls.Add(this.txtSendBus);
             this.tabVPWConsole.Controls.Add(this.groupBox3);
             this.tabVPWConsole.Controls.Add(this.richVPWmessages);
             this.tabVPWConsole.Location = new System.Drawing.Point(4, 22);
             this.tabVPWConsole.Name = "tabVPWConsole";
-            this.tabVPWConsole.Size = new System.Drawing.Size(898, 435);
+            this.tabVPWConsole.Size = new System.Drawing.Size(966, 481);
             this.tabVPWConsole.TabIndex = 6;
             this.tabVPWConsole.Text = "VPW Console";
             this.tabVPWConsole.UseVisualStyleBackColor = true;
+            // 
+            // vScrollBarVpwConsole
+            // 
+            this.vScrollBarVpwConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.vScrollBarVpwConsole.LargeChange = 1;
+            this.vScrollBarVpwConsole.Location = new System.Drawing.Point(940, 5);
+            this.vScrollBarVpwConsole.Name = "vScrollBarVpwConsole";
+            this.vScrollBarVpwConsole.Size = new System.Drawing.Size(21, 443);
+            this.vScrollBarVpwConsole.TabIndex = 37;
+            this.vScrollBarVpwConsole.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBarVpwConsole_Scroll);
             // 
             // groupBox6
             // 
@@ -1855,7 +1743,7 @@ namespace UniversalPatcher
             // 
             this.txtEmulatorId.Location = new System.Drawing.Point(38, 41);
             this.txtEmulatorId.Name = "txtEmulatorId";
-            this.txtEmulatorId.Size = new System.Drawing.Size(92, 22);
+            this.txtEmulatorId.Size = new System.Drawing.Size(92, 20);
             this.txtEmulatorId.TabIndex = 52;
             this.txtEmulatorId.Text = "10";
             // 
@@ -1864,7 +1752,7 @@ namespace UniversalPatcher
             this.label21.AutoSize = true;
             this.label21.Location = new System.Drawing.Point(6, 44);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(24, 16);
+            this.label21.Size = new System.Drawing.Size(21, 13);
             this.label21.TabIndex = 51;
             this.label21.Text = "ID:";
             // 
@@ -1893,7 +1781,7 @@ namespace UniversalPatcher
             this.ChkEmulatorResponseMode.AutoSize = true;
             this.ChkEmulatorResponseMode.Location = new System.Drawing.Point(6, 20);
             this.ChkEmulatorResponseMode.Name = "ChkEmulatorResponseMode";
-            this.ChkEmulatorResponseMode.Size = new System.Drawing.Size(128, 20);
+            this.ChkEmulatorResponseMode.Size = new System.Drawing.Size(103, 17);
             this.ChkEmulatorResponseMode.TabIndex = 48;
             this.ChkEmulatorResponseMode.Text = "Response mode";
             this.ChkEmulatorResponseMode.UseVisualStyleBackColor = true;
@@ -1903,9 +1791,9 @@ namespace UniversalPatcher
             // 
             this.txtSendBus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSendBus.Location = new System.Drawing.Point(304, 409);
+            this.txtSendBus.Location = new System.Drawing.Point(304, 455);
             this.txtSendBus.Name = "txtSendBus";
-            this.txtSendBus.Size = new System.Drawing.Size(589, 22);
+            this.txtSendBus.Size = new System.Drawing.Size(657, 20);
             this.txtSendBus.TabIndex = 1;
             this.txtSendBus.TextChanged += new System.EventHandler(this.txtSendBus_TextChanged);
             // 
@@ -1935,7 +1823,7 @@ namespace UniversalPatcher
             this.chkVpwConsoleDevTimestampConvert.AutoSize = true;
             this.chkVpwConsoleDevTimestampConvert.Location = new System.Drawing.Point(18, 67);
             this.chkVpwConsoleDevTimestampConvert.Name = "chkVpwConsoleDevTimestampConvert";
-            this.chkVpwConsoleDevTimestampConvert.Size = new System.Drawing.Size(101, 20);
+            this.chkVpwConsoleDevTimestampConvert.Size = new System.Drawing.Size(88, 17);
             this.chkVpwConsoleDevTimestampConvert.TabIndex = 56;
             this.chkVpwConsoleDevTimestampConvert.Text = "HH.MM.ss.fff";
             this.chkVpwConsoleDevTimestampConvert.UseVisualStyleBackColor = true;
@@ -1945,28 +1833,40 @@ namespace UniversalPatcher
             this.chkVpwConsoleDevTimestamps.AutoSize = true;
             this.chkVpwConsoleDevTimestamps.Location = new System.Drawing.Point(12, 48);
             this.chkVpwConsoleDevTimestamps.Name = "chkVpwConsoleDevTimestamps";
-            this.chkVpwConsoleDevTimestamps.Size = new System.Drawing.Size(148, 20);
+            this.chkVpwConsoleDevTimestamps.Size = new System.Drawing.Size(119, 17);
             this.chkVpwConsoleDevTimestamps.TabIndex = 55;
             this.chkVpwConsoleDevTimestamps.Text = "Device Timestamps";
             this.chkVpwConsoleDevTimestamps.UseVisualStyleBackColor = true;
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.chkVpwBuffered);
             this.groupBox9.Controls.Add(this.chkVpwToFile);
             this.groupBox9.Controls.Add(this.chkVpwToScreen);
             this.groupBox9.Location = new System.Drawing.Point(7, 239);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(128, 44);
+            this.groupBox9.Size = new System.Drawing.Size(128, 62);
             this.groupBox9.TabIndex = 54;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Destination";
+            // 
+            // chkVpwBuffered
+            // 
+            this.chkVpwBuffered.AutoSize = true;
+            this.chkVpwBuffered.Location = new System.Drawing.Point(11, 36);
+            this.chkVpwBuffered.Name = "chkVpwBuffered";
+            this.chkVpwBuffered.Size = new System.Drawing.Size(66, 17);
+            this.chkVpwBuffered.TabIndex = 2;
+            this.chkVpwBuffered.Text = "Buffered";
+            this.chkVpwBuffered.UseVisualStyleBackColor = true;
+            this.chkVpwBuffered.CheckedChanged += new System.EventHandler(this.chkVpwBuffered_CheckedChanged);
             // 
             // chkVpwToFile
             // 
             this.chkVpwToFile.AutoSize = true;
             this.chkVpwToFile.Location = new System.Drawing.Point(76, 16);
             this.chkVpwToFile.Name = "chkVpwToFile";
-            this.chkVpwToFile.Size = new System.Drawing.Size(49, 20);
+            this.chkVpwToFile.Size = new System.Drawing.Size(42, 17);
             this.chkVpwToFile.TabIndex = 1;
             this.chkVpwToFile.Text = "File";
             this.chkVpwToFile.UseVisualStyleBackColor = true;
@@ -1977,10 +1877,11 @@ namespace UniversalPatcher
             this.chkVpwToScreen.AutoSize = true;
             this.chkVpwToScreen.Location = new System.Drawing.Point(11, 16);
             this.chkVpwToScreen.Name = "chkVpwToScreen";
-            this.chkVpwToScreen.Size = new System.Drawing.Size(70, 20);
+            this.chkVpwToScreen.Size = new System.Drawing.Size(60, 17);
             this.chkVpwToScreen.TabIndex = 0;
             this.chkVpwToScreen.Text = "Screen";
             this.chkVpwToScreen.UseVisualStyleBackColor = true;
+            this.chkVpwToScreen.CheckedChanged += new System.EventHandler(this.chkVpwToScreen_CheckedChanged);
             // 
             // btnStopScript
             // 
@@ -2022,7 +1923,7 @@ namespace UniversalPatcher
             0,
             0});
             this.numConsoleScriptDelay.Name = "numConsoleScriptDelay";
-            this.numConsoleScriptDelay.Size = new System.Drawing.Size(51, 22);
+            this.numConsoleScriptDelay.Size = new System.Drawing.Size(51, 20);
             this.numConsoleScriptDelay.TabIndex = 40;
             this.numConsoleScriptDelay.ValueChanged += new System.EventHandler(this.numConsoleScriptDelay_ValueChanged);
             // 
@@ -2033,7 +1934,7 @@ namespace UniversalPatcher
             this.chkConsole4x.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkConsole4x.Location = new System.Drawing.Point(6, 90);
             this.chkConsole4x.Name = "chkConsole4x";
-            this.chkConsole4x.Size = new System.Drawing.Size(86, 20);
+            this.chkConsole4x.Size = new System.Drawing.Size(73, 17);
             this.chkConsole4x.TabIndex = 42;
             this.chkConsole4x.Text = "Enable 4x";
             this.chkConsole4x.UseVisualStyleBackColor = true;
@@ -2044,7 +1945,7 @@ namespace UniversalPatcher
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(4, 130);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(108, 16);
+            this.label9.Size = new System.Drawing.Size(84, 13);
             this.label9.TabIndex = 41;
             this.label9.Text = "Script delay (ms)";
             // 
@@ -2053,7 +1954,7 @@ namespace UniversalPatcher
             this.chkEnableConsole.AutoSize = true;
             this.chkEnableConsole.Location = new System.Drawing.Point(6, 14);
             this.chkEnableConsole.Name = "chkEnableConsole";
-            this.chkEnableConsole.Size = new System.Drawing.Size(155, 20);
+            this.chkEnableConsole.Size = new System.Drawing.Size(127, 17);
             this.chkEnableConsole.TabIndex = 37;
             this.chkEnableConsole.Text = "Enable VPW console";
             this.chkEnableConsole.UseVisualStyleBackColor = true;
@@ -2064,7 +1965,7 @@ namespace UniversalPatcher
             this.chkConsoleTimestamps.AutoSize = true;
             this.chkConsoleTimestamps.Location = new System.Drawing.Point(6, 30);
             this.chkConsoleTimestamps.Name = "chkConsoleTimestamps";
-            this.chkConsoleTimestamps.Size = new System.Drawing.Size(102, 20);
+            this.chkConsoleTimestamps.Size = new System.Drawing.Size(82, 17);
             this.chkConsoleTimestamps.TabIndex = 38;
             this.chkConsoleTimestamps.Text = "Timestamps";
             this.chkConsoleTimestamps.UseVisualStyleBackColor = true;
@@ -2075,17 +1976,20 @@ namespace UniversalPatcher
             this.richVPWmessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.richVPWmessages.DetectUrls = false;
             this.richVPWmessages.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richVPWmessages.HideSelection = false;
             this.richVPWmessages.Location = new System.Drawing.Point(304, 5);
             this.richVPWmessages.Name = "richVPWmessages";
-            this.richVPWmessages.Size = new System.Drawing.Size(589, 399);
+            this.richVPWmessages.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.richVPWmessages.Size = new System.Drawing.Size(657, 445);
             this.richVPWmessages.TabIndex = 2;
             this.richVPWmessages.Text = "";
             this.richVPWmessages.WordWrap = false;
             // 
             // tabJConsole
             // 
+            this.tabJConsole.Controls.Add(this.vScrollBarJConsole);
             this.tabJConsole.Controls.Add(this.groupBox8);
             this.tabJConsole.Controls.Add(this.labelJconsoleConnected);
             this.tabJConsole.Controls.Add(this.groupBox7);
@@ -2101,28 +2005,51 @@ namespace UniversalPatcher
             this.tabJConsole.Location = new System.Drawing.Point(4, 22);
             this.tabJConsole.Margin = new System.Windows.Forms.Padding(2);
             this.tabJConsole.Name = "tabJConsole";
-            this.tabJConsole.Size = new System.Drawing.Size(898, 435);
+            this.tabJConsole.Size = new System.Drawing.Size(966, 481);
             this.tabJConsole.TabIndex = 7;
             this.tabJConsole.Text = "J-Console";
             this.tabJConsole.UseVisualStyleBackColor = true;
             // 
+            // vScrollBarJConsole
+            // 
+            this.vScrollBarJConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.vScrollBarJConsole.LargeChange = 1;
+            this.vScrollBarJConsole.Location = new System.Drawing.Point(943, 3);
+            this.vScrollBarJConsole.Name = "vScrollBarJConsole";
+            this.vScrollBarJConsole.Size = new System.Drawing.Size(19, 411);
+            this.vScrollBarJConsole.TabIndex = 54;
+            this.vScrollBarJConsole.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBarJConsole_Scroll);
+            // 
             // groupBox8
             // 
+            this.groupBox8.Controls.Add(this.chkJconsoleUsebuffer);
             this.groupBox8.Controls.Add(this.chkJConsoleToFile);
             this.groupBox8.Controls.Add(this.chkJconsoleToScreen);
             this.groupBox8.Location = new System.Drawing.Point(308, 35);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(128, 44);
+            this.groupBox8.Size = new System.Drawing.Size(128, 59);
             this.groupBox8.TabIndex = 53;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Destination";
+            // 
+            // chkJconsoleUsebuffer
+            // 
+            this.chkJconsoleUsebuffer.AutoSize = true;
+            this.chkJconsoleUsebuffer.Location = new System.Drawing.Point(11, 36);
+            this.chkJconsoleUsebuffer.Name = "chkJconsoleUsebuffer";
+            this.chkJconsoleUsebuffer.Size = new System.Drawing.Size(66, 17);
+            this.chkJconsoleUsebuffer.TabIndex = 2;
+            this.chkJconsoleUsebuffer.Text = "Buffered";
+            this.chkJconsoleUsebuffer.UseVisualStyleBackColor = true;
+            this.chkJconsoleUsebuffer.CheckedChanged += new System.EventHandler(this.chkJconsoleUsebuffer_CheckedChanged);
             // 
             // chkJConsoleToFile
             // 
             this.chkJConsoleToFile.AutoSize = true;
             this.chkJConsoleToFile.Location = new System.Drawing.Point(76, 16);
             this.chkJConsoleToFile.Name = "chkJConsoleToFile";
-            this.chkJConsoleToFile.Size = new System.Drawing.Size(49, 20);
+            this.chkJConsoleToFile.Size = new System.Drawing.Size(42, 17);
             this.chkJConsoleToFile.TabIndex = 1;
             this.chkJConsoleToFile.Text = "File";
             this.chkJConsoleToFile.UseVisualStyleBackColor = true;
@@ -2135,10 +2062,11 @@ namespace UniversalPatcher
             this.chkJconsoleToScreen.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkJconsoleToScreen.Location = new System.Drawing.Point(11, 16);
             this.chkJconsoleToScreen.Name = "chkJconsoleToScreen";
-            this.chkJconsoleToScreen.Size = new System.Drawing.Size(70, 20);
+            this.chkJconsoleToScreen.Size = new System.Drawing.Size(60, 17);
             this.chkJconsoleToScreen.TabIndex = 0;
             this.chkJconsoleToScreen.Text = "Screen";
             this.chkJconsoleToScreen.UseVisualStyleBackColor = true;
+            this.chkJconsoleToScreen.CheckedChanged += new System.EventHandler(this.chkJconsoleToScreen_CheckedChanged);
             // 
             // labelJconsoleConnected
             // 
@@ -2154,11 +2082,12 @@ namespace UniversalPatcher
             // 
             // groupBox7
             // 
-            this.groupBox7.Controls.Add(this.btnJconsoleConfigFilters2);
+            this.groupBox7.Controls.Add(this.chkUsePrimaryChannel);
+            this.groupBox7.Controls.Add(this.btnJconsoleEditFilters2);
+            this.groupBox7.Controls.Add(this.btnJconsoleApplyFilters2);
             this.groupBox7.Controls.Add(this.btnJconsoleSecProtoDisconnect);
             this.groupBox7.Controls.Add(this.btnJConsoleReset2);
-            this.groupBox7.Controls.Add(this.txtJConsolePassFilters2);
-            this.groupBox7.Controls.Add(this.label35);
+            this.groupBox7.Controls.Add(this.labelJconsoleFilters2);
             this.groupBox7.Controls.Add(this.btnJConsoleAddConfig2);
             this.groupBox7.Controls.Add(this.label22);
             this.groupBox7.Controls.Add(this.comboJConsoleConfig2);
@@ -2183,26 +2112,46 @@ namespace UniversalPatcher
             this.groupBox7.Controls.Add(this.comboJ2534Baudrate2);
             this.groupBox7.Controls.Add(this.comboJ2534Protocol2);
             this.groupBox7.Controls.Add(this.label33);
-            this.groupBox7.Location = new System.Drawing.Point(233, 85);
+            this.groupBox7.Location = new System.Drawing.Point(232, 100);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(207, 346);
+            this.groupBox7.Size = new System.Drawing.Size(207, 376);
             this.groupBox7.TabIndex = 52;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Protocol 2";
             // 
-            // btnJconsoleConfigFilters2
+            // chkUsePrimaryChannel
             // 
-            this.btnJconsoleConfigFilters2.Location = new System.Drawing.Point(53, 210);
-            this.btnJconsoleConfigFilters2.Name = "btnJconsoleConfigFilters2";
-            this.btnJconsoleConfigFilters2.Size = new System.Drawing.Size(25, 21);
-            this.btnJconsoleConfigFilters2.TabIndex = 76;
-            this.btnJconsoleConfigFilters2.Text = "!";
-            this.btnJconsoleConfigFilters2.UseVisualStyleBackColor = true;
-            this.btnJconsoleConfigFilters2.Click += new System.EventHandler(this.btnJconsoleConfigFilters2_Click);
+            this.chkUsePrimaryChannel.AutoSize = true;
+            this.chkUsePrimaryChannel.Location = new System.Drawing.Point(6, 349);
+            this.chkUsePrimaryChannel.Name = "chkUsePrimaryChannel";
+            this.chkUsePrimaryChannel.Size = new System.Drawing.Size(136, 17);
+            this.chkUsePrimaryChannel.TabIndex = 78;
+            this.chkUsePrimaryChannel.Text = "Use protocol 1 channel";
+            this.chkUsePrimaryChannel.UseVisualStyleBackColor = true;
+            // 
+            // btnJconsoleEditFilters2
+            // 
+            this.btnJconsoleEditFilters2.Location = new System.Drawing.Point(83, 209);
+            this.btnJconsoleEditFilters2.Name = "btnJconsoleEditFilters2";
+            this.btnJconsoleEditFilters2.Size = new System.Drawing.Size(62, 21);
+            this.btnJconsoleEditFilters2.TabIndex = 77;
+            this.btnJconsoleEditFilters2.Text = "Edit";
+            this.btnJconsoleEditFilters2.UseVisualStyleBackColor = true;
+            this.btnJconsoleEditFilters2.Click += new System.EventHandler(this.btnJconsoleEDitFilters2_Click);
+            // 
+            // btnJconsoleApplyFilters2
+            // 
+            this.btnJconsoleApplyFilters2.Location = new System.Drawing.Point(151, 209);
+            this.btnJconsoleApplyFilters2.Name = "btnJconsoleApplyFilters2";
+            this.btnJconsoleApplyFilters2.Size = new System.Drawing.Size(51, 21);
+            this.btnJconsoleApplyFilters2.TabIndex = 76;
+            this.btnJconsoleApplyFilters2.Text = "Apply";
+            this.btnJconsoleApplyFilters2.UseVisualStyleBackColor = true;
+            this.btnJconsoleApplyFilters2.Click += new System.EventHandler(this.btnJconsoleConfigFilters2_Click);
             // 
             // btnJconsoleSecProtoDisconnect
             // 
-            this.btnJconsoleSecProtoDisconnect.Location = new System.Drawing.Point(74, 317);
+            this.btnJconsoleSecProtoDisconnect.Location = new System.Drawing.Point(75, 315);
             this.btnJconsoleSecProtoDisconnect.Name = "btnJconsoleSecProtoDisconnect";
             this.btnJconsoleSecProtoDisconnect.Size = new System.Drawing.Size(73, 23);
             this.btnJconsoleSecProtoDisconnect.TabIndex = 75;
@@ -2220,21 +2169,14 @@ namespace UniversalPatcher
             this.btnJConsoleReset2.UseVisualStyleBackColor = true;
             this.btnJConsoleReset2.Click += new System.EventHandler(this.btnJConsoleReset2_Click);
             // 
-            // txtJConsolePassFilters2
+            // labelJconsoleFilters2
             // 
-            this.txtJConsolePassFilters2.Location = new System.Drawing.Point(84, 211);
-            this.txtJConsolePassFilters2.Name = "txtJConsolePassFilters2";
-            this.txtJConsolePassFilters2.Size = new System.Drawing.Size(117, 22);
-            this.txtJConsolePassFilters2.TabIndex = 73;
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(7, 214);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(47, 16);
-            this.label35.TabIndex = 72;
-            this.label35.Text = "Filters:";
+            this.labelJconsoleFilters2.AutoSize = true;
+            this.labelJconsoleFilters2.Location = new System.Drawing.Point(7, 214);
+            this.labelJconsoleFilters2.Name = "labelJconsoleFilters2";
+            this.labelJconsoleFilters2.Size = new System.Drawing.Size(37, 13);
+            this.labelJconsoleFilters2.TabIndex = 72;
+            this.labelJconsoleFilters2.Text = "Filters:";
             // 
             // btnJConsoleAddConfig2
             // 
@@ -2251,7 +2193,7 @@ namespace UniversalPatcher
             this.label22.AutoSize = true;
             this.label22.Location = new System.Drawing.Point(8, 239);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(49, 16);
+            this.label22.Size = new System.Drawing.Size(40, 13);
             this.label22.TabIndex = 68;
             this.label22.Text = "Config:";
             // 
@@ -2267,7 +2209,7 @@ namespace UniversalPatcher
             // 
             this.txtJConsoleConfigs2.Location = new System.Drawing.Point(84, 263);
             this.txtJConsoleConfigs2.Name = "txtJConsoleConfigs2";
-            this.txtJConsoleConfigs2.Size = new System.Drawing.Size(118, 22);
+            this.txtJConsoleConfigs2.Size = new System.Drawing.Size(118, 20);
             this.txtJConsoleConfigs2.TabIndex = 66;
             // 
             // label23
@@ -2275,14 +2217,14 @@ namespace UniversalPatcher
             this.label23.AutoSize = true;
             this.label23.Location = new System.Drawing.Point(8, 269);
             this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(56, 16);
+            this.label23.Size = new System.Drawing.Size(45, 13);
             this.label23.TabIndex = 65;
             this.label23.Text = "Configs:";
             // 
             // btnJConsoleConnectSecondProtocol
             // 
             this.btnJConsoleConnectSecondProtocol.Enabled = false;
-            this.btnJConsoleConnectSecondProtocol.Location = new System.Drawing.Point(5, 318);
+            this.btnJConsoleConnectSecondProtocol.Location = new System.Drawing.Point(6, 316);
             this.btnJConsoleConnectSecondProtocol.Name = "btnJConsoleConnectSecondProtocol";
             this.btnJConsoleConnectSecondProtocol.Size = new System.Drawing.Size(67, 23);
             this.btnJConsoleConnectSecondProtocol.TabIndex = 55;
@@ -2300,7 +2242,7 @@ namespace UniversalPatcher
             0,
             0});
             this.numJ2534PeriodicMsgInterval2.Name = "numJ2534PeriodicMsgInterval2";
-            this.numJ2534PeriodicMsgInterval2.Size = new System.Drawing.Size(118, 22);
+            this.numJ2534PeriodicMsgInterval2.Size = new System.Drawing.Size(118, 20);
             this.numJ2534PeriodicMsgInterval2.TabIndex = 64;
             this.numJ2534PeriodicMsgInterval2.Value = new decimal(new int[] {
             3000,
@@ -2314,7 +2256,7 @@ namespace UniversalPatcher
             this.label24.Location = new System.Drawing.Point(8, 189);
             this.label24.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(83, 16);
+            this.label24.Size = new System.Drawing.Size(67, 13);
             this.label24.TabIndex = 63;
             this.label24.Text = "Interval: (ms)";
             // 
@@ -2323,7 +2265,7 @@ namespace UniversalPatcher
             this.txtJ2534PeriodicMsg2.Location = new System.Drawing.Point(85, 163);
             this.txtJ2534PeriodicMsg2.Margin = new System.Windows.Forms.Padding(2);
             this.txtJ2534PeriodicMsg2.Name = "txtJ2534PeriodicMsg2";
-            this.txtJ2534PeriodicMsg2.Size = new System.Drawing.Size(118, 22);
+            this.txtJ2534PeriodicMsg2.Size = new System.Drawing.Size(118, 20);
             this.txtJ2534PeriodicMsg2.TabIndex = 62;
             // 
             // label25
@@ -2332,7 +2274,7 @@ namespace UniversalPatcher
             this.label25.Location = new System.Drawing.Point(8, 166);
             this.label25.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(90, 16);
+            this.label25.Size = new System.Drawing.Size(70, 13);
             this.label25.TabIndex = 61;
             this.label25.Text = "Periodic msg:";
             this.label25.Click += new System.EventHandler(this.label25_Click);
@@ -2363,7 +2305,7 @@ namespace UniversalPatcher
             // 
             this.txtJ2534InitBytes2.Location = new System.Drawing.Point(84, 139);
             this.txtJ2534InitBytes2.Name = "txtJ2534InitBytes2";
-            this.txtJ2534InitBytes2.Size = new System.Drawing.Size(118, 22);
+            this.txtJ2534InitBytes2.Size = new System.Drawing.Size(118, 20);
             this.txtJ2534InitBytes2.TabIndex = 58;
             // 
             // label26
@@ -2371,7 +2313,7 @@ namespace UniversalPatcher
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(8, 141);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(63, 16);
+            this.label26.Size = new System.Drawing.Size(52, 13);
             this.label26.TabIndex = 57;
             this.label26.Text = "Init bytes:";
             // 
@@ -2380,7 +2322,7 @@ namespace UniversalPatcher
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(8, 117);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(27, 16);
+            this.label27.Size = new System.Drawing.Size(24, 13);
             this.label27.TabIndex = 56;
             this.label27.Text = "Init:";
             // 
@@ -2397,7 +2339,7 @@ namespace UniversalPatcher
             // 
             this.txtJ2534SetPins2.Location = new System.Drawing.Point(84, 90);
             this.txtJ2534SetPins2.Name = "txtJ2534SetPins2";
-            this.txtJ2534SetPins2.Size = new System.Drawing.Size(118, 22);
+            this.txtJ2534SetPins2.Size = new System.Drawing.Size(118, 20);
             this.txtJ2534SetPins2.TabIndex = 54;
             // 
             // label30
@@ -2405,7 +2347,7 @@ namespace UniversalPatcher
             this.label30.AutoSize = true;
             this.label30.Location = new System.Drawing.Point(8, 92);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(59, 16);
+            this.label30.Size = new System.Drawing.Size(48, 13);
             this.label30.TabIndex = 53;
             this.label30.Text = "Set pins:";
             // 
@@ -2422,7 +2364,7 @@ namespace UniversalPatcher
             this.label31.AutoSize = true;
             this.label31.Location = new System.Drawing.Point(8, 68);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(82, 16);
+            this.label31.Size = new System.Drawing.Size(67, 13);
             this.label31.TabIndex = 49;
             this.label31.Text = "Connectflag:";
             // 
@@ -2431,7 +2373,7 @@ namespace UniversalPatcher
             this.label32.AutoSize = true;
             this.label32.Location = new System.Drawing.Point(8, 18);
             this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(61, 16);
+            this.label32.Size = new System.Drawing.Size(49, 13);
             this.label32.TabIndex = 46;
             this.label32.Text = "Protocol:";
             // 
@@ -2457,16 +2399,19 @@ namespace UniversalPatcher
             this.label33.AutoSize = true;
             this.label33.Location = new System.Drawing.Point(8, 43);
             this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(66, 16);
+            this.label33.Size = new System.Drawing.Size(53, 13);
             this.label33.TabIndex = 47;
             this.label33.Text = "Baudrate:";
             // 
             // groupJ2534Options
             // 
-            this.groupJ2534Options.Controls.Add(this.btnJconsoleConfigFilters);
+            this.groupJ2534Options.Controls.Add(this.btnLoadProtocols);
+            this.groupJ2534Options.Controls.Add(this.btnJconsoleEditFilters);
+            this.groupJ2534Options.Controls.Add(this.btnSaveProtocols);
+            this.groupJ2534Options.Controls.Add(this.btnCanFilters);
+            this.groupJ2534Options.Controls.Add(this.btnJconsoleApplyFilters);
             this.groupJ2534Options.Controls.Add(this.btnJConsoleReset);
-            this.groupJ2534Options.Controls.Add(this.txtJConsolePassFilters);
-            this.groupJ2534Options.Controls.Add(this.label34);
+            this.groupJ2534Options.Controls.Add(this.labelJconsoleFilters);
             this.groupJ2534Options.Controls.Add(this.btnJConsoleAddConfig);
             this.groupJ2534Options.Controls.Add(this.label29);
             this.groupJ2534Options.Controls.Add(this.comboJConsoleConfig);
@@ -2491,22 +2436,62 @@ namespace UniversalPatcher
             this.groupJ2534Options.Controls.Add(this.comboJ2534Baudrate);
             this.groupJ2534Options.Controls.Add(this.comboJ2534Protocol);
             this.groupJ2534Options.Controls.Add(this.label12);
-            this.groupJ2534Options.Location = new System.Drawing.Point(5, 85);
+            this.groupJ2534Options.Location = new System.Drawing.Point(5, 100);
             this.groupJ2534Options.Name = "groupJ2534Options";
-            this.groupJ2534Options.Size = new System.Drawing.Size(222, 346);
+            this.groupJ2534Options.Size = new System.Drawing.Size(222, 376);
             this.groupJ2534Options.TabIndex = 50;
             this.groupJ2534Options.TabStop = false;
             this.groupJ2534Options.Text = "Protocol 1";
             // 
-            // btnJconsoleConfigFilters
+            // btnLoadProtocols
             // 
-            this.btnJconsoleConfigFilters.Location = new System.Drawing.Point(54, 214);
-            this.btnJconsoleConfigFilters.Name = "btnJconsoleConfigFilters";
-            this.btnJconsoleConfigFilters.Size = new System.Drawing.Size(25, 21);
-            this.btnJconsoleConfigFilters.TabIndex = 73;
-            this.btnJconsoleConfigFilters.Text = "!";
-            this.btnJconsoleConfigFilters.UseVisualStyleBackColor = true;
-            this.btnJconsoleConfigFilters.Click += new System.EventHandler(this.btnJconsoleConfigFilters_Click);
+            this.btnLoadProtocols.Location = new System.Drawing.Point(96, 345);
+            this.btnLoadProtocols.Name = "btnLoadProtocols";
+            this.btnLoadProtocols.Size = new System.Drawing.Size(73, 23);
+            this.btnLoadProtocols.TabIndex = 55;
+            this.btnLoadProtocols.Text = "Load both";
+            this.btnLoadProtocols.UseVisualStyleBackColor = true;
+            this.btnLoadProtocols.Click += new System.EventHandler(this.btnLoadProtocols_Click);
+            // 
+            // btnJconsoleEditFilters
+            // 
+            this.btnJconsoleEditFilters.Location = new System.Drawing.Point(85, 216);
+            this.btnJconsoleEditFilters.Name = "btnJconsoleEditFilters";
+            this.btnJconsoleEditFilters.Size = new System.Drawing.Size(62, 21);
+            this.btnJconsoleEditFilters.TabIndex = 75;
+            this.btnJconsoleEditFilters.Text = "Edit";
+            this.btnJconsoleEditFilters.UseVisualStyleBackColor = true;
+            this.btnJconsoleEditFilters.Click += new System.EventHandler(this.btnJconsoleEditFilters_Click);
+            // 
+            // btnSaveProtocols
+            // 
+            this.btnSaveProtocols.Location = new System.Drawing.Point(6, 345);
+            this.btnSaveProtocols.Name = "btnSaveProtocols";
+            this.btnSaveProtocols.Size = new System.Drawing.Size(84, 23);
+            this.btnSaveProtocols.TabIndex = 54;
+            this.btnSaveProtocols.Text = "Save both";
+            this.btnSaveProtocols.UseVisualStyleBackColor = true;
+            this.btnSaveProtocols.Click += new System.EventHandler(this.btnSaveProtocols_Click);
+            // 
+            // btnCanFilters
+            // 
+            this.btnCanFilters.Location = new System.Drawing.Point(147, 318);
+            this.btnCanFilters.Name = "btnCanFilters";
+            this.btnCanFilters.Size = new System.Drawing.Size(64, 21);
+            this.btnCanFilters.TabIndex = 74;
+            this.btnCanFilters.Text = "Filters";
+            this.btnCanFilters.UseVisualStyleBackColor = true;
+            this.btnCanFilters.Click += new System.EventHandler(this.btnCanFilters_Click);
+            // 
+            // btnJconsoleApplyFilters
+            // 
+            this.btnJconsoleApplyFilters.Location = new System.Drawing.Point(147, 216);
+            this.btnJconsoleApplyFilters.Name = "btnJconsoleApplyFilters";
+            this.btnJconsoleApplyFilters.Size = new System.Drawing.Size(62, 21);
+            this.btnJconsoleApplyFilters.TabIndex = 73;
+            this.btnJconsoleApplyFilters.Text = "Apply";
+            this.btnJconsoleApplyFilters.UseVisualStyleBackColor = true;
+            this.btnJconsoleApplyFilters.Click += new System.EventHandler(this.btnJconsoleConfigFilters_Click);
             // 
             // btnJConsoleReset
             // 
@@ -2518,21 +2503,14 @@ namespace UniversalPatcher
             this.btnJConsoleReset.UseVisualStyleBackColor = true;
             this.btnJConsoleReset.Click += new System.EventHandler(this.btnJConsoleReset_Click);
             // 
-            // txtJConsolePassFilters
+            // labelJconsoleFilters
             // 
-            this.txtJConsolePassFilters.Location = new System.Drawing.Point(84, 215);
-            this.txtJConsolePassFilters.Name = "txtJConsolePassFilters";
-            this.txtJConsolePassFilters.Size = new System.Drawing.Size(128, 22);
-            this.txtJConsolePassFilters.TabIndex = 71;
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(7, 218);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(47, 16);
-            this.label34.TabIndex = 70;
-            this.label34.Text = "Filters:";
+            this.labelJconsoleFilters.AutoSize = true;
+            this.labelJconsoleFilters.Location = new System.Drawing.Point(7, 218);
+            this.labelJconsoleFilters.Name = "labelJconsoleFilters";
+            this.labelJconsoleFilters.Size = new System.Drawing.Size(37, 13);
+            this.labelJconsoleFilters.TabIndex = 70;
+            this.labelJconsoleFilters.Text = "Filters:";
             // 
             // btnJConsoleAddConfig
             // 
@@ -2549,7 +2527,7 @@ namespace UniversalPatcher
             this.label29.AutoSize = true;
             this.label29.Location = new System.Drawing.Point(9, 244);
             this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(49, 16);
+            this.label29.Size = new System.Drawing.Size(40, 13);
             this.label29.TabIndex = 68;
             this.label29.Text = "Config:";
             // 
@@ -2565,7 +2543,7 @@ namespace UniversalPatcher
             // 
             this.txtJConsoleConfigs.Location = new System.Drawing.Point(85, 268);
             this.txtJConsoleConfigs.Name = "txtJConsoleConfigs";
-            this.txtJConsoleConfigs.Size = new System.Drawing.Size(127, 22);
+            this.txtJConsoleConfigs.Size = new System.Drawing.Size(127, 20);
             this.txtJConsoleConfigs.TabIndex = 66;
             // 
             // btnJConsoleConnect
@@ -2581,9 +2559,9 @@ namespace UniversalPatcher
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(9, 274);
+            this.label28.Location = new System.Drawing.Point(11, 269);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(56, 16);
+            this.label28.Size = new System.Drawing.Size(45, 13);
             this.label28.TabIndex = 65;
             this.label28.Text = "Configs:";
             // 
@@ -2597,7 +2575,7 @@ namespace UniversalPatcher
             0,
             0});
             this.numJ2534PeriodicMsgInterval.Name = "numJ2534PeriodicMsgInterval";
-            this.numJ2534PeriodicMsgInterval.Size = new System.Drawing.Size(127, 22);
+            this.numJ2534PeriodicMsgInterval.Size = new System.Drawing.Size(127, 20);
             this.numJ2534PeriodicMsgInterval.TabIndex = 64;
             this.numJ2534PeriodicMsgInterval.Value = new decimal(new int[] {
             3000,
@@ -2611,7 +2589,7 @@ namespace UniversalPatcher
             this.label19.Location = new System.Drawing.Point(8, 192);
             this.label19.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(83, 16);
+            this.label19.Size = new System.Drawing.Size(67, 13);
             this.label19.TabIndex = 63;
             this.label19.Text = "Interval: (ms)";
             // 
@@ -2620,7 +2598,7 @@ namespace UniversalPatcher
             this.txtJ2534PeriodicMsg.Location = new System.Drawing.Point(84, 164);
             this.txtJ2534PeriodicMsg.Margin = new System.Windows.Forms.Padding(2);
             this.txtJ2534PeriodicMsg.Name = "txtJ2534PeriodicMsg";
-            this.txtJ2534PeriodicMsg.Size = new System.Drawing.Size(127, 22);
+            this.txtJ2534PeriodicMsg.Size = new System.Drawing.Size(127, 20);
             this.txtJ2534PeriodicMsg.TabIndex = 62;
             // 
             // label18
@@ -2629,7 +2607,7 @@ namespace UniversalPatcher
             this.label18.Location = new System.Drawing.Point(8, 166);
             this.label18.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(90, 16);
+            this.label18.Size = new System.Drawing.Size(70, 13);
             this.label18.TabIndex = 61;
             this.label18.Text = "Periodic msg:";
             // 
@@ -2659,7 +2637,7 @@ namespace UniversalPatcher
             // 
             this.txtJ2534InitBytes.Location = new System.Drawing.Point(84, 139);
             this.txtJ2534InitBytes.Name = "txtJ2534InitBytes";
-            this.txtJ2534InitBytes.Size = new System.Drawing.Size(127, 22);
+            this.txtJ2534InitBytes.Size = new System.Drawing.Size(127, 20);
             this.txtJ2534InitBytes.TabIndex = 58;
             // 
             // label17
@@ -2667,7 +2645,7 @@ namespace UniversalPatcher
             this.label17.AutoSize = true;
             this.label17.Location = new System.Drawing.Point(8, 141);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(63, 16);
+            this.label17.Size = new System.Drawing.Size(52, 13);
             this.label17.TabIndex = 57;
             this.label17.Text = "Init bytes:";
             // 
@@ -2676,7 +2654,7 @@ namespace UniversalPatcher
             this.label16.AutoSize = true;
             this.label16.Location = new System.Drawing.Point(8, 117);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(27, 16);
+            this.label16.Size = new System.Drawing.Size(24, 13);
             this.label16.TabIndex = 56;
             this.label16.Text = "Init:";
             // 
@@ -2693,7 +2671,7 @@ namespace UniversalPatcher
             // 
             this.txtJ2534SetPins.Location = new System.Drawing.Point(84, 90);
             this.txtJ2534SetPins.Name = "txtJ2534SetPins";
-            this.txtJ2534SetPins.Size = new System.Drawing.Size(127, 22);
+            this.txtJ2534SetPins.Size = new System.Drawing.Size(127, 20);
             this.txtJ2534SetPins.TabIndex = 54;
             // 
             // label15
@@ -2701,7 +2679,7 @@ namespace UniversalPatcher
             this.label15.AutoSize = true;
             this.label15.Location = new System.Drawing.Point(8, 92);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(59, 16);
+            this.label15.Size = new System.Drawing.Size(48, 13);
             this.label15.TabIndex = 53;
             this.label15.Text = "Set pins:";
             // 
@@ -2718,7 +2696,7 @@ namespace UniversalPatcher
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(8, 68);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(82, 16);
+            this.label13.Size = new System.Drawing.Size(67, 13);
             this.label13.TabIndex = 49;
             this.label13.Text = "Connectflag:";
             // 
@@ -2727,7 +2705,7 @@ namespace UniversalPatcher
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(8, 18);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(61, 16);
+            this.label11.Size = new System.Drawing.Size(49, 13);
             this.label11.TabIndex = 46;
             this.label11.Text = "Protocol:";
             // 
@@ -2753,7 +2731,7 @@ namespace UniversalPatcher
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(8, 43);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(66, 16);
+            this.label12.Size = new System.Drawing.Size(53, 13);
             this.label12.TabIndex = 47;
             this.label12.Text = "Baudrate:";
             // 
@@ -2766,7 +2744,7 @@ namespace UniversalPatcher
             this.groupBox4.Controls.Add(this.comboJ2534DLL);
             this.groupBox4.Location = new System.Drawing.Point(5, 10);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(296, 69);
+            this.groupBox4.Size = new System.Drawing.Size(296, 84);
             this.groupBox4.TabIndex = 51;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "J-Console";
@@ -2778,7 +2756,7 @@ namespace UniversalPatcher
             this.chkJConsole4x.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkJConsole4x.Location = new System.Drawing.Point(217, 46);
             this.chkJConsole4x.Name = "chkJConsole4x";
-            this.chkJConsole4x.Size = new System.Drawing.Size(86, 20);
+            this.chkJConsole4x.Size = new System.Drawing.Size(73, 17);
             this.chkJConsole4x.TabIndex = 42;
             this.chkJConsole4x.Text = "Enable 4x";
             this.chkJConsole4x.UseVisualStyleBackColor = true;
@@ -2789,7 +2767,7 @@ namespace UniversalPatcher
             this.chkJConsoleTimestamps.AutoSize = true;
             this.chkJConsoleTimestamps.Location = new System.Drawing.Point(9, 48);
             this.chkJConsoleTimestamps.Name = "chkJConsoleTimestamps";
-            this.chkJConsoleTimestamps.Size = new System.Drawing.Size(102, 20);
+            this.chkJConsoleTimestamps.Size = new System.Drawing.Size(82, 17);
             this.chkJConsoleTimestamps.TabIndex = 38;
             this.chkJConsoleTimestamps.Text = "Timestamps";
             this.chkJConsoleTimestamps.UseVisualStyleBackColor = true;
@@ -2799,7 +2777,7 @@ namespace UniversalPatcher
             this.chkConsoleUseJ2534Timestamps.AutoSize = true;
             this.chkConsoleUseJ2534Timestamps.Location = new System.Drawing.Point(97, 48);
             this.chkConsoleUseJ2534Timestamps.Name = "chkConsoleUseJ2534Timestamps";
-            this.chkConsoleUseJ2534Timestamps.Size = new System.Drawing.Size(140, 20);
+            this.chkConsoleUseJ2534Timestamps.Size = new System.Drawing.Size(114, 17);
             this.chkConsoleUseJ2534Timestamps.TabIndex = 39;
             this.chkConsoleUseJ2534Timestamps.Text = "J2534 Timestamps";
             this.chkConsoleUseJ2534Timestamps.UseVisualStyleBackColor = true;
@@ -2810,7 +2788,7 @@ namespace UniversalPatcher
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(6, 25);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(86, 16);
+            this.label14.Size = new System.Drawing.Size(68, 13);
             this.label14.TabIndex = 51;
             this.label14.Text = "&Device Type";
             // 
@@ -2826,14 +2804,14 @@ namespace UniversalPatcher
             // numJConsoleScriptDelay
             // 
             this.numJConsoleScriptDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.numJConsoleScriptDelay.Location = new System.Drawing.Point(730, 402);
+            this.numJConsoleScriptDelay.Location = new System.Drawing.Point(730, 448);
             this.numJConsoleScriptDelay.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
             this.numJConsoleScriptDelay.Name = "numJConsoleScriptDelay";
-            this.numJConsoleScriptDelay.Size = new System.Drawing.Size(51, 22);
+            this.numJConsoleScriptDelay.Size = new System.Drawing.Size(51, 20);
             this.numJConsoleScriptDelay.TabIndex = 40;
             this.numJConsoleScriptDelay.ValueChanged += new System.EventHandler(this.numJConsoleScriptDelay_ValueChanged);
             // 
@@ -2841,9 +2819,9 @@ namespace UniversalPatcher
             // 
             this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(631, 406);
+            this.label20.Location = new System.Drawing.Point(631, 452);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(108, 16);
+            this.label20.Size = new System.Drawing.Size(84, 13);
             this.label20.TabIndex = 41;
             this.label20.Text = "Script delay (ms)";
             // 
@@ -2856,7 +2834,8 @@ namespace UniversalPatcher
             this.richJConsole.HideSelection = false;
             this.richJConsole.Location = new System.Drawing.Point(446, 3);
             this.richJConsole.Name = "richJConsole";
-            this.richJConsole.Size = new System.Drawing.Size(447, 365);
+            this.richJConsole.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.richJConsole.Size = new System.Drawing.Size(520, 411);
             this.richJConsole.TabIndex = 3;
             this.richJConsole.Text = "";
             this.richJConsole.WordWrap = false;
@@ -2865,7 +2844,7 @@ namespace UniversalPatcher
             // 
             this.btnJconsoleStopScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnJconsoleStopScript.Enabled = false;
-            this.btnJconsoleStopScript.Location = new System.Drawing.Point(533, 398);
+            this.btnJconsoleStopScript.Location = new System.Drawing.Point(533, 444);
             this.btnJconsoleStopScript.Name = "btnJconsoleStopScript";
             this.btnJconsoleStopScript.Size = new System.Drawing.Size(81, 23);
             this.btnJconsoleStopScript.TabIndex = 46;
@@ -2877,17 +2856,17 @@ namespace UniversalPatcher
             // 
             this.txtJConsoleSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtJConsoleSend.Location = new System.Drawing.Point(446, 373);
+            this.txtJConsoleSend.Location = new System.Drawing.Point(446, 419);
             this.txtJConsoleSend.Margin = new System.Windows.Forms.Padding(2);
             this.txtJConsoleSend.Name = "txtJConsoleSend";
-            this.txtJConsoleSend.Size = new System.Drawing.Size(448, 22);
+            this.txtJConsoleSend.Size = new System.Drawing.Size(516, 20);
             this.txtJConsoleSend.TabIndex = 0;
             this.txtJConsoleSend.TextChanged += new System.EventHandler(this.txtJConsoleSend_TextChanged);
             // 
             // btnJConsoleUploadScript
             // 
             this.btnJConsoleUploadScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnJConsoleUploadScript.Location = new System.Drawing.Point(445, 398);
+            this.btnJConsoleUploadScript.Location = new System.Drawing.Point(445, 444);
             this.btnJConsoleUploadScript.Name = "btnJConsoleUploadScript";
             this.btnJConsoleUploadScript.Size = new System.Drawing.Size(82, 24);
             this.btnJConsoleUploadScript.TabIndex = 0;
@@ -2901,7 +2880,7 @@ namespace UniversalPatcher
             this.groupJConsoleProto.Controls.Add(this.radioJConsoleProto2);
             this.groupJConsoleProto.Controls.Add(this.radioJConsoleProto1);
             this.groupJConsoleProto.Enabled = false;
-            this.groupJConsoleProto.Location = new System.Drawing.Point(798, 391);
+            this.groupJConsoleProto.Location = new System.Drawing.Point(798, 437);
             this.groupJConsoleProto.Name = "groupJConsoleProto";
             this.groupJConsoleProto.Size = new System.Drawing.Size(94, 43);
             this.groupJConsoleProto.TabIndex = 47;
@@ -2912,11 +2891,12 @@ namespace UniversalPatcher
             this.radioJConsoleProto2.AutoSize = true;
             this.radioJConsoleProto2.Location = new System.Drawing.Point(6, 24);
             this.radioJConsoleProto2.Name = "radioJConsoleProto2";
-            this.radioJConsoleProto2.Size = new System.Drawing.Size(86, 20);
+            this.radioJConsoleProto2.Size = new System.Drawing.Size(73, 17);
             this.radioJConsoleProto2.TabIndex = 1;
             this.radioJConsoleProto2.TabStop = true;
             this.radioJConsoleProto2.Text = "Protocol 2";
             this.radioJConsoleProto2.UseVisualStyleBackColor = true;
+            this.radioJConsoleProto2.CheckedChanged += new System.EventHandler(this.radioJConsoleProto2_CheckedChanged);
             // 
             // radioJConsoleProto1
             // 
@@ -2924,11 +2904,12 @@ namespace UniversalPatcher
             this.radioJConsoleProto1.Checked = true;
             this.radioJConsoleProto1.Location = new System.Drawing.Point(6, 7);
             this.radioJConsoleProto1.Name = "radioJConsoleProto1";
-            this.radioJConsoleProto1.Size = new System.Drawing.Size(86, 20);
+            this.radioJConsoleProto1.Size = new System.Drawing.Size(73, 17);
             this.radioJConsoleProto1.TabIndex = 0;
             this.radioJConsoleProto1.TabStop = true;
             this.radioJConsoleProto1.Text = "Protocol 1";
             this.radioJConsoleProto1.UseVisualStyleBackColor = true;
+            this.radioJConsoleProto1.CheckedChanged += new System.EventHandler(this.radioJConsoleProto1_CheckedChanged);
             // 
             // tabAlgoTest
             // 
@@ -2936,7 +2917,7 @@ namespace UniversalPatcher
             this.tabAlgoTest.Controls.Add(this.txtAlgoTest);
             this.tabAlgoTest.Location = new System.Drawing.Point(4, 22);
             this.tabAlgoTest.Name = "tabAlgoTest";
-            this.tabAlgoTest.Size = new System.Drawing.Size(898, 435);
+            this.tabAlgoTest.Size = new System.Drawing.Size(966, 481);
             this.tabAlgoTest.TabIndex = 8;
             this.tabAlgoTest.Text = "AlgoTest";
             this.tabAlgoTest.UseVisualStyleBackColor = true;
@@ -2955,7 +2936,7 @@ namespace UniversalPatcher
             this.groupBox5.Controls.Add(this.labelSeed);
             this.groupBox5.Location = new System.Drawing.Point(3, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(167, 209);
+            this.groupBox5.Size = new System.Drawing.Size(167, 207);
             this.groupBox5.TabIndex = 9;
             this.groupBox5.TabStop = false;
             this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
@@ -2963,18 +2944,18 @@ namespace UniversalPatcher
             // txtAlgoRange
             // 
             this.txtAlgoRange.Enabled = false;
-            this.txtAlgoRange.Location = new System.Drawing.Point(75, 93);
+            this.txtAlgoRange.Location = new System.Drawing.Point(79, 92);
             this.txtAlgoRange.Name = "txtAlgoRange";
-            this.txtAlgoRange.Size = new System.Drawing.Size(84, 22);
+            this.txtAlgoRange.Size = new System.Drawing.Size(84, 20);
             this.txtAlgoRange.TabIndex = 7;
             this.txtAlgoRange.Text = "0-300";
             // 
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(8, 95);
+            this.label38.Location = new System.Drawing.Point(12, 94);
             this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(77, 16);
+            this.label38.Size = new System.Drawing.Size(61, 13);
             this.label38.TabIndex = 6;
             this.label38.Text = "Algo range:";
             // 
@@ -2983,7 +2964,7 @@ namespace UniversalPatcher
             this.radioFindAlgo.AutoSize = true;
             this.radioFindAlgo.Location = new System.Drawing.Point(6, 65);
             this.radioFindAlgo.Name = "radioFindAlgo";
-            this.radioFindAlgo.Size = new System.Drawing.Size(82, 20);
+            this.radioFindAlgo.Size = new System.Drawing.Size(68, 17);
             this.radioFindAlgo.TabIndex = 2;
             this.radioFindAlgo.Text = "Find algo";
             this.radioFindAlgo.UseVisualStyleBackColor = true;
@@ -2991,7 +2972,7 @@ namespace UniversalPatcher
             // 
             // btnAlgoTest
             // 
-            this.btnAlgoTest.Location = new System.Drawing.Point(75, 170);
+            this.btnAlgoTest.Location = new System.Drawing.Point(79, 169);
             this.btnAlgoTest.Name = "btnAlgoTest";
             this.btnAlgoTest.Size = new System.Drawing.Size(82, 24);
             this.btnAlgoTest.TabIndex = 5;
@@ -3001,17 +2982,17 @@ namespace UniversalPatcher
             // 
             // txtAlgo
             // 
-            this.txtAlgo.Location = new System.Drawing.Point(75, 145);
+            this.txtAlgo.Location = new System.Drawing.Point(79, 144);
             this.txtAlgo.Name = "txtAlgo";
-            this.txtAlgo.Size = new System.Drawing.Size(82, 22);
+            this.txtAlgo.Size = new System.Drawing.Size(82, 20);
             this.txtAlgo.TabIndex = 2;
             // 
             // labelAlgo
             // 
             this.labelAlgo.AutoSize = true;
-            this.labelAlgo.Location = new System.Drawing.Point(7, 148);
+            this.labelAlgo.Location = new System.Drawing.Point(11, 147);
             this.labelAlgo.Name = "labelAlgo";
-            this.labelAlgo.Size = new System.Drawing.Size(39, 16);
+            this.labelAlgo.Size = new System.Drawing.Size(31, 13);
             this.labelAlgo.TabIndex = 0;
             this.labelAlgo.Text = "Algo:";
             // 
@@ -3020,7 +3001,7 @@ namespace UniversalPatcher
             this.radioFindAllKeys.AutoSize = true;
             this.radioFindAllKeys.Location = new System.Drawing.Point(6, 42);
             this.radioFindAllKeys.Name = "radioFindAllKeys";
-            this.radioFindAllKeys.Size = new System.Drawing.Size(101, 20);
+            this.radioFindAllKeys.Size = new System.Drawing.Size(83, 17);
             this.radioFindAllKeys.TabIndex = 1;
             this.radioFindAllKeys.Text = "Find all keys";
             this.radioFindAllKeys.UseVisualStyleBackColor = true;
@@ -3028,9 +3009,9 @@ namespace UniversalPatcher
             // 
             // txtSeed
             // 
-            this.txtSeed.Location = new System.Drawing.Point(75, 119);
+            this.txtSeed.Location = new System.Drawing.Point(79, 118);
             this.txtSeed.Name = "txtSeed";
-            this.txtSeed.Size = new System.Drawing.Size(82, 22);
+            this.txtSeed.Size = new System.Drawing.Size(82, 20);
             this.txtSeed.TabIndex = 3;
             // 
             // radioFindKey
@@ -3039,7 +3020,7 @@ namespace UniversalPatcher
             this.radioFindKey.Checked = true;
             this.radioFindKey.Location = new System.Drawing.Point(6, 19);
             this.radioFindKey.Name = "radioFindKey";
-            this.radioFindKey.Size = new System.Drawing.Size(78, 20);
+            this.radioFindKey.Size = new System.Drawing.Size(66, 17);
             this.radioFindKey.TabIndex = 0;
             this.radioFindKey.TabStop = true;
             this.radioFindKey.Text = "Find Key";
@@ -3049,9 +3030,9 @@ namespace UniversalPatcher
             // labelSeed
             // 
             this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(8, 122);
+            this.labelSeed.Location = new System.Drawing.Point(12, 121);
             this.labelSeed.Name = "labelSeed";
-            this.labelSeed.Size = new System.Drawing.Size(44, 16);
+            this.labelSeed.Size = new System.Drawing.Size(35, 13);
             this.labelSeed.TabIndex = 1;
             this.labelSeed.Text = "Seed:";
             // 
@@ -3065,7 +3046,7 @@ namespace UniversalPatcher
             this.txtAlgoTest.Multiline = true;
             this.txtAlgoTest.Name = "txtAlgoTest";
             this.txtAlgoTest.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtAlgoTest.Size = new System.Drawing.Size(719, 432);
+            this.txtAlgoTest.Size = new System.Drawing.Size(787, 478);
             this.txtAlgoTest.TabIndex = 4;
             // 
             // tabCANdevices
@@ -3073,7 +3054,7 @@ namespace UniversalPatcher
             this.tabCANdevices.Controls.Add(this.dataGridCANDevices);
             this.tabCANdevices.Location = new System.Drawing.Point(4, 22);
             this.tabCANdevices.Name = "tabCANdevices";
-            this.tabCANdevices.Size = new System.Drawing.Size(898, 435);
+            this.tabCANdevices.Size = new System.Drawing.Size(966, 481);
             this.tabCANdevices.TabIndex = 9;
             this.tabCANdevices.Text = "CAN devices";
             this.tabCANdevices.UseVisualStyleBackColor = true;
@@ -3108,7 +3089,7 @@ namespace UniversalPatcher
             dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridCANDevices.RowHeadersDefaultCellStyle = dataGridViewCellStyle18;
-            this.dataGridCANDevices.Size = new System.Drawing.Size(898, 435);
+            this.dataGridCANDevices.Size = new System.Drawing.Size(966, 481);
             this.dataGridCANDevices.TabIndex = 0;
             // 
             // labelProgress
@@ -3117,9 +3098,9 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelProgress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelProgress.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelProgress.Location = new System.Drawing.Point(453, 26);
+            this.labelProgress.Location = new System.Drawing.Point(505, 26);
             this.labelProgress.Name = "labelProgress";
-            this.labelProgress.Size = new System.Drawing.Size(456, 57);
+            this.labelProgress.Size = new System.Drawing.Size(472, 57);
             this.labelProgress.TabIndex = 22;
             this.labelProgress.Text = "idle";
             // 
@@ -3127,7 +3108,7 @@ namespace UniversalPatcher
             // 
             this.btnStartStop.Location = new System.Drawing.Point(3, 24);
             this.btnStartStop.Name = "btnStartStop";
-            this.btnStartStop.Size = new System.Drawing.Size(444, 32);
+            this.btnStartStop.Size = new System.Drawing.Size(496, 32);
             this.btnStartStop.TabIndex = 5;
             this.btnStartStop.Text = "Start Logging";
             this.btnStartStop.UseVisualStyleBackColor = true;
@@ -3139,7 +3120,7 @@ namespace UniversalPatcher
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(906, 121);
+            this.txtResult.Size = new System.Drawing.Size(974, 134);
             this.txtResult.TabIndex = 6;
             this.txtResult.Text = "";
             // 
@@ -3152,7 +3133,7 @@ namespace UniversalPatcher
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(912, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(980, 24);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -3165,7 +3146,9 @@ namespace UniversalPatcher
             this.saveProfileAsToolStripMenuItem,
             this.newProfileToolStripMenuItem,
             this.toolStripSeparator1,
-            this.playbackLogfileToolStripMenuItem});
+            this.playbackLogfileToolStripMenuItem,
+            this.saveVPWConsoleToolStripMenuItem,
+            this.saveJConsoleToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
@@ -3173,42 +3156,56 @@ namespace UniversalPatcher
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
             // newProfileToolStripMenuItem
             // 
             this.newProfileToolStripMenuItem.Name = "newProfileToolStripMenuItem";
-            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.newProfileToolStripMenuItem.Text = "New profile";
             this.newProfileToolStripMenuItem.Click += new System.EventHandler(this.newProfileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
             // 
             // playbackLogfileToolStripMenuItem
             // 
             this.playbackLogfileToolStripMenuItem.Name = "playbackLogfileToolStripMenuItem";
-            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.playbackLogfileToolStripMenuItem.Text = "Playback logfile";
             this.playbackLogfileToolStripMenuItem.Click += new System.EventHandler(this.playbackLogfileToolStripMenuItem_Click);
+            // 
+            // saveVPWConsoleToolStripMenuItem
+            // 
+            this.saveVPWConsoleToolStripMenuItem.Name = "saveVPWConsoleToolStripMenuItem";
+            this.saveVPWConsoleToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.saveVPWConsoleToolStripMenuItem.Text = "Save VPW Console";
+            this.saveVPWConsoleToolStripMenuItem.Click += new System.EventHandler(this.saveVPWConsoleToolStripMenuItem_Click);
+            // 
+            // saveJConsoleToolStripMenuItem
+            // 
+            this.saveJConsoleToolStripMenuItem.Name = "saveJConsoleToolStripMenuItem";
+            this.saveJConsoleToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.saveJConsoleToolStripMenuItem.Text = "Save J-Console";
+            this.saveJConsoleToolStripMenuItem.Click += new System.EventHandler(this.saveJConsoleToolStripMenuItem_Click);
             // 
             // actionToolStripMenuItem
             // 
@@ -3320,8 +3317,8 @@ namespace UniversalPatcher
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.txtResult);
-            this.splitContainer2.Size = new System.Drawing.Size(906, 586);
-            this.splitContainer2.SplitterDistance = 461;
+            this.splitContainer2.Size = new System.Drawing.Size(974, 645);
+            this.splitContainer2.SplitterDistance = 507;
             this.splitContainer2.TabIndex = 5;
             // 
             // labelConnected
@@ -3330,7 +3327,7 @@ namespace UniversalPatcher
             this.labelConnected.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.labelConnected.Location = new System.Drawing.Point(196, 6);
             this.labelConnected.Name = "labelConnected";
-            this.labelConnected.Size = new System.Drawing.Size(93, 18);
+            this.labelConnected.Size = new System.Drawing.Size(75, 15);
             this.labelConnected.TabIndex = 24;
             this.labelConnected.Text = "Disconnected";
             // 
@@ -3356,31 +3353,23 @@ namespace UniversalPatcher
             this.timerDeviceStatus.Interval = 3000;
             this.timerDeviceStatus.Tick += new System.EventHandler(this.timerDeviceStatus_Tick);
             // 
-            // btnResetTimeouts
+            // timerShowLogTxt
             // 
-            this.btnResetTimeouts.Location = new System.Drawing.Point(16, 225);
-            this.btnResetTimeouts.Name = "btnResetTimeouts";
-            this.btnResetTimeouts.Size = new System.Drawing.Size(75, 23);
-            this.btnResetTimeouts.TabIndex = 18;
-            this.btnResetTimeouts.Text = "Reset";
-            this.btnResetTimeouts.UseVisualStyleBackColor = true;
-            this.btnResetTimeouts.Click += new System.EventHandler(this.btnResetTimeouts_Click);
+            this.timerShowLogTxt.Enabled = true;
+            this.timerShowLogTxt.Interval = 250;
+            this.timerShowLogTxt.Tick += new System.EventHandler(this.timerShowLogTxt_Tick);
             // 
-            // btnApplyTimeouts
+            // timerJconsoleShowLogText
             // 
-            this.btnApplyTimeouts.Location = new System.Drawing.Point(259, 227);
-            this.btnApplyTimeouts.Name = "btnApplyTimeouts";
-            this.btnApplyTimeouts.Size = new System.Drawing.Size(75, 23);
-            this.btnApplyTimeouts.TabIndex = 19;
-            this.btnApplyTimeouts.Text = "Apply";
-            this.btnApplyTimeouts.UseVisualStyleBackColor = true;
-            this.btnApplyTimeouts.Click += new System.EventHandler(this.btnApplyTimeouts_Click);
+            this.timerJconsoleShowLogText.Enabled = true;
+            this.timerJconsoleShowLogText.Interval = 250;
+            this.timerJconsoleShowLogText.Tick += new System.EventHandler(this.timerJconsoleShowLogText_Tick);
             // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(912, 649);
+            this.ClientSize = new System.Drawing.Size(980, 708);
             this.Controls.Add(this.labelConnected);
             this.Controls.Add(this.labelProgress);
             this.Controls.Add(this.splitContainer2);
@@ -3401,13 +3390,10 @@ namespace UniversalPatcher
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).EndInit();
             this.tabSettings.ResumeLayout(false);
-            this.groupTimeouts.ResumeLayout(false);
-            this.groupTimeouts.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numWriteTimeout)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numReadTimeout)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numPortWriteTimeout)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numPortReadTimeout)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numLoggingWriteTimeout)).EndInit();
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRetryTimes)).EndInit();
             this.groupHWSettings.ResumeLayout(false);
             this.categories.ResumeLayout(false);
             this.categories.PerformLayout();
@@ -3672,18 +3658,16 @@ namespace UniversalPatcher
         private System.Windows.Forms.ComboBox comboJ2534Baudrate2;
         private System.Windows.Forms.ComboBox comboJ2534Protocol2;
         private System.Windows.Forms.Label label33;
-        private System.Windows.Forms.TextBox txtJConsolePassFilters2;
-        private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.TextBox txtJConsolePassFilters;
-        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.Label labelJconsoleFilters2;
+        private System.Windows.Forms.Label labelJconsoleFilters;
         private System.Windows.Forms.Button btnJConsoleReset;
         private System.Windows.Forms.Button btnJConsoleReset2;
         private System.Windows.Forms.Button btnJconsoleSecProtoDisconnect;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.CheckBox chkJConsoleToFile;
         private System.Windows.Forms.CheckBox chkJconsoleToScreen;
-        private System.Windows.Forms.Button btnJconsoleConfigFilters;
-        private System.Windows.Forms.Button btnJconsoleConfigFilters2;
+        private System.Windows.Forms.Button btnJconsoleApplyFilters;
+        private System.Windows.Forms.Button btnJconsoleApplyFilters2;
         private System.Windows.Forms.TextBox txtTstampFormat;
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.Button btnDateTimeHelp;
@@ -3731,25 +3715,26 @@ namespace UniversalPatcher
         private System.Windows.Forms.Timer timerDeviceStatus;
         private System.Windows.Forms.Button btnQueyPid2;
         private System.Windows.Forms.CheckBox chkAutoDisconnect;
-        private System.Windows.Forms.GroupBox groupTimeouts;
-        private System.Windows.Forms.NumericUpDown numPortWriteTimeout;
-        private System.Windows.Forms.NumericUpDown numPortReadTimeout;
-        private System.Windows.Forms.NumericUpDown numLoggingWriteTimeout;
-        private System.Windows.Forms.Label label44;
-        private System.Windows.Forms.Label label43;
-        private System.Windows.Forms.Label label42;
-        private System.Windows.Forms.Label label41;
-        private System.Windows.Forms.Label label40;
-        private System.Windows.Forms.NumericUpDown numWriteTimeout;
-        private System.Windows.Forms.NumericUpDown numReadTimeout;
-        private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.Label label45;
-        private System.Windows.Forms.ComboBox comboActiveTimeout;
-        private System.Windows.Forms.ComboBox comboPassiveTimeout;
-        private System.Windows.Forms.ComboBox comboOBDLinkTimeout;
-        private System.Windows.Forms.Label label47;
-        private System.Windows.Forms.Button btnResetTimeouts;
-        private System.Windows.Forms.Button btnApplyTimeouts;
+        private System.Windows.Forms.Button btnTimeouts;
+        private System.Windows.Forms.Button btnCanFilters;
+        private System.Windows.Forms.Button btnJconsoleEditFilters;
+        private System.Windows.Forms.Button btnJconsoleEditFilters2;
+        private System.Windows.Forms.CheckBox chkUsePrimaryChannel;
+        private System.Windows.Forms.Button btnLoadProtocols;
+        private System.Windows.Forms.Button btnSaveProtocols;
+        private System.Windows.Forms.Timer timerShowLogTxt;
+        private System.Windows.Forms.VScrollBar vScrollBarVpwConsole;
+        private System.Windows.Forms.Timer timerJconsoleShowLogText;
+        private System.Windows.Forms.VScrollBar vScrollBarJConsole;
+        private System.Windows.Forms.ToolStripMenuItem saveVPWConsoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveJConsoleToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkVpwBuffered;
+        private System.Windows.Forms.CheckBox chkJconsoleUsebuffer;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.NumericUpDown numRetryDelay;
+        private System.Windows.Forms.NumericUpDown numRetryTimes;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.Label label34;
     }
 }
 

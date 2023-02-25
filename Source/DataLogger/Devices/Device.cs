@@ -153,6 +153,11 @@ namespace UniversalPatcher
         private Queue<OBDMessage> queue = new Queue<OBDMessage>();
 
         /// <summary>
+        /// Queue of messages received from the J2534 scondary channel.
+        /// </summary>
+        private Queue<OBDMessage> queue2 = new Queue<OBDMessage>();
+
+        /// <summary>
         /// Queue of Log messages received from the VPW bus.
         /// </summary>
         private Queue<OBDMessage> logQueue = new Queue<OBDMessage>();
@@ -224,7 +229,7 @@ namespace UniversalPatcher
         public abstract void SetWriteTimeout(int timeout);
 
         /// <summary>
-        /// Set the timeout period to wait for responses to sending messages.
+        /// Set the timeout period to wait for receiving message.
         /// </summary>
         public abstract void SetReadTimeout(int timeout);
 
@@ -240,6 +245,7 @@ namespace UniversalPatcher
         {
             Debug.WriteLine("Clearing: {0} messages from queue", queue.Count);
             this.queue.Clear();
+            this.queue2.Clear();
             ClearMessageBuffer();
         }
 
@@ -268,16 +274,39 @@ namespace UniversalPatcher
                 this.Receive();
             }
 
-            lock (this.queue)
+            if (this.queue.Count > 0)
             {
-                if (this.queue.Count > 0)
+                lock (this.queue)
                 {
                     return this.queue.Dequeue();
                 }
-                else
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Reads a message from the VPW bus and returns it.
+        /// </summary>
+        public OBDMessage ReceiveMessage2()
+        {
+            if (this.queue2.Count == 0)
+            {
+                this.Receive2();
+            }
+
+            if (this.queue2.Count > 0)
+            {
+                lock (this.queue2)
                 {
-                    return null;
+                    return this.queue2.Dequeue();
                 }
+            }
+            else
+            {
+                return null;
             }
         }
 
@@ -309,16 +338,14 @@ namespace UniversalPatcher
         /// </summary>
         public bool SetVpwSpeed(VpwSpeed newSpeed)
         {
-            /*            if (this.Speed == newSpeed)
-                        {
-                            return true;
-                        }
-            */
-            if (((newSpeed == VpwSpeed.FourX) && !this.Enable4xReadWrite) || (!this.SetVpwSpeedInternal(newSpeed)))
+            if ((newSpeed == VpwSpeed.FourX) && !this.Enable4xReadWrite)
             {
                 return false;
             }
-
+            if ( !this.SetVpwSpeedInternal(newSpeed))
+            {
+                return false;
+            }
             this.Speed = newSpeed;
             return true;
         }
@@ -341,6 +368,11 @@ namespace UniversalPatcher
             try
             {
                 //Debug.WriteLine("Message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
+                if (message == null)
+                {
+                    Debug.WriteLine("Device Enqueue: null message");
+                    return;
+                }
                 MsgEventparameter msg = new MsgEventparameter(message);
                 OnMsgReceived(msg);
                 if (message.ElmPrompt || (message.Length > 4 && message.GetBytes()[3] == 0x6A))
@@ -368,6 +400,38 @@ namespace UniversalPatcher
                 Debug.WriteLine("Error, Device.Enqueue line " + line + ": " + ex.Message);
             }
         }
+
+        /// <summary>
+        /// Add a received message to the queue2.
+        /// </summary>
+        protected void Enqueue2(OBDMessage message)
+        {
+            try
+            {
+                //Debug.WriteLine("Message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
+                if (message == null)
+                {
+                    Debug.WriteLine("Device Enqueue2: null message");
+                    return;
+                }
+                MsgEventparameter msg = new MsgEventparameter(message);
+                OnMsgReceived(msg);
+                lock (this.queue2)
+                {
+                    this.queue2.Enqueue(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, Device.Enqueue line " + line + ": " + ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// List for an incoming message of the VPW bus.
@@ -500,7 +564,7 @@ namespace UniversalPatcher
         }
 
         //public abstract bool SetConfig(J2534DotNet.SConfig[] sc);
-        public string CurrentFilter { get; set; }
+        public FilterMode CurrentFilter { get; set; }
         public DataLogger.LoggingDevType LogDeviceType { get; set; }
 
 

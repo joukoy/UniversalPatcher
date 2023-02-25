@@ -108,9 +108,9 @@ namespace UniversalPatcher
             receiverTokenSource = new CancellationTokenSource();
             receiverToken = receiverTokenSource.Token;
 
-            this.port.BaseStream.ReadTimeout = AppSettings.LoggerPortReadTimeout;
-            this.port.ReadTimeout = AppSettings.LoggerPortReadTimeout;
-            this.port.WriteTimeout = AppSettings.LoggerPortWriteTimeout;
+            //this.port.BaseStream.ReadTimeout = AppSettings.LoggerPortReadTimeout;
+            //this.port.ReadTimeout = AppSettings.LoggerPortReadTimeout;
+            //this.port.WriteTimeout = AppSettings.LoggerPortWriteTimeout;
             this.port.ErrorReceived += Port_ErrorReceived;
             this.port.DataReceived += DataReceived;
             //Task receiveTask = Task.Factory.StartNew(() => DataReceiverLoop());
@@ -247,6 +247,7 @@ namespace UniversalPatcher
             {
                 this.port.ReadTimeout = milliseconds;
                 this.port.BaseStream.ReadTimeout = milliseconds;
+                Debug.WriteLine("Setting RS232 timeout to: " + milliseconds.ToString());
                 //RTimeout = milliseconds;
             }
             catch (Exception ex)

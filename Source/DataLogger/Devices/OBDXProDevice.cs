@@ -104,7 +104,7 @@ namespace UniversalPatcher
             return DeviceType;
         }
 
-        public override bool Initialize(int BaudRate, LoggerUtils.J2534InitParameters j2534Init)
+        public override bool Initialize(int BaudRate, J2534InitParameters j2534Init)
         {
             Debug.WriteLine("Initializing " + this.ToString());
 
@@ -153,8 +153,8 @@ namespace UniversalPatcher
                 return false;
             }
             this.Connected = true;
-            Port.SetReadTimeout(AppSettings.LoggerPortReadTimeout);
-            Port.SetWriteTimeout(AppSettings.LoggerPortWriteTimeout);
+            //Port.SetReadTimeout(AppSettings.LoggerPortReadTimeout);
+            //Port.SetWriteTimeout(AppSettings.LoggerPortWriteTimeout);
             Logger("Device Successfully Initialized and Ready");
             return true;
         }
@@ -530,7 +530,7 @@ namespace UniversalPatcher
                 //Debug.WriteLine("Sendrequest called");
                 //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());                  
                 this.MessageSent(message);
-                this.ClearMessageQueue();
+                //this.ClearMessageQueue();
                 Response<OBDMessage> m = SendDVIPacket(message, responses);
                 if (m.Status != ResponseStatus.Success)
                 {
@@ -564,12 +564,7 @@ namespace UniversalPatcher
             if (this.Port == null || !Port.PortOpen())
             {
                 Debug.WriteLine("Port closed, disposing OBDX Pro device");
-                OBDMessage oMsg = new OBDMessage(new byte[] { 0 });
-                oMsg.Error = 0x99;
-                this.Enqueue(oMsg);
-                return;
             }
-
             ReadDVIPacket(ReadTimeout);
         }
 
@@ -1116,23 +1111,23 @@ namespace UniversalPatcher
 
         public override bool SetLoggingFilter()
         {
-            if (this.CurrentFilter == "logging")
+            if (this.CurrentFilter == FilterMode.Logging)
                 return true;
             Debug.WriteLine("Set logging filter");
 
             //initialize(BaudRate);
             SetToFilter(DeviceId.Tool);
 
-            this.CurrentFilter = "logging";
+            this.CurrentFilter = FilterMode.Logging;
             return true;
         }
 
         public override bool SetAnalyzerFilter()
         {
-            if (this.CurrentFilter == "analyzer")
+            if (this.CurrentFilter == FilterMode.Analyzer)
                 return true;
             Debug.WriteLine("Setting analyzer filter");
-
+            this.CurrentFilter = FilterMode.Analyzer;
             return RemoveToFilter();
 
 /*            byte[] Msg = new byte[] { 37, 0x0, 218 }; //Reset back to ELM protocol
@@ -1170,6 +1165,7 @@ namespace UniversalPatcher
             }
 */
             RemoveToFilter();
+            this.CurrentFilter = FilterMode.None;
             return true;
         }
 

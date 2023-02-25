@@ -20,22 +20,29 @@ namespace UniversalPatcher
         private Task ReceiverTask;
         private Device device;
         private IPort port;
-        public bool SecondaryProtocol { get; set; }
+        private bool secondaryProtocol;
+        private bool analyzerMode;
 
-        public void StartReceiveLoop(Device dev, IPort port)
+        public void StartReceiveLoop(Device device, IPort port, bool secondary, bool analyzermode)
         {
             try
             {
-                this.device = dev;
+                this.device = device;
                 this.port = port;
+                this.secondaryProtocol = secondary;
+                this.analyzerMode = analyzermode;
                 if (ReceiveLoopRunning)
                 {
                     return;
                 }
-                if (dev.LogDeviceType != DataLogger.LoggingDevType.Other)
+                if (analyzerMode)
+                    device.SetReadTimeout(AppSettings.TimeoutAnalyzerReceive);
+                else
+                    device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
+                if (device.LogDeviceType != DataLogger.LoggingDevType.Other)
                 {
-                    dev.SetTimeout(TimeoutScenario.DataLogging3);
-                    dev.SetAnalyzerFilter();
+                    device.SetTimeout(TimeoutScenario.DataLogging3);
+                    device.SetAnalyzerFilter();
                 }
                 receiverTokenSource = new CancellationTokenSource();
                 receiverToken = receiverTokenSource.Token;
@@ -99,13 +106,17 @@ namespace UniversalPatcher
                 {
                     return true;
                 }
-                Debug.WriteLine("Pausing receiver...");
+                Debug.WriteLine("Pausing receiver, scondary: " + secondaryProtocol.ToString());
                 ReceiverPaused = true;
                 StopReceiveLoop();
                 Application.DoEvents();
-                if (port != null)  //Not for J-tools
+                if (port == null)  //For J-tools
                 {
-                    device.SetReadTimeout(500);
+                    device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
+                }
+                else
+                {
+                    device.SetReadTimeout(AppSettings.TimeoutReceive);
                 }
                 return true;
             }
@@ -113,12 +124,12 @@ namespace UniversalPatcher
             {
                 if (ReceiverPaused)
                 {
-                    Debug.WriteLine("Continue receiving");
-                    if (port != null)
-                    {
-                        device.SetReadTimeout(2000);
-                    }
-                    StartReceiveLoop(device, port);
+                    Debug.WriteLine("Continue receiving, secondary: " + secondaryProtocol.ToString());
+                    if (analyzerMode)
+                        device.SetReadTimeout(AppSettings.TimeoutAnalyzerReceive);
+                    else
+                        device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
+                    StartReceiveLoop(device, port, secondaryProtocol, analyzerMode);
                     ReceiverPaused = false;
                 }
                 return true;
@@ -128,7 +139,7 @@ namespace UniversalPatcher
         private void ReceiveLoop()
         {
             ReceiveLoopRunning = true;
-            if (SecondaryProtocol)
+            if (secondaryProtocol)
             {
                 Debug.WriteLine("Starting receive loop for secondary protocol");
             }
@@ -153,7 +164,7 @@ namespace UniversalPatcher
                         Debug.WriteLine("Resetting analyzer filter");
                         device.SetAnalyzerFilter();
                     }
-                    if (SecondaryProtocol)
+                    if (secondaryProtocol)
                     {
                         device.Receive2();
                     }
@@ -161,6 +172,7 @@ namespace UniversalPatcher
                     {
                         msg = device.ReceiveMessage();
                     }
+                    //Thread.Sleep(500);
                 }
                 catch (Exception ex)
                 {

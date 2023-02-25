@@ -14,6 +14,7 @@ using static UniversalPatcher.ExtensionMethods;
 using static Upatcher;
 using static Helpers;
 using static UniversalPatcher.TreeParts;
+using System.Threading.Tasks;
 //using PcmHacking;
 
 namespace UniversalPatcher
@@ -1774,7 +1775,10 @@ namespace UniversalPatcher
                         TableData compTd = FindTableData(shTd, peekPCM.tableDatas);
                         if (compTd != null)
                         {
-                            ftvd.ShowTables(PCM, shTd, peekPCM, compTd, 0);
+                            this.Invoke((MethodInvoker)delegate ()
+                            {
+                                ftvd.ShowTables(PCM, shTd, peekPCM, compTd, 0);
+                            });
                             break;
                         }
                     }
@@ -3221,8 +3225,8 @@ namespace UniversalPatcher
             keyDelayCounter++;
             if (keyDelayCounter > AppSettings.keyPressWait100ms)
             {
-                Debug.WriteLine("Filter timer");
                 timerFilter.Enabled = false;
+                Debug.WriteLine("Filter timer");
                 keyDelayCounter = 0;
                 Navigating = true;
                 //FilterTables(true);
@@ -5699,8 +5703,9 @@ namespace UniversalPatcher
 
                 if (ftvd == null || !ftvd.Visible)
                 {
-                    ftvd = new frmTableVisDouble(PCM, selTd, peekPCM, compTd, 0);
-                    ftvd.tuner = this;
+                    Task.Factory.StartNew(() => StartVisualizer(PCM, selTd, peekPCM, compTd, 0));
+                    //ftvd = new frmTableVisDouble(PCM, selTd, peekPCM, compTd, 0);
+                    //ftvd.tuner = this;
                 }
             }
             catch (Exception ex)
@@ -5714,7 +5719,14 @@ namespace UniversalPatcher
             }
 
         }
-
+        [STAThread]
+        private void StartVisualizer(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
+        {
+            ftvd = new frmTableVisDouble();
+            ftvd.tuner = this;
+            ftvd.ShowTables(PCM1, td1, PCM2, td2, SelectedByte);
+            Application.Run(ftvd);
+        }
         private void mirrorSegmentsFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mirrorSegmentsFromCompareToolStripMenuItem.Checked = !mirrorSegmentsFromCompareToolStripMenuItem.Checked;

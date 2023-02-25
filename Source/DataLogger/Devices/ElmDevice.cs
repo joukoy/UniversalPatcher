@@ -54,7 +54,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Use the related classes to discover which type of device is currently connected.
         /// </summary>
-        public override bool Initialize(int BaudRate, LoggerUtils.J2534InitParameters j2534Init)
+        public override bool Initialize(int BaudRate, J2534InitParameters j2534Init)
         {
             try
             {
@@ -132,8 +132,8 @@ namespace UniversalPatcher
                 this.Supports4X = this.implementation.Supports4X;
                 this.LogDeviceType = this.implementation.LogDeviceType;
 
-                this.Port.SetReadTimeout(AppSettings.LoggerPortReadTimeout);
-                this.Port.SetWriteTimeout(AppSettings.LoggerPortWriteTimeout);
+                //this.Port.SetReadTimeout(AppSettings.LoggerPortReadTimeout);
+                //this.Port.SetWriteTimeout(AppSettings.LoggerPortWriteTimeout);
 
                 SetLoggingFilter();
                 this.Connected = true;
@@ -189,7 +189,7 @@ namespace UniversalPatcher
             // this when sending the tool-present messages, but that might be coincidence.)
             //
             // Consider increasing if STOPPED / NO DATA is still a problem. 
-            this.Port.SetTimeout(milliseconds + 1000);
+            this.Port.SetTimeout(milliseconds + AppSettings.TimeoutPortRead);
 
             // This code is so problematic that I've left it here as a warning. The app is
             // unable to receive the response to the erase command if this code is enabled.
@@ -350,12 +350,12 @@ namespace UniversalPatcher
 
         public override bool SetLoggingFilter()
         {
-            if (this.CurrentFilter == "logging")
+            if (this.CurrentFilter == FilterMode.Logging)
                 return true;
             Debug.WriteLine("Set logging filter");
             //this.implementation.Initialize();
             this.implementation.SendAndVerify("AT L0", "OK"); //Disable new line characters between commands/messages
-            this.CurrentFilter = "logging";
+            this.CurrentFilter = FilterMode.Logging;
             if (datalogger.useVPWFilters)
             {
                 return this.implementation.SendAndVerify("AT SR " + DeviceId.Tool.ToString("X2"), "OK");
@@ -374,17 +374,18 @@ namespace UniversalPatcher
             this.implementation.SendAndVerify("AT H1", "OK"); 
             Thread.Sleep(100);
 
-            ClearMessageBuffer();
-            ClearMessageQueue();
+            //ClearMessageBuffer();
+            //ClearMessageQueue();
             Thread.Sleep(100);
             Port.Send(Encoding.ASCII.GetBytes("ATMA \r")); //Begin monitoring bus traffic 
 
-            this.CurrentFilter = "analyzer";
+            this.CurrentFilter = FilterMode.Analyzer;
             return true;
         }
         public override bool RemoveFilters()
         {
             Debug.WriteLine("Removing filters");
+            this.CurrentFilter = FilterMode.None;
             return this.implementation.SendAndVerify("AT AR", "OK"); // Set receive filter Off
         }
 

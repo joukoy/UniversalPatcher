@@ -104,7 +104,7 @@ namespace UniversalPatcher
             }
 
             if (config.Timeout == 0) config.Timeout = 1000; // default to 1 second but allow override.
-            ftStatus = this.port.SetTimeouts((uint)config.Timeout, (uint)AppSettings.LoggerReadTimeout);
+            ftStatus = this.port.SetTimeouts((uint)config.Timeout, 500);
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 throw new Exception("Failed to set timeout (error " + ftStatus.ToString() + ")");
@@ -279,6 +279,7 @@ namespace UniversalPatcher
         public void SetTimeout(int milliseconds)
         {
             this.port.SetTimeouts((uint)milliseconds,(uint)WTimeout);
+            Debug.WriteLine("Setting FTDI timeout to: " + milliseconds.ToString());
             //RTimeout = milliseconds;
         }
 

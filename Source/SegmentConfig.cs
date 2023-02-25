@@ -8,6 +8,12 @@ namespace UniversalPatcher
 {
     public class SegmentConfig
     {
+        public SegmentConfig()
+        {
+            Name = "";
+            Version = "";
+            Addresses = "";
+        }
         public string Name { get; set; }
         public string Version { get; set; }
         public string Addresses{ get; set; }    //Segment addresses, can be multiple parts

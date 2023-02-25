@@ -80,6 +80,10 @@
     <StartupObject>UniversalPatcher.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="gmkeylib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\gmkeylib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -111,6 +115,7 @@
     <Compile Include="Crc.cs" />
     <Compile Include="DataLogger\CanLogToBin.cs" />
     <Compile Include="DataLogger\CANQuery.cs" />
+    <Compile Include="DataLogger\Devices\ElmDeviceImplementation.cs" />
     <Compile Include="DataLogger\Devices\frmJ2534Server.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -118,12 +123,19 @@
       <DependentUpon>frmJ2534Server.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLogger\Devices\J2534Client.cs" />
+    <Compile Include="DataLogger\Devices\J2534InitParameters.cs" />
     <Compile Include="DataLogger\Devices\J2534Server.cs" />
     <Compile Include="DataLogger\frmBinToScript.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DataLogger\frmBinToScript.Designer.cs">
       <DependentUpon>frmBinToScript.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogger\frmJ2534Filters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmJ2534Filters.Designer.cs">
+      <DependentUpon>frmJ2534Filters.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLogger\frmLoggerGraphics.cs">
       <SubType>Form</SubType>
@@ -137,6 +149,9 @@
     <Compile Include="DataLogger\MessageReceiver.cs" />
     <Compile Include="DataLogger\ObdEmu.cs" />
     <Compile Include="DataLogger\OBDScript.cs" />
+    <Compile Include="DataLogger\PopupWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="frmCredits.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -440,7 +455,6 @@
     <Compile Include="DataLogger\Devices\DetectPortChange.cs" />
     <Compile Include="DataLogger\Devices\Device.cs" />
     <Compile Include="DataLogger\Devices\ElmDevice.cs" />
-    <Compile Include="DataLogger\Devices\ElmDeviceImplementation.cs" />
     <Compile Include="DataLogger\Devices\FTD2XX_NET.cs" />
     <Compile Include="DataLogger\Devices\FTDIPort.cs" />
     <Compile Include="DataLogger\Devices\FTDI_Finder.cs" />
@@ -523,8 +537,12 @@
     <EmbeddedResource Include="DataLogger\frmBinToScript.resx">
       <DependentUpon>frmBinToScript.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmJ2534Filters.resx">
+      <DependentUpon>frmJ2534Filters.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DataLogger\frmLoggerGraphics.resx">
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCredits.resx">
       <DependentUpon>frmCredits.cs</DependentUpon>

@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using static Upatcher;
 using static Helpers;
+using System.Reflection;
 
 namespace UniversalPatcher
 {
@@ -22,6 +23,52 @@ namespace UniversalPatcher
         private object myObj;
         private void frmClassEditor_Load(object sender, EventArgs e)
         {
+            txtFilter.KeyPress += TxtFilter_KeyPress;
+            dataGridView1.DataError += DataGridView1_DataError;
+        }
+
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            
+        }
+
+        private void TxtFilter_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            LoadObject(myObj);
+        }
+
+        private void SetCellValue(object currentobj, PropertyInfo prop, int row)
+        {
+            dataGridView1.Rows[row].HeaderCell.Value = prop.Name;
+            if (prop.PropertyType.IsEnum)
+            {
+                DataGridViewComboBoxCell c = new DataGridViewComboBoxCell();
+                c.ValueType = prop.PropertyType;
+                c.ValueMember = "Value";
+                c.DisplayMember = "Name";
+                c.DataSource = Enum.GetValues(prop.PropertyType).Cast<object>().Select(v => new
+                {
+                    Value = (int)v,
+                    Name = Enum.GetName(prop.PropertyType, v) /* or any other logic to get text */
+                }).ToList();
+                c.Value = (int)prop.GetValue(currentobj, null);
+                dataGridView1.Rows[row].Cells[0] = c;
+            }
+            else if (prop.PropertyType == typeof(SerializableFont))
+            {
+                SerializableFont sFont = (SerializableFont)prop.GetValue(currentobj, null);
+                dataGridView1.Rows[row].Cells[0].Value = sFont.ToString();
+            }
+            else if (prop.PropertyType == typeof(System.Boolean))
+            {
+                DataGridViewCheckBoxCell c = new DataGridViewCheckBoxCell();
+                dataGridView1.Rows[row].Cells[0] = c;
+                c.Value = prop.GetValue(currentobj, null);
+            }
+            else
+            {
+                dataGridView1.Rows[row].Cells[0].Value = prop.GetValue(currentobj, null);
+            }
 
         }
 
@@ -29,39 +76,19 @@ namespace UniversalPatcher
         {
             try
             {
-                int row = 0;
                 this.myObj = myObj;
-                dataGridView1.ColumnCount = 1;
-                dataGridView1.RowHeadersWidth = 150;
-                foreach (var prop in myObj.GetType().GetProperties())
+                //dataGridView1.ColumnCount = 1;
+                //dataGridView1.Columns[0].Width = 1000;
+                dataGridView1.RowHeadersWidth = 180;
+                dataGridView1.Rows.Clear();
+                foreach (PropertyInfo prop in myObj.GetType().GetProperties())
                 {
-                    dataGridView1.Rows.Add();
-                    dataGridView1.Rows[row].HeaderCell.Value = prop.Name;
-                    if (prop.PropertyType.IsEnum)
+                    if (txtFilter.Text.Length > 0 && !prop.Name.ToLower().Contains(txtFilter.Text.ToLower()))
                     {
-                        DataGridViewComboBoxCell c = new DataGridViewComboBoxCell();
-                        c.ValueType = prop.PropertyType;
-                        c.ValueMember = "Value";
-                        c.DisplayMember = "Name";
-                        c.DataSource = Enum.GetValues(prop.PropertyType).Cast<object>().Select(v => new
-                        {
-                            Value = (int)v,
-                            Name = Enum.GetName(prop.PropertyType, v) /* or any other logic to get text */
-                        }).ToList();
-                        c.Value = (int)prop.GetValue(myObj, null);
-                        dataGridView1.Rows[row].Cells[0] = c;
+                        continue;
                     }
-                    else if (prop.PropertyType == typeof(System.Boolean))
-                    {
-                        DataGridViewCheckBoxCell c = new DataGridViewCheckBoxCell();
-                        dataGridView1.Rows[row].Cells[0] = c;
-                        c.Value = prop.GetValue(myObj, null);
-                    }
-                    else
-                    {
-                        dataGridView1.Rows[row].Cells[0].Value = prop.GetValue(myObj, null);
-                    }
-                    row++;
+                    int row = dataGridView1.Rows.Add();
+                    SetCellValue(myObj,prop, row);
                 }
             }
             catch (Exception ex)
@@ -83,6 +110,8 @@ namespace UniversalPatcher
                     {
                         if (dataGridView1.Rows[i].Cells[0].GetType() == typeof(DataGridViewComboBoxCell))
                             propertyInfo.SetValue(myObj, Enum.ToObject(propertyInfo.PropertyType, dataGridView1.Rows[i].Cells[0].Value), null);
+                        else if (propertyInfo.PropertyType == typeof(SerializableFont))
+                            propertyInfo.SetValue(myObj, new SerializableFont(dataGridView1.Rows[i].Cells[0].Value.ToString()), null);
                         else
                             propertyInfo.SetValue(myObj, Convert.ChangeType(dataGridView1.Rows[i].Cells[0].Value, propertyInfo.PropertyType), null);
                     }
@@ -119,7 +148,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmPropertyEditor, line " + line + ": " + ex.Message);
             }
 
         }
@@ -176,7 +205,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmPropertyEditor, line " + line + ": " + ex.Message);
             }
 
         }
@@ -233,6 +262,69 @@ namespace UniversalPatcher
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
+            int row = dataGridView1.CurrentCell.RowIndex;
+            if (dataGridView1.Rows[row].HeaderCell.Value.ToString().ToLower().Contains("font"))
+                fontToolStripMenuItem.Enabled = true;
+            else
+                fontToolStripMenuItem.Enabled = false;
+        }
+
+        private void resetToDefaultValueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<int> selectedrows = new List<int>();
+                for (int c=0; c < dataGridView1.SelectedCells.Count; c++)
+                {
+                    if (!selectedrows.Contains(dataGridView1.SelectedCells[c].RowIndex))
+                    {
+                        selectedrows.Add(dataGridView1.SelectedCells[c].RowIndex);
+                    }
+                }
+                UpatcherSettings tmpSettings = new UpatcherSettings();
+                for (int r = 0; r < selectedrows.Count; r++)
+                {
+                    int row = selectedrows[r];
+                    string currentProp = dataGridView1.Rows[row].HeaderCell.Value.ToString();
+                    foreach (var prop in tmpSettings.GetType().GetProperties())
+                    {
+                        if (prop.Name == currentProp)
+                        {
+                            SetCellValue(tmpSettings, prop, row);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmPropertyEditor, line " + line + ": " + ex.Message);
+
+            }
+        }
+
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int row = dataGridView1.CurrentCell.RowIndex;
+            SerializableFont currentSFont = new SerializableFont(dataGridView1.Rows[row].Cells[0].Value.ToString());
+            Font currentFont = currentSFont.ToFont();
+            FontDialog fontDlg = new FontDialog();
+            fontDlg.ShowColor = true;
+            fontDlg.ShowApply = true;
+            fontDlg.ShowEffects = true;
+            fontDlg.ShowHelp = true;
+            fontDlg.Font = currentFont;
+            if (fontDlg.ShowDialog() != DialogResult.Cancel)
+            {
+                currentFont = fontDlg.Font;
+                dataGridView1.Rows[row].Cells[0].Value = new SerializableFont(currentFont).ToString();
+            }
+            fontDlg.Dispose();
 
         }
     }

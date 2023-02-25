@@ -599,4 +599,9 @@
 - Logger: J2534 external process handling improved
 - Logger: Settings for timeouts
 
+0.22.02
+- Logger: Jconsole: Editor for filters, filter redesign
+- Segmentseek: Support for big offset
+- XML Editor: Fixed bug, Copy/Paste row added reference to copied row, not new object
+
 

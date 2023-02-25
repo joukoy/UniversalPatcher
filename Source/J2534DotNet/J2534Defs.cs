@@ -38,12 +38,28 @@ namespace J2534DotNet
             TxFlags = myTxFlag;
             Data = myByteArray;
         }
-		public ProtocolID ProtocolID {get; set;}
+        public PassThruMsg(ProtocolID myProtocolId, TxFlag myTxFlag, RxStatus myRxStatus, byte[] myByteArray)
+        {
+            ProtocolID = myProtocolId;
+            TxFlags = myTxFlag;
+            Data = myByteArray;
+            RxStatus = myRxStatus;
+        }
+        public ProtocolID ProtocolID {get; set;}
         public RxStatus RxStatus { get; set; }
         public TxFlag TxFlags { get; set; }
         public int Timestamp { get; set; }
         public int ExtraDataIndex { get; set; }
         public byte[] Data { get; set; }
+    }
+
+    public enum KInit
+    {
+        None,
+        FastInit_GMDelco,
+        FastInit_ME7_5,
+        FastInit_J1979,
+        FiveBaudInit_J1979
     }
 
     [Flags]
@@ -55,8 +71,33 @@ namespace J2534DotNet
         RX_BREAK = 0x00000004,
         TX_INDICATION = 0x00000008,
         ISO15765_PADDING_ERROR = 0x00000010,
+        RESERVED05 = 0x00000020,
+        RESERVED06 = 0x00000040,
         ISO15765_ADDR_TYPE = 0x00000080,
-        CAN_29BIT_ID = 0x00000100
+        CAN_29BIT_ID = 0x00000100,
+        RESERVED09 = 0x00000200,
+        RESERVED10 = 0x00000400,
+        RESERVED11 = 0x00000800,
+        RESERVED12 = 0x00001000,
+        RESERVED13 = 0x00002000,
+        RESERVED14 = 0x00004000,
+        RESERVED15 = 0x00008000,
+        SW_CAN_HV_RX = 0x10000,
+        SW_CAN_HS_RX = 0x20000,
+        SW_CAN_NS_RX = 0x40000,
+        FD_CAN_BRS = 0x80000,
+        FD_CAN_FORMAT = 0x100000,
+        FD_CAN_ESI = 0x200000,
+        RESERVED22 = 0x400000,
+        RESERVED23 = 0x800000,
+        CAN_FD_BRS = 0x1000000,
+        RX_CAN_FD = 0x2000000,
+        CANFD_ESI = 0x4000000,
+        ISO15765_FRAME_PADDED = 0x8000000,
+        TOOLSPEC28 = 0x10000000,
+        TOOLSPEC29 = 0x20000000,
+        TOOLSPEC30 = 0x40000000,
+        //TOOLSPEC31 = 0x80000000
     }
 
     [Flags]

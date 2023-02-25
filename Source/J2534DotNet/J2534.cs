@@ -295,7 +295,7 @@ namespace J2534DotNet
                 Marshal.StructureToPtr(uPatternMsg, uPatternPtr, false);
 
                 IntPtr uFlowControlPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uFlowControlMsg));
-                Marshal.StructureToPtr(flowControlMsg, uFlowControlPtr, false);
+                Marshal.StructureToPtr(uFlowControlMsg, uFlowControlPtr, false);
 
                 IntPtr filterIdPtr = Marshal.AllocHGlobal(4);
                 J2534Err returnValue;
@@ -329,13 +329,13 @@ namespace J2534DotNet
         }
 
         public J2534Err StartMsgFilter
-        (
-            int channelid,
-            FilterType filterType,
-            PassThruMsg maskMsg,
-            PassThruMsg patternMsg,
-            ref int filterId
-        )
+       (
+           int channelid,
+           FilterType filterType,
+           PassThruMsg maskMsg,
+           PassThruMsg patternMsg,
+           ref int filterId
+       )
         {
             try
             {
@@ -380,6 +380,7 @@ namespace J2534DotNet
                 return J2534Err.ERR_FAILED;
             }
         }
+
 
         public J2534Err StopMsgFilter(int channelId, int filterId)
         {

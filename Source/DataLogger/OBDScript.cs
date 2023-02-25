@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using static Upatcher;
-using static Helpers;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using static Helpers;
+using static LoggerUtils;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
     public class OBDScript
     {
-        public OBDScript(Device device, MessageReceiver receiver)
+        public OBDScript(Device device)
         {
             this.device = device;
-            this.receiver = receiver;
             SecondaryProtocol = false;
+            device.SetWriteTimeout(AppSettings.TimeoutScriptWrite);
         }
 
         public class Variable
@@ -28,8 +27,7 @@ namespace UniversalPatcher
         }
         List<Variable> variables = new List<Variable>();
         Device device;
-        MessageReceiver receiver;
-        ushort key = 0xFFFF;
+        UInt64 key = 0xFFFF;
         int globaldelay = AppSettings.LoggerScriptDelay;
         int breakvalue = -1;
         int breaknotvalue = -1;
@@ -39,6 +37,11 @@ namespace UniversalPatcher
         int currentrow = 0;
         public bool SecondaryProtocol { get; set; }
         int defaultResponses = 1;
+        private J2534DotNet.TxFlag txflag;
+        private J2534DotNet.RxStatus rxstatus;
+        int receiveTimeout = AppSettings.TimeoutConsoleReceive;
+        int writeTimeout = AppSettings.TimeoutScriptRead;
+        int readTimeout = AppSettings.TimeoutScriptRead;
 
         /// <summary>
         /// Calc checksum for byte array for all messages to/from device
@@ -58,6 +61,7 @@ namespace UniversalPatcher
         {
             if (stopscript)
             {
+                stopscript = false;
                 return false;
             }
             Line = Line.Trim();
@@ -79,6 +83,42 @@ namespace UniversalPatcher
                         {
                             v.Value = val;
                             variables.Add(v);
+                        }
+                    }
+                }
+                else if (Line.ToLower().StartsWith("set:"))
+                {
+                    string[] setParts = Line.Split(':');
+                    if (setParts.Length > 2)
+                    {
+                        switch (setParts[1].ToLower())
+                        {
+                            case "txflags":
+                                txflag = ParseTxFLags(setParts[2]);
+                                Debug.WriteLine("Setting TxFlags: " + txflag.ToString().Replace(",", "|"));
+                                break;
+                            case "rxstatus":
+                                rxstatus = ParseRxStatus(setParts[2]);
+                                Debug.WriteLine("Setting RxStatus: " + rxstatus.ToString().Replace(",", "|"));
+                                break;
+                        }
+                    }
+                }
+                else if (Line.ToLower().StartsWith("clear:"))
+                {
+                    string[] setParts = Line.Split(':');
+                    if (setParts.Length > 1)
+                    {
+                        switch (setParts[1].ToLower())
+                        {
+                            case "txflags":
+                                txflag = J2534DotNet.TxFlag.NONE;
+                                Debug.WriteLine("Clearing RxStatus");
+                                break;
+                            case "rxstatus":
+                                rxstatus = J2534DotNet.RxStatus.NONE;
+                                Debug.WriteLine("Clearing TxFlags");
+                                break;
                         }
                     }
                 }
@@ -154,7 +194,7 @@ namespace UniversalPatcher
                         Logger("Unknown speed: " + Line.Substring(9));
                     }
                 }
-                else if (Line.ToLower().StartsWith("t:") || Line.ToLower().StartsWith("delay:"))
+                else if (Line.ToLower().StartsWith("d:") || Line.ToLower().StartsWith("delay:"))
                 {
                     int delay = 0;
                     string[] parts = Line.Split(':');
@@ -172,16 +212,18 @@ namespace UniversalPatcher
                     {
                         Debug.WriteLine("Setting timeout to: {0} ms ", tout);
                         device.SetReadTimeout(tout);
+                        readTimeout = tout;
                     }
                 }
-                else if (Line.ToLower().StartsWith("t:") || Line.ToLower().StartsWith("writetimeout:"))
+                else if (Line.ToLower().StartsWith("w:") || Line.ToLower().StartsWith("writetimeout:"))
                 {
                     int tout = 0;
                     string[] parts = Line.Split(':');
                     if (int.TryParse(parts[1], out tout))
                     {
-                        Debug.WriteLine("Setting write timeout to: {0} ms ", tout);
+                        //Debug.WriteLine("Setting write timeout to: {0} ms ", tout);
                         device.SetWriteTimeout(tout);
+                        writeTimeout = tout;
                     }
                 }
                 else if (Line.ToLower().StartsWith("variable"))
@@ -279,20 +321,25 @@ namespace UniversalPatcher
                     {
                         int.TryParse(parts[1], out responses);
                     }
-                    Debug.WriteLine("Waiting {0} responses", responses);
-                    int timeout = 50;
+                    Debug.WriteLine("Waiting {0} responses", responses);                    
                     if (parts.Length > 2)
                     {
-                        if (int.TryParse(parts[2], out timeout))
+                        int wtimeout;
+                        if (int.TryParse(parts[2], out wtimeout))
                         {
-                            device.SetWriteTimeout(timeout);
-                            Debug.WriteLine("Setting write timeout to: " + timeout.ToString());
+                            device.SetWriteTimeout(wtimeout);
                         }
+                    }
+                    else
+                    {
+                        device.SetWriteTimeout(writeTimeout);
                     }
                     Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
                     OBDMessage oMsg = new OBDMessage(msg);
                     oMsg.SecondaryProtocol = SecondaryProtocol;
-                    device.ClearMessageQueue();
+                    oMsg.Txflag = txflag;
+                    oMsg.Rxstatus = rxstatus;
+                    //device.ClearMessageQueue();
                     Debug.WriteLine("Sending message at " + DateTime.Now.ToString("HH.mm.ss.ffff"));
                     device.SendMessage(oMsg, responses);
                     Debug.WriteLine("Done sending message at " + DateTime.Now.ToString("HH.mm.ss.ffff"));
@@ -301,7 +348,11 @@ namespace UniversalPatcher
                     DateTime starttime = DateTime.Now;
                     for (int r = 0; r < responses;)
                     {
-                        OBDMessage rMsg = device.ReceiveMessage();
+                        OBDMessage rMsg;
+                        if (SecondaryProtocol)
+                            rMsg = device.ReceiveMessage2();
+                        else
+                            rMsg = device.ReceiveMessage();
                         if (rMsg != null && rMsg.Length > 3 && rMsg[0] == oMsg[0] && rMsg[1] == oMsg[2] && rMsg[2] == oMsg[1])
                         {
                             starttime = DateTime.Now;   //Message received, reset timer
@@ -333,9 +384,9 @@ namespace UniversalPatcher
                                 }
                             }
                         }
-                        if (DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(timeout))
+                        if (DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(receiveTimeout))
                         {
-                            Debug.WriteLine("Timeout: " + timeout.ToString() + " ms");
+                            Debug.WriteLine("Timeout: " + receiveTimeout.ToString() + " ms");
                             break;
                         }
                         if (device.LogDeviceType == DataLogger.LoggingDevType.Elm && device.ReceivedMessageCount == 0)
@@ -390,6 +441,8 @@ namespace UniversalPatcher
             Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
             OBDMessage oMsg = new OBDMessage(msg);
             oMsg.SecondaryProtocol = SecondaryProtocol;
+            oMsg.Txflag = txflag;
+            oMsg.Rxstatus = rxstatus;
             device.SendMessage(oMsg, 1);
             Thread.Sleep(globaldelay);
             OBDMessage rMsg = null;
@@ -428,7 +481,7 @@ namespace UniversalPatcher
 
         }
 
-        private ushort GetSeed(string Line, string Line2)
+        private UInt64 GetSeed(string Line, string Line2)
         {
             ushort returnValue = 0xFFFF;
             for (int x = 0; x < variables.Count; x++)
@@ -453,12 +506,17 @@ namespace UniversalPatcher
                 return returnValue;
             }
             int algo;
+            bool fivebytes = false;
+            if (parts[2].ToLower().StartsWith("f0"))
+            {
+                fivebytes = true;
+                parts[2] = parts[2].Substring(2);
+            }
             if (!HexToInt(parts[2], out algo))
             {
                 LoggerBold("Unknown algo: " + parts[2] + " (" + Line + ")");
                 return returnValue;
             }
-
             byte[] msg = Line2.Replace(" ", "").ToBytes();
             Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
             OBDMessage oMsg = new OBDMessage(msg);
@@ -482,10 +540,21 @@ namespace UniversalPatcher
                 }
                 Application.DoEvents();
             }
-            ushort seed = (ushort)((rMsg[position] << 8) + rMsg[position + 1]);
-            ushort key = KeyAlgorithm.GetKey(algo, seed);
-            Debug.WriteLine("Seed: " + seed.ToString("X4") + ", Key: " + key.ToString("X4") + ", Algo: " + algo.ToString("X"));
-            return key;
+            if (fivebytes)
+            {
+                byte[] seed = new byte[] { rMsg[position], rMsg[position + 1], rMsg[position + 2], rMsg[position + 3], rMsg[position + 4] };
+                byte[] result = gmkeylib.gmkey.GetKey(seed, (byte)algo);
+                key = BitConverter.ToUInt64(result,0);
+                Debug.WriteLine("Seed: " + seed.ToString() + ", Key: " + result.ToHex() + ", Algo: " + algo.ToString("X"));
+                return key;
+            }
+            else
+            {
+                ushort seed = (ushort)((rMsg[position] << 8) + rMsg[position + 1]);
+                key = KeyAlgorithm.GetKey(algo, seed);
+                Debug.WriteLine("Seed: " + seed.ToString("X4") + ", Key: " + key.ToString("X4") + ", Algo: " + algo.ToString("X"));
+                return key;
+            }
         }
 
         public void UploadScript(string FileName)
@@ -494,7 +563,7 @@ namespace UniversalPatcher
             {
                 stopscript = false;
                 string Line;
-
+                
                 scriptrows = new List<string>();
                 StreamReader sr = new StreamReader(FileName);
                 while ((Line = sr.ReadLine()) != null)
@@ -503,8 +572,7 @@ namespace UniversalPatcher
                 }
                 sr.Close();
 
-                receiver.SetReceiverPaused(true);
-                device.ClearMessageQueue();
+                //device.ClearMessageQueue();
                 for (;currentrow<scriptrows.Count; currentrow++)
                 {
                     Line = scriptrows[currentrow];
@@ -566,10 +634,15 @@ namespace UniversalPatcher
                         {
                             Line2 = scriptrows[currentrow + 1];
                         }
+                        Stopwatch timer = new Stopwatch();
+                        timer.Start();
                         if (!HandleLine(Line, Line2, ref breakloop))
                         {
                             break;
                         }
+                        timer.Stop();
+                        Debug.WriteLine("Handleline time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+
                         if (scriptrows[currentrow].ToLower().Contains("getseed") || scriptrows[currentrow].ToLower().Contains("setvariable"))
                         {
                             currentrow++;
@@ -577,12 +650,10 @@ namespace UniversalPatcher
 
                     }
                 }
-                device.SetWriteTimeout(500); //Revert to default
-                receiver.SetReceiverPaused(false);
+                stopscript = false;
             }
             catch (Exception ex)
             {
-                receiver.SetReceiverPaused(false);
                 LoggerBold(ex.Message);
                 var st = new StackTrace(ex, true);
                 // Get the top stack frame

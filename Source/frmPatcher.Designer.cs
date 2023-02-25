@@ -293,6 +293,7 @@
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -3105,7 +3106,8 @@
             this.cVNDatabaseToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
-            this.moreSettingsToolStripMenuItem});
+            this.moreSettingsToolStripMenuItem,
+            this.allSettingsToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "&Settings";
@@ -3242,6 +3244,13 @@
             this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
+            // 
+            // allSettingsToolStripMenuItem
+            // 
+            this.allSettingsToolStripMenuItem.Name = "allSettingsToolStripMenuItem";
+            this.allSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.allSettingsToolStripMenuItem.Text = "All settings";
+            this.allSettingsToolStripMenuItem.Click += new System.EventHandler(this.allSettingsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -3676,5 +3685,6 @@
         private System.Windows.Forms.ToolStripMenuItem deviceNamesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem functionNamesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pIDDescriptionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem allSettingsToolStripMenuItem;
     }
 }

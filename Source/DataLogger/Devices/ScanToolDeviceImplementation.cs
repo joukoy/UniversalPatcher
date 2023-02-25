@@ -25,10 +25,10 @@ namespace UniversalPatcher
         /// </summary>
         public ScanToolDeviceImplementation(
             Action<OBDMessage> enqueue,
-            Func<int> getRecievedMessageCount,
+            Func<int> getReceivedMessageCount,
             IPort port,
             Action<OBDMessage> MessageSent) : 
-            base(enqueue, getRecievedMessageCount, port, MessageSent)
+            base(enqueue, getReceivedMessageCount, port, MessageSent)
         {
             // Both of these numbers could be slightly larger, but round numbers are easier to work with,
             // and these are only used with the Scantool SX interface anyhow. If we detect an AllPro
@@ -375,7 +375,7 @@ namespace UniversalPatcher
                 //Debug.WriteLine("Elm: " + response.Data);
                 this.ProcessResponse(response, "receive");
 
-                if (this.getRecievedMessageCount() == 0)
+                if (this.getReceivedMessageCount() == 0)
                 {
                    // this.ReceiveViaMonitorMode();
                 }

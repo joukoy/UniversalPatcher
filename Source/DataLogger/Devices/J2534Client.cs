@@ -39,12 +39,15 @@ namespace UniversalPatcher
 
         private NamedPipeClientStream cmdPipe;
         private NamedPipeClientStream responsePipe;
+        private NamedPipeClientStream proto2CmdPipe;
+        private NamedPipeClientStream proto2ResponsePipe;
         private NamedPipeClientStream loggerPipe;
 
         //Handle to j2534 server process
         Process process;
 
-        public J2534Client(J2534DotNet.J2534Device jport) : base()
+        //public J2534Client(J2534DotNet.J2534Device jport) : base()
+        public J2534Client(int DevNumber) : base()
         {
 
             // Reduced from 4096+12 for the MDI2
@@ -56,18 +59,23 @@ namespace UniversalPatcher
             process = new Process();
             // Configure the process using the StartInfo properties.
             process.StartInfo.FileName = Application.ExecutablePath;
-            process.StartInfo.Arguments = "j2534server " + jport.Name;
+            process.StartInfo.Arguments = "j2534server " + DevNumber.ToString();
             process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Debug.WriteLine("Starting j2534 server");
             process.Start();
             Application.DoEvents();
-            Thread.Sleep(100);
+            Thread.Sleep(300);
             int pId = process.Id;
             cmdPipe = new NamedPipeClientStream(".", pId.ToString() + "j2534cmdpipe", PipeDirection.InOut,PipeOptions.WriteThrough);
             cmdPipe.Connect();            
             responsePipe = new NamedPipeClientStream(".", pId.ToString() + "j2534responsepipe", PipeDirection.InOut, PipeOptions.WriteThrough);
             responsePipe.Connect();
             responsePipe.ReadMode = PipeTransmissionMode.Message;
+            proto2CmdPipe = new NamedPipeClientStream(".", pId.ToString() + "proto2cmdpipe", PipeDirection.InOut, PipeOptions.WriteThrough);
+            proto2CmdPipe.Connect();
+            proto2ResponsePipe = new NamedPipeClientStream(".", pId.ToString() + "proto2responsepipe", PipeDirection.InOut, PipeOptions.WriteThrough);
+            proto2ResponsePipe.Connect();
+            proto2ResponsePipe.ReadMode = PipeTransmissionMode.Message;
             loggerPipe = new NamedPipeClientStream(".", pId.ToString() + "j2534loggerpipe", PipeDirection.InOut, PipeOptions.WriteThrough);
             loggerPipe.Connect();
             loggerPipe.ReadMode = PipeTransmissionMode.Message;
@@ -89,27 +97,9 @@ namespace UniversalPatcher
                 }
                 lock (cmdPipe)
                 {
-                    //bool result = Task.Factory.StartNew(() =>
-                    //{
                     cmdPipe.Write(sendBuf.ToArray(), 0, sendBuf.Count);
                     cmdPipe.Flush();
                     retVal = ReceiveFromPipe(responsePipe);
-                    //}).Wait(30000);
-                    /*                    if (result)
-                                        {
-                                            Application.DoEvents();
-                                            retVal = ReceiveFromPipe(responsePipe);
-                                            if (retVal.Length == 0)
-                                            {
-                                                retVal = new byte[] { 0 }; //false
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Debug.WriteLine("J2534 client pipe send failed");
-                                        }
-                    Application.DoEvents();
-                    */
                 }
             }
             catch (Exception ex)
@@ -124,6 +114,38 @@ namespace UniversalPatcher
             }
             return retVal;
         }
+
+        private byte[] PipeSendAndReceiveProto2(j2534Command command, byte[] msg)
+        {
+            byte[] retVal = null;
+            try
+            {
+                List<byte> sendBuf = new List<byte>();
+                sendBuf.Add((byte)command);
+                if (msg != null)
+                {
+                    sendBuf.AddRange(msg);
+                }
+                lock (proto2CmdPipe)
+                {
+                    proto2CmdPipe.Write(sendBuf.ToArray(), 0, sendBuf.Count);
+                    proto2CmdPipe.Flush();
+                    retVal = ReceiveFromPipe(proto2ResponsePipe);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, j2534Client line " + line + ": " + ex.Message);
+                this.Connected = false;
+            }
+            return retVal;
+        }
+
 
         private byte[] ReceiveFromPipe(NamedPipeClientStream pipe)
         {
@@ -225,20 +247,20 @@ namespace UniversalPatcher
         // This needs to return Task<bool> for consistency with the Device base class.
         // However it doesn't do anything asynchronous, so to make the code more readable
         // it just wraps a private method that does the real work and returns a bool.
-        public override bool Initialize(int BaudRate, LoggerUtils.J2534InitParameters j2534Init) //Baudrate not used
+        public override bool Initialize(int BaudRate, J2534InitParameters j2534Init) //Baudrate not used
         {
             return this.InitializeInternal(j2534Init);
         }
 
         // This returns 'bool' for the sake of readability. That bool needs to be
         // wrapped in a Task object for the public Initialize method.
-        private bool InitializeInternal(LoggerUtils.J2534InitParameters j2534Init)
+        private bool InitializeInternal(J2534InitParameters j2534Init)
         {
             try
             {
                 Logger("J2534 client initializing...");
                 Application.DoEvents();
-                string initparms = Helpers.SerializeObjectToXML < J2534InitParameters > (j2534Init);
+                string initparms = Helpers.SerializeObjectToXML(j2534Init);
                 byte[] param = Encoding.ASCII.GetBytes(initparms);
                 byte[] readBuf = PipeSendAndReceive(j2534Command.Initialize, param);
                 if (readBuf.Length > 0 && readBuf[0] == 1)
@@ -265,6 +287,8 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+                Exception ie = ex.InnerException;
+                LoggerBold("Error: " + line + ": " + ie.Message);
             }
             return false;
         }
@@ -321,25 +345,18 @@ namespace UniversalPatcher
             //Debug.WriteLine("Trace: Read Network Packet");
             try
             {
-                DateTime startTime = DateTime.Now;
                 byte[] resp = PipeSendAndReceive(j2534Command.Receive, null);
-                while (resp.Length < 2)
-                {                    
-                    if (resp.Length == 1 && resp[0] == 0)
+                if (resp.Length == 1)
+                {
+                    if (resp[0] == 0)
                     {
                         Debug.WriteLine("J2534 Client: Receive failed");
-                        return;
                     }
-                    if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(ReadTimeout))
-                    {
-                        Debug.WriteLine("Receive timeout: " + ReadTimeout.ToString());
-                        return;
-                    }
-                    Thread.Sleep(1);
-                    resp = PipeSendAndReceive(j2534Command.Receive, null);
+                    return;
                 }
-                OBDMessage oMsg = new OBDMessage(null);
-                oMsg.FromPipeMessage(resp);
+                //OBDMessage oMsg = new OBDMessage(null);
+                //oMsg.FromPipeMessage(resp);
+                OBDMessage oMsg = Helpers.XmlDeserializeFromString<OBDMessage>(Encoding.ASCII.GetString(resp));
                 this.Enqueue(oMsg);
                 //Application.DoEvents();
             }
@@ -364,11 +381,13 @@ namespace UniversalPatcher
             //Debug.WriteLine("Trace: Read Network Packet");
             try
             {
-                byte[] resp = PipeSendAndReceive(j2534Command.Receive2, null);
+                //byte[] resp = PipeSendAndReceive(j2534Command.Receive2, null);
+                byte[] resp = PipeSendAndReceiveProto2(j2534Command.Receive2, null);
                 if (resp.Length > 1)
                 {
-                    OBDMessage oMsg = new OBDMessage(null);
-                    oMsg.FromPipeMessage(resp);
+                    //OBDMessage oMsg = new OBDMessage(null);
+                    //oMsg.FromPipeMessage(resp);
+                    OBDMessage oMsg = Helpers.XmlDeserializeFromString<OBDMessage>(Encoding.ASCII.GetString(resp));
                     this.Enqueue(oMsg);
                 }
             }
@@ -392,7 +411,9 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("J2534 client sending message: " + message.ToString());
                 this.MessageSent(message);
-                byte[] readBuf = PipeSendAndReceive(j2534Command.SendMessage, message.ToPipeMessage());
+                string msgStr = Helpers.SerializeObjectToXML<OBDMessage>(message);
+                //Logger("Client message: " + message.ToString());
+                byte[] readBuf = PipeSendAndReceive(j2534Command.SendMessage, Encoding.ASCII.GetBytes(msgStr));
                 if (readBuf[0] == 1)
                 {
                     //Logger("J2534 client Message sent ok");
@@ -425,8 +446,8 @@ namespace UniversalPatcher
             {                 
                 byte[] param = Encoding.ASCII.GetBytes(Filters);
                 byte[] sendBuf = new byte[param.Length + 1];
-                sendBuf[1] = Convert.ToByte(Secondary); 
-                //boolean length is known, send it first. Rest of bytes are message
+                sendBuf[0] = Convert.ToByte(Secondary); 
+                //boolean length is known, send it first. Rest of bytes are filter text
                 Array.Copy(param, 0, sendBuf, 1, param.Length);
                 byte[] readBuf = PipeSendAndReceive(j2534Command.SetupFilters, sendBuf);
                 if (Convert.ToBoolean(readBuf[0]) == true)
@@ -465,8 +486,13 @@ namespace UniversalPatcher
         {
             try
             {
+                if ((newSpeed == VpwSpeed.FourX) && !this.Enable4xReadWrite)
+                {
+                    return false;
+                }
                 Debug.WriteLine("Setting vpwspeed");
-                byte[] param = Helpers.ObjectToByteArray(newSpeed);
+                byte[] param = new byte[1];
+                param[0] = (byte)newSpeed;
                 byte[] readBuf = PipeSendAndReceive(j2534Command.SetVpwSpeed, param);
                 return Convert.ToBoolean(readBuf[0]);
             }

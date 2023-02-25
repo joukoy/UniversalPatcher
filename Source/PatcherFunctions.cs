@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using UniversalPatcher;
 using UniversalPatcher.Properties;
@@ -560,13 +562,22 @@ public class Upatcher
                     Debug.WriteLine("Remember previous settings");
                 else if (args[0].ToLower().Contains("j2534server"))
                 {
+                    int DevNumber = -1;
+                    if (!int.TryParse(args[1], out DevNumber))
+                    {
+                        MessageBox.Show("Unknown devicenumber: " + args[1]);
+                        Environment.Exit(0);
+                    }
+                    List<J2534DotNet.J2534Device> jDevList = J2534DotNet.J2534Detect.ListDevices();
+                    J2534DotNet.J2534Device selectedDevice = jDevList[DevNumber];
+
                     if (Upatcher.AppSettings.LoggerJ2534ProcessVisible)
                     {
-                        Application.Run(new frmJ2534Server(args[1]));
+                        Application.Run(new frmJ2534Server(selectedDevice));
                     }
                     else
                     {
-                        J2534Server server = new J2534Server(args[1]);
+                        J2534Server server = new J2534Server(selectedDevice);
                         server.ServerLoop();
                     }
                     return;
@@ -643,18 +654,6 @@ public class Upatcher
                 else if (args[1].ToLower().Contains("logger"))
                 {
                     Application.Run(new frmLogger());
-                }
-                else if (args[0].ToLower().Contains("j2534server"))
-                {
-                    if (Upatcher.AppSettings.LoggerJ2534ProcessVisible)
-                    {
-                        Application.Run(new frmJ2534Server(args[1]));
-                    }
-                    else
-                    {
-                        J2534Server server = new J2534Server(args[1]);
-                        server.ServerLoop();
-                    }
                 }
                 else
                 {
@@ -2665,18 +2664,26 @@ public class Upatcher
         }
     }
 
+    private class LoggerClass
+    {
+        public void RunLoggerForm()
+        {
+            frmLogger fl = new frmLogger();
+            Application.Run(fl);
+        }
+    }
+
     public static void StartLogger(PcmFile PCM)
     {
         try
         {
             if (AppSettings.LoggerUseIntegrated)
             {
-                frmLogger fl = new frmLogger();
-                fl.Show();
-                if (PCM != null && !string.IsNullOrEmpty(PCM.OS))
-                {
-                    fl.FilterPidsByBin(PCM);
-                }
+                LoggerClass lc = new LoggerClass();
+                Thread thread = new Thread(new ThreadStart(lc.RunLoggerForm));
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Name = "Datalogger";
+                thread.Start();
             }
             else if (string.IsNullOrEmpty(AppSettings.LoggerExternalApp))
             {

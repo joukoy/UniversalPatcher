@@ -298,13 +298,13 @@ namespace UniversalPatcher
                     LoggerUtils.analyzerData = new List<OBDMessage>();
                 HideHeartBeat = hideHeartBeat;
                 Logger("Waiting data...");
-                datalogger.LogDevice.SetTimeout(TimeoutScenario.Maximum);
                 if (datalogger.LogRunning)
                 {
                     datalogger.LogDevice.RemoveFilters();
                 }
                 else
                 {
+                    datalogger.LogDevice.SetTimeout(TimeoutScenario.Maximum);
                     datalogger.LogDevice.SetAnalyzerFilter();
                 }
                 datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;

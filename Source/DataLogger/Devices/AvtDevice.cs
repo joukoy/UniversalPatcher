@@ -54,7 +54,7 @@ namespace UniversalPatcher
             return DeviceType;
         }
 
-        public override bool Initialize(int BaudRate, LoggerUtils.J2534InitParameters j2534Init)
+        public override bool Initialize(int BaudRate, J2534InitParameters j2534Init)
         {
             Debug.WriteLine("Initializing " + this.ToString());
 
@@ -425,7 +425,7 @@ namespace UniversalPatcher
 
         public override bool SetLoggingFilter()
         {
-            if (this.CurrentFilter == "logging" || datalogger.useVPWFilters == false)
+            if (this.CurrentFilter == FilterMode.Logging || datalogger.useVPWFilters == false)
                 return true;
             Debug.WriteLine("Configure AVT filter");
             this.Port.Send(AVT_FILTER_DEST.GetBytes());
@@ -440,19 +440,19 @@ namespace UniversalPatcher
                 Debug.WriteLine("Expected " + AVT_FILTER_DEST_OK.ToString());
                 return false;
             }
-            this.CurrentFilter = "logging";
+            this.CurrentFilter = FilterMode.Logging;
             return true;
         }
         public override bool SetAnalyzerFilter()
         {
-            if (this.CurrentFilter == "analyzer")
+            if (this.CurrentFilter == FilterMode.Analyzer)
                 return true;
             Debug.WriteLine("Setting analyzer filter");
             byte[] msg = new byte[] { 0x52, 0x5b, 0x00 };
             Port.Send(msg); //Clear filter, listen for all devices
             msg = new byte[] { 0xe1, 0x33 };
             Port.Send(msg); //Begin monitoring bus traffic
-            this.CurrentFilter = "analyzer";
+            this.CurrentFilter = FilterMode.Analyzer;
             return true;
         }
         public override bool RemoveFilters()
@@ -460,6 +460,7 @@ namespace UniversalPatcher
             Debug.WriteLine("Removing filters");
             byte[] msg = new byte[] { 0x52, 0x5b, 0x00 };
             Port.Send(msg); //Clear filter, listen for all devices
+            this.CurrentFilter = FilterMode.None;
             return true;
         }
 

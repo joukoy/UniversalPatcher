@@ -285,7 +285,7 @@ namespace UniversalPatcher
             //dtcCodes2 = new List<DtcCode>();
             tableDatas = new List<TableData>();
             foundTables = new List<FoundTable>();
-            foundSegments = new List<FoundSegment>();
+            foundSegments = null;
             //tableCategories = new List<string>();
             altTableDatas = new List<AltTableData>();
             currentTableDatasList = 0;
@@ -1538,16 +1538,11 @@ namespace UniversalPatcher
 
         private void SeekSegments()
         {
-            if (foundSegments.Count == 0)
+            if (foundSegments == null)
             {
+                foundSegments = new List<FoundSegment>();
                 SegmentSeek sSeek = new SegmentSeek();
                 sSeek.SeekSegments(this);
-                if (foundSegments.Count == 0)
-                {
-                    //Stop seeking again if nothing is found
-                    FoundSegment fs = new FoundSegment(this);
-                    foundSegments.Add(fs);
-                }
             }
         }
 
