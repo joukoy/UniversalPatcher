@@ -51,6 +51,7 @@ namespace UniversalPatcher
         readonly ulong ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
         private Dictionary<string, int> protocol_channel;
         private static J2534DotNet.RxStatus? _customfilter;
+        private bool isSimulator = false;
 
         private J2534DotNet.RxStatus CustomFilter
         {
@@ -106,6 +107,10 @@ namespace UniversalPatcher
             ChannelID = -1;
             ChannelID2 = -1;
             protocol_channel = new Dictionary<string, int>();
+            if (jport.Name.ToLower().Contains("sim"))
+            {
+                isSimulator = true;
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -196,18 +201,27 @@ namespace UniversalPatcher
                     return false;
                 }
 
-                Debug.WriteLine("Connected to the device.");
+                Logger("Connected to the device, ID: " + DeviceID.ToString());
 
                 //Optional.. read API,firmware version ect here
                 //read voltage
                 volts = ReadVoltage();
-                if (volts.Status != ResponseStatus.Success)
+                if (volts.Status == ResponseStatus.Success)
                 {
-                    Logger("Unable to read battery voltage.");
+                    Logger("Battery Voltage is: " + volts.Value.ToString());
                 }
                 else
                 {
-                    Logger("Battery Voltage is: " + volts.Value.ToString());
+                    Logger("Unable to read battery voltage.");
+                }
+                Response<string> ver = ReadVersion();
+                if (ver.Status == ResponseStatus.Success)
+                {
+                    Logger(ver.Value);
+                }
+                else
+                {
+                    Logger("Unable to read device version.");
                 }
 
                 //Set Protocol
@@ -237,6 +251,10 @@ namespace UniversalPatcher
                         return false;
                     }
                 }
+                //For debugging J2534 SIM DLL:
+                //Logger("Setting programming voltage");
+                //OBDError = J2534Port.Functions.SetProgrammingVoltage(DeviceID, PinNumber.PIN_12, 0xFFFFFFFF);
+                //OBDError = J2534Port.Functions.SetProgrammingVoltage(DeviceID, PinNumber.PIN_9, 0xFFFFFFFF);
                 Debug.WriteLine("Protocol Set");
                 J2534FunctionsIsLoaded = true;
                 //receiveTask = Task.Factory.StartNew(() => DataReceiver());
@@ -255,6 +273,76 @@ namespace UniversalPatcher
                 LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return false;
+        }
+
+        public override bool SetProgramminVoltage(PinNumber pinNumber, uint voltage)
+        {
+            OBDError = J2534Port.Functions.SetProgrammingVoltage(DeviceID, pinNumber, voltage);
+            if (OBDError == J2534Err.STATUS_NOERROR)
+            {
+                if (voltage == 0xFFFFFFFF)
+                    Debug.WriteLine("Programming voltage set, pin: " + pinNumber.ToString() + " OFF");
+                else if (voltage == 0xFFFFFFFE)
+                    Debug.WriteLine("Programming voltage set, pin: " + pinNumber.ToString() + " GND");
+                else
+                    Debug.WriteLine("Programming voltage set, pin: " + pinNumber.ToString() + ", volts: " + ((float)voltage/1000).ToString("00.00"));
+                return true;
+            }
+            else
+            {
+                Logger("Set programming voltage failed: " + OBDError.ToString());
+                return false;
+            }
+        }
+
+        public override bool AddToFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            if (secondary)
+                OBDError = J2534Port.Functions.AddToFunctMsgLookupTable(ChannelID2, FuncAddr);
+            else
+                OBDError = J2534Port.Functions.AddToFunctMsgLookupTable(ChannelID, FuncAddr);
+            if (OBDError == J2534Err.STATUS_NOERROR)
+            {
+                Debug.WriteLine("Added functional addresses: " + BitConverter.ToString(FuncAddr));
+                return true;
+            }
+            return false;
+        }
+        public override bool DeleteFromFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            if (secondary)
+                OBDError = J2534Port.Functions.DeleteFromFunctMsgLookupTable(ChannelID2, FuncAddr);
+            else
+                OBDError = J2534Port.Functions.DeleteFromFunctMsgLookupTable(ChannelID, FuncAddr);
+            if (OBDError == J2534Err.STATUS_NOERROR)
+            {
+                Debug.WriteLine("Deleted functional addresses: " + BitConverter.ToString(FuncAddr));
+                return true;
+            }
+            return false;
+        }
+        public override bool ClearFunctMsgLookupTable(bool secondary)
+        {
+            if (secondary)
+                OBDError = J2534Port.Functions.ClearFunctMsgLookupTable(ChannelID2);
+            else
+                OBDError = J2534Port.Functions.ClearFunctMsgLookupTable(ChannelID);
+            if (OBDError == J2534Err.STATUS_NOERROR)
+            {
+                Debug.WriteLine("Cleared functional addresses");
+                return true;
+            }
+            return false;
+        }
+
+        public override bool SetJ2534Configs(string Configs, bool secondary)
+        {
+            bool retVal;
+            if (secondary)
+                retVal = SetSconfig(Configs, ChannelID2);
+            else
+                retVal = SetSconfig(Configs, ChannelID);
+            return retVal;
         }
 
         //Not in use
@@ -289,6 +377,43 @@ namespace UniversalPatcher
             }
         }
 
+        private bool SetSconfig(string scp, int ChID)
+        {
+            bool retVal = true;
+            string[] parts = scp.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 2)
+            {
+                ConfigParameter cp = (ConfigParameter)Enum.Parse(typeof(ConfigParameter), parts[0].ToUpper());
+                if (cp == ConfigParameter.ADD_TO_FUNCT_MSG_LOOKUP_TABLE)
+                {
+                    byte[] funcAddr = GetByteParameters(parts[1]);
+                    J2534Port.Functions.AddToFunctMsgLookupTable(ChID, funcAddr);
+                }
+                else if (cp == ConfigParameter.DELETE_FROM_FUNCT_MSG_LOOKUP_TABLE)
+                {
+                    byte[] funcAddr = GetByteParameters(parts[1]);
+                    J2534Port.Functions.DeleteFromFunctMsgLookupTable(ChID, funcAddr);
+                }
+                else
+                {
+                    int val = 0;
+                    if (parts[1].StartsWith("$") | !Int32.TryParse(parts[1], out val))
+                        HexToInt(parts[1].Replace("$", ""), out val);
+                    if (cp != ConfigParameter.NONE)
+                    {
+                        SConfig sconfig = new SConfig(cp, val);
+                        SConfig[] sc = new SConfig[1];
+                        sc[0] = sconfig;
+                        Logger("Setting: " + cp.ToString() + " = " + val.ToString());
+                        if (!SetConfig(sc, ChID))
+                        {
+                            retVal = false;
+                        }
+                    }
+                }
+            }
+            return retVal;
+        }
 
         /// <summary>
         /// Set J2534 parameters
@@ -303,20 +428,7 @@ namespace UniversalPatcher
                     string[] scParts = j2534Init.Sconfigs.Split('|');
                     foreach (string scp in scParts)
                     {
-                        string[] parts = scp.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (parts.Length == 2)
-                        {
-                            ConfigParameter cp = (ConfigParameter)Enum.Parse(typeof(ConfigParameter), parts[0]);
-                            int val = 0;
-                            HexToInt(parts[1], out val);
-                            if (cp != ConfigParameter.NONE)
-                            {
-                                SConfig sconfig = new SConfig(cp, val);
-                                SConfig[] sc = new SConfig[1];
-                                sc[0] = sconfig;
-                                SetConfig(sc, ChID);
-                            }
-                        }
+                        SetSconfig(scp, ChID);
                     }
                 }
                 if (j2534Init.Kinit == KInit.FastInit_J1979 || j2534Init.Kinit == KInit.FastInit_GMDelco || j2534Init.Kinit == KInit.FastInit_ME7_5)
@@ -515,7 +627,14 @@ namespace UniversalPatcher
                         Thread.Sleep(500);
                         return;
                     }
-                    else if (jErr != J2534Err.ERR_BUFFER_EMPTY)
+                    else if (jErr == J2534Err.ERR_BUFFER_EMPTY)
+                    {
+                        if (isSimulator)
+                        {
+                            Thread.Sleep(AppSettings.TimeoutReceive);
+                        }
+                    }
+                    else
                     {
                         Debug.WriteLine("Receive error: " + jErr);
                         return;
@@ -580,7 +699,14 @@ namespace UniversalPatcher
                             Thread.Sleep(500);
                             return;
                         }
-                        else if (jErr != J2534Err.ERR_BUFFER_EMPTY)
+                        else if (jErr == J2534Err.ERR_BUFFER_EMPTY)
+                        {
+                            if (isSimulator)
+                            {
+                                Thread.Sleep(AppSettings.TimeoutReceive);
+                            }
+                        }
+                        else
                         {
                             Debug.WriteLine("Receive error: " + jErr);
                         }
@@ -762,12 +888,12 @@ namespace UniversalPatcher
         {
             try
             {
-                DeviceID = 0;
-                ChannelID = 0;
+                DeviceID = 1;
+                ChannelID = 2;
                 Filters.Clear();
                 Filters2.Clear();
                 OBDError = 0;
-                int tmpId = 0;
+                int tmpId = 1;
                 OBDError = J2534Port.Functions.Open(ref tmpId);
                 if (OBDError != J2534Err.STATUS_NOERROR)
                 {
@@ -856,7 +982,7 @@ namespace UniversalPatcher
         {
             try
             {
-                int tmpChannel = 0;
+                int tmpChannel = ChID;
                 string protoSpeedStr = ReqProtocol.ToString() + Speed.ToString();
                 if (protocol_channel.ContainsKey(protoSpeedStr))
                 {
@@ -1051,6 +1177,39 @@ namespace UniversalPatcher
         }
 
         /// <summary>
+        /// Read battery voltage
+        /// </summary>
+        public Response<string> ReadVersion()
+        {
+            try
+            {
+                string firmware ="";
+                string dll ="";
+                string api = "";
+                OBDError = J2534Port.Functions.ReadVersion((int)DeviceID, ref firmware,ref dll,ref api);
+                if (OBDError != J2534Err.STATUS_NOERROR)
+                {
+                    return Response.Create(ResponseStatus.Error, "");
+                }
+                else
+                {
+                    string retVal = "Versions: Firmware: " + firmware + ", Dll: " + dll + ", Api: " + api;
+                    return Response.Create(ResponseStatus.Success, retVal);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
+            }
+            return Response.Create(ResponseStatus.Error, "");
+        }
+
+        /// <summary>
         /// Set filter
         /// </summary>
         private Response<J2534Err> SetFilter(byte[] Mask,byte[] Pattern,TxFlag txflag,FilterType Filtertype, int ChID, ProtocolID proto)
@@ -1234,7 +1393,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    int ChID = 0;
+                    int ChID = 3;
 
                     string protoSpeedStr = j2534Init.Protocol.ToString() + j2534Init.Baudrate.ToString();
                     if (protocol_channel.ContainsKey(protoSpeedStr))

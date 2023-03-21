@@ -1,4 +1,5 @@
-﻿using System;
+﻿using J2534DotNet;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -86,6 +87,126 @@ namespace UniversalPatcher
                         }
                     }
                 }
+                else if (Line.ToLower().StartsWith("popup:"))
+                {
+                    string[] lParts = Line.Split(':');
+                    if (lParts.Length == 2)
+                    {
+                        MessageBox.Show(lParts[1], "OBDScript");
+                    }
+                }
+                else if (Line.ToLower().StartsWith("setconfigs:"))
+                {
+                    string[] lParts = Line.Split(':');
+                    if (lParts.Length == 2)
+                    {
+                        device.SetJ2534Configs(lParts[1], SecondaryProtocol);
+                    }
+                }
+                else if (Line.ToLower().StartsWith("addtofunctmsg:"))
+                {
+                    string[] lParts = Line.Split(':');
+                    if (lParts.Length == 2)
+                    {
+                        byte[] funcAddr = GetByteParameters(lParts[1]);
+                        device.AddToFunctMsgLookupTable(funcAddr, SecondaryProtocol);
+                    }
+                    else
+                    {
+                        LoggerBold("Usage: addtofunctmsg:<FuncAddr>, example: addtofunctmsg:0A 12");
+                    }
+                }
+                else if (Line.ToLower().StartsWith("deletefromfunctmsg:"))
+                {
+                    string[] lParts = Line.Split(':');
+                    if (lParts.Length == 2)
+                    {
+                        byte[] funcAddr = GetByteParameters(lParts[1]);
+                        device.DeleteFromFunctMsgLookupTable(funcAddr, SecondaryProtocol);
+                    }
+                    else
+                    {
+                        LoggerBold("Usage: deletefromfunctmsg:<FuncAddr>, example: deletefromfunctmsg:0A 12");
+                    }
+                }
+                else if (Line.ToLower().StartsWith("clearfunctmsg"))
+                {
+                    device.ClearFunctMsgLookupTable(SecondaryProtocol);
+                }
+                else if (Line.ToLower().StartsWith("wait:"))
+                {
+                    string[] lParts = Line.Split(':');
+                    if (lParts.Length >= 2)
+                    {
+                        DateTime starttime = DateTime.Now;
+                        string msg = lParts[1].Replace(" ", "");
+                        OBDMessage rMsg;
+                        string rMsgStr = "";
+                        int timeo = 10000;
+                        if (lParts.Length > 2 && int.TryParse(lParts[2], out int to))
+                        {
+                            timeo = to;
+                        }
+                        do
+                        {
+                            rMsg = device.ReceiveMessage();
+                            Application.DoEvents();
+                            if (rMsg == null)
+                            {
+                                Thread.Sleep(100);
+                            }
+                            else
+                            {
+                                rMsgStr = rMsg.ToString().Replace(" ", "");
+                            }
+                            if (rMsgStr != msg && DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(timeo))
+                            {
+                                Debug.WriteLine("Timeout (" + timeo.ToString() + "ms)");
+                                break;
+                            }
+
+                        } while (rMsg == null || rMsgStr != msg);
+                    }
+                    else
+                    {
+                        LoggerBold("Usage: wait:<message>[:timeout]");
+                    }
+                }
+                else if (Line.ToLower().StartsWith("programminvoltage:"))
+                {
+                    string[] setParts = Line.Split(':');
+                    if (setParts.Length != 3)
+                    {
+                        LoggerBold("Usage: programminvoltage:PIN:Voltage (*1000)");
+                        LoggerBold("Examples: programminvoltage:9:12000, programminvoltage:9:OFF programminvoltage:9:GND");
+                        return false;
+                    }
+                    uint volts;
+                    PinNumber pin;
+                    if (setParts[2].ToLower().Trim() == "off")
+                    {
+                        volts = 0xFFFFFFFF;
+                    }
+                    else if (setParts[2].ToLower().Trim() == "gnd")
+                    {
+                        volts = 0xFFFFFFFE;
+                    }
+                    else if (!uint.TryParse(setParts[2], out volts))
+                    {
+                        LoggerBold("Unknown voltage: " + setParts[2]);
+                        return false;
+                    }
+                    if (int.TryParse(setParts[1], out int pinInt))
+                    {
+                        pin = (PinNumber)pinInt;
+                    }
+                    else
+                    {
+                        LoggerBold("Unknown pin: " + setParts[1]);
+                        return false;
+                    }
+                    device.SetProgramminVoltage(pin, volts);
+                }
                 else if (Line.ToLower().StartsWith("set:"))
                 {
                     string[] setParts = Line.Split(':');
@@ -124,14 +245,14 @@ namespace UniversalPatcher
                 }
                 else if (Line.ToLower().StartsWith("setvariable"))
                 {
-                    if (Line2.Length == 0 )
+                    if (Line2.Length == 0)
                     {
                         LoggerBold("Setvariable requires command, but end of file reached?");
                         return false;
                     }
                     SetVariable(Line, Line2);
                 }
-                else if (Line.ToLower().StartsWith("getseed"))
+                else if (Line.ToLower().StartsWith("getseed") || Line.ToLower().StartsWith("eecvseed") || Line.ToLower().StartsWith("ngcengineseed"))
                 {
                     if (Line2.Length == 0)
                     {
@@ -149,7 +270,7 @@ namespace UniversalPatcher
                     }
                     if (!int.TryParse(parts[1], out breakposition))
                     {
-                        LoggerBold("Unknown position: " + parts[1] +" (" + Line +")");
+                        LoggerBold("Unknown position: " + parts[1] + " (" + Line + ")");
                     }
                     byte val;
                     if (!HexToByte(parts[2], out val))
@@ -255,7 +376,7 @@ namespace UniversalPatcher
                     }
                     v.Size = size;
                     UInt64 val;
-                    if (!HexToUint64(parts[3].Replace("+","").Replace("-", ""), out val))
+                    if (!HexToUint64(parts[3].Replace("+", "").Replace("-", ""), out val))
                     {
                         LoggerBold("Unknown value (HEX): " + parts[3] + " (" + Line + ")");
                         return false;
@@ -282,14 +403,14 @@ namespace UniversalPatcher
                 {
                     string[] parts = Line.Split(':');
                     string msgTxt = parts[0].Replace(" ", "");
-                    for (int x=0; x<variables.Count;x++)
+                    for (int x = 0; x < variables.Count; x++)
                     {
                         if (msgTxt.Contains(variables[x].Name))
                         {
                             string xformat = "X" + (variables[x].Size * 2).ToString("X");
                             msgTxt = msgTxt.Replace(variables[x].Name, variables[x].Value.ToString(xformat));
                         }
-                    }                    
+                    }
                     msgTxt = msgTxt.Replace("key", key.ToString("X4"));
 
                     bool addChecksum = false;
@@ -321,7 +442,7 @@ namespace UniversalPatcher
                     {
                         int.TryParse(parts[1], out responses);
                     }
-                    Debug.WriteLine("Waiting {0} responses", responses);                    
+                    Debug.WriteLine("Waiting {0} responses", responses);
                     if (parts.Length > 2)
                     {
                         int wtimeout;
@@ -367,7 +488,7 @@ namespace UniversalPatcher
                                 }
                                 else
                                 {
-                                    Debug.WriteLine("Byte at position: " + breakposition.ToString() + " == " + rMsg[breakposition].ToString("X") + " != "+ breakvalue.ToString("X") + " => Continue");
+                                    Debug.WriteLine("Byte at position: " + breakposition.ToString() + " == " + rMsg[breakposition].ToString("X") + " != " + breakvalue.ToString("X") + " => Continue");
                                 }
                                 if (breaknotvalue > -1)
                                 {
@@ -494,9 +615,24 @@ namespace UniversalPatcher
             }
 
             string[] parts = Line.Split(':');
-            if (parts.Length != 3)
+            if (parts[0].ToLower().StartsWith("ngcengineseed"))
             {
-                LoggerBold(parts[0] + " must be in format: " + parts[0] + ":position:algo");
+                if (parts.Length != 2)
+                {
+                    LoggerBold(parts[0] + " must be in format: " + parts[0] + ":position");
+                    return 0xFFFF;
+                }
+            }
+            else if (parts.Length < 3)
+            {
+                if (parts[0].ToLower().StartsWith("eecv"))
+                {
+                    LoggerBold(parts[0] + " must be in format: " + parts[0] + ":position:seedbyte");
+                }
+                else
+                {
+                    LoggerBold(parts[0] + " must be in format: " + parts[0] + ":position:algo");
+                }
                 return 0xFFFF;
             }
             int position;
@@ -505,17 +641,20 @@ namespace UniversalPatcher
                 LoggerBold("Unknown position: " + parts[1] + " (" + Line + ")");
                 return returnValue;
             }
-            int algo;
+            int algo=0;
             bool fivebytes = false;
-            if (parts[2].ToLower().StartsWith("f0"))
+            if (parts.Length > 2)
             {
-                fivebytes = true;
-                parts[2] = parts[2].Substring(2);
-            }
-            if (!HexToInt(parts[2], out algo))
-            {
-                LoggerBold("Unknown algo: " + parts[2] + " (" + Line + ")");
-                return returnValue;
+                if (parts[2].ToLower().StartsWith("f0"))
+                {
+                    fivebytes = true;
+                    parts[2] = parts[2].Substring(2);
+                }
+                if (!HexToInt(parts[2], out algo))
+                {
+                    LoggerBold("Unknown algo: " + parts[2] + " (" + Line + ")");
+                    return returnValue;
+                }
             }
             byte[] msg = Line2.Replace(" ", "").ToBytes();
             Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
@@ -533,7 +672,7 @@ namespace UniversalPatcher
                     starttime = DateTime.Now;   //Message received, reset timer
                     r++;
                 }
-                if (DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(100))
+                else if (DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(100))
                 {
                     Debug.WriteLine("Timeout: 100 ms");
                     return returnValue;
@@ -542,10 +681,31 @@ namespace UniversalPatcher
             }
             if (fivebytes)
             {
-                byte[] seed = new byte[] { rMsg[position], rMsg[position + 1], rMsg[position + 2], rMsg[position + 3], rMsg[position + 4] };
-                byte[] result = gmkeylib.gmkey.GetKey(seed, (byte)algo);
-                key = BitConverter.ToUInt64(result,0);
-                Debug.WriteLine("Seed: " + seed.ToString() + ", Key: " + result.ToHex() + ", Algo: " + algo.ToString("X"));
+                byte[] seed = new byte[] { rMsg[position + 4], rMsg[position + 3], rMsg[position + 2], rMsg[position + 1], rMsg[position] };
+                GmKeys gk = new GmKeys();
+                key = gk.GetKey(seed, (byte)algo);
+                return key;
+            }
+            else if (parts[0].ToLower().StartsWith("eecv"))
+            {
+                Debug.WriteLine("Calculating EEC-V key...");
+                EECV eecv = new EECV();
+                int chCount = 0;
+                if (parts.Length > 3 && HexToByte(parts[3], out byte cc))
+                {
+                    chCount = cc;
+                }
+                key = eecv.CalculateKey(chCount, (byte)algo, rMsg[position], rMsg[position + 1], rMsg[position + 2]);
+                Debug.WriteLine("Seed: " + rMsg[position].ToString("X2") + rMsg[position + 1].ToString("X2") + rMsg[position + 2].ToString("X2") + ", Key: " + key.ToString("X4") + ", seedbyte: " + algo.ToString("X"));
+                return key;
+
+            }
+            else if (parts[0].ToLower().StartsWith("ngcengine"))
+            {
+                NgcKeys nk = new NgcKeys();
+                int seed = (ushort)((rMsg[position] << 8) + rMsg[position + 1]);
+                key = (ulong)nk.unlockengine(seed);
+                Debug.WriteLine("Seed: " + seed.ToString("X4") + ", Key: " + key.ToString("X4") );
                 return key;
             }
             else
@@ -557,13 +717,14 @@ namespace UniversalPatcher
             }
         }
 
+
         public void UploadScript(string FileName)
         {
             try
             {
                 stopscript = false;
                 string Line;
-                
+
                 scriptrows = new List<string>();
                 StreamReader sr = new StreamReader(FileName);
                 while ((Line = sr.ReadLine()) != null)
@@ -573,7 +734,7 @@ namespace UniversalPatcher
                 sr.Close();
 
                 //device.ClearMessageQueue();
-                for (;currentrow<scriptrows.Count; currentrow++)
+                for (; currentrow < scriptrows.Count; currentrow++)
                 {
                     Line = scriptrows[currentrow];
                     bool breakloop = false;
@@ -601,10 +762,10 @@ namespace UniversalPatcher
                         for (int cycle = 0; cycle < cycles; cycle++)
                         {
                             int l = 0;
-                            for (; l<lines.Count;l++)
+                            for (; l < lines.Count; l++)
                             {
                                 string Line2 = "";
-                                if (l<lines.Count-1)
+                                if (l < lines.Count - 1)
                                 {
                                     Line2 = lines[l + 1];
                                 }
@@ -612,7 +773,7 @@ namespace UniversalPatcher
                                 {
                                     return;
                                 }
-                                if (lines[l].ToLower().Contains("getseed")|| lines[l].ToLower().Contains("setvariable"))
+                                if (lines[l].ToLower().Contains("getseed") || lines[l].ToLower().Contains("eecvseed") || lines[l].ToLower().Contains("ngcengineseed") || lines[l].ToLower().Contains("setvariable"))
                                 {
                                     l++;
                                 }
@@ -627,7 +788,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    else 
+                    else
                     {
                         string Line2 = "";
                         if (currentrow < scriptrows.Count - 1)
@@ -643,7 +804,7 @@ namespace UniversalPatcher
                         timer.Stop();
                         Debug.WriteLine("Handleline time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
 
-                        if (scriptrows[currentrow].ToLower().Contains("getseed") || scriptrows[currentrow].ToLower().Contains("setvariable"))
+                        if (scriptrows[currentrow].ToLower().Contains("getseed") || scriptrows[currentrow].ToLower().Contains("eecvseed") || scriptrows[currentrow].ToLower().Contains("ngcengineseed") || scriptrows[currentrow].ToLower().Contains("setvariable"))
                         {
                             currentrow++;
                         }

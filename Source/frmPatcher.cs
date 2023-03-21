@@ -4705,6 +4705,51 @@ namespace UniversalPatcher
             }
         }
 
+        private void btnByteSwap_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (basefile == null || basefile.buf == null || basefile.buf.Length == 0)
+                {
+                    Logger("No file loaded");
+                    return;
+                }
+                frmByteSwap fbs = new frmByteSwap();
+                if (fbs.ShowDialog() == DialogResult.OK)
+                {
+                    int treatAs = 2;
+                    if (fbs.radioFour.Checked)
+                    {
+                        treatAs = 4;
+                    }
+                    if (fbs.radioEight.Checked)
+                    {
+                        treatAs = 8;
+                    }
+                    Logger("Swapping...", false);
+                    byte[] newBuf = SwapFileBytes(basefile.buf, treatAs);
+                    Logger(" [OK]");
+                    string defName = Path.Combine(Path.GetDirectoryName(basefile.FileName),Path.GetFileNameWithoutExtension(basefile.FileName) + "-byteswapped.bin");
+                    string fName = SelectSaveFile(BinFilter, defName);
+                    if (fName.Length > 0)
+                    {
+                        Logger("Writing file: " + fName, false);
+                        WriteBinToFile(fName, newBuf);
+                        Logger(" [OK]");
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
+            }
+        }
     }
 }
 

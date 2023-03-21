@@ -158,7 +158,7 @@ namespace J2534DotNet
         //)
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate int PassThruSetProgrammingVoltage(int deviceId, int pinNumber, int voltage);
+        public delegate int PassThruSetProgrammingVoltage(int deviceId, int pinNumber, uint voltage);
         public PassThruSetProgrammingVoltage SetProgrammingVoltage;
         //extern “C” long WINAPI PassThruSetProgrammingVoltage
         //(

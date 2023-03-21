@@ -300,6 +300,7 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
+            this.btnByteSwap = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1655,6 +1656,7 @@
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnByteSwap);
             this.tabApply.Controls.Add(this.btnStartFlashApp);
             this.tabApply.Controls.Add(this.btnLogger);
             this.tabApply.Controls.Add(this.btnTuner);
@@ -1684,7 +1686,7 @@
             // 
             // btnLogger
             // 
-            this.btnLogger.Location = new System.Drawing.Point(349, 37);
+            this.btnLogger.Location = new System.Drawing.Point(462, 37);
             this.btnLogger.Name = "btnLogger";
             this.btnLogger.Size = new System.Drawing.Size(106, 24);
             this.btnLogger.TabIndex = 190;
@@ -1694,7 +1696,7 @@
             // 
             // btnTuner
             // 
-            this.btnTuner.Location = new System.Drawing.Point(349, 6);
+            this.btnTuner.Location = new System.Drawing.Point(349, 37);
             this.btnTuner.Name = "btnTuner";
             this.btnTuner.Size = new System.Drawing.Size(107, 25);
             this.btnTuner.TabIndex = 189;
@@ -3307,6 +3309,16 @@
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
             // 
+            // btnByteSwap
+            // 
+            this.btnByteSwap.Location = new System.Drawing.Point(349, 6);
+            this.btnByteSwap.Name = "btnByteSwap";
+            this.btnByteSwap.Size = new System.Drawing.Size(107, 25);
+            this.btnByteSwap.TabIndex = 192;
+            this.btnByteSwap.Text = "Byteswap";
+            this.btnByteSwap.UseVisualStyleBackColor = true;
+            this.btnByteSwap.Click += new System.EventHandler(this.btnByteSwap_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3686,5 +3698,6 @@
         private System.Windows.Forms.ToolStripMenuItem functionNamesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pIDDescriptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allSettingsToolStripMenuItem;
+        private System.Windows.Forms.Button btnByteSwap;
     }
 }

@@ -841,6 +841,52 @@ public static class LoggerUtils
         }
     }
 
+    public static byte[] GetByteParameters(string byteStr)
+    {
+        List<byte> retVal = new List<byte>();
+        try
+        {
+            if (byteStr.Contains("-"))
+            {
+                string[] fParts = byteStr.Split('-');
+                if (fParts.Length == 2)
+                {
+                    if (HexToByte(fParts[0], out byte start) && HexToByte(fParts[1], out byte end))
+                    {
+                        for (int f = start; f <= end; f++)
+                        {
+                            retVal.Add((byte)f);
+                        }
+                    }
+                    else
+                    {
+                        LoggerBold("Unknown address range: " + byteStr);
+                        return null;
+                    }
+                }
+                else
+                {
+                    LoggerBold("Unknown address range: " + byteStr);
+                    return null;
+                }
+            }
+            else
+            {
+                return byteStr.Replace(" ", "").ToBytes();
+            }
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, LoggerUtils line " + line + ": " + ex.Message);
+        }
+        return retVal.ToArray();
+    }
+
     public static byte CreateConfigByte(byte position, byte bytes, byte defineBy)
     {
         byte dBy = defineBy;

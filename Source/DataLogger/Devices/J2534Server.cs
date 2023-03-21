@@ -219,6 +219,56 @@ namespace UniversalPatcher
                                             retVal = failMessage;
                                         }
                                         break;
+                                    case j2534Command.SetProgramminVoltage:
+                                        PinNumber pin = (PinNumber)data[0];
+                                        uint volts = BitConverter.ToUInt32(data,1);
+                                        Logger("Setting programminvoltage, pin: " + pin.ToString() + ", volts:" + volts.ToString());
+                                        if (!LogDevice.SetProgramminVoltage(pin,volts))
+                                        {
+                                            Logger("Setting programming voltage failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
+                                    case j2534Command.AddToFunctMsgLookupTable:
+                                        Logger("Adding to functional addresses: " + BitConverter.ToString(data));
+                                        secondary = Convert.ToBoolean(data.Last());
+                                        Array.Resize(ref data, data.Length - 1);
+                                        if (!LogDevice.AddToFunctMsgLookupTable(data, secondary))
+                                        {
+                                            Logger("Add to functional addresses failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
+                                    case j2534Command.DeleteFromFunctMsgLookupTable:
+                                        Logger("Deleting from functional addresses: " + BitConverter.ToString(data));
+                                        secondary = Convert.ToBoolean(data.Last());
+                                        Array.Resize(ref data, data.Length - 1);
+                                        if (!LogDevice.DeleteFromFunctMsgLookupTable(data, secondary))
+                                        {
+                                            Logger("Delete from functional addresses failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
+                                    case j2534Command.ClearFunctMsgLookupTable:
+                                        Logger("Clearing functional addresses");
+                                        secondary = Convert.ToBoolean(data[0]);
+                                        if (!LogDevice.ClearFunctMsgLookupTable(secondary))
+                                        {
+                                            Logger("Clear functional addresses failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
+                                    case j2534Command.SetJ2534Configs:
+                                        secondary = Convert.ToBoolean(data.Last());
+                                        Array.Resize(ref data, data.Length - 1);
+                                        string cfg = System.Text.Encoding.Default.GetString(data);
+                                        //Logger("Setting J2534 config parameters: " + cfg);
+                                        if (!LogDevice.SetJ2534Configs(cfg, secondary))
+                                        {
+                                            Logger("Setting J2534 config parameters failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
                                     default:
                                         LoggerBold("Unknown command!" + msg[0].ToString("X2"));
                                         retVal = failMessage;
@@ -254,6 +304,7 @@ namespace UniversalPatcher
                 Logger("Error, j2534Server line " + line + ": " + ex.Message);
             }
             Logger("J2534 Server Quits");
+            LogDevice.Dispose();
             Application.DoEvents();
             Thread.Sleep(1000);
             Environment.Exit(0);

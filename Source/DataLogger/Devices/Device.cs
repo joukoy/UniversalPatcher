@@ -263,6 +263,27 @@ namespace UniversalPatcher
         /// </summary>
         public abstract void ClearMessageBuffer();
 
+        /// <summary>
+        /// Set programming voltage for J2534 device
+        /// </summary>
+        public abstract bool SetProgramminVoltage(PinNumber pinNumber, uint voltage);
+
+        /// <summary>
+        /// Assigns a functional address for J2534 device
+        /// </summary>
+        public abstract bool AddToFunctMsgLookupTable(byte[] FuncAddr, bool secondary);
+        /// <summary>
+        /// Removes a functional address  for J2534 device
+        /// </summary>
+        public abstract bool DeleteFromFunctMsgLookupTable(byte[] FuncAddr, bool secondary);
+        /// <summary>
+        /// Clears the functional address table for J2534 device
+        /// </summary>
+        public abstract bool ClearFunctMsgLookupTable(bool secondary);
+        /// <summary>
+        /// Clears the functional address table for J2534 device
+        /// </summary>
+        public abstract bool SetJ2534Configs(string Configs, bool secondary);
 
         /// <summary>
         /// Reads a message from the VPW bus and returns it.

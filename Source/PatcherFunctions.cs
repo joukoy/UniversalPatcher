@@ -446,6 +446,11 @@ public class Upatcher
         SetLoggingFilter,
         SetAnalyzerFilter,
         RemoveFilters,
+        SetProgramminVoltage,
+        AddToFunctMsgLookupTable,
+        DeleteFromFunctMsgLookupTable,
+        ClearFunctMsgLookupTable,
+        SetJ2534Configs,
         quit
     }
     //
@@ -2795,5 +2800,19 @@ public class Upatcher
                 buffer[dtc.milAddrInt - bufferOffset] = dtc.MilStatus;
             }
         }
+    }
+
+    public static byte[] SwapFileBytes(byte[] buf, int treatAs)
+    {
+        byte[] retVal = new byte[buf.Length];
+        for (int a = 0; (a + treatAs) <= buf.Length; a += treatAs)
+        {
+            int s = a + treatAs;
+            for (int x=0;x<treatAs;x++)
+            {
+                retVal[a + x] = buf[s - x - 1];
+            }
+        }
+        return retVal;
     }
 }

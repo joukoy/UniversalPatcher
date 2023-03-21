@@ -274,6 +274,8 @@ namespace UniversalPatcher
             this.radioJConsoleProto1 = new System.Windows.Forms.RadioButton();
             this.tabAlgoTest = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.chkEecvSecondKey = new System.Windows.Forms.CheckBox();
+            this.radioEecv = new System.Windows.Forms.RadioButton();
             this.txtAlgoRange = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
             this.radioFindAlgo = new System.Windows.Forms.RadioButton();
@@ -2924,6 +2926,8 @@ namespace UniversalPatcher
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.chkEecvSecondKey);
+            this.groupBox5.Controls.Add(this.radioEecv);
             this.groupBox5.Controls.Add(this.txtAlgoRange);
             this.groupBox5.Controls.Add(this.label38);
             this.groupBox5.Controls.Add(this.radioFindAlgo);
@@ -2936,15 +2940,38 @@ namespace UniversalPatcher
             this.groupBox5.Controls.Add(this.labelSeed);
             this.groupBox5.Location = new System.Drawing.Point(3, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(167, 207);
+            this.groupBox5.Size = new System.Drawing.Size(167, 252);
             this.groupBox5.TabIndex = 9;
             this.groupBox5.TabStop = false;
             this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
             // 
+            // chkEecvSecondKey
+            // 
+            this.chkEecvSecondKey.AutoSize = true;
+            this.chkEecvSecondKey.Enabled = false;
+            this.chkEecvSecondKey.Location = new System.Drawing.Point(28, 113);
+            this.chkEecvSecondKey.Name = "chkEecvSecondKey";
+            this.chkEecvSecondKey.Size = new System.Drawing.Size(64, 17);
+            this.chkEecvSecondKey.TabIndex = 9;
+            this.chkEecvSecondKey.Text = "2nd key";
+            this.chkEecvSecondKey.UseVisualStyleBackColor = true;
+            // 
+            // radioEecv
+            // 
+            this.radioEecv.AutoSize = true;
+            this.radioEecv.Location = new System.Drawing.Point(6, 88);
+            this.radioEecv.Name = "radioEecv";
+            this.radioEecv.Size = new System.Drawing.Size(99, 17);
+            this.radioEecv.TabIndex = 8;
+            this.radioEecv.TabStop = true;
+            this.radioEecv.Text = "Find EEC-V key";
+            this.radioEecv.UseVisualStyleBackColor = true;
+            this.radioEecv.CheckedChanged += new System.EventHandler(this.radioEecv_CheckedChanged);
+            // 
             // txtAlgoRange
             // 
             this.txtAlgoRange.Enabled = false;
-            this.txtAlgoRange.Location = new System.Drawing.Point(79, 92);
+            this.txtAlgoRange.Location = new System.Drawing.Point(78, 141);
             this.txtAlgoRange.Name = "txtAlgoRange";
             this.txtAlgoRange.Size = new System.Drawing.Size(84, 20);
             this.txtAlgoRange.TabIndex = 7;
@@ -2953,7 +2980,7 @@ namespace UniversalPatcher
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(12, 94);
+            this.label38.Location = new System.Drawing.Point(11, 143);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(61, 13);
             this.label38.TabIndex = 6;
@@ -2972,7 +2999,7 @@ namespace UniversalPatcher
             // 
             // btnAlgoTest
             // 
-            this.btnAlgoTest.Location = new System.Drawing.Point(79, 169);
+            this.btnAlgoTest.Location = new System.Drawing.Point(78, 218);
             this.btnAlgoTest.Name = "btnAlgoTest";
             this.btnAlgoTest.Size = new System.Drawing.Size(82, 24);
             this.btnAlgoTest.TabIndex = 5;
@@ -2982,7 +3009,7 @@ namespace UniversalPatcher
             // 
             // txtAlgo
             // 
-            this.txtAlgo.Location = new System.Drawing.Point(79, 144);
+            this.txtAlgo.Location = new System.Drawing.Point(78, 193);
             this.txtAlgo.Name = "txtAlgo";
             this.txtAlgo.Size = new System.Drawing.Size(82, 20);
             this.txtAlgo.TabIndex = 2;
@@ -2990,7 +3017,7 @@ namespace UniversalPatcher
             // labelAlgo
             // 
             this.labelAlgo.AutoSize = true;
-            this.labelAlgo.Location = new System.Drawing.Point(11, 147);
+            this.labelAlgo.Location = new System.Drawing.Point(10, 196);
             this.labelAlgo.Name = "labelAlgo";
             this.labelAlgo.Size = new System.Drawing.Size(31, 13);
             this.labelAlgo.TabIndex = 0;
@@ -3009,7 +3036,7 @@ namespace UniversalPatcher
             // 
             // txtSeed
             // 
-            this.txtSeed.Location = new System.Drawing.Point(79, 118);
+            this.txtSeed.Location = new System.Drawing.Point(78, 167);
             this.txtSeed.Name = "txtSeed";
             this.txtSeed.Size = new System.Drawing.Size(82, 20);
             this.txtSeed.TabIndex = 3;
@@ -3030,7 +3057,7 @@ namespace UniversalPatcher
             // labelSeed
             // 
             this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(12, 121);
+            this.labelSeed.Location = new System.Drawing.Point(11, 170);
             this.labelSeed.Name = "labelSeed";
             this.labelSeed.Size = new System.Drawing.Size(35, 13);
             this.labelSeed.TabIndex = 1;
@@ -3735,6 +3762,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.NumericUpDown numRetryTimes;
         private System.Windows.Forms.Label label35;
         private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.RadioButton radioEecv;
+        private System.Windows.Forms.CheckBox chkEecvSecondKey;
     }
 }
 

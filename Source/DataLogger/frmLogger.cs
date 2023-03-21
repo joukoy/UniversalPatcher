@@ -1180,7 +1180,7 @@ namespace UniversalPatcher
                 comboSerialDeviceType.Items.Add(AvtDevice.DeviceType);
                 //comboSerialDeviceType.Items.Add(AvtLegacyDevice.DeviceType);
                 comboSerialDeviceType.Items.Add(ElmDevice.DeviceType);
-                //comboSerialDeviceType.Items.Add(LegacyElmDeviceImplementation.DeviceType);
+                comboSerialDeviceType.Items.Add(JetDevice.DeviceType);
                 comboSerialDeviceType.Items.Add(OBDXProDevice.DeviceType);
                 comboSerialDeviceType.Text = AppSettings.LoggerSerialDeviceType;
 
@@ -3449,6 +3449,39 @@ namespace UniversalPatcher
             WriteTextFile(fName, sb.ToString());
         }
 
+        private ushort EecvAlgoTest()
+        {
+            int seed;
+            byte seedByte;
+            int challengeCount = 0;
+
+            if (!HexToInt(txtSeed.Text, out seed))
+            {
+                Logger("Unknown HEX value: " + txtSeed.Text);
+                return 0;
+            }
+            if (!HexToByte(txtAlgo.Text, out seedByte))
+            {
+                Logger("Unknown HEX value: " + txtAlgo.Text);
+                return 0;
+            }
+
+            byte seedByte1;
+            byte seedByte2;
+            byte seedByte3;
+
+            seedByte1 = (byte)((seed >> 16) & 0xff);
+            seedByte2 = (byte)((seed >> 8) & 0xff);
+            seedByte3 = (byte)((seed) & 0xff);
+
+            if (chkEecvSecondKey.Checked)
+                challengeCount = 1;
+            EECV eecv = new EECV();
+            ushort result = eecv.CalculateKey(challengeCount, seedByte, seedByte1, seedByte2, seedByte3);
+
+            return result;
+
+        }
         private void btnAlgoTest_Click(object sender, EventArgs e)
         {
             int algo;
@@ -3457,6 +3490,11 @@ namespace UniversalPatcher
             int algoFrom = 0;
             int algoTo = 0x300;
 
+            if (radioEecv.Checked)
+            {
+                txtAlgoTest.AppendText("Seed: " + txtSeed.Text + ", Seedbyte: " + txtAlgo.Text + ", Key: " + EecvAlgoTest().ToString("X4"));
+                return;
+            }
             if (txtAlgoRange.Text.Contains("-"))
             {
                 string[] parts = txtAlgoRange.Text.Split('-');
@@ -4859,6 +4897,22 @@ namespace UniversalPatcher
         private void numRetryDelay_ValueChanged(object sender, EventArgs e)
         {
             AppSettings.RetryWriteDelay = (int)numRetryDelay.Value;
+        }
+
+        private void radioEecv_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioEecv.Checked)
+            {
+                labelAlgo.Text = "Seed byte:";
+                labelSeed.Text = "Seed:";
+                txtAlgo.Enabled = true;
+                txtAlgoRange.Enabled = false;
+                chkEecvSecondKey.Enabled = true;
+            }
+            else
+            {
+                chkEecvSecondKey.Enabled = false;
+            }
         }
 
     }

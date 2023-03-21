@@ -166,8 +166,8 @@ namespace UniversalPatcher
                         device = new AvtDevice(port);
                         break;
 
-                    case LegacyElmDeviceImplementation.DeviceType:
-                        device = new ElmDevice(port);
+                    case JetDevice.DeviceType:
+                        device = new JetDevice(port);
                         break;
 
                     case ElmDevice.DeviceType:

@@ -319,7 +319,88 @@ namespace UniversalPatcher
             byte[] readBuf = PipeSendAndReceive(j2534Command.SetReadTimeout, param);
         }
 
+        public override bool SetProgramminVoltage(PinNumber pinNumber, uint voltage)
+        {
+            Debug.WriteLine("Setting programmin voltage in pin: " + pinNumber.ToString() +", volts: " + voltage.ToString());
+            byte[] param = new byte[5];
+            param[0] = (byte)pinNumber;
+            byte[] tmp = BitConverter.GetBytes(voltage);
+            Array.Copy(tmp, 0, param, 1, 4);
+            byte[] readBuf = PipeSendAndReceive(j2534Command.SetProgramminVoltage, param);
+            if (readBuf.Length > 0 && readBuf[0] == 1)
+                return true;
+            else
+                return false;
+        }
 
+        public override bool AddToFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            Debug.WriteLine("Adding functional addresses: " + BitConverter.ToString(FuncAddr));
+            Array.Resize(ref FuncAddr, FuncAddr.Length + 1);
+            FuncAddr[FuncAddr.Length -1] = Convert.ToByte(secondary);
+            byte[] readBuf = PipeSendAndReceive(j2534Command.AddToFunctMsgLookupTable, FuncAddr);
+            if (readBuf.Length > 0 && readBuf[0] == 1)
+                return true;
+            else
+                return false;
+        }
+
+        public override bool DeleteFromFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            Debug.WriteLine("Deleting functional addresses: " + BitConverter.ToString(FuncAddr));
+            Array.Resize(ref FuncAddr, FuncAddr.Length + 1);
+            FuncAddr[FuncAddr.Length - 1] = Convert.ToByte(secondary);
+            byte[] readBuf = PipeSendAndReceive(j2534Command.DeleteFromFunctMsgLookupTable, FuncAddr);
+            if (readBuf.Length > 0 && readBuf[0] == 1)
+                return true;
+            else
+                return false;
+        }
+
+        public override bool ClearFunctMsgLookupTable(bool secondary)
+        {
+            Debug.WriteLine("Clearing functional addresses");
+            byte[] tmp = new byte[1];
+            tmp[0] = Convert.ToByte(secondary);
+            byte[] readBuf = PipeSendAndReceive(j2534Command.ClearFunctMsgLookupTable, tmp);
+            if (readBuf.Length > 0 && readBuf[0] == 1)
+                return true;
+            else
+                return false;
+        }
+
+        public override bool SetJ2534Configs(string Configs, bool secondary)
+        {
+            try
+            {
+                byte[] param = Encoding.ASCII.GetBytes(Configs);
+                Array.Resize(ref param, param.Length + 1);
+                param[param.Length - 1] = Convert.ToByte(secondary);
+                byte[] readBuf = PipeSendAndReceive(j2534Command.SetJ2534Configs, param);
+                if (Convert.ToBoolean(readBuf[0]) == true)
+                {
+                    //Logger("SetJ2534Configs done");
+                    return true;
+                }
+                else
+                {
+                    Logger("SetJ2534Configs fail.");
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+            }
+            return false;
+
+        }
         /// <summary>
         /// This will process incoming messages for up to 500ms looking for a message
         /// </summary>

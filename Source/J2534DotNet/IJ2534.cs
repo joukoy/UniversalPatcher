@@ -51,7 +51,7 @@ namespace J2534DotNet
             ref int filterId
         );
         J2534Err StopMsgFilter(int channelId, int filterId);
-        J2534Err SetProgrammingVoltage(int deviceId, PinNumber pinNumber, int voltage);
+        J2534Err SetProgrammingVoltage(int deviceId, PinNumber pinNumber, uint voltage);
         J2534Err ReadVersion(int deviceId, ref string firmwareVersion, ref string dllVersion, ref string apiVersion);
         J2534Err GetLastError(ref string errorDescription);
         J2534Err GetConfig(int channelId, ref List<SConfig> config);
@@ -64,7 +64,7 @@ namespace J2534DotNet
         J2534Err ClearPeriodicMsgs(int channelId);
         J2534Err ClearMsgFilters(int channelId);
         J2534Err ClearFunctMsgLookupTable(int channelId);
-        J2534Err AddToFunctMsgLookupTable(int channelId);
-        J2534Err DeleteFromFunctMsgLookupTable(int channelId);
+        J2534Err AddToFunctMsgLookupTable(int channelId, byte[] FuncAddr);
+        J2534Err DeleteFromFunctMsgLookupTable(int channelId, byte[] FuncAddr);
     }
 }

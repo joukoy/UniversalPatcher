@@ -22,29 +22,29 @@ namespace UniversalPatcher
         public const string DeviceType = "AVT (838/842/852)";
         public short Model = 0; // 0 = unknown or 838, 842, 852
 
-        public static readonly OBDMessage AVT_RESET                = new OBDMessage(new byte[] { 0xF1, 0xA5 });
-        public static readonly OBDMessage AVT_ENTER_VPW_MODE       = new OBDMessage(new byte[] { 0xE1, 0x33 });
-        public static readonly OBDMessage AVT_REQUEST_MODEL        = new OBDMessage(new byte[] { 0xF0 });
-        public static readonly OBDMessage AVT_REQUEST_FIRMWARE     = new OBDMessage(new byte[] { 0xB0 });
-        public static readonly OBDMessage AVT_DISABLE_TX_ACK       = new OBDMessage(new byte[] { 0x52, 0x40, 0x00 });
-        public static readonly OBDMessage AVT_FILTER_DEST          = new OBDMessage(new byte[] { 0x52, 0x5B, DeviceId.Tool });
-        public static readonly OBDMessage AVT_1X_SPEED             = new OBDMessage(new byte[] { 0xC1, 0x00 });
-        public static readonly OBDMessage AVT_4X_SPEED             = new OBDMessage(new byte[] { 0xC1, 0x01 });
+        public static readonly OBDMessage AVT_RESET = new OBDMessage(new byte[] { 0xF1, 0xA5 });
+        public static readonly OBDMessage AVT_ENTER_VPW_MODE = new OBDMessage(new byte[] { 0xE1, 0x33 });
+        public static readonly OBDMessage AVT_REQUEST_MODEL = new OBDMessage(new byte[] { 0xF0 });
+        public static readonly OBDMessage AVT_REQUEST_FIRMWARE = new OBDMessage(new byte[] { 0xB0 });
+        public static readonly OBDMessage AVT_DISABLE_TX_ACK = new OBDMessage(new byte[] { 0x52, 0x40, 0x00 });
+        public static readonly OBDMessage AVT_FILTER_DEST = new OBDMessage(new byte[] { 0x52, 0x5B, DeviceId.Tool });
+        public static readonly OBDMessage AVT_1X_SPEED = new OBDMessage(new byte[] { 0xC1, 0x00 });
+        public static readonly OBDMessage AVT_4X_SPEED = new OBDMessage(new byte[] { 0xC1, 0x01 });
 
         // AVT reader strips the header
-        public static readonly OBDMessage AVT_VPW                  = new OBDMessage(new byte[] { 0x07 });       // 91 07
-        public static readonly OBDMessage AVT_852_IDLE             = new OBDMessage(new byte[] { 0x27 });       // 91 27
-        public static readonly OBDMessage AVT_842_IDLE             = new OBDMessage(new byte[] { 0x12 });       // 91 12
-        public static readonly OBDMessage AVT_FIRMWARE             = new OBDMessage(new byte[] { 0x04 });       // 92 04 15 (firmware 1.5)
-        public static readonly OBDMessage AVT_TX_ACK               = new OBDMessage(new byte[] { 0x60 });       // 01 60
-        public static readonly OBDMessage AVT_FILTER_DEST_OK       = new OBDMessage(new byte[] { 0x5B, DeviceId.Tool });// 62 5B F0
-        public static readonly OBDMessage AVT_DISABLE_TX_ACK_OK    = new OBDMessage(new byte[] { 0x40, 0x00 }); // 62 40 00
-        public static readonly OBDMessage AVT_BLOCK_TX_ACK         = new OBDMessage(new byte[] { 0xF3, 0x60 }); // F3 60
+        public static readonly OBDMessage AVT_VPW = new OBDMessage(new byte[] { 0x07 });       // 91 07
+        public static readonly OBDMessage AVT_852_IDLE = new OBDMessage(new byte[] { 0x27 });       // 91 27
+        public static readonly OBDMessage AVT_842_IDLE = new OBDMessage(new byte[] { 0x12 });       // 91 12
+        public static readonly OBDMessage AVT_FIRMWARE = new OBDMessage(new byte[] { 0x04 });       // 92 04 15 (firmware 1.5)
+        public static readonly OBDMessage AVT_TX_ACK = new OBDMessage(new byte[] { 0x60 });       // 01 60
+        public static readonly OBDMessage AVT_FILTER_DEST_OK = new OBDMessage(new byte[] { 0x5B, DeviceId.Tool });// 62 5B F0
+        public static readonly OBDMessage AVT_DISABLE_TX_ACK_OK = new OBDMessage(new byte[] { 0x40, 0x00 }); // 62 40 00
+        public static readonly OBDMessage AVT_BLOCK_TX_ACK = new OBDMessage(new byte[] { 0xF3, 0x60 }); // F3 60
 
         public AvtDevice(IPort port) : base(port)
         {
-            this.MaxSendSize = 4096+10+2;    // packets up to 4112 but we want 4096 byte data blocks
-            this.MaxReceiveSize = 4096+10+2; // with 10 byte header and 2 byte block checksum
+            this.MaxSendSize = 4096 + 10 + 2;    // packets up to 4112 but we want 4096 byte data blocks
+            this.MaxReceiveSize = 4096 + 10 + 2; // with 10 byte header and 2 byte block checksum
             this.Supports4X = true;
             this.LogDeviceType = DataLogger.LoggingDevType.Other;
         }
@@ -104,7 +104,7 @@ namespace UniversalPatcher
             }
             Debug.WriteLine("Looking for Firmware message");
             m = this.FindResponse(AVT_FIRMWARE);
-            if ( m.Status == ResponseStatus.Success )
+            if (m.Status == ResponseStatus.Success)
             {
                 byte firmware = m.Value.GetBytes()[1];
                 int major = firmware >> 4;
@@ -138,6 +138,32 @@ namespace UniversalPatcher
             SetLoggingFilter();
             this.Connected = true;
             return true;
+        }
+
+        public override bool SetProgramminVoltage(PinNumber pinNumber, uint voltage)
+        {
+            LoggerBold("SetProgramminVoltage not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool AddToFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            LoggerBold("AddToFunctMsgLookupTable not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool DeleteFromFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            LoggerBold("DeleteFromFunctMsgLookupTable not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool ClearFunctMsgLookupTable(bool secondary)
+        {
+            LoggerBold("ClearFunctMsgLookupTable not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool SetJ2534Configs(string Configs, bool secondary)
+        {
+            LoggerBold("SetJ2534Configs not implemented for " + DeviceType);
+            return false;
         }
 
         /// <summary>

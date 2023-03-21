@@ -79,6 +79,26 @@
   <PropertyGroup>
     <StartupObject>UniversalPatcher.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug DPS|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug DPS\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug DPS|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug DPS\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="gmkeylib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -125,6 +145,8 @@
     <Compile Include="DataLogger\Devices\J2534Client.cs" />
     <Compile Include="DataLogger\Devices\J2534InitParameters.cs" />
     <Compile Include="DataLogger\Devices\J2534Server.cs" />
+    <Compile Include="DataLogger\Devices\JetDevice.cs" />
+    <Compile Include="DataLogger\EECV.cs" />
     <Compile Include="DataLogger\frmBinToScript.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -143,14 +165,22 @@
     <Compile Include="DataLogger\frmLoggerGraphics.Designer.cs">
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataLogger\GmKeys.cs" />
     <Compile Include="DataLogger\JConsole.cs" />
     <Compile Include="DataLogger\KeyAlgorithm.cs" />
     <Compile Include="DataLogger\LogToBin.cs" />
     <Compile Include="DataLogger\MessageReceiver.cs" />
+    <Compile Include="DataLogger\NgcKeys.cs" />
     <Compile Include="DataLogger\ObdEmu.cs" />
     <Compile Include="DataLogger\OBDScript.cs" />
     <Compile Include="DataLogger\PopupWindow.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="frmByteSwap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmByteSwap.Designer.cs">
+      <DependentUpon>frmByteSwap.cs</DependentUpon>
     </Compile>
     <Compile Include="frmCredits.cs">
       <SubType>Form</SubType>
@@ -543,6 +573,9 @@
     <EmbeddedResource Include="DataLogger\frmLoggerGraphics.resx">
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmByteSwap.resx">
+      <DependentUpon>frmByteSwap.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCredits.resx">
       <DependentUpon>frmCredits.cs</DependentUpon>

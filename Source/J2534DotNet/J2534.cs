@@ -82,6 +82,7 @@ namespace J2534DotNet
             { 
                 IntPtr DeviceNamePtr = IntPtr.Zero;
                 IntPtr DeviceIDPtr = Marshal.AllocHGlobal(4);
+                Marshal.WriteInt32(DeviceIDPtr, deviceId);
                 J2534Err returnValue;
                 lock (devLock)
                 {
@@ -91,7 +92,7 @@ namespace J2534DotNet
                 {
                     deviceId = Marshal.ReadInt32(DeviceIDPtr);
                 }
-                Marshal.FreeHGlobal(DeviceIDPtr); 
+                Marshal.FreeHGlobal(DeviceIDPtr);
                 return returnValue;
             }
             catch (Exception ex)
@@ -122,6 +123,7 @@ namespace J2534DotNet
             try
             {
                 IntPtr ChannelPtr = Marshal.AllocHGlobal(4);
+                Marshal.WriteInt32(ChannelPtr, channelId);
                 J2534Err returnValue;
                 lock (devLock)
                 {
@@ -398,7 +400,7 @@ namespace J2534DotNet
             }
         }
 
-        public J2534Err SetProgrammingVoltage(int deviceId, PinNumber pinNumber, int voltage)
+        public J2534Err SetProgrammingVoltage(int deviceId, PinNumber pinNumber, uint voltage)
         {
             lock (devLock)
             {
@@ -514,6 +516,25 @@ namespace J2534DotNet
             Marshal.WriteIntPtr(Ptr, 4, firstElementPtr);
             for (int i = 0; i < config.Length; i++)
                 Marshal.StructureToPtr(config[i], IntPtr.Add(firstElementPtr, i * elementSize), false);
+            return Ptr;
+        }
+
+        //
+        //Sconfig array:
+        //NumOfbytes                   [4 bytes]
+        //Pointer to bytearray         [4 bytes]
+        //Byte array                   [numOfBytes]
+        IntPtr SbytesToPtr(byte[] bytes)
+        {
+            //Create a blob big enough for all elements and two longs (NumOfItems and pItems)
+            IntPtr Ptr = Marshal.AllocHGlobal(bytes.Length + 8);
+            //Set array length: (First value in structure)
+            Marshal.WriteInt32(Ptr, bytes.Length);
+            IntPtr firstElementPtr = IntPtr.Add(Ptr, 8);
+            //Write bytes
+            Marshal.WriteIntPtr(Ptr, 4, firstElementPtr);
+            for (int i = 0; i < bytes.Length; i++)
+                Marshal.StructureToPtr(bytes[i], IntPtr.Add(firstElementPtr, i), false);
             return Ptr;
         }
 
@@ -724,17 +745,19 @@ namespace J2534DotNet
 
         }
 
-        public J2534Err AddToFunctMsgLookupTable(int channelId)
+        public J2534Err AddToFunctMsgLookupTable(int channelId, byte[] FuncAddr)
         {
             try
             {
-                IntPtr input = IntPtr.Zero;
+                J2534Err returnValue;
+                IntPtr input = SbytesToPtr(FuncAddr);
                 IntPtr output = IntPtr.Zero;
-                // TODO: fix this
                 lock (devLock)
                 {
-                    return (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.ADD_TO_FUNCT_MSG_LOOKUP_TABLE, input, output);
+                    returnValue = (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.ADD_TO_FUNCT_MSG_LOOKUP_TABLE, input, output);
                 }
+                Marshal.FreeHGlobal(input);
+                return returnValue;
             }
             catch (Exception ex)
             {
@@ -744,17 +767,20 @@ namespace J2534DotNet
 
         }
 
-        public J2534Err DeleteFromFunctMsgLookupTable(int channelId)
+        public J2534Err DeleteFromFunctMsgLookupTable(int channelId, byte[] FuncAddr)
         {
             try
             {
-                IntPtr input = IntPtr.Zero;
+                J2534Err returnValue;
+                IntPtr input = SbytesToPtr(FuncAddr);
                 IntPtr output = IntPtr.Zero;
                 // TODO: fix this
                 lock (devLock)
                 {
-                    return (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.DELETE_FROM_FUNCT_MSG_LOOKUP_TABLE, input, output);
+                    returnValue = (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.DELETE_FROM_FUNCT_MSG_LOOKUP_TABLE, input, output);
                 }
+                Marshal.FreeHGlobal(input);
+                return returnValue;
             }
             catch (Exception ex)
             {

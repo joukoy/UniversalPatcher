@@ -14,4 +14,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartArguments>advanced patcher</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug DPS|AnyCPU'">
+    <StartArguments>advanced patcher</StartArguments>
+  </PropertyGroup>
 </Project>

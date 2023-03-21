@@ -134,6 +134,7 @@ namespace J2534DotNet
         SCI_A_TRANS = 0x08,
         SCI_B_ENGINE = 0x09,
         SCI_B_TRANS = 0x0A,
+        FGA7274_PS = 0x11,
         //J2534-2 Protocol definitions
         J1850VPW_PS = 0x00008000,
         J1850PWM_PS = 0x00008001,
@@ -174,8 +175,6 @@ namespace J2534DotNet
         FD_CAN_CH1 = 0x00009880,
         FD_ISO15765_CH1 = 0x00009900,
         ANALOG_IN_1 = 0x0000C000,
-
-
     }
 
     public enum BaudRate
@@ -335,8 +334,10 @@ namespace J2534DotNet
         ISO15765_SIMULTANEOUS = 0x10000000, //Drewtech
         DT_ISO15765_PAD_BYTE = 0x10000001,  //Drewtech
         ADC_READINGS_PER_SECOND = 0x10000,  //Drewtech
-        ADC_READINGS_PER_SAMPLE = 0x20000   //Drewtech
+        ADC_READINGS_PER_SAMPLE = 0x20000,   //Drewtech
 
+        ADD_TO_FUNCT_MSG_LOOKUP_TABLE = 0x9000, //Universalpatcher
+        DELETE_FROM_FUNCT_MSG_LOOKUP_TABLE = 0x9001 //Universalpatcher
     }
 
     public enum J2534Err
@@ -389,4 +390,12 @@ namespace J2534DotNet
         public int NumOfParams;
         public IntPtr ConfigPtr;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct SBYTE_ARRAY
+    {
+        public int NumOfBytes;
+        public IntPtr BytePtr;
+    }
+
 }

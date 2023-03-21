@@ -604,4 +604,13 @@
 - Segmentseek: Support for big offset
 - XML Editor: Fixed bug, Copy/Paste row added reference to copied row, not new object
 
+0.22.03
+- Patcher: Added Byteswap: swap all bytes of file
+- Logger: OBDScript, support for Programminvoltage (programminvoltage:PIN:Voltage)
+- Logger: OBDScript, added wait:message or wait:message:timeout(ms) (example: wait:00 00 05 56 74 99) 
+- Logger: OBDScript, added Support for functional addresses (addtofunctmsg:<FuncAddr>, deletefromfunctmsg:<FuncAddr>, clearfunctmsg)
+- Logger: OBDScript, added Support for popup. example: popup:Turn ignition ON
+- Logger: OBDScript, added Support for eecv & ngc engine seed/key
+- Logger: OBDScript, added Support for J2534 Configs, example: setconfigs:DATA_RATE=62500
+- Logger: Initial support for JETdevice
 

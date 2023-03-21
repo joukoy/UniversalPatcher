@@ -49,6 +49,29 @@ namespace UniversalPatcher
             this.Connected = true;
             return true;
         }
+        public override bool SetProgramminVoltage(PinNumber pinNumber, uint voltage)
+        {
+            Debug.WriteLine("SetProgramminVoltage not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool AddToFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            return false;
+        }
+        public override bool DeleteFromFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            return false;
+        }
+        public override bool ClearFunctMsgLookupTable(bool secondary)
+        {
+            return false;
+        }
+        public override bool SetJ2534Configs(string Configs, bool secondary)
+        {
+            Debug.WriteLine("SetJ2534Configs not implemented for " + DeviceType);
+            return false;
+        }
+
 
         /// <summary>
         /// Not needed.

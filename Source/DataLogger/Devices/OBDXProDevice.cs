@@ -159,6 +159,32 @@ namespace UniversalPatcher
             return true;
         }
 
+        public override bool SetProgramminVoltage(PinNumber pinNumber, uint voltage)
+        {
+            LoggerBold("SetProgramminVoltage not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool AddToFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            LoggerBold("AddToFunctMsgLookupTable not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool DeleteFromFunctMsgLookupTable(byte[] FuncAddr, bool secondary)
+        {
+            LoggerBold("DeleteFromFunctMsgLookupTable not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool ClearFunctMsgLookupTable(bool secondary)
+        {
+            LoggerBold("ClearFunctMsgLookupTable not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool SetJ2534Configs(string Configs, bool secondary)
+        {
+            LoggerBold("SetJ2534Configs not implemented for " + DeviceType);
+            return false;
+        }
+
         /// <summary>
         /// Not yet implemented.
         /// </summary>
