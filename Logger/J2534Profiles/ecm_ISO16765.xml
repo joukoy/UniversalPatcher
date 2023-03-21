@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<J2534InitParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <VPWLogger>false</VPWLogger>
+  <Secondary>false</Secondary>
+  <Protocol>ISO15765</Protocol>
+  <Baudrate>ISO15765_500000</Baudrate>
+  <Sconfigs />
+  <Kinit>None</Kinit>
+  <InitBytes />
+  <Connectflag>NONE</Connectflag>
+  <PerodicMsg />
+  <PeriodicInterval>0</PeriodicInterval>
+  <PassFilters>Type:FLOW_CONTROL_FILTER,Name:23-02-04-10-13-46
+Mask:FFFFFFFF,RxStatus:NONE,TxFlags:NONE
+Pattern:000007E8,RxStatus:NONE,TxFlags:NONE
+FlowControl:000007E0,RxStatus:NONE,TxFlags:NONE
+
+Type:FLOW_CONTROL_FILTER,Name:23-02-04-10-13-46
+Mask:FFFFFFFF,RxStatus:NONE,TxFlags:NONE
+Pattern:000007E0,RxStatus:NONE,TxFlags:NONE
+FlowControl:000007E8,RxStatus:NONE,TxFlags:NONE
+
+</PassFilters>
+  <UsePrimaryChannel>false</UsePrimaryChannel>
+</J2534InitParameters>

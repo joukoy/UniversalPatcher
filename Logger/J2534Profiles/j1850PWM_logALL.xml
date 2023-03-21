@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<J2534InitParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <VPWLogger>false</VPWLogger>
+  <Secondary>false</Secondary>
+  <Protocol>J1850PWM</Protocol>
+  <Baudrate>J1850PWM</Baudrate>
+  <Sconfigs>ADD_TO_FUNCT_MSG_LOOKUP_TABLE = 00-FF | NODE_ADDRESS = F1</Sconfigs>
+  <Kinit>None</Kinit>
+  <InitBytes />
+  <Connectflag>NONE</Connectflag>
+  <PerodicMsg />
+  <PeriodicInterval>0</PeriodicInterval>
+  <PassFilters>Type:PASS_FILTER,Name:23-03-21-10-39-12
+Mask:00,RxStatus:NONE,TxFlags:NONE
+Pattern:00,RxStatus:NONE,TxFlags:NONE
+
+</PassFilters>
+  <UsePrimaryChannel>false</UsePrimaryChannel>
+</J2534InitParameters>

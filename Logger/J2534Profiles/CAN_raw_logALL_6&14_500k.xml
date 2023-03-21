@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<J2534InitParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <VPWLogger>false</VPWLogger>
+  <Secondary>false</Secondary>
+  <Protocol>CAN</Protocol>
+  <Baudrate>CAN_500000</Baudrate>
+  <Sconfigs />
+  <Kinit>None</Kinit>
+  <InitBytes />
+  <Connectflag>NONE</Connectflag>
+  <PerodicMsg />
+  <PeriodicInterval>0</PeriodicInterval>
+  <PassFilters>Type:PASS_FILTER,Name:23-03-21-10-41-54
+Mask:00,RxStatus:NONE,TxFlags:NONE
+Pattern:00,RxStatus:NONE,TxFlags:NONE
+
+</PassFilters>
+  <UsePrimaryChannel>false</UsePrimaryChannel>
+</J2534InitParameters>
