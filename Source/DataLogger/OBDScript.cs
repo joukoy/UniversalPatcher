@@ -87,6 +87,45 @@ namespace UniversalPatcher
                         }
                     }
                 }
+                else if (Line.ToLower().StartsWith("printall"))
+                {
+                    bool printPrimary = true;
+                    bool printSecondary = true;
+                    string[] pParts = Line.Split(':');
+                    int tOut = 10000;
+                    if (pParts.Length > 1)
+                    {
+                        if (pParts[1] == ":1")
+                        {
+                            printSecondary = false;
+                        }
+                        else if (pParts[1] == ":2")
+                        {
+                            printPrimary = false;
+                        }
+                    }
+                    if (pParts.Length > 2)
+                    {
+                        int.TryParse(pParts[2], out tOut);
+                    }
+                    DateTime starttime = DateTime.Now;
+                    while (true)
+                    {
+                        if (printPrimary)
+                        {
+                            device.ReceiveMessage();
+                        }
+                        if (printSecondary)
+                        {
+                            device.ReceiveMessage2();
+                        }
+                        if (DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(tOut))
+                        {
+                            break;
+                        }
+                        Application.DoEvents();
+                    }
+                }
                 else if (Line.ToLower().StartsWith("popup:"))
                 {
                     string[] lParts = Line.Split(':');
@@ -132,6 +171,20 @@ namespace UniversalPatcher
                 else if (Line.ToLower().StartsWith("clearfunctmsg"))
                 {
                     device.ClearFunctMsgLookupTable(SecondaryProtocol);
+                }
+                else if (Line.ToLower().StartsWith("startperiodic:"))
+                {
+                    string pMsg = Line.Substring(Line.IndexOf(":") + 1);
+                    device.StartPeriodicMsg(pMsg, SecondaryProtocol);
+                }
+                else if (Line.ToLower().StartsWith("stopperiodic:"))
+                {
+                    string pMsg = Line.Substring(Line.IndexOf(":") + 1);
+                    device.StopPeriodicMsg(pMsg, SecondaryProtocol);
+                }
+                else if (Line.ToLower().StartsWith("clearperiodic"))
+                {
+                    device.ClearPeriodicMsg(SecondaryProtocol);
                 }
                 else if (Line.ToLower().StartsWith("wait:"))
                 {
@@ -438,9 +491,14 @@ namespace UniversalPatcher
                     {
                         responses = 0;
                     }
+                    bool useSecondaryProtocol = SecondaryProtocol;
                     if (parts.Length > 1)
                     {
-                        int.TryParse(parts[1], out responses);
+                        if (parts[1].Contains("p"))
+                        {
+                            useSecondaryProtocol = !useSecondaryProtocol;
+                        }
+                        int.TryParse(parts[1].Replace("p",""), out responses);
                     }
                     Debug.WriteLine("Waiting {0} responses", responses);
                     if (parts.Length > 2)
@@ -470,11 +528,11 @@ namespace UniversalPatcher
                     for (int r = 0; r < responses;)
                     {
                         OBDMessage rMsg;
-                        if (SecondaryProtocol)
-                            rMsg = device.ReceiveMessage2();
-                        else
+                        if (!useSecondaryProtocol)
                             rMsg = device.ReceiveMessage();
-                        if (rMsg != null && rMsg.Length > 3 && rMsg[0] == oMsg[0] && rMsg[1] == oMsg[2] && rMsg[2] == oMsg[1])
+                        else
+                            rMsg = device.ReceiveMessage2();
+                        if (rMsg != null && rMsg.Length > 3) // && rMsg[0] == oMsg[0] && rMsg[1] == oMsg[2] && rMsg[2] == oMsg[1])
                         {
                             starttime = DateTime.Now;   //Message received, reset timer
                             r++;

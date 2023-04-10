@@ -846,16 +846,25 @@ public static class LoggerUtils
         List<byte> retVal = new List<byte>();
         try
         {
-            if (byteStr.Contains("-"))
+            string[] bParts = byteStr.Split(',');
+            foreach (string bStr in bParts)
             {
-                string[] fParts = byteStr.Split('-');
-                if (fParts.Length == 2)
+                if (bStr.Contains("-"))
                 {
-                    if (HexToByte(fParts[0], out byte start) && HexToByte(fParts[1], out byte end))
+                    string[] fParts = bStr.Split('-');
+                    if (fParts.Length == 2)
                     {
-                        for (int f = start; f <= end; f++)
+                        if (HexToByte(fParts[0], out byte start) && HexToByte(fParts[1], out byte end))
                         {
-                            retVal.Add((byte)f);
+                            for (int f = start; f <= end; f++)
+                            {
+                                retVal.Add((byte)f);
+                            }
+                        }
+                        else
+                        {
+                            LoggerBold("Unknown address range: " + byteStr);
+                            return null;
                         }
                     }
                     else
@@ -866,13 +875,8 @@ public static class LoggerUtils
                 }
                 else
                 {
-                    LoggerBold("Unknown address range: " + byteStr);
-                    return null;
+                    retVal.AddRange(bStr.Replace(" ", "").ToBytes());
                 }
-            }
-            else
-            {
-                return byteStr.Replace(" ", "").ToBytes();
             }
         }
         catch (Exception ex)

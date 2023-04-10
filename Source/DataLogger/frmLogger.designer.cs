@@ -78,6 +78,9 @@ namespace UniversalPatcher
             this.label3 = new System.Windows.Forms.Label();
             this.dataGridLogData = new System.Windows.Forms.DataGridView();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.radioCAN = new System.Windows.Forms.RadioButton();
+            this.radioVPW = new System.Windows.Forms.RadioButton();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.numRetryDelay = new System.Windows.Forms.NumericUpDown();
             this.numRetryTimes = new System.Windows.Forms.NumericUpDown();
@@ -331,6 +334,7 @@ namespace UniversalPatcher
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
             this.tabSettings.SuspendLayout();
+            this.groupBox11.SuspendLayout();
             this.groupBox10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRetryTimes)).BeginInit();
@@ -719,6 +723,7 @@ namespace UniversalPatcher
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupBox11);
             this.tabSettings.Controls.Add(this.groupBox10);
             this.tabSettings.Controls.Add(this.groupHWSettings);
             this.tabSettings.Controls.Add(this.btnConnect2);
@@ -729,6 +734,40 @@ namespace UniversalPatcher
             this.tabSettings.TabIndex = 3;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.radioCAN);
+            this.groupBox11.Controls.Add(this.radioVPW);
+            this.groupBox11.Location = new System.Drawing.Point(9, 232);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(359, 40);
+            this.groupBox11.TabIndex = 36;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Protocol";
+            // 
+            // radioCAN
+            // 
+            this.radioCAN.AutoSize = true;
+            this.radioCAN.Location = new System.Drawing.Point(85, 17);
+            this.radioCAN.Name = "radioCAN";
+            this.radioCAN.Size = new System.Drawing.Size(142, 17);
+            this.radioCAN.TabIndex = 1;
+            this.radioCAN.TabStop = true;
+            this.radioCAN.Text = "CAN (EXPERIMENTAL!)";
+            this.radioCAN.UseVisualStyleBackColor = true;
+            // 
+            // radioVPW
+            // 
+            this.radioVPW.AutoSize = true;
+            this.radioVPW.Checked = true;
+            this.radioVPW.Location = new System.Drawing.Point(12, 17);
+            this.radioVPW.Name = "radioVPW";
+            this.radioVPW.Size = new System.Drawing.Size(50, 17);
+            this.radioVPW.TabIndex = 0;
+            this.radioVPW.TabStop = true;
+            this.radioVPW.Text = "VPW";
+            this.radioVPW.UseVisualStyleBackColor = true;
             // 
             // groupBox10
             // 
@@ -931,7 +970,7 @@ namespace UniversalPatcher
             // 
             // btnConnect2
             // 
-            this.btnConnect2.Location = new System.Drawing.Point(121, 234);
+            this.btnConnect2.Location = new System.Drawing.Point(122, 288);
             this.btnConnect2.Name = "btnConnect2";
             this.btnConnect2.Size = new System.Drawing.Size(142, 29);
             this.btnConnect2.TabIndex = 23;
@@ -2561,7 +2600,7 @@ namespace UniversalPatcher
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(11, 269);
+            this.label28.Location = new System.Drawing.Point(8, 269);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(45, 13);
             this.label28.TabIndex = 65;
@@ -3417,6 +3456,8 @@ namespace UniversalPatcher
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).EndInit();
             this.tabSettings.ResumeLayout(false);
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).EndInit();
@@ -3764,6 +3805,9 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.RadioButton radioEecv;
         private System.Windows.Forms.CheckBox chkEecvSecondKey;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.RadioButton radioCAN;
+        private System.Windows.Forms.RadioButton radioVPW;
     }
 }
 

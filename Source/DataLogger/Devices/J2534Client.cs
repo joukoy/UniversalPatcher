@@ -86,7 +86,7 @@ namespace UniversalPatcher
 
         private byte[] PipeSendAndReceive(j2534Command command, byte[] msg)
         {
-            byte[] retVal = null;
+            byte[] retVal = new byte[0];
             try
             {
                 List<byte> sendBuf = new List<byte>();
@@ -225,8 +225,18 @@ namespace UniversalPatcher
                         catch { }
                     }).Wait(500);
                 }
-                if (process != null && !process.HasExited)
-                    process.Kill();
+                DateTime startTime = DateTime.Now;
+                while (process != null && !process.HasExited)
+                {
+                    if (DateTime.Now.Subtract(startTime) > TimeSpan.FromSeconds(5))
+                    {
+                        Application.DoEvents();
+                        process.Kill();
+                        break;
+                    }
+                    Application.DoEvents();
+                    Thread.Sleep(100);
+                }
             }
             catch (Exception ex)
             {
@@ -399,8 +409,97 @@ namespace UniversalPatcher
                 LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
             }
             return false;
-
         }
+
+        public override bool StartPeriodicMsg(string PeriodicMsg, bool secondary)
+        {
+            try
+            {
+                byte[] param = Encoding.ASCII.GetBytes(PeriodicMsg);
+                Array.Resize(ref param, param.Length + 1);
+                param[param.Length - 1] = Convert.ToByte(secondary);
+                byte[] readBuf = PipeSendAndReceive(j2534Command.StartPeriodicMsg, param);
+                if (Convert.ToBoolean(readBuf[0]) == true)
+                {
+                    return true;
+                }
+                else
+                {
+                    Logger("StartPeriodicMsg fail.");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+            }
+            return false;
+        }
+
+        public override bool StopPeriodicMsg(string PeriodicMsg, bool secondary)
+        {
+            try
+            {
+                byte[] param = Encoding.ASCII.GetBytes(PeriodicMsg);
+                Array.Resize(ref param, param.Length + 1);
+                param[param.Length - 1] = Convert.ToByte(secondary);
+                byte[] readBuf = PipeSendAndReceive(j2534Command.StopPeriodicMsg, param);
+                if (Convert.ToBoolean(readBuf[0]) == true)
+                {
+                    return true;
+                }
+                else
+                {
+                    Logger("StopPeriodicMsg fail.");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+            }
+            return false;
+        }
+
+        public override bool ClearPeriodicMsg(bool secondary)
+        {
+            try
+            {
+                byte[] param = new byte[1];
+                param[0] = Convert.ToByte(secondary);
+                byte[] readBuf = PipeSendAndReceive(j2534Command.ClearPeriodicMsg, param);
+                if (Convert.ToBoolean(readBuf[0]) == true)
+                {
+                    return true;
+                }
+                else
+                {
+                    Logger("ClearPeriodicMsg fail.");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+            }
+            return false;
+        }
+
         /// <summary>
         /// This will process incoming messages for up to 500ms looking for a message
         /// </summary>

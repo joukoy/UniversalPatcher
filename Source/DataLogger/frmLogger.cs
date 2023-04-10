@@ -138,7 +138,7 @@ namespace UniversalPatcher
         {
             logTexts = new List<LogText>();
             jconsolelogTexts = new List<LogText>();
-            datalogger = new DataLogger();
+            datalogger = new DataLogger(AppSettings.LoggerUseVPW);
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             if (!string.IsNullOrEmpty(datalogger.OS))
             {
@@ -757,7 +757,7 @@ namespace UniversalPatcher
             {
                 if (e.KeyChar == '\r')
                 {
-                    if (!Connect())
+                    if (!Connect(true))
                     {
                         return;
                     }
@@ -1202,6 +1202,8 @@ namespace UniversalPatcher
                 chkAutoDisconnect.Checked = AppSettings.LoggerAutoDisconnect;
                 numRetryDelay.Value = AppSettings.RetryWriteDelay;
                 numRetryTimes.Value = AppSettings.RetryWriteTimes;
+                radioVPW.Checked = AppSettings.LoggerUseVPW;
+                radioCAN.Checked = !AppSettings.LoggerUseVPW;
 
                 if (AppSettings.LoggerConsoleFont != null)
                 {
@@ -1830,7 +1832,7 @@ namespace UniversalPatcher
             {
                 if (datalogger.Connected)
                 {
-                    QueryPid(pc);
+                    QueryPid(pc,true);
                 }
                 CheckMaxPids();
                 datalogger.PidProfile.Add(pc);
@@ -1942,6 +1944,7 @@ namespace UniversalPatcher
             AppSettings.LoggerStartJ2534Process = chkStartJ2534Process.Checked;
             AppSettings.LoggerJ2534ProcessVisible = chkJ2534ServerVisible.Checked;
             AppSettings.LoggerAutoDisconnect = chkAutoDisconnect.Checked;
+            AppSettings.LoggerUseVPW = radioVPW.Checked;
 
             AppSettings.Save();
 
@@ -1975,17 +1978,27 @@ namespace UniversalPatcher
             }
         }
 
-        private bool Connect(bool StartReceiver = true, bool ShowOs = true)
+        private bool Connect(bool UseVPW, bool StartReceiver = true, bool ShowOs = true)
         {
             try
             {
 
-                datalogger.useVPWFilters = chkVPWFilters.Checked;
+                datalogger.VPWProtocol = radioVPW.Checked;
                 if (datalogger.Connected)
                 {
                     return true;
                 }
-                Logger("Connecting (VPW)...");
+                if (UseVPW)
+                {
+                    Logger("Connecting (VPW)...");
+                    datalogger.useVPWFilters = chkVPWFilters.Checked;
+                }
+                else
+                {
+                    Logger("Connecting (CAN)...");
+                    datalogger.useVPWFilters = false;
+                    ShowOs = false;
+                }
                 Application.DoEvents();
                 if (serialRadioButton.Checked)
                 {
@@ -2017,7 +2030,24 @@ namespace UniversalPatcher
                     datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                     datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
                 }
-                if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text), new J2534InitParameters(true)))
+                J2534InitParameters jParams;
+                if (UseVPW)
+                {
+                    jParams = new J2534InitParameters(true);
+                }
+                else
+                {
+                    jParams = new J2534InitParameters();
+                    jParams.SeparateProtoByChannel = true;
+                    jParams.Protocol = ProtocolID.ISO15765;
+                    jParams.Baudrate = "ISO15765_500000";
+                    jParams.Sconfigs = "CAN_MIXED_FORMAT=1";
+                    jParams.PassFilters = "Type:FLOW_CONTROL_FILTER,Name:CANloggerFlow" + Environment.NewLine;
+                    jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:000007E8,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "FlowControl:000007E0,RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
+                }
+                if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text), jParams))
                 {
                     if (datalogger.port != null)
                     {
@@ -2036,6 +2066,20 @@ namespace UniversalPatcher
                 {
                     //datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
                     //datalogger.LogDevice.SetReadTimeout(2000);
+                }
+
+                if (!UseVPW)
+                {
+                    jParams = new J2534InitParameters();
+                    jParams.Protocol = ProtocolID.CAN;                    
+                    jParams.Baudrate = "CAN_500000";
+                    jParams.Secondary = true;
+                    jParams.SeparateProtoByChannel = true;
+                    jParams.UsePrimaryChannel = true;
+                    jParams.PassFilters = "Type:PASS_FILTER,Name:CANloggerPass" + Environment.NewLine;
+                    jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:000005E8,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    datalogger.LogDevice.ConnectSecondaryProtocol(jParams);
                 }
                 string os = "";
                 if (ShowOs)
@@ -2286,7 +2330,7 @@ namespace UniversalPatcher
                         return;
                     }
                 }
-                if (datalogger.StartLogging())
+                if (datalogger.StartLogging(radioVPW.Checked))
                 {
                     timerShowData.Enabled = true;
                     btnStartStop.Text = "Stop Logging";
@@ -2597,7 +2641,7 @@ namespace UniversalPatcher
             dataGridDtcCodes.Rows.Clear();
             dataGridDtcCodes.Columns["Conversion"].Visible = false;
             dataGridDtcCodes.Columns["Scaling"].Visible = false;
-            if (!Connect())
+            if (!Connect(true))
             {
                 return;
             }
@@ -2670,7 +2714,7 @@ namespace UniversalPatcher
 
         private void btnClearCodes_Click(object sender, EventArgs e)
         {
-            Connect();
+            Connect(true);
 
             byte module = (byte)comboModule.SelectedValue;
             if (chkDtcAllModules.Checked)
@@ -2783,11 +2827,11 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        private void QueryPid(PidConfig pc)
+        private void QueryPid(PidConfig pc, bool UseVPW)
         {
             try
             {
-                Connect();
+                Connect(UseVPW);
 
                 ReadValue rv;
                 ReadValue rv2 = new ReadValue();
@@ -2812,11 +2856,11 @@ namespace UniversalPatcher
 
         private void btnQueryPid_Click(object sender, EventArgs e)
         {
-            Connect();
+            Connect(true);
             List<PidConfig> pds = ConvertSelectedPidConfigs();
             foreach (PidConfig pc in pds)
             {
-                QueryPid(pc);
+                QueryPid(pc,true);
             }
         }
 
@@ -2880,7 +2924,7 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect();
+                Connect(radioVPW.Checked);
             }
         }
 
@@ -2900,13 +2944,13 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect();
+                Connect(radioVPW.Checked);
             }
         }
 
         private void btnGetVINCode_Click(object sender, EventArgs e)
         {
-            Connect();
+            Connect(true);
             if (datalogger.LogRunning)
             {
                 datalogger.QueueVINRequest();
@@ -3158,7 +3202,7 @@ namespace UniversalPatcher
             string fName = SelectFile("Select script file", TxtFilter);
             if (fName.Length == 0)
                 return;
-            if (!Connect())
+            if (!Connect(true))
             {
                 return;
             }
@@ -3194,7 +3238,7 @@ namespace UniversalPatcher
             }
 
             dataGridDtcCodes.Rows.Clear();
-            Connect();
+            Connect(true);
             if (datalogger.LogRunning)
             {
                 datalogger.QueueDtcRequest(module, mode);
@@ -3225,7 +3269,7 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect();
+                Connect(radioVPW.Checked);
             }
 
         }
@@ -4156,7 +4200,7 @@ namespace UniversalPatcher
 
         private void btnQueryDevices_Click(object sender, EventArgs e)
         {
-            if (!Connect())
+            if (!Connect(true))
             {
                 return;
             }
@@ -4188,7 +4232,7 @@ namespace UniversalPatcher
 
         private void btnQueryModules_Click(object sender, EventArgs e)
         {
-            if (!Connect())
+            if (!Connect(true))
             {
                 return;
             }
@@ -4260,7 +4304,7 @@ namespace UniversalPatcher
             dataGridDtcCodes.Rows.Clear();
             dataGridDtcCodes.Columns["Conversion"].Visible = true;
             dataGridDtcCodes.Columns["Scaling"].Visible = true;
-            if (!Connect())
+            if (!Connect(true))
             {
                 return;
             }
@@ -4475,7 +4519,7 @@ namespace UniversalPatcher
 
         private void btnQueyPid2_Click(object sender, EventArgs e)
         {
-            Connect();
+            Connect(true);
             List<int> selectedRows = new List<int>();
             foreach (DataGridViewCell cell in dataGridLogProfile.SelectedCells)
             {
@@ -4487,7 +4531,7 @@ namespace UniversalPatcher
             for (int r=0;r<selectedRows.Count;r++)
             {
                 PidConfig pc = (PidConfig)dataGridLogProfile.Rows[selectedRows[r]].DataBoundItem;
-                QueryPid(pc);
+                QueryPid(pc, true);
             }
         }
 

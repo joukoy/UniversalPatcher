@@ -43,15 +43,18 @@ namespace UniversalPatcher
         public bool IsProtocolOpen;
         private const string PortName = "J2534";
         public string ToolName = "";
-        private int periodigMsgId = -1;
-        private int periodigMsgId2 = -1;
+        //private int periodigMsgId = -1;
+        //private int periodigMsgId2 = -1;
         public const string DeviceType = "J2534";
         ulong timeDiff = long.MaxValue;
         long lastTstamp = long.MaxValue;
         readonly ulong ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
         private Dictionary<string, int> protocol_channel;
+        private Dictionary<string, int> periodicMsgIds1;
+        private Dictionary<string, int> periodicMsgIds2;
         private static J2534DotNet.RxStatus? _customfilter;
         private bool isSimulator = false;
+        private bool SeparateProtocolByChannel;
 
         private J2534DotNet.RxStatus CustomFilter
         {
@@ -107,6 +110,8 @@ namespace UniversalPatcher
             ChannelID = -1;
             ChannelID2 = -1;
             protocol_channel = new Dictionary<string, int>();
+            periodicMsgIds1 = new Dictionary<string, int>();
+            periodicMsgIds2 = new Dictionary<string, int>();
             if (jport.Name.ToLower().Contains("sim"))
             {
                 isSimulator = true;
@@ -345,6 +350,107 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        public override bool StartPeriodicMsg(string PeriodicMsg, bool secondary)
+        {
+            ProtocolID proto = Protocol;
+            int ChID = ChannelID;
+            int Interval = 1000;
+            if (secondary)
+            {
+                proto = Protocol2;
+                ChID = ChannelID2;
+            }
+            TxFlag tf = TxFlag.NONE;
+            string[] pParts = PeriodicMsg.Split(':');
+            if (pParts.Length > 1)
+            {
+                Int32.TryParse(pParts[1], out Interval);
+            }
+            if (pParts.Length > 2)
+            {
+                tf = ParseTxFLags(pParts[2]);
+            }
+            byte[] data = pParts[0].Replace(" ", "").ToBytes();
+            PassThruMsg txMsg = new PassThruMsg(Protocol, 0, data);
+            txMsg.TxFlags = tf;
+            int pMsgId = -1;
+            J2534Err jErr = J2534Port.Functions.StartPeriodicMsg(ChID, txMsg, ref pMsgId, Interval);
+            if (jErr != J2534Err.STATUS_NOERROR)
+            {
+                Logger("Periodic message error: " + jErr.ToString());
+                return false;
+            }
+            if (!secondary)
+            {
+                Logger("Started periodic message: " + pParts[0] + " for protocol 1, ID: " + pMsgId.ToString());
+                //periodigMsgId = pMsgId;
+                periodicMsgIds1.Add(PeriodicMsg, pMsgId);
+            }
+            else
+            {
+                Logger("Started periodic message: " + pParts[0] + " for protocol 2, ID: " + pMsgId.ToString());
+                //periodigMsgId2 = pMsgId;
+                periodicMsgIds2.Add(PeriodicMsg, pMsgId);
+            }
+            return true;
+        }
+
+        public override bool StopPeriodicMsg(string PeriodicMsg, bool secondary)
+        {
+            string[] pParts = PeriodicMsg.Split(':');
+            J2534Err err = J2534Err.ERR_FAILED;
+            if (secondary)
+            {
+                if (periodicMsgIds2.ContainsKey(PeriodicMsg))
+                {
+                    Logger("Stopping periodic message: " + pParts[0] + " for protocol 2, ID: " + periodicMsgIds2[PeriodicMsg].ToString());
+                    err = J2534Port.Functions.StopPeriodicMsg(ChannelID2, periodicMsgIds2[PeriodicMsg]);
+                    periodicMsgIds2.Remove(PeriodicMsg);
+                }
+            }
+            else
+            {
+                if (periodicMsgIds1.ContainsKey(PeriodicMsg))
+                {
+                    Logger("Stopping periodic message: " + pParts[0] + " for protocol 1, ID: " + periodicMsgIds1[PeriodicMsg].ToString());
+                    err = J2534Port.Functions.StopPeriodicMsg(ChannelID, periodicMsgIds1[PeriodicMsg]);
+                    periodicMsgIds1.Remove(PeriodicMsg);
+                }
+            }
+            if (err == J2534Err.STATUS_NOERROR)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override bool ClearPeriodicMsg(bool secondary)
+        {
+            J2534Err err;
+            if (secondary)
+            {
+                err = J2534Port.Functions.ClearPeriodicMsgs(ChannelID2);
+                periodicMsgIds2 = new Dictionary<string, int>();
+            }
+            else
+            {
+                err = J2534Port.Functions.ClearPeriodicMsgs(ChannelID);
+                periodicMsgIds1 = new Dictionary<string, int>();
+            }
+            if (err == J2534Err.STATUS_NOERROR)
+            {
+                Logger("Cleared periodic messages for protocol: " + (Convert.ToInt32(secondary) + 1).ToString());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         //Not in use
         private void DataReceiver()
         {
@@ -422,6 +528,7 @@ namespace UniversalPatcher
         {
             try
             {
+                SeparateProtocolByChannel = j2534Init.SeparateProtoByChannel;
                 if (!string.IsNullOrEmpty(j2534Init.Sconfigs))
                 {
                     Debug.WriteLine("Setting Sconfigs: " + j2534Init.Sconfigs);
@@ -463,24 +570,20 @@ namespace UniversalPatcher
                 }
                 if (!string.IsNullOrEmpty(j2534Init.PerodicMsg))
                 {
-                    byte[] data = j2534Init.PerodicMsg.Replace(" ", "").ToBytes();
-                    PassThruMsg txMsg = new PassThruMsg(j2534Init.Protocol, 0, data);
-                    int pMsgId = -1;
-                    J2534Err jErr = J2534Port.Functions.StartPeriodicMsg(ChID, txMsg, ref pMsgId, j2534Init.PeriodicInterval);
-                    if (jErr != J2534Err.STATUS_NOERROR)
+                    //Insert interval between message and txflags:
+                    string[] pParts = j2534Init.PerodicMsg.Split(':');
+                    string pMsg = pParts[0] + ":" + j2534Init.PeriodicInterval.ToString();
+                    if (pParts.Length > 1)
                     {
-                        Logger("Periodic message error: " + jErr.ToString());
-                        //return false;
+                        pMsg += pParts[1];
                     }
                     if (ChID == ChannelID)
                     {
-                        Debug.WriteLine("Started periodic message: "+ j2534Init.PerodicMsg + " for protocol 1, ID: " + pMsgId.ToString());
-                        periodigMsgId = pMsgId;
+                        StartPeriodicMsg(pMsg, false);
                     }
                     else
                     {
-                        Debug.WriteLine("Started periodic message: " + j2534Init.PerodicMsg + " for protocol 2, ID: " + pMsgId.ToString());
-                        periodigMsgId2 = pMsgId;
+                        StartPeriodicMsg(pMsg, true);
                     }
                 }
                 if (string.IsNullOrEmpty(j2534Init.PassFilters))
@@ -566,77 +669,88 @@ namespace UniversalPatcher
                 J2534Err jErr;
                 DateTime startTime = DateTime.Now;
                 NumMessages = 1;
-                jErr = J2534Port.Functions.ReadMsgs((int)ChannelID, ref rxMsgs, ref NumMessages, ReadTimeout);
-                Application.DoEvents();
-                if (jErr == J2534Err.STATUS_NOERROR)
+                bool skip = true;
+                while (skip)
                 {
-                    ulong tNow = (ulong)DateTime.Now.Ticks;
-                    for (int m = 0; m < rxMsgs.Count; m++)
+                    jErr = J2534Port.Functions.ReadMsgs((int)ChannelID, ref rxMsgs, ref NumMessages, ReadTimeout);
+                    Application.DoEvents();
+                    if (jErr == J2534Err.STATUS_NOERROR)
                     {
-                        if (timeDiff == long.MaxValue && rxMsgs.Count > 0)
+                        ulong tNow = (ulong)DateTime.Now.Ticks;
+                        for (int m = 0; m < rxMsgs.Count; m++)
                         {
-                            SetTimeDiff(rxMsgs.Last());
-                        }
-                        if (rxMsgs.Last().Timestamp < lastTstamp && NumMessages > 0)
-                        {
-                            timeDiff = tNow - ((ulong)rxMsgs.Last().Timestamp * ticksPerMicrosecond);
-                            Debug.WriteLine("Time diff: " + timeDiff.ToString());
-                        }
-                        lastTstamp = rxMsgs.Last().Timestamp;
-                        if (AppSettings.LoggerFilterStartOfMessage && rxMsgs[m].RxStatus == RxStatus.START_OF_MESSAGE)
-                        {
-                            Debug.WriteLine("Skipping START_OF_MESSAGE");
-                        }
-                        else if (AppSettings.LoggerFilterStartOfMessage && rxMsgs[m].RxStatus == (RxStatus.TX_MSG_TYPE | RxStatus.TX_INDICATION))
-                        {
-                            Debug.WriteLine("Skipping TX_MSG_TYPE|TX_INDICATION");
-                        }
-                        else if (!string.IsNullOrEmpty(AppSettings.LoggerFilterRxStatusCustom) && rxMsgs[m].RxStatus == CustomFilter)
-                        {
-                            Debug.WriteLine("Skipping: " + CustomFilter.ToString());
-                        }
-                        else
-                        {
-                            //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
-                            //this.Enqueue(new OBDMessage(rxMsgs[m].Data, (ulong)rxMsgs[m].Timestamp, (ulong)OBDError));
-                            OBDMessage oMsg = new OBDMessage(rxMsgs[m].Data, (ulong)tNow, (ulong)OBDError);
-                            oMsg.DevTimeStamp = (ulong)rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
-                            //oMsg.TimeStamp = (ulong)(oMsg.DevTimeStamp + timeDiff);
-                            if (rxMsgs[m].ProtocolID != Protocol && rxMsgs[m].ProtocolID == Protocol2)
+                            if (timeDiff == long.MaxValue && rxMsgs.Count > 0)
                             {
-                                oMsg.SecondaryProtocol = true;
-                                this.Enqueue2(oMsg);
+                                SetTimeDiff(rxMsgs.Last());
+                            }
+                            if (rxMsgs.Last().Timestamp < lastTstamp && NumMessages > 0)
+                            {
+                                timeDiff = tNow - ((ulong)rxMsgs.Last().Timestamp * ticksPerMicrosecond);
+                                Debug.WriteLine("Time diff: " + timeDiff.ToString());
+                            }
+                            lastTstamp = rxMsgs.Last().Timestamp;
+                            if (AppSettings.LoggerFilterStartOfMessage && (rxMsgs[m].RxStatus & RxStatus.START_OF_MESSAGE) == RxStatus.START_OF_MESSAGE)
+                            {
+                                skip = true;
+                                Debug.WriteLine("Skipping START_OF_MESSAGE");
+                            }
+                            else if (AppSettings.LoggerFilterTXIndication && (rxMsgs[m].RxStatus & RxStatus.TX_INDICATION) == RxStatus.TX_INDICATION)
+                            {
+                                skip = true;
+                                Debug.WriteLine("Skipping TX_INDICATION");
+                            }
+                            //else if (AppSettings.LoggerFilterStartOfMessage && rxMsgs[m].RxStatus == (RxStatus.TX_MSG_TYPE | RxStatus.TX_INDICATION))
+                            //{
+                            //   Debug.WriteLine("Skipping TX_MSG_TYPE|TX_INDICATION");
+                            //}
+                            else if (!string.IsNullOrEmpty(AppSettings.LoggerFilterRxStatusCustom) && rxMsgs[m].RxStatus == CustomFilter)
+                            {
+                                skip = true;
+                                Debug.WriteLine("Skipping: " + CustomFilter.ToString());
                             }
                             else
                             {
-                                this.Enqueue(oMsg);
+                                skip = false;
+                                //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
+                                //this.Enqueue(new OBDMessage(rxMsgs[m].Data, (ulong)rxMsgs[m].Timestamp, (ulong)OBDError));
+                                OBDMessage oMsg = new OBDMessage(rxMsgs[m].Data, (ulong)tNow, (ulong)OBDError);
+                                oMsg.DevTimeStamp = (ulong)rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
+                                //oMsg.TimeStamp = (ulong)(oMsg.DevTimeStamp + timeDiff);
+                                if (SeparateProtocolByChannel == false && rxMsgs[m].ProtocolID != Protocol && rxMsgs[m].ProtocolID == Protocol2)
+                                {
+                                    oMsg.SecondaryProtocol = true;
+                                    this.Enqueue2(oMsg);
+                                }
+                                else
+                                {
+                                    this.Enqueue(oMsg);
+                                }
                             }
                         }
-                    }
-                    if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(AppSettings.TimeoutReceive))
-                    {
-                        Debug.WriteLine("J2534 Receive timeout: " + AppSettings.TimeoutReceive.ToString());
-                        return;
-                    }
-                }
-                else
-                {
-                    if (jErr == J2534Err.ERR_DEVICE_NOT_CONNECTED)
-                    {
-                        this.Connected = false;
-                        Thread.Sleep(500);
-                        return;
-                    }
-                    else if (jErr == J2534Err.ERR_BUFFER_EMPTY)
-                    {
-                        if (isSimulator)
+                        if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(AppSettings.TimeoutReceive))
                         {
-                            Thread.Sleep(AppSettings.TimeoutReceive);
+                            Debug.WriteLine("J2534 Receive timeout: " + AppSettings.TimeoutReceive.ToString());
+                            return;
                         }
                     }
                     else
                     {
-                        Debug.WriteLine("Receive error: " + jErr);
+                        if (jErr == J2534Err.ERR_DEVICE_NOT_CONNECTED)
+                        {
+                            this.Connected = false;
+                            Thread.Sleep(500);
+                        }
+                        else if (jErr == J2534Err.ERR_BUFFER_EMPTY)
+                        {
+                            if (isSimulator)
+                            {
+                                Thread.Sleep(AppSettings.TimeoutReceive);
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Receive error: " + jErr);
+                        }
                         return;
                     }
                 }
@@ -665,50 +779,77 @@ namespace UniversalPatcher
                 J2534Err jErr;
                 if (ChannelID2 > -1)
                 {
-                    jErr = J2534Port.Functions.ReadMsgs((int)ChannelID2, ref rxMsgs, ref NumMessages, ReadTimeout);
-                    Application.DoEvents();
-                    if (jErr == J2534Err.STATUS_NOERROR)
+                    bool skip = true;
+                    while (skip)
                     {
-                        for (int m = 0; m < rxMsgs.Count; m++)
+                        jErr = J2534Port.Functions.ReadMsgs((int)ChannelID2, ref rxMsgs, ref NumMessages, ReadTimeout);
+                        Application.DoEvents();
+                        if (jErr == J2534Err.STATUS_NOERROR)
                         {
-                            if (timeDiff == long.MaxValue)
+                            for (int m = 0; m < rxMsgs.Count; m++)
                             {
-                                SetTimeDiff(rxMsgs.Last());
-                            }
-                            //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
-                            //this.Enqueue(new OBDMessage(rxMsgs[m].Data, (ulong)rxMsgs[m].Timestamp, (ulong)OBDError));
-                            OBDMessage msg = new OBDMessage(rxMsgs[m].Data, (ulong)DateTime.Now.Ticks, (ulong)OBDError);
-                            msg.DevTimeStamp = (ulong)rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
-                            //msg.TimeStamp = (ulong)(msg.DevTimeStamp + timeDiff);
-                            if (rxMsgs[m].ProtocolID != Protocol2 && rxMsgs[m].ProtocolID == Protocol)
-                            {
-                                this.Enqueue(msg);
-                            }
-                            else
-                            {
-                                msg.SecondaryProtocol = true;
-                                this.Enqueue2(msg);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (jErr == J2534Err.ERR_DEVICE_NOT_CONNECTED)
-                        {
-                            this.Connected = false;
-                            Thread.Sleep(500);
-                            return;
-                        }
-                        else if (jErr == J2534Err.ERR_BUFFER_EMPTY)
-                        {
-                            if (isSimulator)
-                            {
-                                Thread.Sleep(AppSettings.TimeoutReceive);
+                                if (timeDiff == long.MaxValue)
+                                {
+                                    SetTimeDiff(rxMsgs.Last());
+                                }
+                                if (AppSettings.LoggerFilterStartOfMessage && (rxMsgs[m].RxStatus & RxStatus.START_OF_MESSAGE) == RxStatus.START_OF_MESSAGE)
+                                {
+                                    skip = true;
+                                    Debug.WriteLine("Skipping START_OF_MESSAGE");
+                                }
+                                else if (AppSettings.LoggerFilterTXIndication && (rxMsgs[m].RxStatus & RxStatus.TX_INDICATION) == RxStatus.TX_INDICATION)
+                                {
+                                    skip = true;
+                                    Debug.WriteLine("Skipping TX_INDICATION");
+                                }
+                                //else if (AppSettings.LoggerFilterStartOfMessage && rxMsgs[m].RxStatus == (RxStatus.TX_MSG_TYPE | RxStatus.TX_INDICATION))
+                                //{
+                                //   Debug.WriteLine("Skipping TX_MSG_TYPE|TX_INDICATION");
+                                //}
+                                else if (!string.IsNullOrEmpty(AppSettings.LoggerFilterRxStatusCustom) && rxMsgs[m].RxStatus == CustomFilter)
+                                {
+                                    skip = true;
+                                    Debug.WriteLine("Skipping: " + CustomFilter.ToString());
+                                }
+                                else
+                                {
+                                    skip = false;
+                                    //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
+                                    //this.Enqueue(new OBDMessage(rxMsgs[m].Data, (ulong)rxMsgs[m].Timestamp, (ulong)OBDError));
+                                    OBDMessage msg = new OBDMessage(rxMsgs[m].Data, (ulong)DateTime.Now.Ticks, (ulong)OBDError);
+                                    msg.DevTimeStamp = (ulong)rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
+                                    //msg.TimeStamp = (ulong)(msg.DevTimeStamp + timeDiff);
+                                    if (rxMsgs[m].ProtocolID != Protocol2 && rxMsgs[m].ProtocolID == Protocol)
+                                    {
+                                        this.Enqueue(msg);
+                                    }
+                                    else
+                                    {
+                                        msg.SecondaryProtocol = true;
+                                        this.Enqueue2(msg);
+                                    }
+                                }
                             }
                         }
                         else
                         {
-                            Debug.WriteLine("Receive error: " + jErr);
+                            if (jErr == J2534Err.ERR_DEVICE_NOT_CONNECTED)
+                            {
+                                this.Connected = false;
+                                Thread.Sleep(500);
+                            }
+                            else if (jErr == J2534Err.ERR_BUFFER_EMPTY)
+                            {
+                                if (isSimulator)
+                                {
+                                    Thread.Sleep(AppSettings.TimeoutReceive);
+                                }
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Receive error: " + jErr);
+                            }
+                            return;
                         }
                     }
                 }
@@ -926,11 +1067,11 @@ namespace UniversalPatcher
             {
                 if (!J2534FunctionsIsLoaded)
                 {
-                    Response.Create(ResponseStatus.Success, OBDError);
+                    return Response.Create(ResponseStatus.Success, OBDError);
                 }
                 if (ChannelID2 > -1)
                 {
-                    DisconnectFromSecondProtocol();
+                    DisConnectSecondaryProtocol();
                 }
                 if (ChannelID > -1)
                 {
@@ -1017,13 +1158,18 @@ namespace UniversalPatcher
         {
             try
             {
-                Debug.WriteLine("Disconnecting primary protocol");
 
-                if (periodigMsgId > -1)
+                foreach (KeyValuePair<string, int> pMsg in periodicMsgIds1)
                 {
-                    Debug.WriteLine("Stopping perodic message, id: " + periodigMsgId.ToString());
-                    J2534Port.Functions.StopPeriodicMsg(ChannelID, periodigMsgId);
+                    Logger("Stopping perodic message, id: " + pMsg.Value.ToString());
+                    J2534Port.Functions.StopPeriodicMsg(ChannelID, pMsg.Value);
                 }
+                if (AppSettings.ClearFuncAddrOnDisconnect)
+                {
+                    Logger("Clearing functional address table (primary protocol)");
+                    ClearFunctMsgLookupTable(false);
+                }
+                Logger("Disconnecting primary protocol");
                 var item = protocol_channel.First(x => x.Value == ChannelID);
                 OBDError = J2534Port.Functions.Disconnect((int)ChannelID);
                 protocol_channel.Remove(item.Key);
@@ -1047,26 +1193,37 @@ namespace UniversalPatcher
         /// <summary>
         /// Disconnect from Second protocol
         /// </summary>
-        private Response<J2534Err> DisconnectFromSecondProtocol()
+        public override bool DisConnectSecondaryProtocol()
         {
             try
             {
-                Debug.WriteLine("Disconnecting secondary protocol");
-                if (periodigMsgId2 > -1)
+                if (periodicMsgIds2.Count > 0)
                 {
-                    Debug.WriteLine("Stopping perodic message, id: " + periodigMsgId2.ToString());
-                    J2534Port.Functions.StopPeriodicMsg(ChannelID2, periodigMsgId2);
+                    foreach (KeyValuePair<string, int> pMsg in periodicMsgIds2)
+                    {
+                        Logger("Stopping perodic message, id: " + pMsg.Value.ToString());
+                        J2534Port.Functions.StopPeriodicMsg(ChannelID2, pMsg.Value);
+                    }
                 }
-                OBDError = J2534Port.Functions.Disconnect((int)ChannelID2);
-                var item = protocol_channel.First(x => x.Value == ChannelID2);
-                protocol_channel.Remove(item.Key);
+                if (AppSettings.ClearFuncAddrOnDisconnect)
+                {
+                    Logger("Clearing functional address table (secondary protocol)");
+                    ClearFunctMsgLookupTable(true);
+                }
+                Logger("Disconnecting secondary protocol");
+                if (ChannelID != ChannelID2)
+                {
+                    OBDError = J2534Port.Functions.Disconnect((int)ChannelID2);
+                    var item = protocol_channel.First(x => x.Value == ChannelID2);
+                    protocol_channel.Remove(item.Key);
+                }
                 ChannelID2 = -1;
                 if (OBDError != J2534Err.STATUS_NOERROR)
                 {
                     Debug.WriteLine("Error disconnecting protocol: " + OBDError.ToString());
-                    return Response.Create(ResponseStatus.Error, OBDError);
+                    return false;
                 }
-                return Response.Create(ResponseStatus.Success, OBDError);
+                return true;
             }
             catch (Exception ex)
             {
@@ -1077,7 +1234,7 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
-            return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
+            return false;
         }
 
         /// <summary>
@@ -1371,18 +1528,6 @@ namespace UniversalPatcher
             }
         }
 
-        public override bool DisConnectSecondaryProtocol()
-        {
-            if( DisconnectFromSecondProtocol().Status == ResponseStatus.Success)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public override bool ConnectSecondaryProtocol(J2534InitParameters j2534Init)
         {
             try
@@ -1418,7 +1563,7 @@ namespace UniversalPatcher
                     Logger("Failed to set parameters");
                     if (ChannelID != ChannelID2)
                     {
-                        DisconnectFromSecondProtocol();
+                        DisConnectSecondaryProtocol();
                     }
                     return false;
                 }

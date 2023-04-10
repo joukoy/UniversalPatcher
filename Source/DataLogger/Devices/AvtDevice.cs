@@ -165,6 +165,21 @@ namespace UniversalPatcher
             LoggerBold("SetJ2534Configs not implemented for " + DeviceType);
             return false;
         }
+        public override bool StartPeriodicMsg(string PeriodicMsg, bool secondary)
+        {
+            LoggerBold("StartPeriodicMsg not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool StopPeriodicMsg(string PeriodicMsg, bool secondary)
+        {
+            LoggerBold("StopPeriodicMsg not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool ClearPeriodicMsg(bool secondary)
+        {
+            LoggerBold("ClearPeriodicMsg not implemented for " + DeviceType);
+            return false;
+        }
 
         /// <summary>
         /// Not yet implemented.

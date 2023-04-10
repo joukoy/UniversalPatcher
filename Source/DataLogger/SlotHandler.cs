@@ -12,9 +12,9 @@ namespace UniversalPatcher
 {
     public class SlotHandler
     {
-        public SlotHandler()
+        public SlotHandler(bool UseVPW)
         {
-
+            VPWProtocol = UseVPW;
         }
         public int ReceivedHPRows = 0;
         public int ReceivedLPRows = 0;
@@ -32,6 +32,8 @@ namespace UniversalPatcher
         private double[] newPidValues;
         private double[] newHighPriorityPidValues;
         private double[] lowPriorityPidValues;
+
+        public bool VPWProtocol = true;
 
         public class Slot
         {
@@ -160,6 +162,7 @@ namespace UniversalPatcher
                 byte SlotNr = 0;
                 byte position = 1;
                 sbyte step = 1;
+                int bytesPerSlot = 6;
 
                 ReceivingPids = new List<int>();
                 Slots = new List<Slot>();
@@ -176,6 +179,10 @@ namespace UniversalPatcher
                     SlotNr = 0xFE;
                 }
 
+                if (!VPWProtocol)
+                {
+                    bytesPerSlot = 7;
+                }
                 //Generate unique list of pids, HighPriority first:
                 for (int p = 0; p < datalogger.PidProfile.Count; p++)
                 {
@@ -230,7 +237,7 @@ namespace UniversalPatcher
                 {
                     Slot slot = new Slot(SlotNr);
                     bool isHP = false;
-                    while (pidIndex < ReceivingPids.Count && (slot.Bytes + GetElementSize((InDataType)pidDataTypes[pidIndex])) <= 6)
+                    while (pidIndex < ReceivingPids.Count && (slot.Bytes + GetElementSize((InDataType)pidDataTypes[pidIndex])) <= bytesPerSlot)
                     {
                         if (HighPriorityPids.Contains(ReceivingPids[pidIndex]))
                         {
@@ -254,35 +261,82 @@ namespace UniversalPatcher
                 }
 
                 //Slots planned, let's create commands:
-                for (int s = 0; s < Slots.Count; s++)
+                if (VPWProtocol)
                 {
-                    pidIndex = 0;
-                    position = 1;
-                    byte bytes = 0;
-                    while (pidIndex < Slots[s].Pids.Count)
+                    for (int s = 0; s < Slots.Count; s++)
                     {
+                        pidIndex = 0;
+                        position = 1;
+                        byte bytes = 0;
+                        while (pidIndex < Slots[s].Pids.Count)
+                        {
+                            SlotNr = Slots[s].Id;
+                            byte[] msg = { datalogger.priority, DeviceId.Pcm, DeviceId.Tool, 0x2C, SlotNr, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+                            if (Slots[s].Pids[pidIndex] > ushort.MaxValue) //RAM
+                            {
+                                msg[6] = (byte)(Slots[s].Pids[pidIndex] >> 16);
+                                msg[7] = (byte)(Slots[s].Pids[pidIndex] >> 8);
+                                msg[8] = (byte)(Slots[s].Pids[pidIndex]);
+                                bytes = Slots[s].PidSize(pidIndex);
+                                byte cfgByte = CreateConfigByte(position, bytes, (byte)DefineBy.Address);
+                                msg[5] = cfgByte;
+                            }
+                            else
+                            {
+                                msg[6] = (byte)(Slots[s].Pids[pidIndex] >> 8);
+                                msg[7] = (byte)(Slots[s].Pids[pidIndex]);
+                                bytes = Slots[s].PidSize(pidIndex);
+                                byte cfgByte = CreateConfigByte(position, bytes, (byte)DefineBy.Pid);
+                                msg[5] = cfgByte;
+                                //Debug.WriteLine("ConfigByte: " + cfgByte.ToString("X"));
+                            }
+                            Debug.WriteLine("Pid setup msg:" + BitConverter.ToString(msg));
+                            bool resp = datalogger.LogDevice.SendMessage(new OBDMessage(msg), 1);
+                            if (!resp)
+                            {
+                                LoggerBold("Error, Pid setup failed");
+                                return false;
+                            }
+                            OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
+                            while (rMsg != null)
+                            {
+                                if (rMsg.Length > 4)
+                                {
+                                    Debug.WriteLine("Response: " + rMsg.ToString());
+                                    if (rMsg[3] == 0x7f)
+                                    {
+                                        LoggerBold("Pid " + Slots[s].Pids[pidIndex].ToString("X4") + " Error: " + PcmResponses[rMsg.GetBytes().Last()]);
+                                        return false;
+                                    }
+                                    if (rMsg[3] == 0x6C)
+                                    {
+                                        break;
+                                    }
+                                }
+                                rMsg = datalogger.LogDevice.ReceiveMessage();
+                            }
+                            pidIndex++;
+                            position += bytes;
+                        }
+                    }
+                }
+                else //CAN
+                {
+                    for (int s = 0; s < Slots.Count; s++)
+                    {
+                        pidIndex = 0;
+                        position = 1;
+                        byte bytes = 0;
                         SlotNr = Slots[s].Id;
-                        byte[] msg = { datalogger.priority, DeviceId.Pcm, DeviceId.Tool, 0x2C, SlotNr, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-                        if (Slots[s].Pids[pidIndex] > ushort.MaxValue) //RAM
+                        List<byte> msg = new List<byte> { 0x00, 0x00, 0x07, 0xE0, 0x2C, SlotNr };
+                        while (pidIndex < Slots[s].Pids.Count)
                         {
-                            msg[6] = (byte)(Slots[s].Pids[pidIndex] >> 16);
-                            msg[7] = (byte)(Slots[s].Pids[pidIndex] >> 8);
-                            msg[8] = (byte)(Slots[s].Pids[pidIndex]);
-                            bytes = Slots[s].PidSize(pidIndex);
-                            byte cfgByte = CreateConfigByte(position, bytes, (byte)DefineBy.Address);
-                            msg[5] = cfgByte;
+                            msg.Add((byte)(Slots[s].Pids[pidIndex] >> 8));
+                            msg.Add((byte)(Slots[s].Pids[pidIndex]));
+                            pidIndex++;
                         }
-                        else
-                        {
-                            msg[6] = (byte)(Slots[s].Pids[pidIndex] >> 8);
-                            msg[7] = (byte)(Slots[s].Pids[pidIndex]);
-                            bytes = Slots[s].PidSize(pidIndex);
-                            byte cfgByte = CreateConfigByte(position, bytes, (byte)DefineBy.Pid);
-                            msg[5] = cfgByte;
-                            //Debug.WriteLine("ConfigByte: " + cfgByte.ToString("X"));
-                        }
-                        Debug.WriteLine("Pid setup msg:" + BitConverter.ToString(msg));
-                        bool resp = datalogger.LogDevice.SendMessage(new OBDMessage(msg), 1);
+                        Debug.WriteLine("Pid setup msg:" + BitConverter.ToString(msg.ToArray()));
+                        bool resp = datalogger.LogDevice.SendMessage(new OBDMessage(msg.ToArray()), 1);
                         if (!resp)
                         {
                             LoggerBold("Error, Pid setup failed");
@@ -291,19 +345,6 @@ namespace UniversalPatcher
                         OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
                         while (rMsg != null)
                         {
-                            if (rMsg.Length > 4)
-                            {
-                                Debug.WriteLine("Response: " + rMsg.ToString());
-                                if (rMsg[3] == 0x7f)
-                                {
-                                    LoggerBold("Pid " + Slots[s].Pids[pidIndex].ToString("X4") + " Error: " + PcmResponses[rMsg.GetBytes().Last()]);
-                                    return false;
-                                }
-                                if (rMsg[3] == 0x6C)
-                                {
-                                    break;
-                                }
-                            }
                             rMsg = datalogger.LogDevice.ReceiveMessage();
                         }
                         pidIndex++;
@@ -355,7 +396,34 @@ namespace UniversalPatcher
 
         public byte[] CreateNextSlotRequestMessage()
         {
-            List<byte> msg = new List<byte> { datalogger.priority, DeviceId.Pcm, DeviceId.Tool, Mode.SendDynamicData, datalogger.Responsetype };
+            List<byte> msg;
+            if (VPWProtocol)
+            {
+                msg = new List<byte> { datalogger.priority, DeviceId.Pcm, DeviceId.Tool, Mode.SendDynamicData, datalogger.Responsetype };
+            }
+            else
+            {
+                byte mode = 0;
+                switch(datalogger.Responsetype)
+                {
+                    case ResponseType.SendOnce:
+                        mode = 1;
+                        break;
+                    case ResponseType.SendSlowly:
+                        mode = 2;
+                        break;
+                    case ResponseType.SendMedium1:
+                        mode = 3;
+                        break;
+                    case ResponseType.SendMedium2:
+                        mode = 3;
+                        break;
+                    case ResponseType.SendFast:
+                        mode = 4;
+                        break;
+                }
+                msg = new List<byte> { 0x00, 0x00, 0x07, 0xE0, 0xAA, mode };
+            }
             try
             {
                 int addedHighPrioSlots = 0;
@@ -511,14 +579,30 @@ namespace UniversalPatcher
             {
                 if (msg.Length > 6)
                 {
-                    if (msg[1] != DeviceId.Tool || msg[2] != DeviceId.Pcm)
+                    int pos = 5; 
+                    if (VPWProtocol)
                     {
-                        Debug.WriteLine("This message is not for us?");
-                        return retVal;
+                        if (msg[1] != DeviceId.Tool || msg[2] != DeviceId.Pcm)
+                        {
+                            Debug.WriteLine("This message is not for us?");
+                            return retVal;
+                        }
+                    }
+                    else
+                    {
+                        if (msg[0] != 0x00 || msg[3] != 0xE8)
+                        {
+                            Debug.WriteLine("This message is not for us?");
+                            return retVal;
+                        }
                     }
                     byte SlotNr = msg[4];
                     Debug.WriteLine("Parsing message: " + msg.ToString() + " - Slot: " + SlotNr.ToString("X"));
-                    int pos = 5;
+                    if (!SlotIndex.ContainsKey(SlotNr))
+                    {
+                        Debug.WriteLine("Slot not found: " + SlotNr.ToString("X"));
+                        return retVal;
+                    }
                     Slot slot = Slots[SlotIndex[SlotNr]];
                     if (slot == null)
                     {

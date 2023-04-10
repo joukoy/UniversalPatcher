@@ -71,6 +71,21 @@ namespace UniversalPatcher
             Debug.WriteLine("SetJ2534Configs not implemented for " + DeviceType);
             return false;
         }
+        public override bool StartPeriodicMsg(string PeriodicMsg, bool secondary)
+        {
+            Debug.WriteLine("StartPeriodicMsg not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool StopPeriodicMsg(string PeriodicMsg, bool secondary)
+        {
+            Debug.WriteLine("StopPeriodicMsg not implemented for " + DeviceType);
+            return false;
+        }
+        public override bool ClearPeriodicMsg(bool secondary)
+        {
+            Debug.WriteLine("ClearPeriodicMsg not implemented for " + DeviceType);
+            return false;
+        }
 
 
         /// <summary>

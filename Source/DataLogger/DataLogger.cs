@@ -17,9 +17,10 @@ namespace UniversalPatcher
 {
     public class DataLogger
     {
-        public DataLogger()
+        public DataLogger(bool UseVPW)
         {
             Receiver = new MessageReceiver();
+            VPWProtocol = UseVPW;
         }
         private CancellationTokenSource logTokenSource = new CancellationTokenSource();
         private CancellationTokenSource logWriterTokenSource = new CancellationTokenSource();
@@ -64,6 +65,7 @@ namespace UniversalPatcher
         public  int maxSlotsPerRequest = 4;   //How many Slots before asking more
         public  int maxSlotsPerMessage = 4;   //How many Slots in one Slot request message
         public  bool HighPriority = false;
+        public bool VPWProtocol = true;
 
         private enum QueueCmd
         {
@@ -381,7 +383,7 @@ namespace UniversalPatcher
                     pc.Math = "X";
                     PidProfile.Add(pc);
                 }
-                slothandler = new SlotHandler();
+                slothandler = new SlotHandler(true);
             }
             catch (Exception ex)
             {
@@ -420,20 +422,27 @@ namespace UniversalPatcher
         }
 
 
-        public  ReadValue QuerySinglePidValue(int addr, ProfileDataType dataType)
+        public ReadValue QuerySinglePidValue(int addr, ProfileDataType dataType)
         {
             ReadValue rv = new ReadValue();
             try
             {
                 Receiver.SetReceiverPaused(true);
                 OBDMessage request = null;
-                if (addr > ushort.MaxValue) //RAM
+                if (VPWProtocol)
                 {
-                    request = new OBDMessage(new byte[] { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, 0x23, (byte)(addr >> 16), (byte)(addr >> 8), (byte)addr, 0x01 });
+                    if (addr > ushort.MaxValue) //RAM
+                    {
+                        request = new OBDMessage(new byte[] { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, 0x23, (byte)(addr >> 16), (byte)(addr >> 8), (byte)addr, 0x01 });
+                    }
+                    else
+                    {
+                        request = new OBDMessage(new byte[] { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, 0x22, (byte)(addr >> 8), (byte)addr, 0x01 });
+                    }
                 }
-                else
+                else //CAN
                 {
-                    request = new OBDMessage(new byte[] { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, 0x22, (byte)(addr >> 8), (byte)addr, 0x01 });
+                    request = new OBDMessage(new byte[] { 0x00, 0x00, 0x07, 0xE0, 0x22, (byte)(addr >> 8), (byte)addr });
                 }
                 if (LogDevice.SendMessage(request,1))
                 {
@@ -446,10 +455,14 @@ namespace UniversalPatcher
                         Receiver.SetReceiverPaused(false);
                         return rv;
                     }
-
+                    int rPos;
+                    if (VPWProtocol)
+                        rPos = 3;
+                    else
+                        rPos = 4;
                     while (resp != null)
                     {
-                        if (resp.Length > 3 && resp[3] == 0x7f)
+                        if (resp.Length > rPos && resp[rPos] == 0x7f)
                         {
                             string errStr = "Unknown error";
                             int p = resp.Length - 1;
@@ -492,6 +505,11 @@ namespace UniversalPatcher
         {
             try
             {
+                if (!VPWProtocol)
+                {
+                    Debug.WriteLine("No bus quiet for CAN");
+                    return true;
+                }
                 Debug.WriteLine("Set bus quiet");
                 byte[] quietMsg = { priority, DeviceId.Broadcast, DeviceId.Tool, Mode.ExitKernel };
                 bool m = LogDevice.SendMessage(new OBDMessage(quietMsg), 10);
@@ -781,52 +799,67 @@ namespace UniversalPatcher
             logTask.Wait(300);
         }
 
-        public  bool StartLogging()
+        public bool StartLogging(bool UseVPW)
         {
             try
             {
+                VPWProtocol = UseVPW;
                 ReceivedBytes = 0;
 
-                if (Responsetype == ResponseType.SendOnce)
-                {
-                    passive = false;
-                    maxSlotsPerMessage = 6;
-                    maxSlotsPerRequest = 6;
-                }
-                else
-                {
-                    passive = true;
-                    maxSlotsPerMessage = 4;
-                    maxSlotsPerRequest = 4;
-                }
-
-                if (Responsetype == ResponseType.SendFast)
-                {
-                    Responsetype = ResponseType.SendMedium2;    //Can't start with 0x24
-                }
-
-                if (LogDevice == null )
+                if (LogDevice == null)
                 {
                     LoggerBold("Connection failed");
                     return false;
                 }
-
                 if (Receiver.ReceiveLoopRunning)
                 {
                     Receiver.StopReceiveLoop();
                 }
-
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
                 LogDevice.SetReadTimeout(AppSettings.TimeoutLoggingReceive);
                 LogDevice.SetWriteTimeout(AppSettings.TimeoutLoggingWrite);
 
-                if (QueryDevicesOnBus(false).Status != ResponseStatus.Success)
-                    return false;
-                if (!SetBusQuiet())
-                    return false;
-                if (!SetBusQuiet())
-                    return false;
-                if (!AnalyzerRunning)
+                if (VPWProtocol)
+                {
+                    if (Responsetype == ResponseType.SendOnce)
+                    {
+                        passive = false;
+                        maxSlotsPerMessage = 6;
+                        maxSlotsPerRequest = 6;
+                    }
+                    else
+                    {
+                        passive = true;
+                        maxSlotsPerMessage = 4;
+                        maxSlotsPerRequest = 4;
+                    }
+                    if (Responsetype == ResponseType.SendFast)
+                    {
+                        Responsetype = ResponseType.SendMedium2;    //VPW Can't start with 0x24
+                    }
+                    if (QueryDevicesOnBus(false).Status != ResponseStatus.Success)
+                        return false;
+                    if (!SetBusQuiet())
+                        return false;
+                    if (!SetBusQuiet())
+                        return false;
+                }
+                else
+                { 
+                    maxSlotsPerMessage = 5;
+                    maxSlotsPerRequest = 5;
+                    if (Responsetype == ResponseType.SendOnce)
+                    {
+                        passive = false;
+                    }
+                    else
+                    {
+                        passive = true;
+                    }
+                }
+
+
+                if (AnalyzerRunning == false && UseVPW == true)
                 {
                     if (!LogDevice.SetLoggingFilter())
                         return false;
@@ -837,7 +870,7 @@ namespace UniversalPatcher
                 //Thread.Sleep(100);
                 Logger("Pid setup...");
                 Application.DoEvents();
-                slothandler = new SlotHandler();
+                slothandler = new SlotHandler(UseVPW);
                 bool resp = slothandler.CreatePidSetupMessages();
                 if (!resp)
                 {
@@ -896,7 +929,7 @@ namespace UniversalPatcher
             }
         }
 
-        public  bool RequestNextSlots()
+        public bool RequestNextSlots()
         {
             OBDMessage msg;
             byte[] rq = slothandler.CreateNextSlotRequestMessage();
@@ -1186,7 +1219,11 @@ namespace UniversalPatcher
                 {
                     Debug.WriteLine("Seconds since last testerpresent: " + DateTime.Now.Subtract(lastPresent));
                     {
-                        byte[] presentMsg = { priority, DeviceId.Broadcast, DeviceId.Tool, 0x3F };
+                        byte[] presentMsg;
+                        if (VPWProtocol)
+                            presentMsg = new byte[]{ priority, DeviceId.Broadcast, DeviceId.Tool, 0x3F };
+                        else
+                            presentMsg = new byte[] { 0x00, 0x00, 0x07, 0xe0, 0x3e };
                         LogDevice.SendMessage(new OBDMessage(presentMsg), -maxSlotsPerRequest);
                         lastPresent = DateTime.Now;
                         Debug.WriteLine("Sent Tester present, force: " + force);
@@ -1209,42 +1246,52 @@ namespace UniversalPatcher
                 if (msg.Length > 6)
                 {
                     Debug.WriteLine("Parsing message: " + msg.ToString());
-                    int pos = 5;
+                    int pos;
+                    if (VPWProtocol)
+                        pos = 6;
+                    else //CAN
+                        pos = 7;
                     double val = 0;
                     switch (datatype)
                     {
                         case ProfileDataType.UBYTE:
-                            val = (byte)msg[6];
-                            pos++;
+                            val = (byte)msg[pos];
                             break;
                         case ProfileDataType.SBYTE:
-                            val = (sbyte)msg[6];
-                            pos++;
+                            val = (sbyte)msg[pos];
                             break;
                         case ProfileDataType.UWORD:
-                            val = ReadUint16(msg.GetBytes(), 6, true);
-                            pos += 2;
+                            val = ReadUint16(msg.GetBytes(), (uint)pos, true);
                             break;
                         case ProfileDataType.SWORD:
-                            val = ReadInt16(msg.GetBytes(), 6,true);
-                            pos += 2;
+                            val = ReadInt16(msg.GetBytes(), (uint)pos,true);
                             break;
                     }
                     ReadValue rv = new ReadValue();
-                    if (msg[3] == 0x62)
+                    if (VPWProtocol)
                     {
-                        rv.PidNr = ReadUint16(msg.GetBytes(), 4, true);
+                        if (msg[3] == 0x62)
+                        {
+                            rv.PidNr = ReadUint16(msg.GetBytes(), 4, true);
+                        }
+                        else if (msg[3] == 0x63)
+                        {
+                            byte[] tmp = new byte[4];
+                            Array.Copy(msg.GetBytes(), 4, tmp, 2, 2);
+                            tmp[1] = 0xFF;
+                            rv.PidNr = (int)ReadUint32(tmp, 0, true);
+                        }
                     }
-                    else if (msg[3] == 0x63)
+                    else //CAN
                     {
-                        byte[] tmp = new byte[4];
-                        Array.Copy(msg.GetBytes(), 4, tmp, 2, 2);
-                        tmp[1] = 0xFF;
-                        rv.PidNr = (int)ReadUint32(tmp, 0, true);
+                        if (msg[4] == 0x62)
+                        {
+                            rv.PidNr = ReadUint16(msg.GetBytes(), 5, true);
+                        }
                     }
                     rv.PidValue = val;
+                    Debug.WriteLine("Pid: " + rv.PidNr + ", Value: " + val);
                     return rv;
-                    //Debug.WriteLine("Pid: " + rv.PidName + ", "+ pc.DataType + ", " + val + " => " + pc.Math + " => " + rv.PidValue);
                 }
             }
             catch (Exception ex)
@@ -1265,18 +1312,21 @@ namespace UniversalPatcher
             lastPresent = DateTime.Now;
             if (!RequestNextSlots())
                 return false;
-            if (Responsetype == ResponseType.SendFast)
+            if (VPWProtocol)
             {
-                Responsetype = ResponseType.SendMedium2;
-            }
-            else if (Responsetype == ResponseType.SendMedium2)
-            {
-                Responsetype = ResponseType.SendFast;
-            }
-            if (LogDevice.LogDeviceType == LoggingDevType.Other) //If Elm device, need to wait for prompt
-            {
-                if (!RequestNextSlots())
-                    return false;
+                if (Responsetype == ResponseType.SendFast)
+                {
+                    Responsetype = ResponseType.SendMedium2;
+                }
+                else if (Responsetype == ResponseType.SendMedium2)
+                {
+                    Responsetype = ResponseType.SendFast;
+                }
+                if (LogDevice.LogDeviceType == LoggingDevType.Other) //If Elm device, need to wait for prompt
+                {
+                    if (!RequestNextSlots())
+                        return false;
+                }
             }
             return true;
         }
@@ -1360,20 +1410,43 @@ namespace UniversalPatcher
         private  bool ValidateMessage(OBDMessage oMsg, ref int SlotCount)
         {
             byte lastSlot = slothandler.Slots.Last().Id;
-            if (!Utility.CompareArraysPart(oMsg.GetBytes(), new byte[] { priority, DeviceId.Tool, DeviceId.Pcm }))
+            int bytePos;
+            if (VPWProtocol)
             {
-                Debug.WriteLine("Unknown msg");
-                return false;
+                if (!Utility.CompareArraysPart(oMsg.GetBytes(), new byte[] { priority, DeviceId.Tool, DeviceId.Pcm }))
+                {
+                    Debug.WriteLine("Unknown msg");
+                    return false;
+                }
+                if (oMsg.Length < 11)
+                {
+                    Debug.WriteLine("Short msg");
+                    return false;
+                }
+                byte slot = oMsg[4];
+                if ((reverseSlotNumbers && slot < lastSlot) || (!reverseSlotNumbers && slot > lastSlot))    //It's not slot. Maybe 2A ?
+                {
+                    return false;
+                }
+                bytePos = 3;
+            }
+            else
+            {
+                if (oMsg.Length < 8)
+                {
+                    Debug.WriteLine("Short msg");
+                    return false;
+                }
+                if (oMsg[0] != 0x00 || oMsg[1] != 0x00 || oMsg[3] != 0xE8)
+                {
+                    Debug.WriteLine("Unknown msg");
+                    return false;
+                }
+                bytePos = 4;
             }
 
-            if (oMsg.Length < 11)
-            {
-                Debug.WriteLine("Short msg");
-                return false;
-            }
 
-            byte[] data = oMsg.GetBytes();
-            byte PcmResponse = data[3];
+            byte PcmResponse = oMsg[bytePos];
             if (PcmResponse == 0x7F)
             {
                 Debug.WriteLine(oMsg.ToString() + ": " + PcmResponses[oMsg.GetBytes().Last()]);
@@ -1381,11 +1454,6 @@ namespace UniversalPatcher
                 return false;
             }
 
-            byte slot = data[4];
-            if ((reverseSlotNumbers && slot < lastSlot) || (!reverseSlotNumbers && slot > lastSlot))    //It's not slot. Maybe 2A ?
-            {
-                return false;
-            }
 
             return true;
         }
@@ -1565,7 +1633,9 @@ namespace UniversalPatcher
                             break;
                         }
 
-                        OBDMessage oMsg = LogDevice.ReceiveLogMessage();
+                        OBDMessage oMsg;
+                        oMsg= LogDevice.ReceiveLogMessage();
+
                         if (oMsg == null)
                         {
                             Debug.WriteLine("Received null message");
@@ -1598,6 +1668,7 @@ namespace UniversalPatcher
                         {
                             SendTesterPresent(false);
                         }
+                        Debug.WriteLine("Decoding message");
                         slothandler.HandleSlotMessage(oMsg);
                         Application.DoEvents();
                     } //Inner logloop

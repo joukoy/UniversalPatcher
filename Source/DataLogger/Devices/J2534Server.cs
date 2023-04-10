@@ -107,7 +107,7 @@ namespace UniversalPatcher
                                 switch (cmd)
                                 {
                                     case j2534Command.quit:
-                                        Logger("quit\n");
+                                        //Logger("quit\n");
                                         running = false;
                                         break;
                                     case j2534Command.Initialize:
@@ -269,12 +269,44 @@ namespace UniversalPatcher
                                             retVal = failMessage;
                                         }
                                         break;
+                                    case j2534Command.StartPeriodicMsg:
+                                        secondary = Convert.ToBoolean(data.Last());
+                                        Array.Resize(ref data, data.Length - 1);
+                                        string pMsg = System.Text.Encoding.Default.GetString(data);
+                                        if (!LogDevice.StartPeriodicMsg(pMsg, secondary))
+                                        {
+                                            Logger("Starting periodic message failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
+                                    case j2534Command.StopPeriodicMsg:
+                                        secondary = Convert.ToBoolean(data.Last());
+                                        Array.Resize(ref data, data.Length - 1);
+                                        pMsg = System.Text.Encoding.Default.GetString(data);
+                                        if (!LogDevice.StopPeriodicMsg(pMsg, secondary))
+                                        {
+                                            Logger("Stopping periodic message failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
+                                    case j2534Command.ClearPeriodicMsg:
+                                        Logger("Clearing periodic messages");
+                                        secondary = Convert.ToBoolean(data[0]);
+                                        if (!LogDevice.ClearPeriodicMsg(secondary))
+                                        {
+                                            Logger("Clear periodic messages failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
                                     default:
                                         LoggerBold("Unknown command!" + msg[0].ToString("X2"));
                                         retVal = failMessage;
                                         break;
                                 }
-                                responsePipeServer.Write(retVal, 0, retVal.Length);
+                                if (cmd != j2534Command.quit)
+                                {
+                                    responsePipeServer.Write(retVal, 0, retVal.Length);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -306,7 +338,8 @@ namespace UniversalPatcher
             Logger("J2534 Server Quits");
             LogDevice.Dispose();
             Application.DoEvents();
-            Thread.Sleep(1000);
+            Thread.Sleep(100);
+            Application.DoEvents();
             Environment.Exit(0);
         }
 

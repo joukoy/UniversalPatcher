@@ -451,6 +451,9 @@ public class Upatcher
         DeleteFromFunctMsgLookupTable,
         ClearFunctMsgLookupTable,
         SetJ2534Configs,
+        StartPeriodicMsg,
+        StopPeriodicMsg,
+        ClearPeriodicMsg,
         quit
     }
     //

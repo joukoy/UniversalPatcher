@@ -284,6 +284,18 @@ namespace UniversalPatcher
         /// Clears the functional address table for J2534 device
         /// </summary>
         public abstract bool SetJ2534Configs(string Configs, bool secondary);
+        /// <summary>
+        /// Start periodic message for J2534 device
+        /// </summary>
+        public abstract bool StartPeriodicMsg(string PeriodicMsg, bool secondary);
+        /// <summary>
+        /// Stop periodic message for J2534 device
+        /// </summary>
+        public abstract bool StopPeriodicMsg(string PeriodicMsg, bool secondary);
+        /// <summary>
+        /// Clear periodic messages from J2534 device
+        /// </summary>
+        public abstract bool ClearPeriodicMsg(bool secondary);
 
         /// <summary>
         /// Reads a message from the VPW bus and returns it.
@@ -396,7 +408,7 @@ namespace UniversalPatcher
                 }
                 MsgEventparameter msg = new MsgEventparameter(message);
                 OnMsgReceived(msg);
-                if (message.ElmPrompt || (message.Length > 4 && message.GetBytes()[3] == 0x6A))
+                //if (message.ElmPrompt || (message.Length > 4 && message.GetBytes()[3] == 0x6A))
                 {
                     lock (this.logQueue)
                     {

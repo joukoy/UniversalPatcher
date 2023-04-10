@@ -61,9 +61,11 @@ namespace UniversalPatcher
             LoggerFilterStartOfMessage = true;
             LoggerFilterTXIndication = true;
             LoggerFilterRxStatusCustom = "";
+            LoggerUseVPW = true;
             LoggerConsoleDisplayInterval = 200;
             RetryWriteTimes = 3;
             RetryWriteDelay = 10;
+            ClearFuncAddrOnDisconnect = true;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
             TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
@@ -185,6 +187,7 @@ namespace UniversalPatcher
         public int LoggerBaudRate { get; set; }
         public bool LoggerUsePriority { get; set; }
         public bool LoggerUseFilters { get; set; }
+        public bool LoggerUseVPW { get; set; }
         public Size LoggerWindowSize { get; set; }
         public FormWindowState LoggerWindowState { get; set; }
         public Point LoggerWindowPosition { get; set; }
@@ -230,6 +233,7 @@ namespace UniversalPatcher
         public int LoggerConsoleDisplayInterval { get; set; }
         public int RetryWriteTimes { get; set; }
         public int RetryWriteDelay { get; set; }
+        public bool ClearFuncAddrOnDisconnect { get; set; }
 
         public TimeoutScenario TimeoutLoggingActive { get; set; }
         public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }
