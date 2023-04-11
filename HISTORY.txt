@@ -621,3 +621,5 @@
 - Logger: OBDScript: Read response using different protocol than request: <request>:p<responses>, example: 00 00 07 DF 09 02:p1
 - Logger: Initial support for CAN protocol in logging
 
+0.22.05
+- Logger: Fixed bug: Reconnect using always CAN protocol when VPW selected

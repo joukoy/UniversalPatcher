@@ -446,14 +446,21 @@ namespace UniversalPatcher
                 }
                 if (LogDevice.SendMessage(request,1))
                 {
-                    Thread.Sleep(2);
+                    Thread.Sleep(5);
                     OBDMessage resp = LogDevice.ReceiveMessage();
                     //if (resp.GetBytes()[3] == 0x7f)
                     if (resp == null)
                     {
-                        LoggerBold("Pid: " + addr.ToString("X4") + " Error, null response");
-                        Receiver.SetReceiverPaused(false);
-                        return rv;
+                        Debug.WriteLine("Null response to pid request, retry...");
+                        LogDevice.SendMessage(request, 1);
+                        Thread.Sleep(100);
+                        resp = LogDevice.ReceiveMessage();
+                        if (resp == null)
+                        {
+                            LoggerBold("Pid: " + addr.ToString("X4") + " Error, null response");
+                            Receiver.SetReceiverPaused(false);
+                            return rv;
+                        }
                     }
                     int rPos;
                     if (VPWProtocol)

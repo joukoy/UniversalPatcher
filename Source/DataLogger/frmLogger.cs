@@ -757,7 +757,7 @@ namespace UniversalPatcher
             {
                 if (e.KeyChar == '\r')
                 {
-                    if (!Connect(true))
+                    if (!Connect(radioVPW.Checked, true, true))
                     {
                         return;
                     }
@@ -1832,7 +1832,7 @@ namespace UniversalPatcher
             {
                 if (datalogger.Connected)
                 {
-                    QueryPid(pc,true);
+                    QueryPid(pc);
                 }
                 CheckMaxPids();
                 datalogger.PidProfile.Add(pc);
@@ -1978,7 +1978,7 @@ namespace UniversalPatcher
             }
         }
 
-        private bool Connect(bool UseVPW, bool StartReceiver = true, bool ShowOs = true)
+        private bool Connect(bool UseVPW, bool StartReceiver, bool ShowOs)
         {
             try
             {
@@ -2301,7 +2301,7 @@ namespace UniversalPatcher
                     Logger("No profile configured");
                     return;
                 }
-                if (!Connect(false))
+                if (!Connect(radioVPW.Checked, false,true))
                 {
                     return;
                 }
@@ -2522,7 +2522,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!Connect(false))
+                if (!Connect(radioVPW.Checked, false, true))
                 {
                     return;
                 }
@@ -2641,7 +2641,7 @@ namespace UniversalPatcher
             dataGridDtcCodes.Rows.Clear();
             dataGridDtcCodes.Columns["Conversion"].Visible = false;
             dataGridDtcCodes.Columns["Scaling"].Visible = false;
-            if (!Connect(true))
+            if (!Connect(radioVPW.Checked, true, true))
             {
                 return;
             }
@@ -2714,7 +2714,7 @@ namespace UniversalPatcher
 
         private void btnClearCodes_Click(object sender, EventArgs e)
         {
-            Connect(true);
+            Connect(radioVPW.Checked, true, true);
 
             byte module = (byte)comboModule.SelectedValue;
             if (chkDtcAllModules.Checked)
@@ -2827,11 +2827,11 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        private void QueryPid(PidConfig pc, bool UseVPW)
+        private void QueryPid(PidConfig pc)
         {
             try
             {
-                Connect(UseVPW);
+                Connect(radioVPW.Checked,true,true);
 
                 ReadValue rv;
                 ReadValue rv2 = new ReadValue();
@@ -2856,11 +2856,11 @@ namespace UniversalPatcher
 
         private void btnQueryPid_Click(object sender, EventArgs e)
         {
-            Connect(true);
+            Connect(radioVPW.Checked, true,true);
             List<PidConfig> pds = ConvertSelectedPidConfigs();
             foreach (PidConfig pc in pds)
             {
-                QueryPid(pc,true);
+                QueryPid(pc);
             }
         }
 
@@ -2924,7 +2924,7 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect(radioVPW.Checked);
+                Connect(radioVPW.Checked,true,true);
             }
         }
 
@@ -2944,13 +2944,13 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect(radioVPW.Checked);
+                Connect(radioVPW.Checked,true,true);
             }
         }
 
         private void btnGetVINCode_Click(object sender, EventArgs e)
         {
-            Connect(true);
+            Connect(radioVPW.Checked,true, true);
             if (datalogger.LogRunning)
             {
                 datalogger.QueueVINRequest();
@@ -3202,7 +3202,7 @@ namespace UniversalPatcher
             string fName = SelectFile("Select script file", TxtFilter);
             if (fName.Length == 0)
                 return;
-            if (!Connect(true))
+            if (!Connect(radioVPW.Checked,true, true))
             {
                 return;
             }
@@ -3238,7 +3238,7 @@ namespace UniversalPatcher
             }
 
             dataGridDtcCodes.Rows.Clear();
-            Connect(true);
+            Connect(radioVPW.Checked,true, true);
             if (datalogger.LogRunning)
             {
                 datalogger.QueueDtcRequest(module, mode);
@@ -3269,7 +3269,7 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect(radioVPW.Checked);
+                Connect(radioVPW.Checked,true,true);
             }
 
         }
@@ -4200,7 +4200,7 @@ namespace UniversalPatcher
 
         private void btnQueryDevices_Click(object sender, EventArgs e)
         {
-            if (!Connect(true))
+            if (!Connect(radioVPW.Checked, true, true))
             {
                 return;
             }
@@ -4232,7 +4232,7 @@ namespace UniversalPatcher
 
         private void btnQueryModules_Click(object sender, EventArgs e)
         {
-            if (!Connect(true))
+            if (!Connect(radioVPW.Checked,true, true))
             {
                 return;
             }
@@ -4304,7 +4304,7 @@ namespace UniversalPatcher
             dataGridDtcCodes.Rows.Clear();
             dataGridDtcCodes.Columns["Conversion"].Visible = true;
             dataGridDtcCodes.Columns["Scaling"].Visible = true;
-            if (!Connect(true))
+            if (!Connect(radioVPW.Checked, true, true))
             {
                 return;
             }
@@ -4519,7 +4519,7 @@ namespace UniversalPatcher
 
         private void btnQueyPid2_Click(object sender, EventArgs e)
         {
-            Connect(true);
+            Connect(radioVPW.Checked, true, true);
             List<int> selectedRows = new List<int>();
             foreach (DataGridViewCell cell in dataGridLogProfile.SelectedCells)
             {
@@ -4531,7 +4531,7 @@ namespace UniversalPatcher
             for (int r=0;r<selectedRows.Count;r++)
             {
                 PidConfig pc = (PidConfig)dataGridLogProfile.Rows[selectedRows[r]].DataBoundItem;
-                QueryPid(pc, true);
+                QueryPid(pc);
             }
         }
 
