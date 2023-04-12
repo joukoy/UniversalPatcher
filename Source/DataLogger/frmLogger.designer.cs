@@ -326,6 +326,8 @@ namespace UniversalPatcher
             this.timerDeviceStatus = new System.Windows.Forms.Timer(this.components);
             this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
+            this.label40 = new System.Windows.Forms.Label();
+            this.numResetAfter = new System.Windows.Forms.NumericUpDown();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -381,6 +383,7 @@ namespace UniversalPatcher
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numResetAfter)).BeginInit();
             this.SuspendLayout();
             // 
             // timerShowData
@@ -741,7 +744,7 @@ namespace UniversalPatcher
             this.groupBox11.Controls.Add(this.radioVPW);
             this.groupBox11.Location = new System.Drawing.Point(9, 232);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(359, 40);
+            this.groupBox11.Size = new System.Drawing.Size(359, 50);
             this.groupBox11.TabIndex = 36;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Protocol";
@@ -775,7 +778,7 @@ namespace UniversalPatcher
             this.groupBox10.Controls.Add(this.numRetryTimes);
             this.groupBox10.Controls.Add(this.label35);
             this.groupBox10.Controls.Add(this.label34);
-            this.groupBox10.Location = new System.Drawing.Point(381, 177);
+            this.groupBox10.Location = new System.Drawing.Point(382, 232);
             this.groupBox10.Name = "groupBox10";
             this.groupBox10.Size = new System.Drawing.Size(368, 50);
             this.groupBox10.TabIndex = 35;
@@ -970,7 +973,7 @@ namespace UniversalPatcher
             // 
             // btnConnect2
             // 
-            this.btnConnect2.Location = new System.Drawing.Point(122, 288);
+            this.btnConnect2.Location = new System.Drawing.Point(304, 288);
             this.btnConnect2.Name = "btnConnect2";
             this.btnConnect2.Size = new System.Drawing.Size(142, 29);
             this.btnConnect2.TabIndex = 23;
@@ -980,6 +983,8 @@ namespace UniversalPatcher
             // 
             // groupAdvanced
             // 
+            this.groupAdvanced.Controls.Add(this.numResetAfter);
+            this.groupAdvanced.Controls.Add(this.label40);
             this.groupAdvanced.Controls.Add(this.btnTimeouts);
             this.groupAdvanced.Controls.Add(this.chkAutoDisconnect);
             this.groupAdvanced.Controls.Add(this.chkJ2534ServerVisible);
@@ -993,7 +998,7 @@ namespace UniversalPatcher
             this.groupAdvanced.Controls.Add(this.comboResponseMode);
             this.groupAdvanced.Location = new System.Drawing.Point(375, 4);
             this.groupAdvanced.Name = "groupAdvanced";
-            this.groupAdvanced.Size = new System.Drawing.Size(375, 166);
+            this.groupAdvanced.Size = new System.Drawing.Size(375, 223);
             this.groupAdvanced.TabIndex = 34;
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced settings";
@@ -3431,6 +3436,27 @@ namespace UniversalPatcher
             this.timerJconsoleShowLogText.Interval = 250;
             this.timerJconsoleShowLogText.Tick += new System.EventHandler(this.timerJconsoleShowLogText_Tick);
             // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(6, 168);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(177, 13);
+            this.label40.TabIndex = 41;
+            this.label40.Text = "Reset connection after missed data:";
+            // 
+            // numResetAfter
+            // 
+            this.numResetAfter.Location = new System.Drawing.Point(189, 166);
+            this.numResetAfter.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.numResetAfter.Name = "numResetAfter";
+            this.numResetAfter.Size = new System.Drawing.Size(115, 20);
+            this.numResetAfter.TabIndex = 42;
+            // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3525,6 +3551,7 @@ namespace UniversalPatcher
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numResetAfter)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3808,6 +3835,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.RadioButton radioCAN;
         private System.Windows.Forms.RadioButton radioVPW;
+        private System.Windows.Forms.NumericUpDown numResetAfter;
+        private System.Windows.Forms.Label label40;
     }
 }
 

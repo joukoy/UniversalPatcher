@@ -65,6 +65,7 @@ namespace UniversalPatcher
             LoggerConsoleDisplayInterval = 200;
             RetryWriteTimes = 3;
             RetryWriteDelay = 10;
+            LoggerResetAfterMiss = 50;
             ClearFuncAddrOnDisconnect = true;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
@@ -233,6 +234,7 @@ namespace UniversalPatcher
         public int LoggerConsoleDisplayInterval { get; set; }
         public int RetryWriteTimes { get; set; }
         public int RetryWriteDelay { get; set; }
+        public int LoggerResetAfterMiss { get; set; }
         public bool ClearFuncAddrOnDisconnect { get; set; }
 
         public TimeoutScenario TimeoutLoggingActive { get; set; }

@@ -623,3 +623,8 @@
 
 0.22.05
 - Logger: Fixed bug: Reconnect using always CAN protocol when VPW selected
+
+0.22.06
+- Logger: Added: "Reset connection after missed data:" to avoid connection resets with multiple pids
+- Logger: Fixed Misfire Pid descriptions 1200-1208 
+

@@ -1202,6 +1202,7 @@ namespace UniversalPatcher
                 chkAutoDisconnect.Checked = AppSettings.LoggerAutoDisconnect;
                 numRetryDelay.Value = AppSettings.RetryWriteDelay;
                 numRetryTimes.Value = AppSettings.RetryWriteTimes;
+                numResetAfter.Value = AppSettings.LoggerResetAfterMiss;
                 radioVPW.Checked = AppSettings.LoggerUseVPW;
                 radioCAN.Checked = !AppSettings.LoggerUseVPW;
 
@@ -1728,7 +1729,7 @@ namespace UniversalPatcher
                 if (prevSlotCount == datalogger.slothandler.ReceivedHPRows)
                 {
                     failCount++;  
-                    if (failCount > 15)
+                    if (failCount > numResetAfter.Value)
                     {
                         timerShowData.Enabled = false;
                         StopLogging(true);
@@ -1945,7 +1946,7 @@ namespace UniversalPatcher
             AppSettings.LoggerJ2534ProcessVisible = chkJ2534ServerVisible.Checked;
             AppSettings.LoggerAutoDisconnect = chkAutoDisconnect.Checked;
             AppSettings.LoggerUseVPW = radioVPW.Checked;
-
+            AppSettings.LoggerResetAfterMiss = (int)numResetAfter.Value;
             AppSettings.Save();
 
         }

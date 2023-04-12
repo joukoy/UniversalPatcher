@@ -77,7 +77,6 @@ namespace UniversalPatcher
             // This is common across all ELM-based devices.
             this.SendRequest(""); // send a cr/lf to prevent the ATZ failing.
             Debug.WriteLine(response = this.SendRequest("AT Z").Data);  // reset
-
             if(string.IsNullOrWhiteSpace(response))
             {
                 LoggerBold($"No device found on {this.Port.ToString()}");

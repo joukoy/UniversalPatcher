@@ -895,7 +895,7 @@
         description=""	
         storageType="uint8"
         bitMapped="False">
-        <Conversion units="Raw" expression="x" format="0" />
+        <Conversion units="Boolean" expression="x" format="0" />
     </Parameter>
     <Parameter
         id="11F8"
@@ -930,39 +930,15 @@
         <Conversion units="Raw" expression="x" format="0" />
     </Parameter>
     <Parameter
+        id="1200"
+        name="Misfire Total count"
+        description=""	
+        storageType="uint8"
+        bitMapped="False">
+        <Conversion units="Raw" expression="x" format="0" />
+    </Parameter>
+    <Parameter
         id="1201"
-        name="Misfire Current Cyl 1"
-        description=""	
-        storageType="uint8"
-        bitMapped="False">
-        <Conversion units="Raw" expression="x" format="0" />
-    </Parameter>
-    <Parameter
-        id="1202"
-        name="Misfire Current Cyl 2"
-        description=""	
-        storageType="uint8"
-        bitMapped="False">
-        <Conversion units="Raw" expression="x" format="0" />
-    </Parameter>
-    <Parameter
-        id="1203"
-        name="Misfire Current Cyl 3"
-        description=""	
-        storageType="uint8"
-        bitMapped="False">
-        <Conversion units="Raw" expression="x" format="0" />
-    </Parameter>
-    <Parameter
-        id="1204"
-        name="Misfire Current Cyl 4"
-        description=""	
-        storageType="uint8"
-        bitMapped="False">
-        <Conversion units="Raw" expression="x" format="0" />
-    </Parameter>
-    <Parameter
-        id="1205"
         name="Misfire History Cyl 1"
         description=""	
         storageType="uint16"
@@ -970,7 +946,7 @@
         <Conversion units="Raw" expression="x" format="0" />
     </Parameter>
     <Parameter
-        id="1206"
+        id="1202"
         name="Misfire History Cyl 2"
         description=""	
         storageType="uint16"
@@ -978,18 +954,50 @@
         <Conversion units="Raw" expression="x" format="0" />
     </Parameter>
     <Parameter
-        id="1207"
+        id="1203"
         name="Misfire History Cyl 3"
         description=""	
         storageType="uint16"
+        bitMapped="Raw">
+        <Conversion units="Boolean" expression="x" format="0" />
+    </Parameter>
+    <Parameter
+        id="1204"
+        name="Misfire History Cyl 4"
+        description=""	
+        storageType="uint16"
+        bitMapped="False">
+        <Conversion units="Raw" expression="x" format="0" />
+    </Parameter>
+    <Parameter
+        id="1205"
+        name="Misfire Current Cyl 1"
+        description=""	
+        storageType="uint8"
+        bitMapped="False">
+        <Conversion units="Raw" expression="x" format="0" />
+    </Parameter>
+    <Parameter
+        id="1206"
+        name="Misfire Current Cyl 2"
+        description=""	
+        storageType="uint8"
+        bitMapped="False">
+        <Conversion units="Raw" expression="x" format="0" />
+    </Parameter>
+    <Parameter
+        id="1207"
+        name="Misfire Current Cyl 3"
+        description=""	
+        storageType="uint8"
         bitMapped="False">
         <Conversion units="Raw" expression="x" format="0" />    
     </Parameter>
     <Parameter
         id="1208"
-        name="Misfire History Cyl 4"
+        name="Misfire Current Cyl 4"
         description=""	
-        storageType="uint16"
+        storageType="uint8"
         bitMapped="False">
         <Conversion units="Raw" expression="x" format="0" />
     </Parameter>
