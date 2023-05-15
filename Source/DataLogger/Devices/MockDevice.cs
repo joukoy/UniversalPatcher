@@ -115,11 +115,16 @@ namespace UniversalPatcher
             return true;
         }
 
+        public override void ReceiveBufferedMessages()
+        {
+            Receive(false);
+        }
+
         /// <summary>
         /// Try to read an incoming message from the device.
         /// </summary>
         /// <returns></returns>
-        public override void Receive()
+        public override void Receive(bool WaitForTimeout)
         {
             //List<byte> incoming = new List<byte>(5000);
             SerialByte incoming = new SerialByte(5000);
@@ -128,7 +133,7 @@ namespace UniversalPatcher
             {
                 byte[] sized = new byte[count];
                 Buffer.BlockCopy(incoming.Data, 0, sized, 0, count);
-                base.Enqueue(new OBDMessage(sized));
+                base.Enqueue(new OBDMessage(sized), true);
             }
 
             return;
@@ -170,7 +175,7 @@ namespace UniversalPatcher
         {
             return true;
         }
-        public override bool RemoveFilters()
+        public override bool RemoveFilters(int[] filterIds)
         {
             return true;
         }

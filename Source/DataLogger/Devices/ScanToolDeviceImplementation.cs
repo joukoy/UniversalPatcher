@@ -24,7 +24,7 @@ namespace UniversalPatcher
         /// Constructor.
         /// </summary>
         public ScanToolDeviceImplementation(
-            Action<OBDMessage> enqueue,
+            Action<OBDMessage, bool> enqueue,
             Func<int> getReceivedMessageCount,
             IPort port,
             Action<OBDMessage> MessageSent) : 
@@ -293,20 +293,24 @@ namespace UniversalPatcher
                     {
                         builder.Append(messageBytes[index].ToString("X2"));
                     }
-
-                    SerialString dataResponse = this.SendRequest(builder.ToString(), getResponse);
-                    Debug.WriteLine("Dataresponse: " + dataResponse.Data);
-                    if (!this.ProcessResponse(dataResponse, "STPX with data", allowEmpty: responses == 0))
+                    bool sendOK = false;
+                    for (int retry = 1; retry <= 5; retry++)
                     {
-                        if (dataResponse.Data == string.Empty || dataResponse.Data.Contains("STOPPED") || dataResponse.Data.Contains("?"))
+                        SerialString dataResponse = this.SendRequest(builder.ToString(), getResponse);
+                        Debug.WriteLine("Dataresponse: " + dataResponse.Data);
+                        if (this.ProcessResponse(dataResponse, "STPX with data", allowEmpty: responses == 0))
                         {
-                            // These will happen if the bus is quiet, for example right after uploading the kernel.
-                            // They are traced during the SendRequest code. No need to repeat that message.
+                            sendOK = true;
+                            break;
                         }
                         else
                         {
-                            Logger("Unexpected response to STPX with data: " + dataResponse.Data);
+                            Debug.WriteLine("Unexpected response to STPX with data: " + dataResponse.Data + ", Retry: " + retry.ToString());
                         }
+                    }
+                    if (!sendOK)
+                    {
+                        Logger("Unexpected response to STPX with data");
                         return false;
                     }
                 }
@@ -367,14 +371,16 @@ namespace UniversalPatcher
         /// <summary>
         /// Try to read an incoming message from the device.
         /// </summary>
-        public override void Receive()
+        public override void Receive(bool WaitForTimeout)
         {
             try
             {
-                SerialString response = this.ReadELMLine(false);
-                //Debug.WriteLine("Elm: " + response.Data);
-                this.ProcessResponse(response, "receive");
-
+                if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+                {
+                    SerialString response = this.ReadELMLine(false);
+                    //Debug.WriteLine("Elm: " + response.Data);
+                    this.ProcessResponse(response, "receive");
+                }
                 if (this.getReceivedMessageCount() == 0)
                 {
                    // this.ReceiveViaMonitorMode();

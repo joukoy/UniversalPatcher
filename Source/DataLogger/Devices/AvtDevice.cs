@@ -46,7 +46,7 @@ namespace UniversalPatcher
             this.MaxSendSize = 4096 + 10 + 2;    // packets up to 4112 but we want 4096 byte data blocks
             this.MaxReceiveSize = 4096 + 10 + 2; // with 10 byte header and 2 byte block checksum
             this.Supports4X = true;
-            this.LogDeviceType = DataLogger.LoggingDevType.Other;
+            this.LogDeviceType = DataLogger.LoggingDevType.Avt;
         }
 
         public override string GetDeviceType()
@@ -162,8 +162,8 @@ namespace UniversalPatcher
         }
         public override bool SetJ2534Configs(string Configs, bool secondary)
         {
-            LoggerBold("SetJ2534Configs not implemented for " + DeviceType);
-            return false;
+            Port.Send(Configs.Replace(" ","").ToBytes());
+            return true;
         }
         public override bool StartPeriodicMsg(string PeriodicMsg, bool secondary)
         {
@@ -209,7 +209,7 @@ namespace UniversalPatcher
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            while(stopwatch.ElapsedMilliseconds < 3000)
+            while(stopwatch.ElapsedMilliseconds < AppSettings.TimeoutAvtRead)
             {
                 Response<OBDMessage> response = this.ReadAVTPacket();
                 if (response.Status == ResponseStatus.Success) 
@@ -329,7 +329,6 @@ namespace UniversalPatcher
             //Debug.WriteLine("Total Length=" + length + " RX: " + packet.ToHex());
             OBDMessage rMsg = new OBDMessage(packet);
             rMsg.TimeStamp = (ulong)rx.TimeStamp;
-            rMsg.DevTimeStamp = (ulong)rMsg.TimeStamp;
             return Response.Create(ResponseStatus.Success, rMsg);
 
             //return Response.Create(ResponseStatus.Success, new OBDMessage(packet));
@@ -405,30 +404,29 @@ namespace UniversalPatcher
         {
             //Debug.WriteLine("Sendrequest called");
             Debug.WriteLine("TX: " + message.GetBytes().ToHex());
-            this.MessageSent(message);
             SendAVTPacket(message, responses);
+            message.TimeStamp = (ulong)DateTime.Now.Ticks;
+            this.MessageSent(message);
             return true;
         }
 
-        public override void Receive()
+        public override void ReceiveBufferedMessages()
         {
-            if (this.Port == null)
-            {
-                Debug.WriteLine("Port closed, disposing AVT device");
-                OBDMessage oMsg = new OBDMessage(new byte[] { 0 });
-                oMsg.Error = 0x99;
-                this.Enqueue(oMsg);
-                return;
-            }
+        }
 
-            Response<OBDMessage> response = ReadAVTPacket();
-            if (response.Status == ResponseStatus.Success)
+        public override void Receive(bool WaitForTimeout)
+        {
+            Debug.WriteLine("Port have " + Port.GetReceiveQueueSize().ToString() + " bytes in queue");
+            if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
             {
-                Debug.WriteLine("RX: " + response.Value.GetBytes().ToHex());
-                this.Enqueue(response.Value);
-                return;
+                Response<OBDMessage> response = ReadAVTPacket();
+                if (response.Status == ResponseStatus.Success)
+                {
+                    Debug.WriteLine("RX: " + response.Value.GetBytes().ToHex());
+                    this.Enqueue(response.Value, true);
+                    return;
+                }
             }
-
             Debug.WriteLine("AVT: no message waiting.");            
         }
         
@@ -496,7 +494,7 @@ namespace UniversalPatcher
             this.CurrentFilter = FilterMode.Analyzer;
             return true;
         }
-        public override bool RemoveFilters()
+        public override bool RemoveFilters(int[] filterIDs)
         {
             Debug.WriteLine("Removing filters");
             byte[] msg = new byte[] { 0x52, 0x5b, 0x00 };

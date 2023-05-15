@@ -436,6 +436,9 @@ public class Upatcher
         SetReadTimeout,
         Receive,
         Receive2,
+        StartReceiver,
+        StopReceiver,
+        ReceiveBufferedMessages,
         SendMessage,
         ConnectSecondaryProtocol,
         DisconnectSecondayProtocol,
@@ -490,6 +493,7 @@ public class Upatcher
     public static List<Units> unitList;
     public static List<RichTextBox> LogReceivers;
     public static List<PidInfo> PidDescriptions;
+    public static List<CANDevice> CanModules;
 
     public static string tableSearchFile;
     //public static string tableSeekFile = "";
@@ -567,7 +571,9 @@ public class Upatcher
             if (args.Length > 0)
             {
                 if (args[0] == "-")
+                {
                     Debug.WriteLine("Remember previous settings");
+                }
                 else if (args[0].ToLower().Contains("j2534server"))
                 {
                     int DevNumber = -1;
@@ -578,7 +584,11 @@ public class Upatcher
                     }
                     List<J2534DotNet.J2534Device> jDevList = J2534DotNet.J2534Detect.ListDevices();
                     J2534DotNet.J2534Device selectedDevice = jDevList[DevNumber];
-
+                    if (AppSettings.LoggerStartJ2534ProcessDebug)
+                    {
+                        frmpatcher = new FrmPatcher();
+                        frmpatcher.Show();
+                    }
                     if (Upatcher.AppSettings.LoggerJ2534ProcessVisible)
                     {
                         Application.Run(new frmJ2534Server(selectedDevice));
@@ -628,6 +638,8 @@ public class Upatcher
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "ospids")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "ospids"));
 
             if (AppSettings.LastXMLfolder == "")
                 AppSettings.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
@@ -777,6 +789,19 @@ public class Upatcher
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<Analyzer.IdName>));
                 System.IO.StreamReader file = new System.IO.StreamReader(funcNameFile);
                 FuncNames = (List<Analyzer.IdName>)reader.Deserialize(file);
+                file.Close();
+            }
+
+            Logger(",CANmodules", false);
+            ShowSplash("CANmodules");
+            Application.DoEvents();
+            string canmodulefile = Path.Combine(Application.StartupPath, "XML", "CANModules.xml");
+            if (File.Exists(canmodulefile))
+            {
+                Debug.WriteLine("Loading " + canmodulefile);
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<CANDevice>));
+                System.IO.StreamReader file = new System.IO.StreamReader(canmodulefile);
+                CanModules = (List<CANDevice>)reader.Deserialize(file);
                 file.Close();
             }
 

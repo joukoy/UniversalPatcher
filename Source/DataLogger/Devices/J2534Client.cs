@@ -42,6 +42,7 @@ namespace UniversalPatcher
         private NamedPipeClientStream proto2CmdPipe;
         private NamedPipeClientStream proto2ResponsePipe;
         private NamedPipeClientStream loggerPipe;
+        private NamedPipeClientStream msgEventPipe;
 
         //Handle to j2534 server process
         Process process;
@@ -54,7 +55,7 @@ namespace UniversalPatcher
             this.MaxSendSize = 2048 + 12;    // J2534 Standard is 4KB
             this.MaxReceiveSize = 2048 + 12; // J2534 Standard is 4KB
             this.Supports4X = true;
-            this.LogDeviceType = DataLogger.LoggingDevType.Other;
+            this.LogDeviceType = DataLogger.LoggingDevType.J2534;
 
             process = new Process();
             // Configure the process using the StartInfo properties.
@@ -79,9 +80,13 @@ namespace UniversalPatcher
             loggerPipe = new NamedPipeClientStream(".", pId.ToString() + "j2534loggerpipe", PipeDirection.InOut, PipeOptions.WriteThrough);
             loggerPipe.Connect();
             loggerPipe.ReadMode = PipeTransmissionMode.Message;
+            msgEventPipe = new NamedPipeClientStream(".", pId.ToString() + "j2534msgeventpipe", PipeDirection.InOut, PipeOptions.WriteThrough);
+            msgEventPipe.Connect();
+            msgEventPipe.ReadMode = PipeTransmissionMode.Message;
 
             //Task.Factory.StartNew(() => ReadMsgLoop());
             Task.Factory.StartNew(() => LoggerLoop());
+            Task.Factory.StartNew(() => MessageEventLoop());
         }
 
         private byte[] PipeSendAndReceive(j2534Command command, byte[] msg)
@@ -203,6 +208,51 @@ namespace UniversalPatcher
                 Debug.WriteLine("Error, j2534Client line " + line + ": " + ex.Message);
             }
         }
+
+        private void MessageEventLoop()
+        {
+            try
+            {
+                Debug.WriteLine("Message event loop started");
+                while (true)
+                {
+                    byte[] msg = ReceiveFromPipe(msgEventPipe);
+                    if (msg != null && msg.Length > 1)
+                    {
+                        string msgTxt = Encoding.ASCII.GetString(msg);
+                        OBDMessage oMsg = Helpers.XmlDeserializeFromString<OBDMessage>(msgTxt.Substring(1));
+                        if (msgTxt.StartsWith("R"))
+                        {
+                            this.MessageReceived(oMsg);
+                        }
+                        else if (msgTxt.StartsWith("S"))
+                        {
+                            this.MessageSent(oMsg);
+                        }
+                        else
+                        {
+                            LoggerBold("Unknown message event type: " + msgTxt.Substring(0, 1));
+                        }
+                    }
+                    if (!msgEventPipe.IsConnected)
+                    {
+                        Debug.WriteLine("J2534 client: connection to server closed");
+                        this.Dispose();
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, j2534Client line " + line + ": " + ex.Message);
+            }
+        }
+
 
         protected override void Dispose(bool disposing)
         {
@@ -508,7 +558,7 @@ namespace UniversalPatcher
             //Debug.WriteLine("FindResponse called");
             for (int iterations = 0; iterations < 5; iterations++)
             {
-                OBDMessage response = this.ReceiveMessage();
+                OBDMessage response = this.ReceiveMessage(true);
                     if (Utility.CompareArraysPart(response.GetBytes(), expected.GetBytes()))
                         return Response.Create(ResponseStatus.Success, response);
                 Thread.Sleep(100);
@@ -517,15 +567,18 @@ namespace UniversalPatcher
             return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
         }
 
+
         /// <summary>
         /// Read an network packet from the interface, and return a Response/Message
         /// </summary>
-        public override void Receive()
+        public override void Receive(bool WaitForTimeout)
         {
             //Debug.WriteLine("Trace: Read Network Packet");
             try
             {
-                byte[] resp = PipeSendAndReceive(j2534Command.Receive, null);
+                byte[] param = new byte[1];
+                param[0] = Convert.ToByte(WaitForTimeout);
+                byte[] resp = PipeSendAndReceive(j2534Command.Receive, param);
                 if (resp.Length == 1)
                 {
                     if (resp[0] == 0)
@@ -537,7 +590,43 @@ namespace UniversalPatcher
                 //OBDMessage oMsg = new OBDMessage(null);
                 //oMsg.FromPipeMessage(resp);
                 OBDMessage oMsg = Helpers.XmlDeserializeFromString<OBDMessage>(Encoding.ASCII.GetString(resp));
-                this.Enqueue(oMsg);
+                this.Enqueue(oMsg, false);
+                //Application.DoEvents();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, j2534Client line " + line + ": " + ex.Message);
+                Application.DoEvents();
+                Thread.Sleep(500); //Throttling...
+            }
+        }
+
+        /// <summary>
+        /// Read an network packet from the interface, and return a Response/Message
+        /// </summary>
+        public override void ReceiveBufferedMessages()
+        {
+            //Debug.WriteLine("Trace: Read Network Packet");
+            try
+            {
+                byte[] resp = PipeSendAndReceive(j2534Command.ReceiveBufferedMessages, null);
+                if (resp.Length == 1)
+                {
+                    if (resp[0] == 0)
+                    {
+                        Debug.WriteLine("J2534 Client: ReceiveBufferedMessages failed");
+                    }
+                    return;
+                }
+                //OBDMessage oMsg = new OBDMessage(null);
+                //oMsg.FromPipeMessage(resp);
+                OBDMessage oMsg = Helpers.XmlDeserializeFromString<OBDMessage>(Encoding.ASCII.GetString(resp));
+                this.Enqueue(oMsg, false);
                 //Application.DoEvents();
             }
             catch (Exception ex)
@@ -568,7 +657,7 @@ namespace UniversalPatcher
                     //OBDMessage oMsg = new OBDMessage(null);
                     //oMsg.FromPipeMessage(resp);
                     OBDMessage oMsg = Helpers.XmlDeserializeFromString<OBDMessage>(Encoding.ASCII.GetString(resp));
-                    this.Enqueue(oMsg);
+                    this.Enqueue2(oMsg, false);
                 }
             }
             catch (Exception ex)
@@ -590,19 +679,18 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("J2534 client sending message: " + message.ToString());
-                this.MessageSent(message);
                 string msgStr = Helpers.SerializeObjectToXML<OBDMessage>(message);
                 //Logger("Client message: " + message.ToString());
                 byte[] readBuf = PipeSendAndReceive(j2534Command.SendMessage, Encoding.ASCII.GetBytes(msgStr));
-                if (readBuf[0] == 1)
+                if (readBuf.Length == 1 && readBuf[0] == 0)
                 {
                     //Logger("J2534 client Message sent ok");
-                    return true;
-                }
-                else
-                {
                     Logger("J2534 client Message sent fail.");
                     return false;
+                }
+                else if (readBuf.Length == 1 && readBuf[0] == 1)
+                {
+                    return true;
                 }
             }
             catch (Exception ex)
@@ -620,25 +708,28 @@ namespace UniversalPatcher
         /// <summary>
         /// Disconnect from Second protocol
         /// </summary>
-        public override bool SetupFilters(string Filters, bool Secondary)
+        public override int[] SetupFilters(string Filters, bool Secondary, bool ClearOld)
         {
             try
             {                 
                 byte[] param = Encoding.ASCII.GetBytes(Filters);
-                byte[] sendBuf = new byte[param.Length + 1];
-                sendBuf[0] = Convert.ToByte(Secondary); 
+                byte[] sendBuf = new byte[param.Length + 2];
+                sendBuf[0] = Convert.ToByte(Secondary);
+                sendBuf[1] = Convert.ToByte(ClearOld);
                 //boolean length is known, send it first. Rest of bytes are filter text
-                Array.Copy(param, 0, sendBuf, 1, param.Length);
+                Array.Copy(param, 0, sendBuf, 2, param.Length);
                 byte[] readBuf = PipeSendAndReceive(j2534Command.SetupFilters, sendBuf);
-                if (Convert.ToBoolean(readBuf[0]) == true)
+                if (readBuf.Length == 1 && Convert.ToBoolean(readBuf[0]) == false)
                 {
-                    //Logger("J2534 client Filter setup complete.");
-                    return true;
+                    Logger("J2534 client Filter setup fail.");
+                    return null;
                 }
                 else
                 {
-                    Logger("J2534 client Filter setup fail.");
-                    return false;
+                    int[] fIds = new int[readBuf.Length / 4];
+                    for (int i = 0; (i * 4) < readBuf.Length; i++)
+                        fIds[i] = BitConverter.ToInt32(readBuf, i * 4);
+                    return fIds;
                 }
 
             }
@@ -651,7 +742,7 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
             }
-            return false;
+            return null;
         }
 
 
@@ -773,12 +864,16 @@ namespace UniversalPatcher
             return false;
         }
 
-        public override bool RemoveFilters()
+        public override bool RemoveFilters(int[] filterIds)
         {
             try
             {
                 Debug.WriteLine("Removing filters");
-                byte[] readBuf = PipeSendAndReceive(j2534Command.RemoveFilters, null);
+                byte[] fIds;
+                fIds = new byte[filterIds.Length * 4];
+                Buffer.BlockCopy(filterIds, 0, fIds, 0, fIds.Length);
+
+                byte[] readBuf = PipeSendAndReceive(j2534Command.RemoveFilters, fIds);
                 return Convert.ToBoolean(readBuf[0]);
             }
             catch (Exception ex)

@@ -4750,6 +4750,43 @@ namespace UniversalPatcher
                 LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
             }
         }
+
+        private void cANModulesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML fe = new frmEditXML();
+            fe.Show();
+            fe.LoadCANModules();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select V6 csv", CsvFilter);
+            if (string.IsNullOrEmpty(fName))
+                return;
+
+            V6CrossRef v6r = new V6CrossRef();
+            v6r.LoadDB();
+
+            StreamReader sr = new StreamReader(fName);
+            string line = sr.ReadLine(); //Header
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] parts = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length > 6)
+                {
+                    uint os = 0;
+                    uint crc = 0;
+                    UInt32.TryParse(parts[0], out os);
+                    HexToUint(parts[6], out crc);
+                    if (os > 0 && crc > 0)
+                    {
+                        Logger("Adding OS: " + os.ToString() + ", Crc: " + crc.ToString("X8") + ", CS1: " + parts[1] + ", 3d: " + parts[7]);
+                        v6r.AddtoRef(os, parts[1], parts[2], parts[3], parts[4], parts[5],parts[6], parts[7]);
+                    }
+                }
+            }
+        }
+
     }
 }
 

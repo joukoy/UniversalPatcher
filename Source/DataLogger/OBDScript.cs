@@ -17,7 +17,6 @@ namespace UniversalPatcher
         {
             this.device = device;
             SecondaryProtocol = false;
-            device.SetWriteTimeout(AppSettings.TimeoutScriptWrite);
         }
 
         public class Variable
@@ -113,7 +112,7 @@ namespace UniversalPatcher
                     {
                         if (printPrimary)
                         {
-                            device.ReceiveMessage();
+                            device.ReceiveMessage(true);
                         }
                         if (printSecondary)
                         {
@@ -202,7 +201,7 @@ namespace UniversalPatcher
                         }
                         do
                         {
-                            rMsg = device.ReceiveMessage();
+                            rMsg = device.ReceiveMessage(true);
                             Application.DoEvents();
                             if (rMsg == null)
                             {
@@ -529,7 +528,7 @@ namespace UniversalPatcher
                     {
                         OBDMessage rMsg;
                         if (!useSecondaryProtocol)
-                            rMsg = device.ReceiveMessage();
+                            rMsg = device.ReceiveMessage(true);
                         else
                             rMsg = device.ReceiveMessage2();
                         if (rMsg != null && rMsg.Length > 3) // && rMsg[0] == oMsg[0] && rMsg[1] == oMsg[2] && rMsg[2] == oMsg[1])
@@ -628,7 +627,7 @@ namespace UniversalPatcher
             DateTime starttime = DateTime.Now;
             for (int r = 0; r < 1;)
             {
-                rMsg = device.ReceiveMessage();
+                rMsg = device.ReceiveMessage(true);
                 if (rMsg != null && rMsg.Length >= (position + 2))
                 {
                     starttime = DateTime.Now;   //Message received, reset timer
@@ -724,7 +723,7 @@ namespace UniversalPatcher
             DateTime starttime = DateTime.Now;
             for (int r = 0; r < 1;)
             {
-                rMsg = device.ReceiveMessage();
+                rMsg = device.ReceiveMessage(true);
                 if (rMsg != null && rMsg.Length >= (position + 2))
                 {
                     starttime = DateTime.Now;   //Message received, reset timer

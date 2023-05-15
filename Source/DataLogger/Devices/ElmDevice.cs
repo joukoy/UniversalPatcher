@@ -132,7 +132,7 @@ namespace UniversalPatcher
                 this.Supports4X = this.implementation.Supports4X;
                 this.LogDeviceType = this.implementation.LogDeviceType;
 
-                //this.Port.SetReadTimeout(AppSettings.LoggerPortReadTimeout);
+                this.Port.SetReadTimeout(AppSettings.TimeoutSerialPortRead);
                 //this.Port.SetWriteTimeout(AppSettings.LoggerPortWriteTimeout);
 
                 SetLoggingFilter();
@@ -230,7 +230,7 @@ namespace UniversalPatcher
             // this when sending the tool-present messages, but that might be coincidence.)
             //
             // Consider increasing if STOPPED / NO DATA is still a problem. 
-            this.Port.SetTimeout(milliseconds + AppSettings.TimeoutPortRead);
+            this.Port.SetTimeout(milliseconds + AppSettings.TimeoutSerialPortRead);
 
             // This code is so problematic that I've left it here as a warning. The app is
             // unable to receive the response to the erase command if this code is enabled.
@@ -261,22 +261,17 @@ namespace UniversalPatcher
             return this.implementation.SendMessage(message, responses);
         }
 
+        public override void ReceiveBufferedMessages()
+        {
+        }
 
         /// <summary>
         /// Try to read an incoming message from the device.
         /// </summary>
         /// <returns></returns>
-        public override void Receive()
+        public override void Receive(bool WaitForTimeout)
         {
-            if (this.Port == null || !this.Port.PortOpen())
-            {
-                Debug.WriteLine("Port closed, disposing ELM device");
-                OBDMessage oMsg = new OBDMessage(new byte[] { 0 });
-                oMsg.Error = 0x99;
-                this.Enqueue(oMsg);                
-                return;
-            }
-            this.implementation.Receive();
+            this.implementation.Receive(WaitForTimeout);
         }
 
         /// <summary>
@@ -423,7 +418,7 @@ namespace UniversalPatcher
             this.CurrentFilter = FilterMode.Analyzer;
             return true;
         }
-        public override bool RemoveFilters()
+        public override bool RemoveFilters(int[] filterIds)
         {
             Debug.WriteLine("Removing filters");
             this.CurrentFilter = FilterMode.None;

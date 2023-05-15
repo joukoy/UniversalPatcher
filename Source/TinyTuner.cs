@@ -61,7 +61,7 @@ namespace UniversalPatcher
             string connetionString = null;
             OleDbConnection cnn;
             string dbFile = Path.Combine(Application.StartupPath, "db", "TinyTuner.mdb");
-            if (File.Exists(dbFile))
+            if (!File.Exists(dbFile))
                 dbFile = Path.Combine(Application.StartupPath, "TinyTuner.mdb");
             connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dbFile;
             cnn = new OleDbConnection(connetionString);
@@ -163,6 +163,23 @@ namespace UniversalPatcher
             }
             return "OK";
         }
+
+        private string GetMapNumberByOS(OleDbConnection cnn, string OS)
+        {
+            string query = "Select MapNumber from OSIDData where OSID=" + OS;
+            OleDbCommand selectCommand = new OleDbCommand(query, cnn);
+            DataTable table = new DataTable();
+            OleDbDataAdapter adapter = new OleDbDataAdapter();
+            adapter.SelectCommand = selectCommand;
+            adapter.Fill(table);
+            string mapNr = "";
+            foreach (DataRow row in table.Rows)
+            {
+                mapNr = row["MapNumber"].ToString();
+            }
+            return mapNr;
+        }
+
         public string ReadTinyDBtoTableData(PcmFile PCM, List<TableData> tdList)
         {
             if (PCM.OS == null || PCM.OS.Length == 0)
@@ -178,30 +195,52 @@ namespace UniversalPatcher
 
             connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dbFile;
             cnn = new OleDbConnection(connetionString);
+            cnn.Open();
             try
             {
-                string query = "Select MapNumber from OSIDData where OSID=" + PCM.OS;
-                OleDbCommand selectCommand = new OleDbCommand(query, cnn);
-                cnn.Open();
-                DataTable table = new DataTable();
-                OleDbDataAdapter adapter = new OleDbDataAdapter();
-                adapter.SelectCommand = selectCommand;
-                adapter.Fill(table);
-                string mapNr = "";
-                foreach (DataRow row in table.Rows)
-                {
-                    mapNr = row["MapNumber"].ToString();
-                }
+                string mapNr = GetMapNumberByOS(cnn, PCM.OS);
                 if (mapNr == "")
                 {
-                    LoggerBold("OS not found from TinyTuner DB");
-                    return "Not found";
+                    V6CrossRef v6r = new V6CrossRef();
+                    v6r.LoadDB();
+                    uint[] compOses = v6r.GetCompatibleOSs(PCM.v6OSCrc);
+                    if (compOses != null && compOses.Length > 0)
+                    {
+                        foreach (uint os in compOses)
+                        {
+                            mapNr = GetMapNumberByOS(cnn, os.ToString());
+                            if (!string.IsNullOrEmpty(mapNr))
+                            {
+                                Logger("Loading compatible OS data: " + os.ToString());
+                                break;
+                            }
+                        }
+                    }
+                    if (mapNr == "")
+                    {
+                        compOses = v6r.GetLessCompatibleOSs(PCM);
+                        foreach (uint os in compOses)
+                        {
+                            mapNr = GetMapNumberByOS(cnn, os.ToString());
+                            if (!string.IsNullOrEmpty(mapNr))
+                            {
+                                Logger("Loading compatible OS data: " + os.ToString());
+                                LoggerBold("Warning! Tables may not be 100% compatible");
+                                break;
+                            }
+                        }
+                        if (string.IsNullOrEmpty(mapNr))
+                        {
+                            LoggerBold("OS not found from TinyTuner DB");
+                            return "Not found";
+                        }
+                    }
                 }
 
-                query = "select * from CategoryList order by Category";
-                selectCommand = new OleDbCommand(query, cnn);
-                table = new DataTable();
-                adapter = new OleDbDataAdapter();
+                string query = "select * from CategoryList order by Category";
+                OleDbCommand selectCommand = new OleDbCommand(query, cnn);
+                DataTable table = new DataTable();
+                OleDbDataAdapter adapter = new OleDbDataAdapter();
                 adapter.SelectCommand = selectCommand;
                 adapter.Fill(table);
 

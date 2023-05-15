@@ -173,6 +173,7 @@
     <Compile Include="DataLogger\NgcKeys.cs" />
     <Compile Include="DataLogger\ObdEmu.cs" />
     <Compile Include="DataLogger\OBDScript.cs" />
+    <Compile Include="DataLogger\PidConfig.cs" />
     <Compile Include="DataLogger\PopupWindow.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -551,6 +552,7 @@
     <Compile Include="Units.cs" />
     <Compile Include="UpatcherSettings.cs" />
     <Compile Include="UPLogger.cs" />
+    <Compile Include="V6crossref.cs" />
     <Compile Include="VerticalProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>

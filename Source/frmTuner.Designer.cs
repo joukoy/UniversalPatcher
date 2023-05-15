@@ -32,8 +32,8 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTuner));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.txtFilter = new System.Windows.Forms.TextBox();
@@ -257,23 +257,23 @@ namespace UniversalPatcher
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
@@ -293,7 +293,7 @@ namespace UniversalPatcher
             // 
             this.txtFilter.Location = new System.Drawing.Point(50, 29);
             this.txtFilter.Name = "txtFilter";
-            this.txtFilter.Size = new System.Drawing.Size(107, 22);
+            this.txtFilter.Size = new System.Drawing.Size(107, 20);
             this.txtFilter.TabIndex = 14;
             // 
             // comboTableCategory
@@ -310,7 +310,7 @@ namespace UniversalPatcher
             this.labelCategory.AutoSize = true;
             this.labelCategory.Location = new System.Drawing.Point(317, 34);
             this.labelCategory.Name = "labelCategory";
-            this.labelCategory.Size = new System.Drawing.Size(66, 16);
+            this.labelCategory.Size = new System.Drawing.Size(52, 13);
             this.labelCategory.TabIndex = 12;
             this.labelCategory.Text = "Category:";
             // 
@@ -1249,7 +1249,7 @@ namespace UniversalPatcher
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 33);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(40, 16);
+            this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 17;
             this.label1.Text = "Filter:";
             // 
@@ -1322,10 +1322,10 @@ namespace UniversalPatcher
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.tabCategory);
             this.tabControl1.Controls.Add(this.tabMultiTree);
             this.tabControl1.Controls.Add(this.tabDimensions);
             this.tabControl1.Controls.Add(this.tabValueType);
-            this.tabControl1.Controls.Add(this.tabCategory);
             this.tabControl1.Controls.Add(this.tabSegments);
             this.tabControl1.Controls.Add(this.tabSettings);
             this.tabControl1.Controls.Add(this.tabPatches);
@@ -1429,7 +1429,7 @@ namespace UniversalPatcher
             0,
             0});
             this.numNaviMaxTablesTotal.Name = "numNaviMaxTablesTotal";
-            this.numNaviMaxTablesTotal.Size = new System.Drawing.Size(54, 22);
+            this.numNaviMaxTablesTotal.Size = new System.Drawing.Size(54, 20);
             this.numNaviMaxTablesTotal.TabIndex = 34;
             this.numNaviMaxTablesTotal.Value = new decimal(new int[] {
             1,
@@ -1442,7 +1442,7 @@ namespace UniversalPatcher
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(6, 41);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(172, 16);
+            this.label4.Size = new System.Drawing.Size(134, 13);
             this.label4.TabIndex = 33;
             this.label4.Text = "Remember max tables total";
             // 
@@ -1451,7 +1451,7 @@ namespace UniversalPatcher
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(6, 16);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(179, 16);
+            this.label3.Size = new System.Drawing.Size(140, 13);
             this.label3.TabIndex = 32;
             this.label3.Text = "Remember max tables/node";
             // 
@@ -1469,7 +1469,7 @@ namespace UniversalPatcher
             0,
             -2147483648});
             this.numNaviMaxTablesPerNode.Name = "numNaviMaxTablesPerNode";
-            this.numNaviMaxTablesPerNode.Size = new System.Drawing.Size(54, 22);
+            this.numNaviMaxTablesPerNode.Size = new System.Drawing.Size(54, 20);
             this.numNaviMaxTablesPerNode.TabIndex = 31;
             // 
             // btnExplorerFont
@@ -1487,7 +1487,7 @@ namespace UniversalPatcher
             this.chkShowTableCount.AutoSize = true;
             this.chkShowTableCount.Location = new System.Drawing.Point(10, 78);
             this.chkShowTableCount.Name = "chkShowTableCount";
-            this.chkShowTableCount.Size = new System.Drawing.Size(128, 20);
+            this.chkShowTableCount.Size = new System.Drawing.Size(109, 17);
             this.chkShowTableCount.TabIndex = 29;
             this.chkShowTableCount.Text = "Show table count";
             this.chkShowTableCount.UseVisualStyleBackColor = true;
@@ -1497,7 +1497,7 @@ namespace UniversalPatcher
             this.chkAutoMulti1d.AutoSize = true;
             this.chkAutoMulti1d.Location = new System.Drawing.Point(10, 55);
             this.chkAutoMulti1d.Name = "chkAutoMulti1d";
-            this.chkAutoMulti1d.Size = new System.Drawing.Size(222, 20);
+            this.chkAutoMulti1d.Size = new System.Drawing.Size(181, 17);
             this.chkAutoMulti1d.TabIndex = 28;
             this.chkAutoMulti1d.Text = "Automatic multitable for 1d tables";
             this.chkAutoMulti1d.UseVisualStyleBackColor = true;
@@ -1508,7 +1508,7 @@ namespace UniversalPatcher
             this.chkShowCategorySubfolder.AutoSize = true;
             this.chkShowCategorySubfolder.Location = new System.Drawing.Point(10, 32);
             this.chkShowCategorySubfolder.Name = "chkShowCategorySubfolder";
-            this.chkShowCategorySubfolder.Size = new System.Drawing.Size(177, 20);
+            this.chkShowCategorySubfolder.Size = new System.Drawing.Size(144, 17);
             this.chkShowCategorySubfolder.TabIndex = 0;
             this.chkShowCategorySubfolder.Text = "Show Category subfolder";
             this.chkShowCategorySubfolder.UseVisualStyleBackColor = true;
@@ -1519,7 +1519,7 @@ namespace UniversalPatcher
             this.labelIconSize.AutoSize = true;
             this.labelIconSize.Location = new System.Drawing.Point(7, 9);
             this.labelIconSize.Name = "labelIconSize";
-            this.labelIconSize.Size = new System.Drawing.Size(63, 16);
+            this.labelIconSize.Size = new System.Drawing.Size(52, 13);
             this.labelIconSize.TabIndex = 26;
             this.labelIconSize.Text = "Icon size:";
             // 
@@ -1537,7 +1537,7 @@ namespace UniversalPatcher
             0,
             0});
             this.numIconSize.Name = "numIconSize";
-            this.numIconSize.Size = new System.Drawing.Size(40, 22);
+            this.numIconSize.Size = new System.Drawing.Size(40, 20);
             this.numIconSize.TabIndex = 27;
             this.numIconSize.Value = new decimal(new int[] {
             16,
@@ -1883,7 +1883,7 @@ namespace UniversalPatcher
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(584, 5);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(47, 16);
+            this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 29;
             this.label2.Text = "Table:";
             // 
@@ -1904,7 +1904,7 @@ namespace UniversalPatcher
             this.labelBy.AutoSize = true;
             this.labelBy.Location = new System.Drawing.Point(163, 34);
             this.labelBy.Name = "labelBy";
-            this.labelBy.Size = new System.Drawing.Size(26, 16);
+            this.labelBy.Size = new System.Drawing.Size(21, 13);
             this.labelBy.TabIndex = 31;
             this.labelBy.Text = "by:";
             // 
@@ -2070,7 +2070,7 @@ namespace UniversalPatcher
             // 
             this.txtMath.Location = new System.Drawing.Point(571, 31);
             this.txtMath.Name = "txtMath";
-            this.txtMath.Size = new System.Drawing.Size(82, 22);
+            this.txtMath.Size = new System.Drawing.Size(82, 20);
             this.txtMath.TabIndex = 33;
             this.txtMath.Text = "X*1";
             // 
@@ -2113,7 +2113,7 @@ namespace UniversalPatcher
             0,
             -2147483648});
             this.numExtraOffsetTest.Name = "numExtraOffsetTest";
-            this.numExtraOffsetTest.Size = new System.Drawing.Size(55, 22);
+            this.numExtraOffsetTest.Size = new System.Drawing.Size(55, 20);
             this.numExtraOffsetTest.TabIndex = 7;
             // 
             // btnExtraOffsetTest
@@ -2140,7 +2140,7 @@ namespace UniversalPatcher
             0,
             -2147483648});
             this.numExtraOffset.Name = "numExtraOffset";
-            this.numExtraOffset.Size = new System.Drawing.Size(55, 22);
+            this.numExtraOffset.Size = new System.Drawing.Size(55, 20);
             this.numExtraOffset.TabIndex = 3;
             this.numExtraOffset.ValueChanged += new System.EventHandler(this.numExtraOffset_ValueChanged);
             // 

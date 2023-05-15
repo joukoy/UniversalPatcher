@@ -6,6 +6,8 @@ using static Helpers;
 using System.Diagnostics;
 using static LoggerUtils;
 using J2534DotNet;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace UniversalPatcher
 {
@@ -246,7 +248,7 @@ namespace UniversalPatcher
             Debug.WriteLine("Clearing: {0} messages from queue", queue.Count);
             this.queue.Clear();
             this.queue2.Clear();
-            ClearMessageBuffer();
+            //ClearMessageBuffer();
         }
 
         /// <summary>
@@ -255,7 +257,7 @@ namespace UniversalPatcher
         public void ClearLogQueue()
         {
             this.logQueue.Clear();
-            ClearMessageBuffer();
+            //ClearMessageBuffer();
         }
 
         /// <summary>
@@ -297,14 +299,16 @@ namespace UniversalPatcher
         /// </summary>
         public abstract bool ClearPeriodicMsg(bool secondary);
 
+        public abstract void ReceiveBufferedMessages();
+
         /// <summary>
         /// Reads a message from the VPW bus and returns it.
         /// </summary>
-        public OBDMessage ReceiveMessage()
+        public OBDMessage ReceiveMessage(bool WaitForTimeout)
         {
             if (this.queue.Count == 0)
             {
-                this.Receive();
+                this.Receive(WaitForTimeout);
             }
 
             if (this.queue.Count > 0)
@@ -350,7 +354,7 @@ namespace UniversalPatcher
         {
             if (this.logQueue.Count == 0)
             {
-                this.Receive();
+                this.Receive(true);
             }
 
             lock (this.logQueue)
@@ -396,7 +400,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Add a received message to the queue.
         /// </summary>
-        protected void Enqueue(OBDMessage message)
+        protected void Enqueue(OBDMessage message, bool SendEvent)
         {
             try
             {
@@ -407,7 +411,10 @@ namespace UniversalPatcher
                     return;
                 }
                 MsgEventparameter msg = new MsgEventparameter(message);
-                OnMsgReceived(msg);
+                if (SendEvent)
+                {
+                    OnMsgReceived(msg);
+                }
                 //if (message.ElmPrompt || (message.Length > 4 && message.GetBytes()[3] == 0x6A))
                 {
                     lock (this.logQueue)
@@ -437,7 +444,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Add a received message to the queue2.
         /// </summary>
-        protected void Enqueue2(OBDMessage message)
+        protected void Enqueue2(OBDMessage message, bool SendEvent)
         {
             try
             {
@@ -448,7 +455,10 @@ namespace UniversalPatcher
                     return;
                 }
                 MsgEventparameter msg = new MsgEventparameter(message);
-                OnMsgReceived(msg);
+                if (SendEvent)
+                {
+                    OnMsgReceived(msg);
+                }
                 lock (this.queue2)
                 {
                     this.queue2.Enqueue(message);
@@ -469,7 +479,7 @@ namespace UniversalPatcher
         /// <summary>
         /// List for an incoming message of the VPW bus.
         /// </summary>
-        public abstract void Receive();
+        public abstract void Receive(bool WaitForTimeout);
 
         /// <summary>
         /// List for an incoming message of the VPW bus, protocol 2.
@@ -582,7 +592,7 @@ namespace UniversalPatcher
 
         public abstract bool SetLoggingFilter();
         public abstract bool SetAnalyzerFilter();
-        public abstract bool RemoveFilters();
+        public abstract bool RemoveFilters(int[] filterIDs);
         public virtual bool ConnectSecondaryProtocol(J2534InitParameters j2534Init)
         {
             return false;
@@ -591,9 +601,9 @@ namespace UniversalPatcher
         {
             return false;
         }
-        public virtual bool SetupFilters(string Filters, bool Secondary)
+        public virtual int[] SetupFilters(string Filters, bool Secondary, bool ClearOld)
         {
-            return false;
+            return null;
         }
 
         //public abstract bool SetConfig(J2534DotNet.SConfig[] sc);
@@ -631,6 +641,21 @@ namespace UniversalPatcher
         {
             MsgEventparameter msg = new MsgEventparameter(message);
             OnMsgSent(msg);
+        }
+
+        public void StartIdleTraffic(int interval)
+        {
+            Task.Factory.StartNew(() => IdleLoop(interval));
+        }
+
+        private void IdleLoop(int interval)
+        {
+            while (Connected)
+            {
+                Thread.Sleep(interval);
+                OBDMessage idleMsg = new OBDMessage(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 });
+                this.Enqueue(idleMsg, true);
+            }
         }
     }
 }

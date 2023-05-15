@@ -2442,6 +2442,10 @@ namespace UniversalPatcher
             RefreshTablelist(false);
             timer.Stop();
             Debug.WriteLine("Open new file time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+            if (tabControl1.SelectedTab == tabCategory && treeCategory != null && treeCategory.Nodes != null && treeCategory.Nodes.Count > 0)
+            {
+                treeCategory.Nodes[0].Expand();
+            }
         }
 
         private string GetFileLetter(string menuTxt)

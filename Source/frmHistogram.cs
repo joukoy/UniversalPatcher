@@ -566,6 +566,8 @@ namespace UniversalPatcher
         {
             try
             {
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
                 if (hSetup == null)
                 {
                     if (string.IsNullOrEmpty(comboXparam.Text) || string.IsNullOrEmpty(comboValueparam.Text))
@@ -596,6 +598,8 @@ namespace UniversalPatcher
                     }
                 }
                 ShowCellInfo();
+                timer.Stop();
+                Debug.WriteLine("Histogram AddLogData Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
             }
             catch (Exception ex)
             {

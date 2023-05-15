@@ -143,6 +143,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnByteSwap = new System.Windows.Forms.Button();
             this.btnStartFlashApp = new System.Windows.Forms.Button();
             this.btnLogger = new System.Windows.Forms.Button();
             this.btnTuner = new System.Windows.Forms.Button();
@@ -289,6 +290,7 @@
             this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deviceNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.functionNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cANModulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cVNDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -300,7 +302,6 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
-            this.btnByteSwap = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1673,6 +1674,16 @@
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // btnByteSwap
+            // 
+            this.btnByteSwap.Location = new System.Drawing.Point(349, 6);
+            this.btnByteSwap.Name = "btnByteSwap";
+            this.btnByteSwap.Size = new System.Drawing.Size(107, 25);
+            this.btnByteSwap.TabIndex = 192;
+            this.btnByteSwap.Text = "Byteswap";
+            this.btnByteSwap.UseVisualStyleBackColor = true;
+            this.btnByteSwap.Click += new System.EventHandler(this.btnByteSwap_Click);
             // 
             // btnStartFlashApp
             // 
@@ -3105,6 +3116,7 @@
             this.oBD2CodesToolStripMenuItem,
             this.deviceNamesToolStripMenuItem,
             this.functionNamesToolStripMenuItem,
+            this.cANModulesToolStripMenuItem,
             this.cVNDatabaseToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
@@ -3219,6 +3231,13 @@
             this.functionNamesToolStripMenuItem.Text = "Function Names";
             this.functionNamesToolStripMenuItem.Click += new System.EventHandler(this.functionNamesToolStripMenuItem_Click);
             // 
+            // cANModulesToolStripMenuItem
+            // 
+            this.cANModulesToolStripMenuItem.Name = "cANModulesToolStripMenuItem";
+            this.cANModulesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.cANModulesToolStripMenuItem.Text = "CAN modules";
+            this.cANModulesToolStripMenuItem.Click += new System.EventHandler(this.cANModulesToolStripMenuItem_Click);
+            // 
             // cVNDatabaseToolStripMenuItem
             // 
             this.cVNDatabaseToolStripMenuItem.Name = "cVNDatabaseToolStripMenuItem";
@@ -3308,16 +3327,6 @@
             // timerDebug
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
-            // 
-            // btnByteSwap
-            // 
-            this.btnByteSwap.Location = new System.Drawing.Point(349, 6);
-            this.btnByteSwap.Name = "btnByteSwap";
-            this.btnByteSwap.Size = new System.Drawing.Size(107, 25);
-            this.btnByteSwap.TabIndex = 192;
-            this.btnByteSwap.Text = "Byteswap";
-            this.btnByteSwap.UseVisualStyleBackColor = true;
-            this.btnByteSwap.Click += new System.EventHandler(this.btnByteSwap_Click);
             // 
             // FrmPatcher
             // 
@@ -3699,5 +3708,6 @@
         private System.Windows.Forms.ToolStripMenuItem pIDDescriptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allSettingsToolStripMenuItem;
         private System.Windows.Forms.Button btnByteSwap;
+        private System.Windows.Forms.ToolStripMenuItem cANModulesToolStripMenuItem;
     }
 }

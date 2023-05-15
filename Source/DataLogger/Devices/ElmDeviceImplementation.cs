@@ -28,7 +28,7 @@ namespace UniversalPatcher
 
         public TimeoutScenario TimeoutScenario { get; set; }
 
-        protected readonly Action<OBDMessage> enqueue;
+        protected readonly Action<OBDMessage, bool> enqueue;
 
         protected readonly Action<OBDMessage> MessageSent;
 
@@ -44,7 +44,7 @@ namespace UniversalPatcher
         /// Constructor.
         /// </summary>
         public ElmDeviceImplementation(
-            Action<OBDMessage> enqueue,
+            Action<OBDMessage, bool> enqueue,
             Func<int> getReceivedMessageCount,
             IPort port,
             Action<OBDMessage> MessageSent)
@@ -157,7 +157,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Try to read an incoming message from the device.
         /// </summary>
-        public virtual void Receive()
+        public virtual void Receive(bool WaitForTimeout)
         {
             throw new NotImplementedException("This is only implemented by derived classes.");
         }
@@ -299,7 +299,6 @@ namespace UniversalPatcher
             byte[] message = response.Data.ToBytes();
             OBDMessage rMsg = new OBDMessage(message);
             rMsg.TimeStamp = (ulong)response.TimeStamp;
-            rMsg.DevTimeStamp = (ulong)response.TimeStamp;
             rMsg.ElmPrompt = response.Prompt;
             return Response.Create(ResponseStatus.Success, rMsg);
 
@@ -311,7 +310,7 @@ namespace UniversalPatcher
         /// </summary>
         public bool ProcessResponse(SerialString rawResponse, string context, bool allowEmpty = false)
         {
-            if (rawResponse.Prompt && (rawResponse.Data.Length < 5 || rawResponse.Data.Contains("STOPPED")) ) 
+            if (rawResponse.Prompt && (rawResponse.Data.Length < 3 || rawResponse.Data.Contains("STOPPED")) ) 
             {
                 //We have received prompt
                 Debug.WriteLine("Processresponse with prompt: " + rawResponse.Data);
@@ -320,10 +319,9 @@ namespace UniversalPatcher
                 //if (rawResponse.Data.StartsWith("6C") || rawResponse.Data.StartsWith("8C"))
                   //  response = new OBDMessage(rawResponse.Data.ToBytes());
                 response.TimeStamp = (ulong)rawResponse.TimeStamp;
-                response.DevTimeStamp = (ulong)rawResponse.TimeStamp;
                 response.ElmPrompt = true;
-                this.enqueue(response);
-                return true;
+                this.enqueue(response, true);
+                return false;
             }
 
             if (string.IsNullOrWhiteSpace(rawResponse.Data))
@@ -368,10 +366,9 @@ namespace UniversalPatcher
                         Debug.WriteLine("RX: " + deviceResponseBytes.ToHex());
                         //Debug.WriteLine("Timestamp " + s.ToString() +": "+ rawResponse.TimeStamps[s].ToString());
                         OBDMessage response = new OBDMessage(deviceResponseBytes);
-                        response.DevTimeStamp = (ulong)rawResponse.TimeStamps[s];
                         response.TimeStamp = (ulong)rawResponse.TimeStamps[s];
                         response.ElmPrompt = rawResponse.Prompt;
-                        this.enqueue(response);
+                        this.enqueue(response, true);
                         s++;
                     }
                     return true;

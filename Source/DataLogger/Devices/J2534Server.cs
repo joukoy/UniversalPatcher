@@ -27,13 +27,16 @@ namespace UniversalPatcher
     {
         //private NamedPipeServerStream msgReceivePipe;
         private NamedPipeServerStream loggerPipe;
+        private NamedPipeServerStream msgEventPipe;
         private Device LogDevice;
         public bool running = true;
+        private Queue<string> msgEventQueue = new Queue<string>();
 
         public J2534Server(J2534DotNet.J2534Device jDevice) 
         {
             this.LogDevice = new J2534Device(jDevice);
             loggerPipe = new NamedPipeServerStream(ProcessId.ToString() + "j2534loggerpipe", PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.WriteThrough);
+            msgEventPipe = new NamedPipeServerStream(ProcessId.ToString() + "j2534msgeventpipe", PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.WriteThrough);
         }
 
         private byte[] ReceiveFromPipe(NamedPipeServerStream pipe)
@@ -59,11 +62,51 @@ namespace UniversalPatcher
             });
         }
 
+        private void LogDevice_MsgReceived(object sender, MsgEventparameter e)
+        {
+            string msg = "R" + Helpers.SerializeObjectToXML<OBDMessage>(e.Msg);
+            msgEventQueue.Enqueue(msg);
+        }
+
+        private void LogDevice_MsgSent(object sender, MsgEventparameter e)
+        {
+            string msg = "S" + Helpers.SerializeObjectToXML<OBDMessage>(e.Msg);
+            msgEventQueue.Enqueue(msg);
+        }
+
+        private void MessageEventLoop()
+        {
+            try
+            {
+                while (running)
+                {
+                    if (msgEventQueue.Count > 0)
+                    {
+                        string msg = msgEventQueue.Dequeue();
+                        msgEventPipe.Write(Encoding.ASCII.GetBytes(msg), 0, msg.Length);
+                        msgEventPipe.Flush();
+                    }
+                    else
+                    {
+                        Thread.Sleep(100);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                var frame = st.GetFrame(st.FrameCount - 1);
+                var line = frame.GetFileLineNumber();
+                Logger("Error, j2534Server line " + line + ": " + ex.Message);
+            }
+        }
+
         public void ServerLoop()
         {
             try
             {
                 Task.Factory.StartNew(() => Protocol2Loop());
+                Task.Factory.StartNew(() => MessageEventLoop());
                 using (NamedPipeServerStream cmdPipeServer = new NamedPipeServerStream(ProcessId.ToString() + "j2534cmdpipe", PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.WriteThrough))
                 {
                     using (NamedPipeServerStream responsePipeServer = new NamedPipeServerStream(ProcessId.ToString() + "j2534responsepipe", PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.WriteThrough))
@@ -79,6 +122,7 @@ namespace UniversalPatcher
                         responsePipeServer.WaitForConnection();
                         //msgReceivePipe.WaitForConnection();
                         loggerPipe.WaitForConnection();
+                        msgEventPipe.WaitForConnection();
                         Logger("Server have connection from client");
                         uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
                         Application.DoEvents();
@@ -123,6 +167,11 @@ namespace UniversalPatcher
                                             running = false;
                                             retVal = failMessage;
                                         }
+                                        else
+                                        {
+                                            LogDevice.MsgSent += LogDevice_MsgSent;
+                                            LogDevice.MsgReceived += LogDevice_MsgReceived;
+                                        }
                                         Application.DoEvents();
                                         break;
                                     case j2534Command.SetWriteTimeout:
@@ -134,13 +183,17 @@ namespace UniversalPatcher
                                         LogDevice.SetReadTimeout(readTimeout);
                                         break;
                                     case j2534Command.Receive:
-                                        OBDMessage oMsg = LogDevice.ReceiveMessage();
+                                        bool waitfortimeout = Convert.ToBoolean(data[0]);
+                                        OBDMessage oMsg = LogDevice.ReceiveMessage(waitfortimeout);                                        
                                         if (oMsg != null)
                                         {
-                                            //retVal = oMsg.ToPipeMessage();
+                                            Debug.WriteLine("Jserver Received msg: " + oMsg.ToString());
                                             string msgStr = Helpers.SerializeObjectToXML<OBDMessage>(oMsg);
                                             retVal = Encoding.ASCII.GetBytes(msgStr);
                                         }
+                                        break;
+                                    case j2534Command.ReceiveBufferedMessages:
+                                        LogDevice.ReceiveBufferedMessages();
                                         break;
                                     case j2534Command.Receive2:
                                         //LogDevice.Receive2();
@@ -155,23 +208,33 @@ namespace UniversalPatcher
                                     case j2534Command.SendMessage:
                                         //OBDMessage message = new OBDMessage(null);
                                         //message.FromPipeMessage(data);
+                                        Debug.WriteLine("Msg send start");
                                         OBDMessage message = Helpers.XmlDeserializeFromString<OBDMessage>(Encoding.ASCII.GetString(data));
                                         //Logger("Server message: " + message.ToString());
-                                        if (!LogDevice.SendMessage(message, 1))
+                                        bool m = LogDevice.SendMessage(message, 1);
+                                        if (!m)
                                         {
                                             retVal = failMessage;
                                         }
+                                        Debug.WriteLine("Msg send end");
                                         break;
                                     case j2534Command.SetupFilters:
                                         bool secondary = Convert.ToBoolean(data[0]);
-                                        byte[] tmp = new byte[data.Length - 1];
-                                        Array.Copy(data, 1, tmp, 0, tmp.Length);
+                                        bool clearold = Convert.ToBoolean(data[1]);
+                                        byte[] tmp = new byte[data.Length - 2];
+                                        Array.Copy(data, 2, tmp, 0, tmp.Length);
                                         string filters = System.Text.Encoding.Default.GetString(tmp);
                                         Logger("J2534 server setting filters: " + filters + ", secondary: " + secondary.ToString());
-                                        if (!LogDevice.SetupFilters(filters, secondary))
+                                        int[] filterIds = LogDevice.SetupFilters(filters, secondary, clearold);
+                                        if (filterIds == null)
                                         {
                                             Logger("J2534 server: Filter setup failed");
                                             retVal = failMessage;
+                                        }
+                                        else
+                                        {
+                                            retVal = new byte[filterIds.Length * 4];
+                                            Buffer.BlockCopy(filterIds, 0, retVal, 0, retVal.Length);
                                         }
                                         Logger("J2534 server filters set");
                                         break;
@@ -204,7 +267,14 @@ namespace UniversalPatcher
                                         }
                                         break;
                                     case j2534Command.RemoveFilters:
-                                        if (!LogDevice.SetAnalyzerFilter())
+                                        int[] fIds = null;
+                                        if (data != null && data.Length > 3)
+                                        {
+                                            fIds = new int[data.Length / 4];
+                                            for (int i=0;(i * 4) < data.Length; i++)
+                                                fIds[i] = BitConverter.ToInt32(data, i*4);
+                                        }
+                                        if (!LogDevice.RemoveFilters(fIds))
                                         {
                                             retVal = failMessage;
                                         }
@@ -342,6 +412,7 @@ namespace UniversalPatcher
             Application.DoEvents();
             Environment.Exit(0);
         }
+
 
         public void Protocol2Loop()
         {

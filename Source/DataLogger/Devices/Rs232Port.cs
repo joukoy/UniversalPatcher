@@ -230,6 +230,10 @@ namespace UniversalPatcher
         /// </summary>
         public void DiscardBuffers()
         {
+            if (port == null)
+            {
+                return;
+            }
             this.port.DiscardInBuffer();
             lock (this.internalQueue)
             {

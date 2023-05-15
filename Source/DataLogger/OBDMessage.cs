@@ -28,11 +28,6 @@ namespace UniversalPatcher
         private ulong timestamp;
 
         /// <summary>
-        /// When the message was created (From device timestamp).
-        /// </summary>
-        private ulong devtimestamp;
-
-        /// <summary>
         /// Error code, if applicable.
         /// </summary>
         private ulong error;
@@ -67,7 +62,6 @@ namespace UniversalPatcher
         public OBDMessage()
         {
             this.timestamp = (ulong)DateTime.Now.Ticks;
-            this.devtimestamp = (ulong)DateTime.Now.Ticks;
             SecondaryProtocol = false;
         }
 
@@ -78,7 +72,6 @@ namespace UniversalPatcher
         {
             this.message = message;
             this.timestamp = (ulong)DateTime.Now.Ticks;
-            this.devtimestamp = (ulong)DateTime.Now.Ticks;
             SecondaryProtocol = false;
         }
 
@@ -89,7 +82,6 @@ namespace UniversalPatcher
         {
             this.message = message;
             this.timestamp = timestamp;
-            this.devtimestamp = (ulong)DateTime.Now.Ticks;
             this.error = error;
             SecondaryProtocol = false;
         }
@@ -101,15 +93,6 @@ namespace UniversalPatcher
         {
             get { return this.timestamp; }
             set { this.timestamp = value; }
-        }
-
-        /// <summary>
-        /// When the message was created or received (Device time).
-        /// </summary>
-        public ulong DevTimeStamp
-        {
-            get { return this.devtimestamp; }
-            set { this.devtimestamp = value; }
         }
 
         /// <summary>
@@ -152,36 +135,6 @@ namespace UniversalPatcher
         }
 
         /// <summary>
-        /// When sending message in named pipe (byte array) it is organized: timestamp, devtimestamp, Elmrompt, Secondaryprotocol, message data 
-        /// NOT IN USE
-        /// </summary>
-        public void FromPipeMessage(byte[] msg)
-        {
-            int ulen = sizeof(ulong);
-            if (msg.Length > ((2 * ulen) + 2))
-            {
-                timestamp = BitConverter.ToUInt64(msg, 0);
-                devtimestamp = BitConverter.ToUInt64(msg, ulen);
-                ElmPrompt = Convert.ToBoolean(msg[2 * ulen]);
-                SecondaryProtocol = Convert.ToBoolean(msg[2 * ulen + 1]);
-                message = new byte[msg.Length - (2 * ulen) - 2];
-                Array.Copy(msg, (2 * ulen) + 2, message, 0, message.Length);
-            }
-        }
-
-        /// NOT IN USE
-        public byte[] ToPipeMessage()
-        {
-            List<byte> msg = new List<byte>();
-            msg.AddRange(BitConverter.GetBytes(timestamp));
-            msg.AddRange(BitConverter.GetBytes(devtimestamp));
-            msg.Add(Convert.ToByte(ElmPrompt));
-            msg.Add(Convert.ToByte(SecondaryProtocol));
-            msg.AddRange(message);
-            return msg.ToArray();
-        }
-
-        /// <summary>
         /// When Elm device is waiting for new command, it shows prompt >
         /// </summary>
         public bool ElmPrompt { get; set; }
@@ -202,5 +155,11 @@ namespace UniversalPatcher
         /// J2534 RxStatus
         /// </summary>
         public J2534DotNet.RxStatus Rxstatus { get; set; }
+
+        /// <summary>
+        /// J2534 device original timestamp, no conversions
+        /// </summary>
+        public ulong DeviceTimestamp { get; set; }
+
     }
 }

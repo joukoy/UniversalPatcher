@@ -36,10 +36,17 @@ namespace UniversalPatcher
                     return;
                 }
                 if (analyzerMode)
+                {
                     device.SetReadTimeout(AppSettings.TimeoutAnalyzerReceive);
+                }
                 else
-                    device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
-                if (device.LogDeviceType != DataLogger.LoggingDevType.Other)
+                {
+                    if (device.LogDeviceType == DataLogger.LoggingDevType.J2534)
+                        device.SetReadTimeout(AppSettings.TimeoutJConsoleReceive);
+                    else
+                        device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
+                }
+                if (device.LogDeviceType != DataLogger.LoggingDevType.J2534)
                 {
                     device.SetTimeout(TimeoutScenario.DataLogging3);
                     device.SetAnalyzerFilter();
@@ -73,12 +80,8 @@ namespace UniversalPatcher
                     {
                         port.CancelReceive();
                     }
-                    if (device.LogDeviceType == DataLogger.LoggingDevType.Other)
-                    {
-                        //ReceiverTask.Wait(100);
-                    }
-                    else
-                    {
+                    if (device.LogDeviceType == DataLogger.LoggingDevType.Elm || device.LogDeviceType == DataLogger.LoggingDevType.Obdlink)
+                    { 
                         datalogger.StopElmReceive();
                         //ReceiverTask.Wait(5000);
                     }
@@ -102,21 +105,21 @@ namespace UniversalPatcher
         {
             if (Pause)
             {
-                if (!ReceiveLoopRunning) 
+                if (!ReceiveLoopRunning) // || device.LogDeviceType == DataLogger.LoggingDevType.J2534) 
                 {
                     return true;
                 }
-                Debug.WriteLine("Pausing receiver, scondary: " + secondaryProtocol.ToString());
+                Debug.WriteLine("Pausing receiver, secondary: " + secondaryProtocol.ToString());
                 ReceiverPaused = true;
                 StopReceiveLoop();
                 Application.DoEvents();
-                if (port == null)  //For J-tools
+                if (device.LogDeviceType == DataLogger.LoggingDevType.J2534)  //For J-tools (Old code)
                 {
-                    device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
+                    device.SetReadTimeout(AppSettings.TimeoutJConsoleReceive);
                 }
                 else
                 {
-                    device.SetReadTimeout(AppSettings.TimeoutReceive);
+                    device.SetReadTimeout(AppSettings.TimeoutSerialPortRead);
                 }
                 return true;
             }
@@ -126,9 +129,20 @@ namespace UniversalPatcher
                 {
                     Debug.WriteLine("Continue receiving, secondary: " + secondaryProtocol.ToString());
                     if (analyzerMode)
+                    {
                         device.SetReadTimeout(AppSettings.TimeoutAnalyzerReceive);
+                    }
                     else
-                        device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
+                    {
+                        if (device.LogDeviceType == DataLogger.LoggingDevType.J2534)  
+                        {
+                            device.SetReadTimeout(AppSettings.TimeoutJConsoleReceive);
+                        }
+                        else
+                        {
+                            device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
+                        }
+                    }
                     StartReceiveLoop(device, port, secondaryProtocol, analyzerMode);
                     ReceiverPaused = false;
                 }
@@ -148,7 +162,7 @@ namespace UniversalPatcher
                 Debug.WriteLine("Starting receive loop");
             }
             //while (Connected && ReceiveLoopRunning)
-            OBDMessage msg = device.ReceiveMessage();
+            OBDMessage msg = null;
             while (!receiverToken.IsCancellationRequested)
             {
                 try
@@ -163,6 +177,10 @@ namespace UniversalPatcher
                     {
                         Debug.WriteLine("Resetting analyzer filter");
                         device.SetAnalyzerFilter();
+                        do
+                        {
+                            msg = device.ReceiveMessage(true);
+                        } while (msg != null);
                     }
                     if (secondaryProtocol)
                     {
@@ -170,7 +188,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        msg = device.ReceiveMessage();
+                        msg = device.ReceiveMessage(true);
                     }
                     //Thread.Sleep(500);
                 }

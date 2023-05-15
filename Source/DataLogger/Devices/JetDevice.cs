@@ -440,22 +440,28 @@ namespace UniversalPatcher
         {
             //Debug.WriteLine("Sendrequest called");
             Debug.WriteLine("TX: " + message.GetBytes().ToHex());
-            this.MessageSent(message);
             SendJETPacket(message);
+            message.TimeStamp = (ulong)DateTime.Now.Ticks;
+            this.MessageSent(message);
             return true;
         }
 
-        public override void Receive()
+        public override void ReceiveBufferedMessages()
         {
-           
-            Response<OBDMessage> response = ReadJETPacket();
-            if (response.Status == ResponseStatus.Success)
-            {
-                Debug.WriteLine("RX: " + response.Value.GetBytes().ToHex());
-                this.Enqueue(response.Value);
-                return;
-            }
+        }
 
+        public override void Receive(bool WaitForTimeout)
+        {
+            if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+            {
+                Response<OBDMessage> response = ReadJETPacket();
+                if (response.Status == ResponseStatus.Success)
+                {
+                    Debug.WriteLine("RX: " + response.Value.GetBytes().ToHex());
+                    this.Enqueue(response.Value, true);
+                    return;
+                }
+            }
             Debug.WriteLine("JET: no message waiting.");            
         }
         
@@ -513,7 +519,7 @@ namespace UniversalPatcher
             Debug.WriteLine("SetAnalyzerFilter not implemented");
             return true;
         }
-        public override bool RemoveFilters()
+        public override bool RemoveFilters(int[] filterIds)
         {
             Debug.WriteLine("RemoveFilters not implemented");
             return true;

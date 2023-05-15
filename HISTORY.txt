@@ -628,3 +628,12 @@
 - Logger: Added: "Reset connection after missed data:" to avoid connection resets with multiple pids
 - Logger: Fixed Misfire Pid descriptions 1200-1208 
 
+0.22.07
+- Logger: Fixed bug: Logging failed with ELM device if profile have >38 bytes
+- Logger: Profile editor: Added "Filter by OS" and "Filter by query"
+- Logger: Reset logger if adding/removing pids while logging
+- Logger: Separate timeout settings for J2534 & serialport devices: TimeoutConsoleReceive/TimeoutJConsoleReceive, TimeoutSerialPortWrite/TimeoutJ2534Write
+- Logger: CAN protocol imrovements
+- Logger: Fix: handle Math pids with divide by zero (Usually when engine not running)
+- Logger: OBDScript, support for setconfigs: for Avt device
+- Logger: Bug fixes & improvements

@@ -300,7 +300,7 @@ namespace UniversalPatcher
                 Logger("Waiting data...");
                 if (datalogger.LogRunning)
                 {
-                    datalogger.LogDevice.RemoveFilters();
+                    datalogger.LogDevice.RemoveFilters(null);
                 }
                 else
                 {

@@ -96,7 +96,7 @@ namespace UniversalPatcher
 
             // This will be used during device initialization.
             this.currentTimeoutScenario = TimeoutScenario.ReadProperty;
-            this.LogDeviceType = DataLogger.LoggingDevType.Other;
+            this.LogDeviceType = DataLogger.LoggingDevType.OBDX;
         }
 
         public override string GetDeviceType()
@@ -356,8 +356,7 @@ namespace UniversalPatcher
                     //if (!TimeStampsEnabled)
 
                     OBDMessage rMsg = new OBDMessage(StrippedFrame, (ulong)rx.TimeStamp, 0);
-                    rMsg.DevTimeStamp = (ulong)rx.TimeStamp;
-                    this.Enqueue(rMsg);
+                    this.Enqueue(rMsg, true);
                     /*                if (!TimeStampsEnabled)
                                         timestampmicro = (ulong)rx.TimeStamp;
                                     this.Enqueue(new OBDMessage(StrippedFrame, timestampmicro, 0));
@@ -570,9 +569,10 @@ namespace UniversalPatcher
             {
                 //Debug.WriteLine("Sendrequest called");
                 //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());                  
-                this.MessageSent(message);
                 //this.ClearMessageQueue();
                 Response<OBDMessage> m = SendDVIPacket(message, responses);
+                message.TimeStamp = (ulong)DateTime.Now.Ticks;
+                this.MessageSent(message);
                 if (m.Status != ResponseStatus.Success)
                 {
                     Debug.WriteLine(m.ToString());
@@ -592,6 +592,10 @@ namespace UniversalPatcher
             }
         }
 
+        public override void ReceiveBufferedMessages()
+        {
+        }
+
 
         /// <summary>
         /// Receive a message from the network - or at least try to.
@@ -600,13 +604,17 @@ namespace UniversalPatcher
         /// Messages are placed into the queue by the code in ReadDvIPacket.
         /// Retry loops and message processing are in the application layer.
         /// </remarks>
-        public override void Receive()
+        public override void Receive(bool WaitForTimeout)
         {
             if (this.Port == null || !Port.PortOpen())
             {
                 Debug.WriteLine("Port closed, disposing OBDX Pro device");
             }
-            ReadDVIPacket(ReadTimeout);
+            if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+            {
+                ReadDVIPacket(ReadTimeout);
+            }
+            Debug.WriteLine("Port have " + Port.GetReceiveQueueSize().ToString() + " bytes in queue");
         }
 
         private bool ResetDevice()
@@ -1192,7 +1200,7 @@ namespace UniversalPatcher
 */            
         }
 
-        public override bool RemoveFilters()
+        public override bool RemoveFilters(int[] filterIds)
         {
             Debug.WriteLine("Removing filters");
 /*            if (this.CurrentFilter == "analyzer")

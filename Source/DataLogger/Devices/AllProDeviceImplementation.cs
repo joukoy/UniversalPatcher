@@ -31,7 +31,7 @@ namespace UniversalPatcher
         /// Constructor.
         /// </summary>
         public AllProDeviceImplementation(
-            Action<OBDMessage> enqueue,
+            Action<OBDMessage, bool> enqueue,
             Func<int> getReceivedMessageCount,
             IPort port,
             Action<OBDMessage> MessageSent) :
@@ -266,12 +266,15 @@ namespace UniversalPatcher
         /// Try to read an incoming message from the device.
         /// </summary>
         /// <returns></returns>
-        public override void Receive()
+        public override void Receive(bool WaitForTimeout)
         {
             try
             {
-                SerialString response = this.ReadELMLine(false);
-                this.ProcessResponse(response, "receive");
+                if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+                {
+                    SerialString response = this.ReadELMLine(false);
+                    this.ProcessResponse(response, "receive");
+                }
             }
             catch (TimeoutException)
             {

@@ -42,6 +42,7 @@ namespace UniversalPatcher
             devicenames,
             funcnames,
             obd2codes,
+            CANmodules,
         }
 
         private XMLTYPE xmlType = XMLTYPE.autodetect;
@@ -65,6 +66,7 @@ namespace UniversalPatcher
         public List<ObdEmu.OBDResponse> obdresponses;
         private List<IdName> devicenames;
         private List<IdName> funcnames;
+        private List<CANDevice> canmods;
         private object currentObj;
         private object currentList;
         private Type currentType;
@@ -380,6 +382,60 @@ namespace UniversalPatcher
             FillFilterBy();
         }
 
+        public void LoadCANModules()
+        {
+            xmlType = XMLTYPE.CANmodules;
+            this.Text = "CAN modules";
+            canmods = new List<CANDevice>();
+            currentObj = new CANDevice();
+            currentType = typeof(CANDevice);
+            if (CanModules == null || CanModules.Count == 0)
+            {
+                string fName = SelectFile("Select id-file", TxtFilter);
+                if (string.IsNullOrEmpty(fName))
+                {
+                    return;
+                }
+                CanModules = new List<CANDevice>();
+                string content = ReadTextFile(fName);
+                string[] lines = content.Split('\n');
+                foreach (string line in lines)
+                {
+                    CANDevice cd = new CANDevice();
+                    string[] lParts = line.Split('\t');
+                    if (lParts.Length >= 6)
+                    {
+                        cd.ModuleName = lParts[0];
+                        cd.ModuleDescription = lParts[5];
+                        if (HexToByte(lParts[1], out byte ecuid))
+                            cd.ModuleID = ecuid;
+                        if (HexToUint(lParts[2], out uint rqid))
+                            cd.RequestID = (int)rqid;
+                        if (HexToUint(lParts[3], out uint resid))
+                            cd.ResID = (int)resid;
+                        if (HexToUint(lParts[4], out uint diagid))
+                            cd.DiagID = (int)diagid;
+                    }
+                    canmods.Add(cd);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < CanModules.Count; i++)
+                {
+                    CANDevice c = CanModules[i].ShallowCopy();
+                    canmods.Add(c);
+                }
+            }
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = canmods;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            for (int c=0; c<4; c++)
+                dataGridView1.Columns[c].DefaultCellStyle.Format = "X4";
+            FillFilterBy();
+        }
+
         public void LoadDeviceNames()
         {
             xmlType = XMLTYPE.devicenames;
@@ -678,6 +734,19 @@ namespace UniversalPatcher
                         DeviceNames = devicenames;
                         Logger(" [OK]");
                         break;
+                    case XMLTYPE.CANmodules:
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "CANModules.xml");
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CANDevice>));
+                            writer.Serialize(stream, canmods);
+                            stream.Close();
+                        }
+                        CanModules = canmods;
+                        Logger(" [OK]");
+                        break;
                     case XMLTYPE.segmentconfig:
                         if (fName.Length == 0)
                             fName = PCM.segmentFile;
@@ -842,7 +911,7 @@ namespace UniversalPatcher
 
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            if (this.Text.Contains("Table Seek") && starting)
+            if (xmlType == XMLTYPE.tableseek && starting)
             {
                 dataGridView1.AutoResizeColumns();
                 dataGridView1.Columns["SearchStr"].Width = 100;
@@ -1040,6 +1109,14 @@ namespace UniversalPatcher
                         else
                             compareUnitList = compareUnitList.OrderByDescending(x => typeof(Units).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareUnitList;
+                        break;
+                    case XMLTYPE.CANmodules:
+                        List<CANDevice> compareCanList = canmods.Where(t => typeof(CANDevice).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
+                        if (strSortOrder == SortOrder.Ascending)
+                            compareCanList = compareCanList.OrderBy(x => typeof(CANDevice).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        else
+                            compareCanList = compareCanList.OrderByDescending(x => typeof(CANDevice).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        bindingSource.DataSource = compareCanList;
                         break;
                 }
                 dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;

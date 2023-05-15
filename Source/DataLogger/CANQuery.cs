@@ -15,12 +15,18 @@ namespace UniversalPatcher
         public int DiagID { get; set; }
         public byte ModuleID { get; set; }
         public string ModuleName { get; set; }
+        public string ModuleDescription { get; set; }
 
         public override string ToString()
         {
             return "ResID:" + ResID.ToString("X4") + " RequestID: " + RequestID.ToString("X4") +
                 " DiagID: " + DiagID.ToString("X4") + " ModuleID: " + ModuleID.ToString("X") + ": " + ModuleName;
         }
+        public CANDevice ShallowCopy()
+        {
+            return (CANDevice)this.MemberwiseClone();
+        }
+
     }
     public static class CANQuery
     {
@@ -30,7 +36,7 @@ namespace UniversalPatcher
             {
                 Logger("Sending CAN device query");
                 byte[] queryMsg = { 0x00, 0x00, 0x01, 0x01, 0xFE, 0x02, 0x1A, 0xB0, 0x00, 0x00, 0x00, 0x00 };
-                bool m = device.SendMessage(new OBDMessage(queryMsg), 0);
+                device.SendMessage(new OBDMessage(queryMsg), 0);
             }
             catch (Exception ex)
             {
@@ -60,6 +66,23 @@ namespace UniversalPatcher
             retVal.ModuleName = GetModuleName(retVal.ModuleID);
 
             return retVal;
+        }
+
+        public static CANDevice GetDeviceAddresses(ushort RequestId)
+        {
+            CANDevice cd = new CANDevice();
+            cd.RequestID = RequestId;
+            if (RequestId > 0x0700)
+            {
+                cd.ResID = RequestId + 8;
+                cd.DiagID = 0x0500 + (byte)RequestId + 8;
+            }
+            else
+            {
+                cd.ResID = RequestId + 0x400;
+                cd.DiagID = 0x0500 + (byte)RequestId;
+            }
+            return cd;
         }
 
         private static string GetModuleName(byte did)

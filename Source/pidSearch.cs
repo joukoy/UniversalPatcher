@@ -183,7 +183,19 @@ namespace UniversalPatcher
                 }
                 prevPidNumber = pid.pidNumberInt;
             }
-
+            if (pidList.Count > 0)
+            {
+                string ospidfile = Path.Combine(Application.StartupPath, "Logger", "ospids", PCM.OS + ".txt");
+                if (!File.Exists(ospidfile))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int p=0;p<pidList.Count;p++)
+                    {
+                        sb.AppendLine(pidList[p].PidNumber);
+                    }
+                    WriteTextFile(ospidfile, sb.ToString());
+                }
+            }
         }
 
         private PID ReadPid(uint addr)

@@ -30,7 +30,7 @@ namespace UniversalPatcher
             TunerTreeMode = true;
             TunerAutomulti1d = true;
             MulitableChars = ". [ ]";
-            WorkingMode = 1;
+            WorkingMode = 0;
             RequireValidVerForStock = true;
             TunerShowUnitsUndefined = true;
             TunerShowUnitsImperial = true;
@@ -49,6 +49,7 @@ namespace UniversalPatcher
             LoggerTimestampFormat = "HH:mm:ss.ffff";
             LoggerLogSeparator = ",";
             LoggerDecimalSeparator = ".";
+            LoggerLastFilterOS = "";
             TunerShowTableCount = true;
             TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
             ConfigModeColumnWidth = "180,114,32,63,86,71,48,81,100,50,78,49,69,60,54,43,58,64,43,78,100,100,243,100,100";
@@ -57,12 +58,15 @@ namespace UniversalPatcher
             NavigatorMaxTablesTotal = 50;
             LoggerStartJ2534Process = true;
             LoggerJ2534ProcessVisible = false;
+            LoggerStartJ2534ProcessDebug = false;
             LoggerAutoDisconnect = true;
             LoggerFilterStartOfMessage = true;
             LoggerFilterTXIndication = true;
             LoggerFilterRxStatusCustom = "";
             LoggerUseVPW = true;
             LoggerConsoleDisplayInterval = 200;
+            LoggerTesterPresentInterval = 4000;
+            LoggerCanPcmAddress = 0x07E0;
             RetryWriteTimes = 3;
             RetryWriteDelay = 10;
             LoggerResetAfterMiss = 50;
@@ -74,11 +78,16 @@ namespace UniversalPatcher
             TimeoutReceive = 100;
             TimeoutLoggingReceive = 100;
             TimeoutScriptRead = 100;
-            TimeoutScriptWrite = 100;
-            TimeoutPortRead = 1000;
+            //TimeoutScriptWrite = 100;
+            TimeoutJ2534Write = 10;
+            TimeoutSerialPortRead = 2000;
+            TimeoutSerialPortWrite = 100;
+            TimeoutAvtRead = 3000;
             TimeoutAnalyzerReceive = 3000;
             TimeoutConsoleReceive = 100;
-            TimeoutLoggingWrite = 100;
+            TimeoutJConsoleReceive = 100;
+            //TimeoutLoggingWrite = 100;
+            //TimeoutJLoggingWrite = 0;
             //TimeoutJconsoleWrite = 100;
             //TimeoutJ2534DeviceRead = 20;
 
@@ -192,14 +201,15 @@ namespace UniversalPatcher
         public Size LoggerWindowSize { get; set; }
         public FormWindowState LoggerWindowState { get; set; }
         public Point LoggerWindowPosition { get; set; }
-        public bool LoggerEnableConsole { get; set; }
+        //public bool LoggerEnableConsole { get; set; }
         public bool LoggerConsoleTimestamps { get; set; }
+        public bool LoggerConsoleDevTimestamps { get; set; }
         //public Font LoggerConsoleFont { get; set; }
-        public bool LoggerConsoleJ2534Timestamps { get; set; }
         public int LoggerScriptDelay { get; set; }
         public string LoggerJ2534SettingsFile { get; set; }
         public string JConsoleDevice { get; set; }
         public bool JConsoleTimestamps { get; set; }
+        public bool JConsoleDevTimestamps { get; set; }
         public bool JConsole4x { get; set; }
         public bool LoggerConsole4x { get; set; }
         public string LoggerJ2534SettingsFile2 { get; set; }
@@ -227,10 +237,14 @@ namespace UniversalPatcher
         public int NavigatorMaxTablesTotal { get; set; }
         public bool LoggerStartJ2534Process { get; set; }
         public bool LoggerJ2534ProcessVisible { get; set; }
+        public bool LoggerStartJ2534ProcessDebug { get; set; }
         public bool LoggerAutoDisconnect { get; set; }
         public bool LoggerFilterStartOfMessage { get; set; }
         public bool LoggerFilterTXIndication { get; set; }
         public string LoggerFilterRxStatusCustom { get; set; }
+        public string LoggerLastFilterOS { get; set; }
+        public ushort LoggerCanPcmAddress { get; set; }
+        public int LoggerTesterPresentInterval { get; set; }
         public int LoggerConsoleDisplayInterval { get; set; }
         public int RetryWriteTimes { get; set; }
         public int RetryWriteDelay { get; set; }
@@ -241,13 +255,18 @@ namespace UniversalPatcher
         public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }
         public TimeoutScenario TimeoutLoggingPassive { get; set; }
         public int TimeoutScriptRead { get; set; }
-        public int TimeoutPortRead { get; set; }
+        public int TimeoutSerialPortRead { get; set; }
+        public int TimeoutAvtRead { get; set; }
+        public int TimeoutSerialPortWrite { get; set; }
+        public int TimeoutJ2534Write { get; set; }
         public int TimeoutAnalyzerReceive { get; set; }
         public int TimeoutReceive { get; set; }
         public int TimeoutLoggingReceive { get; set; }
-        public int TimeoutScriptWrite { get; set; }
+        //public int TimeoutScriptWrite { get; set; }
         public int TimeoutConsoleReceive { get; set; }
-        public int TimeoutLoggingWrite { get; set; }
+        public int TimeoutJConsoleReceive { get; set; }
+        //public int TimeoutLoggingWrite { get; set; }
+        //public int TimeoutJLoggingWrite { get; set; }
         //public int TimeoutJconsoleWrite { get; set; }
         //public int TimeoutJ2534DeviceRead { get; set; }
 

@@ -7,6 +7,7 @@ using static Helpers;
 using static LoggerUtils;
 using static UniversalPatcher.DataLogger;
 using System.Diagnostics;
+using static UniversalPatcher.PidConfig;
 
 namespace UniversalPatcher
 {
@@ -41,11 +42,11 @@ namespace UniversalPatcher
             {
                 this.Id = Id;
                 Pids = new List<int>();
-                DataTypes = new List<ProfileDataType>();
+                DataTypes = new List<PidConfig.ProfileDataType>();
             }
             public byte Id { get; set; }
             public List<int> Pids { get; set; }
-            public List<ProfileDataType> DataTypes { get; set; }
+            public List<PidConfig.ProfileDataType> DataTypes { get; set; }
             public byte Bytes
             {
                 get
@@ -60,19 +61,19 @@ namespace UniversalPatcher
             {
                 switch (DataTypes[pidindex])
                 {
-                    case ProfileDataType.UBYTE:
+                    case PidConfig.ProfileDataType.UBYTE:
                         return 1;
-                    case ProfileDataType.SBYTE:
+                    case PidConfig.ProfileDataType.SBYTE:
                         return 1;
-                    case ProfileDataType.UWORD:
+                    case PidConfig.ProfileDataType.UWORD:
                         return 2;
-                    case ProfileDataType.SWORD:
+                    case PidConfig.ProfileDataType.SWORD:
                         return 2;
                     //case ProfileDataType.THREEBYTES:
                       //  return 3;
-                    case ProfileDataType.UINT32:
+                    case PidConfig.ProfileDataType.UINT32:
                         return 4;
-                    case ProfileDataType.INT32:
+                    case PidConfig.ProfileDataType.INT32:
                         return 4;
                     default:
                         return 1;
@@ -83,30 +84,42 @@ namespace UniversalPatcher
         public string[] CalculatePidValues(double[] rawPidValues)
         {
             string[] calculatedvalues = new string[datalogger.PidProfile.Count];
-            for (int pp = 0; pp < datalogger.PidProfile.Count; pp++)
+            try
             {
-                calculatedvalues[pp] = "";
-                PidConfig pc = datalogger.PidProfile[pp];
-                int ind = ReceivingPids.IndexOf(pc.addr);
-                if (ind > -1)
+                for (int pp = 0; pp < datalogger.PidProfile.Count; pp++)
                 {
-                    if (rawPidValues[ind] > double.MinValue)
+                    calculatedvalues[pp] = "";
+                    PidConfig pc = datalogger.PidProfile[pp];
+                    int ind = ReceivingPids.IndexOf(pc.addr);
+                    if (ind > -1)
                     {
-                        double val1 = rawPidValues[ind];
-                        double val2 = double.MinValue;
-                        if (pc.addr2 > -1)
+                        if (rawPidValues[ind] > double.MinValue)
                         {
-                            int ind2 = ReceivingPids.IndexOf(pc.addr2);
-                            if (ind2 > -1)
-                                val2 = rawPidValues[ind2];
+                            double val1 = rawPidValues[ind];
+                            double val2 = double.MinValue;
+                            if (pc.addr2 > -1)
+                            {
+                                int ind2 = ReceivingPids.IndexOf(pc.addr2);
+                                if (ind2 > -1)
+                                    val2 = rawPidValues[ind2];
+                            }
+                            calculatedvalues[pp] = pc.GetCalculatedValue(val1, val2);
                         }
-                        calculatedvalues[pp] = pc.GetCalculatedValue(val1, val2);
+                    }
+                    else
+                    {
+                        //Debug.WriteLine("Pid not found: " + PidProfile[pp].PidName);
                     }
                 }
-                else
-                {
-                    //Debug.WriteLine("Pid not found: " + PidProfile[pp].PidName);
-                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, SlotHandler line " + line + ": " + ex.Message);
             }
             return calculatedvalues;
         }
@@ -188,8 +201,8 @@ namespace UniversalPatcher
                 {
                     if (datalogger.PidProfile[p].HighPriority && !ReceivingPids.Contains(datalogger.PidProfile[p].addr))
                     {
-                        ReadValue rv = datalogger.QuerySinglePidValue(datalogger.PidProfile[p].addr, datalogger.PidProfile[p].DataType);
-                        if (rv.PidValue > double.MinValue)
+                        //ReadValue rv = datalogger.QuerySinglePidValue(datalogger.PidProfile[p].addr, datalogger.PidProfile[p].DataType);
+                        //if (rv.PidValue > double.MinValue)
                         {
                             ReceivingPids.Add(datalogger.PidProfile[p].addr);
                             pidDataTypes.Add(datalogger.PidProfile[p].DataType);
@@ -198,8 +211,8 @@ namespace UniversalPatcher
                     }
                     if (datalogger.PidProfile[p].HighPriority && datalogger.PidProfile[p].addr2 > 0 && !ReceivingPids.Contains((ushort)datalogger.PidProfile[p].addr2))
                     {
-                        ReadValue rv = datalogger.QuerySinglePidValue((ushort)datalogger.PidProfile[p].addr2, datalogger.PidProfile[p].DataType);
-                        if (rv.PidValue > double.MinValue)
+                        //ReadValue rv = datalogger.QuerySinglePidValue((ushort)datalogger.PidProfile[p].addr2, datalogger.PidProfile[p].DataType);
+                        //if (rv.PidValue > double.MinValue)
                         {
                             ReceivingPids.Add((ushort)datalogger.PidProfile[p].addr2);
                             pidDataTypes.Add(datalogger.PidProfile[p].DataType);
@@ -212,8 +225,8 @@ namespace UniversalPatcher
                 {
                     if (!datalogger.PidProfile[p].HighPriority && !ReceivingPids.Contains(datalogger.PidProfile[p].addr))
                     {
-                        ReadValue rv = datalogger.QuerySinglePidValue(datalogger.PidProfile[p].addr, datalogger.PidProfile[p].DataType);
-                        if (rv.PidValue > double.MinValue)
+                        //ReadValue rv = datalogger.QuerySinglePidValue(datalogger.PidProfile[p].addr, datalogger.PidProfile[p].DataType);
+                        //if (rv.PidValue > double.MinValue)
                         {
                             ReceivingPids.Add(datalogger.PidProfile[p].addr);
                             pidDataTypes.Add(datalogger.PidProfile[p].DataType);
@@ -222,8 +235,8 @@ namespace UniversalPatcher
                     }
                     if (!datalogger.PidProfile[p].HighPriority && datalogger.PidProfile[p].addr2 > 0 && !ReceivingPids.Contains((ushort)datalogger.PidProfile[p].addr2))
                     {
-                        ReadValue rv = datalogger.QuerySinglePidValue((ushort)datalogger.PidProfile[p].addr2, datalogger.PidProfile[p].DataType);
-                        if (rv.PidValue > double.MinValue)
+                        //ReadValue rv = datalogger.QuerySinglePidValue((ushort)datalogger.PidProfile[p].addr2, datalogger.PidProfile[p].DataType);
+                        //if (rv.PidValue > double.MinValue)
                         {
                             ReceivingPids.Add((ushort)datalogger.PidProfile[p].addr2);
                             pidDataTypes.Add(datalogger.PidProfile[p].DataType);
@@ -297,7 +310,7 @@ namespace UniversalPatcher
                                 LoggerBold("Error, Pid setup failed");
                                 return false;
                             }
-                            OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
+                            OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage(true);
                             while (rMsg != null)
                             {
                                 if (rMsg.Length > 4)
@@ -313,7 +326,7 @@ namespace UniversalPatcher
                                         break;
                                     }
                                 }
-                                rMsg = datalogger.LogDevice.ReceiveMessage();
+                                rMsg = datalogger.LogDevice.ReceiveMessage(true);
                             }
                             pidIndex++;
                             position += bytes;
@@ -328,7 +341,7 @@ namespace UniversalPatcher
                         position = 1;
                         byte bytes = 0;
                         SlotNr = Slots[s].Id;
-                        List<byte> msg = new List<byte> { 0x00, 0x00, 0x07, 0xE0, 0x2C, SlotNr };
+                        List<byte> msg = new List<byte> { 0x00, 0x00, datalogger.CanPcmAddrByte1, datalogger.CanPcmAddrByte2, 0x2C, SlotNr };
                         while (pidIndex < Slots[s].Pids.Count)
                         {
                             msg.Add((byte)(Slots[s].Pids[pidIndex] >> 8));
@@ -342,11 +355,7 @@ namespace UniversalPatcher
                             LoggerBold("Error, Pid setup failed");
                             return false;
                         }
-                        OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
-                        while (rMsg != null)
-                        {
-                            rMsg = datalogger.LogDevice.ReceiveMessage();
-                        }
+                        datalogger.LogDevice.ReceiveBufferedMessages();
                         pidIndex++;
                         position += bytes;
                     }
@@ -422,7 +431,7 @@ namespace UniversalPatcher
                         mode = 4;
                         break;
                 }
-                msg = new List<byte> { 0x00, 0x00, 0x07, 0xE0, 0xAA, mode };
+                msg = new List<byte> { 0x00, 0x00, datalogger.CanPcmAddrByte1, datalogger.CanPcmAddrByte2, 0xAA, mode };
             }
             try
             {
@@ -666,7 +675,6 @@ namespace UniversalPatcher
                             ReadValue rv = new ReadValue();
                             rv.PidNr = pidNr;
                             rv.TimeStamp = msg.TimeStamp;
-                            rv.DevTimeStamp = msg.DevTimeStamp;
                             rv.PidValue = val;
                             retVal.Add(rv);
                         }
@@ -733,7 +741,6 @@ namespace UniversalPatcher
                         LogData ld = new LogData(LastPidValues.Length);
                         //ld.TimeStamp = newReadValues[0].TimeStamp;
                         ld.TimeStamp = oMsg.TimeStamp;
-                        ld.DevTimeStamp = oMsg.DevTimeStamp;
                         Array.Copy(LastPidValues, ld.Values, ld.Values.Length);
                         lock (datalogger.LogFileQueue)
                         {

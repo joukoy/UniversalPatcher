@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -33,13 +34,26 @@ namespace UniversalPatcher
 
         protected virtual void OnUpLogUpdated(UPLogString e)
         {
-            UpLogUpdated?.Invoke(this, e);
+            try
+            {
+                UpLogUpdated?.Invoke(this, e);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, UPLogger line " + line + ": " + ex.Message);
+            }
         }
 
         public void Add(string LogText, bool NewLine, bool Bold)
         {
             try
             {
+                Debug.WriteLine("Logger: " + LogText);
                 if (NewLine)
                 {
                     LogText += Environment.NewLine;
@@ -68,6 +82,10 @@ namespace UniversalPatcher
         {
             try
             {
+                if (rtb == null || rtb.Parent == null)
+                {
+                    return;
+                }
                 rtb.Parent.Invoke((System.Windows.Forms.MethodInvoker)delegate ()
                 {
                     if (Bold)
@@ -78,7 +96,15 @@ namespace UniversalPatcher
                     rtb.SelectionFont = new System.Drawing.Font(rtb.Font, System.Drawing.FontStyle.Regular);
                 });
             }
-            catch { }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, UPLogger line " + line + ": " + ex.Message);
+            }
         }
 
         public void EnableLogFile(string FileName)
@@ -98,7 +124,15 @@ namespace UniversalPatcher
                     logwriter = new StreamWriter(logFile, true);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, UPLogger line " + line + ": " + ex.Message);
+            }
         }
 
         public void DisableLogFile()
@@ -112,7 +146,15 @@ namespace UniversalPatcher
                     logwriter = null;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, UPLogger line " + line + ": " + ex.Message);
+            }
         }
 
 

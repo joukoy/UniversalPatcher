@@ -31,7 +31,7 @@ namespace UniversalPatcher
         /// Constructor.
         /// </summary>
         public LegacyElmDeviceImplementation(
-            Action<OBDMessage> enqueue,
+            Action<OBDMessage, bool> enqueue,
             Func<int> getReceivedMessageCount,
             IPort port,
             Action<OBDMessage> MessageSent) :
@@ -252,13 +252,19 @@ namespace UniversalPatcher
                 SerialString setHeaderResponse = this.SendRequest("AT SH " + header, getResponse);
                 Debug.WriteLine("Set header response (1): " + setHeaderResponse.Data +", time: " + DateTime.Now.ToString("HH.mm.ss.ffff"));
 
-                if (setHeaderResponse.Data != "OK")
+                for (int retry = 0; retry < 5; retry++)
                 {
-                    // Does it help to retry once?
-                    setHeaderResponse = this.SendRequest("AT SH " + header);
-                    Debug.WriteLine("Set header response (2): " + setHeaderResponse.Data + ", time: " + DateTime.Now.ToString("HH.mm.ss.ffff"));
+                    if (setHeaderResponse.Data == "OK")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        // Does it help to retry once?
+                        setHeaderResponse = this.SendRequest("AT SH " + header);
+                        Debug.WriteLine("Set header response ("+(retry+2).ToString()+"): " + setHeaderResponse.Data + ", time: " + DateTime.Now.ToString("HH.mm.ss.ffff"));
+                    }
                 }
-
                 if (!this.ProcessResponse(setHeaderResponse, "set-header command", !getResponse))
                 {
                     return false;
@@ -301,13 +307,16 @@ namespace UniversalPatcher
         /// Try to read an incoming message from the device.
         /// </summary>
         /// <returns></returns>
-        public override void Receive()
+        public override void Receive(bool WaitForTimeout)
         {
             try
             {
-                SerialString response = this.ReadELMLine(false);
-                Debug.WriteLine("Elm line: " + response.Data );
-                this.ProcessResponse(response, "receive");
+                if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+                {
+                    SerialString response = this.ReadELMLine(false);
+                    Debug.WriteLine("Elm line: " + response.Data);
+                    this.ProcessResponse(response, "receive");
+                }
             }
             catch (TimeoutException)
             {
