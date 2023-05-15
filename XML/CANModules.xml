@@ -1,0 +1,691 @@
+<?xml version="1.0"?>
+<ArrayOfCANDevice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CANDevice>
+    <ResID>2024</ResID>
+    <RequestID>2016</RequestID>
+    <DiagID>1512</DiagID>
+    <ModuleID>17</ModuleID>
+    <ModuleName>ECM </ModuleName>
+    <ModuleDescription>Engine Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1618</ResID>
+    <RequestID>594</RequestID>
+    <DiagID>0</DiagID>
+    <ModuleID>143</ModuleID>
+    <ModuleName>HMI </ModuleName>
+    <ModuleDescription>Human Machine Interface</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2026</ResID>
+    <RequestID>2018</RequestID>
+    <DiagID>1514</DiagID>
+    <ModuleID>24</ModuleID>
+    <ModuleName>TCM/MTA/MTIO </ModuleName>
+    <ModuleDescription>Transmission Control Module/Manual Transmission Automatically Shifted/Manual Transmission I/O Device</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1620</ResID>
+    <RequestID>596</RequestID>
+    <DiagID>1364</DiagID>
+    <ModuleID>43</ModuleID>
+    <ModuleName>EPB </ModuleName>
+    <ModuleDescription>Electronic Park Brake</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1603</ResID>
+    <RequestID>579</RequestID>
+    <DiagID>1347</DiagID>
+    <ModuleID>40</ModuleID>
+    <ModuleName>EBCM </ModuleName>
+    <ModuleDescription>Electronic Brake Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1609</ResID>
+    <RequestID>585</RequestID>
+    <DiagID>1353</DiagID>
+    <ModuleID>114</ModuleID>
+    <ModuleName>AFL/AHL </ModuleName>
+    <ModuleDescription>Adaptive Forward Lighting, Automatic Headlamp Leveling</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1602</ResID>
+    <RequestID>578</RequestID>
+    <DiagID>1346</DiagID>
+    <ModuleID>49</ModuleID>
+    <ModuleName>EPS/VES </ModuleName>
+    <ModuleDescription>Electronic Power Steering/Vehicle Effort Steering</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1601</ResID>
+    <RequestID>577</RequestID>
+    <DiagID>1345</DiagID>
+    <ModuleID>64</ModuleID>
+    <ModuleName>BCM </ModuleName>
+    <ModuleDescription>Body Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1612</ResID>
+    <RequestID>588</RequestID>
+    <DiagID>1356</DiagID>
+    <ModuleID>96</ModuleID>
+    <ModuleName>IPC </ModuleName>
+    <ModuleDescription>Instrument Panel Cluster</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1606</ResID>
+    <RequestID>582</RequestID>
+    <DiagID>1350</DiagID>
+    <ModuleID>102</ModuleID>
+    <ModuleName>Radio Controls </ModuleName>
+    <ModuleDescription>A22 Radio Controls, Info Faceplate</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1602</ResID>
+    <RequestID>578</RequestID>
+    <DiagID>1346</DiagID>
+    <ModuleID>175</ModuleID>
+    <ModuleName>PEPS/PBSM </ModuleName>
+    <ModuleDescription>Passive Entry Passive Start/Push-Button Start Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1604</ResID>
+    <RequestID>580</RequestID>
+    <DiagID>1348</DiagID>
+    <ModuleID>128</ModuleID>
+    <ModuleName>RADIO </ModuleName>
+    <ModuleDescription>Radio Head (Silverbox)</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1607</ResID>
+    <RequestID>583</RequestID>
+    <DiagID>1351</DiagID>
+    <ModuleID>88</ModuleID>
+    <ModuleName>SDM </ModuleName>
+    <ModuleDescription>Sensing Diagnostic Module (Airbag)</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1608</ResID>
+    <RequestID>584</RequestID>
+    <DiagID>0</DiagID>
+    <ModuleID>104</ModuleID>
+    <ModuleName>HVAC CONTROLS </ModuleName>
+    <ModuleDescription>A26 HVAC CONTROLS</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1615</ResID>
+    <RequestID>591</RequestID>
+    <DiagID>1359</DiagID>
+    <ModuleID>164</ModuleID>
+    <ModuleName>PTM </ModuleName>
+    <ModuleDescription>K39 Power Tailgate Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1617</ResID>
+    <RequestID>593</RequestID>
+    <DiagID>1361</DiagID>
+    <ModuleID>153</ModuleID>
+    <ModuleName>ECC </ModuleName>
+    <ModuleDescription>Electronic Climate Control</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1618</ResID>
+    <RequestID>594</RequestID>
+    <DiagID>0</DiagID>
+    <ModuleID>141</ModuleID>
+    <ModuleName>Not-Known </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1619</ResID>
+    <RequestID>595</RequestID>
+    <DiagID>1363</DiagID>
+    <ModuleID>117</ModuleID>
+    <ModuleName>TIM </ModuleName>
+    <ModuleDescription>K101 Trailer Interface Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1625</ResID>
+    <RequestID>601</RequestID>
+    <DiagID>1369</DiagID>
+    <ModuleID>187</ModuleID>
+    <ModuleName>APA/UPA </ModuleName>
+    <ModuleDescription>K182 Advanced Parking Aid/Parking Assist System</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1628</ResID>
+    <RequestID>604</RequestID>
+    <DiagID>1372</DiagID>
+    <ModuleID>194</ModuleID>
+    <ModuleName>ESCL </ModuleName>
+    <ModuleDescription>K60 Steering Column Lock Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1629</ResID>
+    <RequestID>605</RequestID>
+    <DiagID>1373</DiagID>
+    <ModuleID>168</ModuleID>
+    <ModuleName>MSM </ModuleName>
+    <ModuleDescription>Memory Seat Module, Front Seat Heating/Venting/Cooling/Memory/ Control</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1631</ResID>
+    <RequestID>607</RequestID>
+    <DiagID>1375</DiagID>
+    <ModuleID>115</ModuleID>
+    <ModuleName>HBSM </ModuleName>
+    <ModuleDescription>K82 High Beam Select Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1601</ResID>
+    <RequestID>577</RequestID>
+    <DiagID>1345</DiagID>
+    <ModuleID>64</ModuleID>
+    <ModuleName>BCM </ModuleName>
+    <ModuleDescription>Body Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1610</ResID>
+    <RequestID>586</RequestID>
+    <DiagID>1354</DiagID>
+    <ModuleID>52</ModuleID>
+    <ModuleName>SAS </ModuleName>
+    <ModuleDescription>Steering Angle Sensor</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1626</ResID>
+    <RequestID>602</RequestID>
+    <DiagID>1370</DiagID>
+    <ModuleID>155</ModuleID>
+    <ModuleName>SAM </ModuleName>
+    <ModuleDescription>Situation Awareness Module, Obstacle Avoidance</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2027</ResID>
+    <RequestID>2019</RequestID>
+    <DiagID>1515</DiagID>
+    <ModuleID>19</ModuleID>
+    <ModuleName>FSCM </ModuleName>
+    <ModuleDescription>Fuel Sensor Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2027</ResID>
+    <RequestID>2019</RequestID>
+    <DiagID>1515</DiagID>
+    <ModuleID>21</ModuleID>
+    <ModuleName>FPPM </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2025</ResID>
+    <RequestID>2017</RequestID>
+    <DiagID>1513</DiagID>
+    <ModuleID>23</ModuleID>
+    <ModuleName>BCP/HCP_T </ModuleName>
+    <ModuleDescription>Hybrid Control Processor (part of BAS Power Inverter Module BPIM)</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1607</ResID>
+    <RequestID>583</RequestID>
+    <DiagID>1351</DiagID>
+    <ModuleID>25</ModuleID>
+    <ModuleName>PTO </ModuleName>
+    <ModuleDescription>Power Takeoff System</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1615</ResID>
+    <RequestID>591</RequestID>
+    <DiagID>1359</DiagID>
+    <ModuleID>26</ModuleID>
+    <ModuleName>RDCM </ModuleName>
+    <ModuleDescription>Rear Drive Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2028</ResID>
+    <RequestID>2020</RequestID>
+    <DiagID>1516</DiagID>
+    <ModuleID>26</ModuleID>
+    <ModuleName>TCCM </ModuleName>
+    <ModuleDescription>Transfer Case Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1618</ResID>
+    <RequestID>594</RequestID>
+    <DiagID>1362</DiagID>
+    <ModuleID>27</ModuleID>
+    <ModuleName>ETRS </ModuleName>
+    <ModuleDescription>Electronic Transmission Range Select</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1621</ResID>
+    <RequestID>597</RequestID>
+    <DiagID>1365</DiagID>
+    <ModuleID>28</ModuleID>
+    <ModuleName>TRCM </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1623</ResID>
+    <RequestID>599</RequestID>
+    <DiagID>1367</DiagID>
+    <ModuleID>29</ModuleID>
+    <ModuleName>MCPA </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1624</ResID>
+    <RequestID>600</RequestID>
+    <DiagID>1368</DiagID>
+    <ModuleID>30</ModuleID>
+    <ModuleName>MCPB </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1616</ResID>
+    <RequestID>592</RequestID>
+    <DiagID>1360</DiagID>
+    <ModuleID>32</ModuleID>
+    <ModuleName>SCM </ModuleName>
+    <ModuleDescription>Supervisory Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1611</ResID>
+    <RequestID>587</RequestID>
+    <DiagID>1355</DiagID>
+    <ModuleID>33</ModuleID>
+    <ModuleName>ACC </ModuleName>
+    <ModuleDescription>Adaptive Cruise Control</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1627</ResID>
+    <RequestID>603</RequestID>
+    <DiagID>1371</DiagID>
+    <ModuleID>33</ModuleID>
+    <ModuleName>LRR </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2027</ResID>
+    <RequestID>2019</RequestID>
+    <DiagID>1515</DiagID>
+    <ModuleID>34</ModuleID>
+    <ModuleName>ICCM </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1604</ResID>
+    <RequestID>580</RequestID>
+    <DiagID>1348</DiagID>
+    <ModuleID>44</ModuleID>
+    <ModuleName>IMU </ModuleName>
+    <ModuleDescription>Inertial Measurement Unit</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1604</ResID>
+    <RequestID>580</RequestID>
+    <DiagID>1348</DiagID>
+    <ModuleID>45</ModuleID>
+    <ModuleName>ITBC </ModuleName>
+    <ModuleDescription>Integrated Trailer Brake Control</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1625</ResID>
+    <RequestID>601</RequestID>
+    <DiagID>1369</DiagID>
+    <ModuleID>46</ModuleID>
+    <ModuleName>VBM </ModuleName>
+    <ModuleDescription>Virtual Bumper Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1606</ResID>
+    <RequestID>582</RequestID>
+    <DiagID>1350</DiagID>
+    <ModuleID>50</ModuleID>
+    <ModuleName>RWS </ModuleName>
+    <ModuleDescription>Rear Wheel Steer Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1621</ResID>
+    <RequestID>597</RequestID>
+    <DiagID>1365</DiagID>
+    <ModuleID>51</ModuleID>
+    <ModuleName>AFS </ModuleName>
+    <ModuleDescription>Active Front Steering</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1622</ResID>
+    <RequestID>598</RequestID>
+    <DiagID>1366</DiagID>
+    <ModuleID>53</ModuleID>
+    <ModuleName>PAS </ModuleName>
+    <ModuleDescription>Pinion Angle Sensor</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1617</ResID>
+    <RequestID>593</RequestID>
+    <DiagID>1361</DiagID>
+    <ModuleID>54</ModuleID>
+    <ModuleName>ELSD </ModuleName>
+    <ModuleDescription>Electronic Limited Slip Differential</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1614</ResID>
+    <RequestID>590</RequestID>
+    <DiagID>1358</DiagID>
+    <ModuleID>56</ModuleID>
+    <ModuleName>SADS </ModuleName>
+    <ModuleDescription>Semi Active Damping System</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1605</ResID>
+    <RequestID>581</RequestID>
+    <DiagID>1349</DiagID>
+    <ModuleID>58</ModuleID>
+    <ModuleName>ALC </ModuleName>
+    <ModuleDescription>Automatic Level Control</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1619</ResID>
+    <RequestID>595</RequestID>
+    <DiagID>1363</DiagID>
+    <ModuleID>60</ModuleID>
+    <ModuleName>ARC </ModuleName>
+    <ModuleDescription>Active Roll Control</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1618</ResID>
+    <RequestID>594</RequestID>
+    <DiagID>1362</DiagID>
+    <ModuleID>69</ModuleID>
+    <ModuleName>CGM </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1605</ResID>
+    <RequestID>581</RequestID>
+    <DiagID>1349</DiagID>
+    <ModuleID>89</ModuleID>
+    <ModuleName>AOS </ModuleName>
+    <ModuleDescription>Automatic Occupant Sensing Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1623</ResID>
+    <RequestID>599</RequestID>
+    <DiagID>1367</DiagID>
+    <ModuleID>91</ModuleID>
+    <ModuleName>PVOS </ModuleName>
+    <ModuleDescription>Parked Vehicle Occupant Sensing</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1631</ResID>
+    <RequestID>607</RequestID>
+    <DiagID>1375</DiagID>
+    <ModuleID>91</ModuleID>
+    <ModuleName>SBCAR </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1612</ResID>
+    <RequestID>588</RequestID>
+    <DiagID>1356</DiagID>
+    <ModuleID>92</ModuleID>
+    <ModuleName>MSB </ModuleName>
+    <ModuleDescription>Motorized Seat Belt</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1606</ResID>
+    <RequestID>582</RequestID>
+    <DiagID>1350</DiagID>
+    <ModuleID>97</ModuleID>
+    <ModuleName>GID/TID </ModuleName>
+    <ModuleDescription>Graphics Information Display/Text Information Display</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1625</ResID>
+    <RequestID>601</RequestID>
+    <DiagID>1360</DiagID>
+    <ModuleID>98</ModuleID>
+    <ModuleName>HUD </ModuleName>
+    <ModuleDescription>Head-up Display</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1603</ResID>
+    <RequestID>579</RequestID>
+    <DiagID>1347</DiagID>
+    <ModuleID>103</ModuleID>
+    <ModuleName>AuxIPC </ModuleName>
+    <ModuleDescription>Auxiliary Instrument Panel Cluster</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1611</ResID>
+    <RequestID>587</RequestID>
+    <DiagID>1355</DiagID>
+    <ModuleID>108</ModuleID>
+    <ModuleName>IPB </ModuleName>
+    <ModuleDescription>Image Processing Bundle</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1604</ResID>
+    <RequestID>580</RequestID>
+    <DiagID>1348</DiagID>
+    <ModuleID>111</ModuleID>
+    <ModuleName>CHM </ModuleName>
+    <ModuleDescription>Chime Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1631</ResID>
+    <RequestID>607</RequestID>
+    <DiagID>1375</DiagID>
+    <ModuleID>69</ModuleID>
+    <ModuleName>CGM </ModuleName>
+    <ModuleDescription>Gateway Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1609</ResID>
+    <RequestID>585</RequestID>
+    <DiagID>1353</DiagID>
+    <ModuleID>116</ModuleID>
+    <ModuleName>AFL </ModuleName>
+    <ModuleDescription>Adaptive Forward Lighting</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1620</ResID>
+    <RequestID>596</RequestID>
+    <DiagID>1364</DiagID>
+    <ModuleID>129</ModuleID>
+    <ModuleName>AMP </ModuleName>
+    <ModuleDescription>Audio Amplifier</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1622</ResID>
+    <RequestID>598</RequestID>
+    <DiagID>1366</DiagID>
+    <ModuleID>133</ModuleID>
+    <ModuleName>RSA/RSE </ModuleName>
+    <ModuleDescription>Rear Seat Audio/Entertainment</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1618</ResID>
+    <RequestID>594</RequestID>
+    <DiagID>1362</DiagID>
+    <ModuleID>135</ModuleID>
+    <ModuleName>DVB-T </ModuleName>
+    <ModuleDescription>Digital /Video Broadcasting TV</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1619</ResID>
+    <RequestID>595</RequestID>
+    <DiagID>1363</DiagID>
+    <ModuleID>136</ModuleID>
+    <ModuleName>DAB </ModuleName>
+    <ModuleDescription>Digital Audio Broadcast</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1608</ResID>
+    <RequestID>584</RequestID>
+    <DiagID>1352</DiagID>
+    <ModuleID>142</ModuleID>
+    <ModuleName>PDIM </ModuleName>
+    <ModuleDescription>Preferred Device Interface Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1609</ResID>
+    <RequestID>585</RequestID>
+    <DiagID>1353</DiagID>
+    <ModuleID>150</ModuleID>
+    <ModuleName>OTIM </ModuleName>
+    <ModuleDescription>ONSTAR TTY Interface Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1613</ResID>
+    <RequestID>589</RequestID>
+    <DiagID>1357</DiagID>
+    <ModuleID>151</ModuleID>
+    <ModuleName>T-Box/ICM, TCICM/FCP/UHP </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1630</ResID>
+    <RequestID>606</RequestID>
+    <DiagID>1374</DiagID>
+    <ModuleID>152</ModuleID>
+    <ModuleName>AHS/PHS </ModuleName>
+    <ModuleDescription>Auxiliary Heater System (Electrically Powered)/Parking Heater System</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1629</ResID>
+    <RequestID>605</RequestID>
+    <DiagID>1373</DiagID>
+    <ModuleID>169</ModuleID>
+    <ModuleName>HVSM-F </ModuleName>
+    <ModuleDescription>Heated/ Vented Seat Module_Front</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1624</ResID>
+    <RequestID>600</RequestID>
+    <DiagID>1368</DiagID>
+    <ModuleID>170</ModuleID>
+    <ModuleName>HVSM-R </ModuleName>
+    <ModuleDescription>Heated/ Vented Seat Module_Rear</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1610</ResID>
+    <RequestID>586</RequestID>
+    <DiagID>1354</DiagID>
+    <ModuleID>171</ModuleID>
+    <ModuleName>PSD-L </ModuleName>
+    <ModuleDescription>Power Sliding Door Left</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1614</ResID>
+    <RequestID>590</RequestID>
+    <DiagID>1358</DiagID>
+    <ModuleID>172</ModuleID>
+    <ModuleName>PSD-R </ModuleName>
+    <ModuleDescription>Power Sliding Door Right</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1615</ResID>
+    <RequestID>591</RequestID>
+    <DiagID>1359</DiagID>
+    <ModuleID>173</ModuleID>
+    <ModuleName>STC </ModuleName>
+    <ModuleDescription>Soft Top Control Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1600</ResID>
+    <RequestID>576</RequestID>
+    <DiagID>1344</DiagID>
+    <ModuleID>174</ModuleID>
+    <ModuleName>Firewall#2 </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1626</ResID>
+    <RequestID>602</RequestID>
+    <DiagID>1370</DiagID>
+    <ModuleID>155</ModuleID>
+    <ModuleName>SBCAL </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1611</ResID>
+    <RequestID>587</RequestID>
+    <DiagID>1355</DiagID>
+    <ModuleID>188</ModuleID>
+    <ModuleName>FCM </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1611</ResID>
+    <RequestID>587</RequestID>
+    <DiagID>1355</DiagID>
+    <ModuleID>188</ModuleID>
+    <ModuleName>LDW </ModuleName>
+    <ModuleDescription>Lane Departure Warning</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1621</ResID>
+    <RequestID>597</RequestID>
+    <DiagID>1365</DiagID>
+    <ModuleID>188</ModuleID>
+    <ModuleName>FCM </ModuleName>
+    <ModuleDescription>Front Camera Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2028</ResID>
+    <RequestID>2020</RequestID>
+    <DiagID>1516</DiagID>
+    <ModuleID>203</ModuleID>
+    <ModuleName>BSM </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2028</ResID>
+    <RequestID>2020</RequestID>
+    <DiagID>1516</DiagID>
+    <ModuleID>203</ModuleID>
+    <ModuleName>VICM </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1604</ResID>
+    <RequestID>580</RequestID>
+    <DiagID>1348</DiagID>
+    <ModuleID>204</ModuleID>
+    <ModuleName>DCDC </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1622</ResID>
+    <RequestID>598</RequestID>
+    <DiagID>1366</DiagID>
+    <ModuleID>205</ModuleID>
+    <ModuleName>VITM </ModuleName>
+    <ModuleDescription>Voltage, Current, Temperature Module</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>2031</ResID>
+    <RequestID>2023</RequestID>
+    <DiagID>1519</DiagID>
+    <ModuleID>205</ModuleID>
+    <ModuleName>VITM </ModuleName>
+    <ModuleDescription>Not-Known</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1623</ResID>
+    <RequestID>599</RequestID>
+    <DiagID>1367</DiagID>
+    <ModuleID>206</ModuleID>
+    <ModuleName>MCP </ModuleName>
+    <ModuleDescription>Motor Control Processor (Part Of BAS Power Inverter Module)</ModuleDescription>
+  </CANDevice>
+  <CANDevice>
+    <ResID>1626</ResID>
+    <RequestID>602</RequestID>
+    <DiagID>1370</DiagID>
+    <ModuleID>226</ModuleID>
+    <ModuleName>FireWall2 </ModuleName>
+    <ModuleDescription>Not-Known </ModuleDescription>
+  </CANDevice>
+</ArrayOfCANDevice>
