@@ -86,6 +86,11 @@ namespace UniversalPatcher
                         }
                     }
                 }
+                else if (Line.ToLower().StartsWith("disconnect"))
+                {
+                    device.Dispose();
+                    return false;
+                }
                 else if (Line.ToLower().StartsWith("printall"))
                 {
                     bool printPrimary = true;

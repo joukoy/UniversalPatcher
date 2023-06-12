@@ -257,6 +257,7 @@ namespace UniversalPatcher
                 else
                     cnfFile += "-dtc2";
 
+
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
                     DtcSearchConfig dConfig = dtcSearchConfigs[configIndex];
@@ -382,8 +383,13 @@ namespace UniversalPatcher
 
                 //Read codes:
                 bool dCodes = false;
+                uint addr2 = statusAddr;
+                uint codePerStatusaddr = statusAddr;
+                uint codePerStatusCounter = 0;
+
                 for (uint addr = codeAddr; addr < PCM.fsize; addr += (uint)dtcSearchConfigs[configIndex].CodeSteps)
                 {
+                    addr2 += (uint)dtcSearchConfigs[configIndex].StatusSteps;
                     DtcCode dtc = new DtcCode();
                     dtc.codeAddrInt = addr;
                     dtc.Values = dtcSearchConfigs[configIndex].Values;
@@ -408,6 +414,43 @@ namespace UniversalPatcher
                     }
 */
                     dtc.Code = DecodeDTC(codeTmp);
+
+
+                    byte statusByte;
+                    dtc.statusAddrInt = codePerStatusaddr;
+                    statusByte = PCM.buf[codePerStatusaddr];
+
+                    if (!string.IsNullOrEmpty(dtcSearchConfigs[configIndex].StatusMath) && dtcSearchConfigs[configIndex].StatusMath.Contains("&"))
+                    {
+                        string[] sParts = dtcSearchConfigs[configIndex].StatusMath.Split('&');
+                        if (sParts.Length == 2)
+                        {
+                            byte mask = byte.Parse(sParts[1]);
+                            dtc.Status = (byte)(statusByte & mask);
+                        }
+                    }
+                    else
+                    {
+                        dtc.Status = statusByte;
+                    }
+                    codePerStatusCounter++;
+                    if (codePerStatusCounter >= codePerStatus)
+                    {
+                        codePerStatusCounter = 0;
+                        codePerStatusaddr++;
+                    }
+                    if (PCM.dtcValues.ContainsKey(dtc.Status))
+                    {
+                        dtc.StatusTxt = PCM.dtcValues[dtc.Status].ToString();
+                    }
+                    else
+                    {
+                        Debug.WriteLine("DTC Status out of range: " + dtc.Status);
+                        break;
+                    }
+
+
+
                     if (codeTmp.StartsWith("D") || codeTmp.StartsWith("E")) 
                         dCodes = true;
                     //Find description for code:
@@ -484,67 +527,20 @@ namespace UniversalPatcher
                     return null;
                 }
 
-                //Read DTC status bytes:
+                //Read MIL status:
                 int dtcNr = 0;
-                uint addr2 = statusAddr;
                 uint addr3 = milAddr;
-                uint codePerStatusaddr = statusAddr;
-                uint codePerStatusCounter = 0;
+                codePerStatusaddr = statusAddr;
+                codePerStatusCounter = 0;
 
-                for (; dtcNr < retVal.Count; addr2 += (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3 += (uint)dtcSearchConfigs[configIndex].MilSteps)
+                for (; dtcNr < retVal.Count; addr3 += (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
 
-                    /*if (PCM.buf[addr2] > 7)
-                    {
-                        if (linear)
-                            break;
-                        else
-                            continue;
-                    }
-                    if (!PCM.dtcCombined && PCM.buf[addr2] > 3) //DTC = 0-3
-                    {
-                        if (linear)
-                            break;
-                        else
-                            continue;
-                    }*/
                     DtcCode dtc = retVal[dtcNr];
 
-                    byte statusByte;
-                    dtc.statusAddrInt = codePerStatusaddr;
-                    statusByte = PCM.buf[codePerStatusaddr];
-
-                    if (!string.IsNullOrEmpty(dtcSearchConfigs[configIndex].StatusMath) && dtcSearchConfigs[configIndex].StatusMath.Contains("&"))
-                    {
-                        string[] sParts = dtcSearchConfigs[configIndex].StatusMath.Split('&');
-                        if (sParts.Length == 2)
-                        {
-                            byte mask = byte.Parse(sParts[1]);
-                            dtc.Status = (byte)(statusByte & mask);
-                        }
-                    }
-                    else
-                    {
-                        dtc.Status = statusByte;
-                    }
-                    codePerStatusCounter++;
-                    if (codePerStatusCounter >= codePerStatus)
-                    {
-                        codePerStatusCounter = 0;
-                        codePerStatusaddr++;
-                    }
-                    if (PCM.dtcValues.ContainsKey(dtc.Status))
-                    {
-                        dtc.StatusTxt = PCM.dtcValues[dtc.Status].ToString();
-                    }
-                    else
-                    {
-                        Debug.WriteLine("DTC Status out of range: " + dtc.Status);
-                        break;
-                    }
                     if (PCM.dtcCombined)
                     {
-                        if (statusByte > 4)
+                        if (dtc.Status > 4)
                             dtc.MilStatus = 1;
                         else
                             dtc.MilStatus = 0;
@@ -560,12 +556,6 @@ namespace UniversalPatcher
                     retVal.Insert(dtcNr, dtc);
                     dtcNr++;
                 }
-                //Remove codes with invalid status:
-                if (dtcNr<retVal.Count - 1)
-                {
-                    for (int x = retVal.Count - 1; x >= dtcNr; x--)
-                        retVal.RemoveAt(x);
-                }
             }
             catch (Exception ex)
             {
@@ -578,6 +568,7 @@ namespace UniversalPatcher
             }
             return retVal;
         }
+
         //Search GM e38/e67 DTC codes
         public List<DtcCode> SearchDtcE38(PcmFile PCM)
         {

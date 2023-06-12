@@ -637,3 +637,7 @@
 - Logger: Fix: handle Math pids with divide by zero (Usually when engine not running)
 - Logger: OBDScript, support for setconfigs: for Avt device
 - Logger: Bug fixes & improvements
+
+0.22.08
+- Fixed Bosch Inv checksum
+- Logger: OBDScript: Added "disconnect"

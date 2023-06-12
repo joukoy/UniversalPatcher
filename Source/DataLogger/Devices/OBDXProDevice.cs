@@ -260,7 +260,6 @@ namespace UniversalPatcher
                 //Second is length, third also for long frame
                 //Data
                 //Checksum
-                bool Chk = false;
                 try
                 {
                     this.Port.Receive(rx, 0, 1);
@@ -389,7 +388,6 @@ namespace UniversalPatcher
         {
             // UInt16 Counter = 0;
             bool framefound = false;
-            bool Chk = false;
 
             string StrResp = "";
             SerialByte rx = new SerialByte(1);

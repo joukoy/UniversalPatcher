@@ -302,6 +302,8 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
+            this.label24 = new System.Windows.Forms.Label();
+            this.numCsUtilInitValue = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -359,6 +361,7 @@
             this.splitPatcher.Panel1.SuspendLayout();
             this.splitPatcher.Panel2.SuspendLayout();
             this.splitPatcher.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -2221,6 +2224,8 @@
             // 
             // tabChecksumUtil
             // 
+            this.tabChecksumUtil.Controls.Add(this.numCsUtilInitValue);
+            this.tabChecksumUtil.Controls.Add(this.label24);
             this.tabChecksumUtil.Controls.Add(this.groupBox6);
             this.tabChecksumUtil.Controls.Add(this.chkCsMSB);
             this.tabChecksumUtil.Controls.Add(this.richChkData);
@@ -2322,7 +2327,7 @@
             // 
             // numCSBytes
             // 
-            this.numCSBytes.Location = new System.Drawing.Point(369, 80);
+            this.numCSBytes.Location = new System.Drawing.Point(369, 69);
             this.numCSBytes.Maximum = new decimal(new int[] {
             8,
             0,
@@ -2346,7 +2351,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(298, 81);
+            this.label20.Location = new System.Drawing.Point(298, 74);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(36, 13);
             this.label20.TabIndex = 151;
@@ -2354,7 +2359,7 @@
             // 
             // txtExclude
             // 
-            this.txtExclude.Location = new System.Drawing.Point(369, 34);
+            this.txtExclude.Location = new System.Drawing.Point(369, 24);
             this.txtExclude.Name = "txtExclude";
             this.txtExclude.Size = new System.Drawing.Size(137, 20);
             this.txtExclude.TabIndex = 150;
@@ -2362,7 +2367,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(298, 39);
+            this.label19.Location = new System.Drawing.Point(298, 29);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(48, 13);
             this.label19.TabIndex = 149;
@@ -2370,7 +2375,7 @@
             // 
             // txtCSAddr
             // 
-            this.txtCSAddr.Location = new System.Drawing.Point(369, 57);
+            this.txtCSAddr.Location = new System.Drawing.Point(369, 46);
             this.txtCSAddr.Name = "txtCSAddr";
             this.txtCSAddr.Size = new System.Drawing.Size(137, 20);
             this.txtCSAddr.TabIndex = 148;
@@ -2379,7 +2384,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(298, 60);
+            this.label18.Location = new System.Drawing.Point(298, 52);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(64, 13);
             this.label18.TabIndex = 147;
@@ -2388,7 +2393,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(297, 13);
+            this.label17.Location = new System.Drawing.Point(298, 5);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(42, 13);
             this.label17.TabIndex = 146;
@@ -2396,7 +2401,7 @@
             // 
             // txtChecksumRange
             // 
-            this.txtChecksumRange.Location = new System.Drawing.Point(369, 10);
+            this.txtChecksumRange.Location = new System.Drawing.Point(369, 2);
             this.txtChecksumRange.Name = "txtChecksumRange";
             this.txtChecksumRange.Size = new System.Drawing.Size(137, 20);
             this.txtChecksumRange.TabIndex = 145;
@@ -3328,6 +3333,27 @@
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
             // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(298, 96);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(63, 13);
+            this.label24.TabIndex = 158;
+            this.label24.Text = "Initial value:";
+            // 
+            // numCsUtilInitValue
+            // 
+            this.numCsUtilInitValue.Location = new System.Drawing.Point(369, 93);
+            this.numCsUtilInitValue.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
+            this.numCsUtilInitValue.Name = "numCsUtilInitValue";
+            this.numCsUtilInitValue.Size = new System.Drawing.Size(136, 20);
+            this.numCsUtilInitValue.TabIndex = 159;
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3431,6 +3457,7 @@
             this.splitPatcher.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).EndInit();
             this.splitPatcher.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3709,5 +3736,7 @@
         private System.Windows.Forms.ToolStripMenuItem allSettingsToolStripMenuItem;
         private System.Windows.Forms.Button btnByteSwap;
         private System.Windows.Forms.ToolStripMenuItem cANModulesToolStripMenuItem;
+        private System.Windows.Forms.NumericUpDown numCsUtilInitValue;
+        private System.Windows.Forms.Label label24;
     }
 }
