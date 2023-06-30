@@ -52,7 +52,7 @@ namespace UniversalPatcher
         private PidConfig ClipBrd;
         private int keyDelayCounter = 0;
         public List<J2534DotNet.J2534Device> jDevList;
-        private SelectedTab selectedtab = SelectedTab.Logger;
+        //private SelectedTab selectedtab = SelectedTab.Logger;
         bool waiting4x = false;
         bool jConsoleWaiting4x = false;
         JConsole jConsole;
@@ -114,7 +114,7 @@ namespace UniversalPatcher
         const int EM_SCROLL = 0xB5;
         const int SB_LINEDOWN = 1;
         const int SB_LINEUP = 0;
-        private uint WM_VSCROLL = 0x115;
+        //private uint WM_VSCROLL = 0x115;
 
         private class LogText
         {
@@ -138,6 +138,7 @@ namespace UniversalPatcher
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
+            frmlogger = this;
             logTexts = new List<LogText>();
             jconsolelogTexts = new List<LogText>();
             datalogger = new DataLogger(AppSettings.LoggerUseVPW);
@@ -428,7 +429,7 @@ namespace UniversalPatcher
             {
                 if (e.KeyChar == '\r')
                 {
-                    if (!ConnectJConsole())
+                    if (!ConnectJConsole(null,null))
                     {
                         return;
                     }
@@ -464,12 +465,12 @@ namespace UniversalPatcher
 
         private void TabAdvanced_Enter(object sender, EventArgs e)
         {
-            selectedtab = SelectedTab.Advanced;
+            //selectedtab = SelectedTab.Advanced;
         }
 
         private void TabDTC_Enter(object sender, EventArgs e)
         {
-            selectedtab = SelectedTab.Dtc;
+            //selectedtab = SelectedTab.Dtc;
         }
 
         private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
@@ -747,7 +748,7 @@ namespace UniversalPatcher
 
         private void TabSettings_Enter(object sender, EventArgs e)
         {
-            selectedtab = SelectedTab.Settings;
+            //selectedtab = SelectedTab.Settings;
         }
 
         private void TxtSendBus_KeyPress(object sender, KeyPressEventArgs e)
@@ -756,7 +757,7 @@ namespace UniversalPatcher
             {
                 if (e.KeyChar == '\r')
                 {
-                    if (!Connect(radioVPW.Checked, true, true))
+                    if (!Connect(radioVPW.Checked, true, true,null))
                     {
                         return;
                     }
@@ -804,12 +805,12 @@ namespace UniversalPatcher
 
         private void TabProfile_Enter(object sender, EventArgs e)
         {
-            selectedtab = SelectedTab.Profile;
+            //selectedtab = SelectedTab.Profile;
         }
 
         private void TabAnalyzer_Enter(object sender, EventArgs e)
         {
-            selectedtab = SelectedTab.Analyzer;
+            //selectedtab = SelectedTab.Analyzer;
         }
 
         private void DataGridAnalyzer_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -866,7 +867,7 @@ namespace UniversalPatcher
                         if (chkFTDI.Checked && datalogger.Connected && serialRadioButton.Checked && !comboSerialPort.Items.Contains(CurrentPortName))
                         {
                             LoggerBold("FTDI Device disconnected");
-                            Disconnect();
+                            Disconnect(true);
                         }
                     });
                 }
@@ -906,7 +907,7 @@ namespace UniversalPatcher
 
         private void TabLog_Enter(object sender, EventArgs e)
         {
-            selectedtab = SelectedTab.Logger;
+            //selectedtab = SelectedTab.Logger;
             SetupLogDataGrid();
         }
 
@@ -1680,11 +1681,11 @@ namespace UniversalPatcher
                     {
                         datalogger.StopLogging();
                     }
-                    Disconnect();
+                    Disconnect(true);
                 }
                 if (jConsole != null && jConsole.JDevice != null && jConsole.Connected)
                 {
-                    DisconnectJConsole();
+                    DisconnectJConsole(true);
                 }
                 datalogger.stopLogLoop = true;
                 if (ProfileDirty)
@@ -2035,7 +2036,7 @@ namespace UniversalPatcher
             }
         }
 
-        private bool Connect(bool UseVPW, bool StartReceiver, bool ShowOs)
+        public bool Connect(bool UseVPW, bool StartReceiver, bool ShowOs, OBDScript Oscript)
         {
             try
             {
@@ -2118,7 +2119,15 @@ namespace UniversalPatcher
                     datalogger.LogDevice.Dispose();
                     return false;
                 }
-                oscript = new OBDScript(datalogger.LogDevice);
+                if (Oscript == null)
+                {
+                    oscript = new OBDScript(datalogger.LogDevice, null);
+                }
+                else
+                {
+                    oscript = Oscript;
+                    oscript.device = datalogger.LogDevice;
+                }
                 datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
                 datalogger.TestedPids = new List<int>();
 
@@ -2305,8 +2314,7 @@ namespace UniversalPatcher
             numJ2534PeriodicMsgInterval2.Value = initParameters.PeriodicInterval;
             jConsoleFilters2 = initParameters.PassFilters;
         }
-
-        private bool ConnectJConsole()
+        public bool ConnectJConsole(OBDScript oscript, J2534InitParameters InitParms)
         {
             try
             {
@@ -2323,7 +2331,15 @@ namespace UniversalPatcher
                 jConsole.Receiver = new MessageReceiver();
                 Application.DoEvents();
                 J2534InitParameters initParameters = new J2534InitParameters(false);
-                initParameters = CreateJ2534InitParameters();
+                if (InitParms == null)
+                {
+                    initParameters = CreateJ2534InitParameters();
+                }
+                else
+                {
+                    initParameters = InitParms;
+                    LoadJ2534InitParameters(initParameters);
+                }
                 J2534DotNet.J2534Device dev = jDevList[comboJ2534DLL.SelectedIndex];
                 if (AppSettings.LoggerStartJ2534Process)
                     jConsole.JDevice = new J2534Client(comboJ2534DLL.SelectedIndex);
@@ -2343,7 +2359,15 @@ namespace UniversalPatcher
                 jConsole.Connected = true;
                 SaveSettings();
                 jConsole.Receiver.StartReceiveLoop(jConsole.JDevice, null, false, false);
-                joscript = new OBDScript(jConsole.JDevice);
+                if (oscript == null)
+                {
+                    joscript = new OBDScript(jConsole.JDevice, jConsole);
+                }
+                else
+                {
+                    joscript = oscript;
+                    joscript.device = jConsole.JDevice;
+                }
                 Application.DoEvents();
                 //groupJ2534Options.Enabled = false;
                 btnJConsoleConnectSecondProtocol.Enabled = true;
@@ -2374,7 +2398,7 @@ namespace UniversalPatcher
                     Logger("No profile configured");
                     return;
                 }
-                if (!Connect(radioVPW.Checked, false,true))
+                if (!Connect(radioVPW.Checked, false,true, null))
                 {
                     return;
                 }
@@ -2610,7 +2634,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!Connect(radioVPW.Checked, false, true))
+                if (!Connect(radioVPW.Checked, false, true, null))
                 {
                     return;
                 }
@@ -2731,7 +2755,7 @@ namespace UniversalPatcher
             dataGridDtcCodes.Rows.Clear();
             dataGridDtcCodes.Columns["Conversion"].Visible = false;
             dataGridDtcCodes.Columns["Scaling"].Visible = false;
-            if (!Connect(radioVPW.Checked, true, true))
+            if (!Connect(radioVPW.Checked, true, true, null))
             {
                 return;
             }
@@ -2841,7 +2865,7 @@ namespace UniversalPatcher
                 LoggerBold("Not implemented for CAN");
                 return;
             }
-            Connect(radioVPW.Checked, true, true);
+            Connect(radioVPW.Checked, true, true, null);
 
             byte module = (byte)comboModule.SelectedValue;
             if (chkDtcAllModules.Checked)
@@ -2958,7 +2982,7 @@ namespace UniversalPatcher
         {
             try
             {
-                Connect(radioVPW.Checked,true,true);
+                Connect(radioVPW.Checked,true,true, null);
 
                 ReadValue rv;
                 ReadValue rv2 = new ReadValue();
@@ -2989,7 +3013,7 @@ namespace UniversalPatcher
 
         private void btnQueryPid_Click(object sender, EventArgs e)
         {
-            Connect(radioVPW.Checked, true,true);
+            Connect(radioVPW.Checked, true,true, null);
             List<PidConfig> pds = ConvertSelectedPidConfigs();
             datalogger.Receiver.SetReceiverPaused(true);
             foreach (PidConfig pc in pds)
@@ -2999,13 +3023,16 @@ namespace UniversalPatcher
             datalogger.Receiver.SetReceiverPaused(false);
         }
 
-        private void Disconnect()
+        public void Disconnect(bool StopScript)
         {
             Logger("Disconnecting...", false);
             btnConnect.Text = "Connect";
             timerDeviceStatus.Enabled = false;
             chkVpwToFile.Checked = false;
-            oscript.stopscript = true;
+            if (StopScript)
+            {
+                oscript.stopscript = true;
+            }
             datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
             datalogger.LogDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
 
@@ -3036,11 +3063,14 @@ namespace UniversalPatcher
             Logger(" [Done]");
         }
 
-        private void DisconnectJConsole()
+        public void DisconnectJConsole(bool StopScript)
         {
             timerDeviceStatus.Enabled = false;
             chkJConsoleToFile.Checked = false;
-            joscript.stopscript = true;
+            if (StopScript)
+            {
+                joscript.stopscript = true;
+            }
             jConsole.JDevice.MsgReceived -= LogDevice_MsgReceived;
             jConsole.JDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
             DisconnectSecondaryProto();
@@ -3063,11 +3093,11 @@ namespace UniversalPatcher
             btnConnect.Enabled = false;
             if (datalogger.Connected)
             {
-                Disconnect();
+                Disconnect(true);
             }
             else
             {
-                Connect(radioVPW.Checked,true,true);
+                Connect(radioVPW.Checked,true,true, null);
             }
             btnConnect.Enabled = true;
             btnConnect.Enabled = true;
@@ -3085,17 +3115,17 @@ namespace UniversalPatcher
         {
             if (datalogger.Connected)
             {
-                Disconnect();
+                Disconnect(true);
             }
             else
             {
-                Connect(radioVPW.Checked,true,true);
+                Connect(radioVPW.Checked,true,true, null);
             }
         }
 
         private void btnGetVINCode_Click(object sender, EventArgs e)
         {
-            Connect(radioVPW.Checked,true, true);
+            Connect(radioVPW.Checked,true, true, null);
             if (datalogger.LogRunning)
             {
                 datalogger.QueueVINRequest();
@@ -3349,12 +3379,12 @@ namespace UniversalPatcher
             string fName = SelectFile("Select script file", TxtFilter);
             if (fName.Length == 0)
                 return;
-            if (!Connect(radioVPW.Checked,true, true))
+            if (!Connect(radioVPW.Checked,true, true, null))
             {
                 return;
             }
             Logger("Sending file: " + fName);
-            oscript = new OBDScript(datalogger.LogDevice);
+            oscript = new OBDScript(datalogger.LogDevice, null);
             //datalogger.LogDevice.ClearMessageBuffer();
             datalogger.Receiver.SetReceiverPaused(true);
             Task.Factory.StartNew(() =>
@@ -3385,7 +3415,7 @@ namespace UniversalPatcher
             }
 
             dataGridDtcCodes.Rows.Clear();
-            Connect(radioVPW.Checked,true, true);
+            Connect(radioVPW.Checked,true, true, null);
             if (datalogger.LogRunning)
             {
                 datalogger.QueueDtcRequest(module, mode);
@@ -3414,11 +3444,11 @@ namespace UniversalPatcher
             btnConnect.Enabled = false;
             if (datalogger.Connected)
             {
-                Disconnect();
+                Disconnect(true);
             }
             else
             {
-                Connect(radioVPW.Checked,true,true);
+                Connect(radioVPW.Checked,true,true, null);
             }
             btnConnect.Enabled = true;
             btnConnect.Enabled = true;
@@ -3542,11 +3572,11 @@ namespace UniversalPatcher
         {
             if (jConsole != null && jConsole.Connected)
             {
-                DisconnectJConsole();
+                DisconnectJConsole(true);
             }
             else
             {
-                ConnectJConsole();
+                ConnectJConsole(null,null);
             }
         }
 
@@ -3560,12 +3590,12 @@ namespace UniversalPatcher
             string fName = SelectFile("Select script file", TxtFilter);
             if (fName.Length == 0)
                 return;
-            if (!ConnectJConsole())
+            if (!ConnectJConsole(null,null))
             {
                 return;
             }
             Logger("Sending file: " + fName);
-            joscript = new OBDScript(jConsole.JDevice);
+            joscript = new OBDScript(jConsole.JDevice, jConsole);
             joscript.SecondaryProtocol = radioJConsoleProto2.Checked;
             //jConsole.JDevice.ClearMessageBuffer();
             if (radioJConsoleProto2.Checked)
@@ -4015,7 +4045,7 @@ namespace UniversalPatcher
             try
             {
                 //CANqueryCounter = 0;
-                ConnectJConsole();
+                ConnectJConsole(null,null);
                 canQuietResponses = 0;
                 canDeviceResponses = -1;
                 lastResponseTime = DateTime.Now;
@@ -4300,7 +4330,7 @@ namespace UniversalPatcher
 
         private int QueryDevsOnBus()
         {
-            if (!Connect(radioVPW.Checked, true, true))
+            if (!Connect(radioVPW.Checked, true, true, null))
             {
                 return 0;
             }
@@ -4370,7 +4400,7 @@ namespace UniversalPatcher
 
         private void btnQueryModules_Click(object sender, EventArgs e)
         {
-            if (!Connect(radioVPW.Checked,true, true))
+            if (!Connect(radioVPW.Checked,true, true, null))
             {
                 return;
             }
@@ -4441,7 +4471,7 @@ namespace UniversalPatcher
             dataGridDtcCodes.Rows.Clear();
             dataGridDtcCodes.Columns["Conversion"].Visible = true;
             dataGridDtcCodes.Columns["Scaling"].Visible = true;
-            if (!Connect(radioVPW.Checked, true, true))
+            if (!Connect(radioVPW.Checked, true, true, null))
             {
                 return;
             }
@@ -4651,19 +4681,19 @@ namespace UniversalPatcher
             {
                 Logger("Device disconnected");
                 timerDeviceStatus.Enabled = false;
-                Disconnect();
+                Disconnect(false);
             }
             if (jConsole != null && jConsole.Connected && !jConsole.JDevice.Connected)
             {
                 Logger("J-Device disconnected");
                 timerDeviceStatus.Enabled = false;
-                DisconnectJConsole();
+                DisconnectJConsole(false);
             }
         }
 
         private void btnQueyPid2_Click(object sender, EventArgs e)
         {
-            Connect(radioVPW.Checked, true, true);
+            Connect(radioVPW.Checked, true, true, null);
             List<int> selectedRows = new List<int>();
             foreach (DataGridViewCell cell in dataGridLogProfile.SelectedCells)
             {
@@ -5088,7 +5118,7 @@ namespace UniversalPatcher
 
         private void chkJconsoleUsebuffer_CheckedChanged(object sender, EventArgs e)
         {
-            timerJconsoleShowLogText.Enabled = chkJconsoleUsebuffer.Checked;
+            //timerJconsoleShowLogText.Enabled = chkJconsoleUsebuffer.Checked;
             vScrollBarJConsole.Visible = chkJconsoleUsebuffer.Checked;
             if (chkJconsoleUsebuffer.Checked)
             {
@@ -5181,7 +5211,7 @@ namespace UniversalPatcher
 
         private void btnTestPids_Click(object sender, EventArgs e)
         {
-            if (!Connect(radioVPW.Checked, false, true))
+            if (!Connect(radioVPW.Checked, false, true, null))
             {
                 return;
             }
@@ -5229,7 +5259,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!Connect(radioVPW.Checked,false,true))
+                if (!Connect(radioVPW.Checked,false,true,null))
                 {
                     return;
                 }

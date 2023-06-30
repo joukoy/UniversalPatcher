@@ -202,35 +202,6 @@ namespace UniversalPatcher
             return milliseconds;
         }
 
-        /// <summary>
-        /// Send a request in string form, wait for a response (for init)
-        /// </summary>
-        /// <remarks>
-        /// The API for this method (sending a string, returning a string) matches
-        /// the way that we need to communicate with ELM and STN devices for setup
-        /// </remarks>
-        private new SerialString SendRequest_BAD(string request, bool getresponse = true)
-        {
-            Debug.WriteLine("TX: " + request);
-            try
-            {
-                Port.DiscardBuffers();
-                this.Port.Send(Encoding.ASCII.GetBytes(request + " \r"));
-                if (getresponse)
-                {
-                    return ReadELMLine(false);
-                }
-                else
-                {
-                    return new SerialString("", 0, false);
-                }
-            }
-            catch (TimeoutException)
-            {
-                return new SerialString("", 0, false);
-            }
-        }
-
 
         /// <summary>
         /// Send a message, do not expect a response.

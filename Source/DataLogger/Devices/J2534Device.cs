@@ -1145,6 +1145,7 @@ namespace UniversalPatcher
                     if (OBDError != J2534Err.STATUS_NOERROR) return Response.Create(ResponseStatus.Error, OBDError);
                     protocol_channel.Add(protoSpeedStr, tmpChannel);
                 }
+                Logger("Connected protocol: " + ReqProtocol.ToString() + " Speed: " + Speed.ToString());
                 ChID = tmpChannel;
                 IsProtocolOpen = true;
                 return Response.Create(ResponseStatus.Success, OBDError);
@@ -1198,6 +1199,11 @@ namespace UniversalPatcher
                 LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
+        }
+
+        public override void Disconnect()
+        {
+            DisconnectTool();
         }
 
         /// <summary>

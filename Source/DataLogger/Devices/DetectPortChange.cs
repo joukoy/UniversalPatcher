@@ -7,7 +7,7 @@ using System.Management;
 
 public static class SerialPortService
 {
-    private static SerialPort _serialPort;
+    //private static SerialPort _serialPort;
 
     private static string[] _serialPorts;
 

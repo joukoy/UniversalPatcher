@@ -442,6 +442,7 @@ public class Upatcher
         SendMessage,
         ConnectSecondaryProtocol,
         DisconnectSecondayProtocol,
+        Disconnect,
         SetupFilters,
         ClearFilters,
         SetVpwSpeed,
@@ -500,6 +501,7 @@ public class Upatcher
     public static MathParser parser = new MathParser();
     public static SavingMath savingMath = new SavingMath();
     public static FrmPatcher frmpatcher;
+    public static frmLogger frmlogger;
     private static frmSplashScreen frmSplash = new frmSplashScreen();
     public static DataLogger datalogger;
     public static Analyzer analyzer;

@@ -641,3 +641,10 @@
 0.22.08
 - Fixed Bosch Inv checksum
 - Logger: OBDScript: Added "disconnect"
+
+0.22.09
+- Added missing file: DB\V6CrossRef.mdb
+- Logger: Jconsole: Fixed bug, no console output if "Buffered" unchecked
+- Logger: OBDScript: Added "connect:<profile>" Example: connect:VPW.xml (Load profile file from script folder or Logger\J2534Profiles\)
+- Logger: OBDScript: Added "logger:<data>" To show data in log window. Examples: logger:"Variable1 value=$variable1", "logger:PCM Password: key"
+

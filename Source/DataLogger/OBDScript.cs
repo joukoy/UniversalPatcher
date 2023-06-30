@@ -13,8 +13,9 @@ namespace UniversalPatcher
 {
     public class OBDScript
     {
-        public OBDScript(Device device)
+        public OBDScript(Device device, JConsole Jconsole)
         {
+            this.jconsole = Jconsole;
             this.device = device;
             SecondaryProtocol = false;
         }
@@ -26,7 +27,7 @@ namespace UniversalPatcher
             public int Size { get; set; }
         }
         List<Variable> variables = new List<Variable>();
-        Device device;
+        public Device device;
         UInt64 key = 0xFFFF;
         int globaldelay = AppSettings.LoggerScriptDelay;
         int breakvalue = -1;
@@ -42,6 +43,43 @@ namespace UniversalPatcher
         int receiveTimeout = AppSettings.TimeoutConsoleReceive;
         int writeTimeout = AppSettings.TimeoutScriptRead;
         int readTimeout = AppSettings.TimeoutScriptRead;
+        private JConsole jconsole;
+        private string ScriptFolder;
+
+        public bool ReConnect(string ProfileFileName)
+        {
+            J2534InitParameters initParameters = null;
+            if (ProfileFileName != null)
+            {
+                string profileFile = Path.Combine(ScriptFolder, ProfileFileName);
+                if (!File.Exists(profileFile))
+                {
+                    profileFile = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", ProfileFileName);
+                }
+                if (!File.Exists(profileFile))
+                {
+                    LoggerBold("File not found: " + ProfileFileName);
+                    return false;
+                }
+                initParameters = LoadJ2534Settings(profileFile);
+            }
+
+            if (jconsole == null)
+            {
+                if (!frmlogger.Connect(false, true, false,this))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!frmlogger.ConnectJConsole(this,initParameters))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         /// <summary>
         /// Calc checksum for byte array for all messages to/from device
@@ -65,6 +103,7 @@ namespace UniversalPatcher
                 return false;
             }
             Line = Line.Trim();
+            Debug.WriteLine("Executing line: " + Line + " Line2: " + Line2);
             if (Line.Length > 1)
             {
                 if (Line.StartsWith("#"))
@@ -86,10 +125,42 @@ namespace UniversalPatcher
                         }
                     }
                 }
+                else if (Line.ToLower().StartsWith("logger:"))
+                {
+                    string msgTxt = Line.Substring(7);
+                    for (int x = 0; x < variables.Count; x++)
+                    {
+                        if (msgTxt.Contains(variables[x].Name))
+                        {
+                            string xformat = "X" + (variables[x].Size * 2).ToString("X");
+                            msgTxt = msgTxt.Replace(variables[x].Name, variables[x].Value.ToString(xformat));
+                        }
+                    }
+                    msgTxt = msgTxt.Replace("key", key.ToString("X4"));
+                    Logger(msgTxt);
+                }
                 else if (Line.ToLower().StartsWith("disconnect"))
                 {
-                    device.Dispose();
-                    return false;
+                    if (jconsole == null)
+                    {
+                        frmlogger.Disconnect(false);
+                    }
+                    else
+                    {
+                        frmlogger.DisconnectJConsole(false);
+                    }
+                }
+                else if (Line.ToLower().StartsWith("connect"))
+                {
+                    string[] jParts = Line.Split(':');
+                    if (jParts.Length > 1)
+                    {
+                        return ReConnect(jParts[1]);
+                    }
+                    else
+                    {
+                        return ReConnect(null);
+                    }
                 }
                 else if (Line.ToLower().StartsWith("printall"))
                 {
@@ -502,7 +573,7 @@ namespace UniversalPatcher
                         {
                             useSecondaryProtocol = !useSecondaryProtocol;
                         }
-                        int.TryParse(parts[1].Replace("p",""), out responses);
+                        int.TryParse(parts[1].Replace("p", ""), out responses);
                     }
                     Debug.WriteLine("Waiting {0} responses", responses);
                     if (parts.Length > 2)
@@ -786,6 +857,7 @@ namespace UniversalPatcher
             {
                 stopscript = false;
                 string Line;
+                ScriptFolder = Path.GetDirectoryName(FileName);
 
                 scriptrows = new List<string>();
                 StreamReader sr = new StreamReader(FileName);

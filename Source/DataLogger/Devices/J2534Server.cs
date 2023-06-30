@@ -247,6 +247,9 @@ namespace UniversalPatcher
                                             retVal = failMessage;
                                         }
                                         break;
+                                    case j2534Command.Disconnect:
+                                        LogDevice.Disconnect();
+                                        break;
                                     case j2534Command.ConnectSecondaryProtocol:
                                         J2534InitParameters jParams = (J2534InitParameters)Helpers.ByteArrayToObject(data);
                                         if (!LogDevice.ConnectSecondaryProtocol(jParams))

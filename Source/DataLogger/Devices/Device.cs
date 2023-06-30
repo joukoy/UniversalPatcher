@@ -593,6 +593,10 @@ namespace UniversalPatcher
         public abstract bool SetLoggingFilter();
         public abstract bool SetAnalyzerFilter();
         public abstract bool RemoveFilters(int[] filterIDs);
+        public virtual void Disconnect()
+        {
+            return;
+        }
         public virtual bool ConnectSecondaryProtocol(J2534InitParameters j2534Init)
         {
             return false;

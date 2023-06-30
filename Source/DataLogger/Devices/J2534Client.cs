@@ -802,6 +802,11 @@ namespace UniversalPatcher
             return Convert.ToBoolean(readBuf[0]);
         }
 
+        public override void Disconnect()
+        {
+            PipeSendAndReceive(j2534Command.Disconnect, null);
+        }
+
         public override bool ConnectSecondaryProtocol(J2534InitParameters j2534Init)
         {
             try

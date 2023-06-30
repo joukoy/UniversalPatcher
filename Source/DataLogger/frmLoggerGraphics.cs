@@ -81,7 +81,7 @@ namespace UniversalPatcher
         private string logFile;
         private bool LiveData;
         private bool PlayBack;
-        private int TStamps = 1;
+        //private int TStamps = 1;
         private string ProfileFile;
         private string Title;
         private List<PointDataGroup> pointDataGroups = new List<PointDataGroup>();
@@ -420,7 +420,7 @@ namespace UniversalPatcher
                         PointData pd = (PointData)prop.Tag;
                         DateTime dt = new DateTime((long)pd.TimeStamp);
                         StringBuilder sb = new StringBuilder("[" + dt.ToString("HH:mm:ss.ffff") + "] ");
-                        DataPoint[] points;
+                        //DataPoint[] points;
 
                         dataGridPointValues.Rows.Clear();
                         dataGridPointValues.Rows.Add();
@@ -684,7 +684,7 @@ namespace UniversalPatcher
             Title = this.Text;
             chart1.Series.Clear();
             SetupGraphProperties();
-            TStamps = 0;
+            //TStamps = 0;
             SeriesChartType ct = (SeriesChartType)Enum.Parse(typeof(SeriesChartType), comboBox1.Text);
             LiveData = false;
             timerDisplayData.Enabled = false;

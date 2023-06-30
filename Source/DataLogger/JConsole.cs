@@ -10,7 +10,7 @@ using static Upatcher;
 
 namespace UniversalPatcher
 {
-    class JConsole
+    public class JConsole
     {
         public Device JDevice;
         public IPort port;
