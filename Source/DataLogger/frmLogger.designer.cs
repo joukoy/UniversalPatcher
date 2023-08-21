@@ -312,11 +312,16 @@ namespace UniversalPatcher
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filterSupportedPidsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.parseLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseBinfileToScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.parseCANLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queryCANDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showSavedLogGraphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearVPWConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearJConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseLogfileToBinToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseCANLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseCANMode36LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseCAN23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -331,6 +336,7 @@ namespace UniversalPatcher
             this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
+            this.labelTimeStamp = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -473,6 +479,7 @@ namespace UniversalPatcher
             // 
             this.groupPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupPlayback.Controls.Add(this.labelTimeStamp);
             this.groupPlayback.Controls.Add(this.label39);
             this.groupPlayback.Controls.Add(this.numPlaybackSpeed);
             this.groupPlayback.Controls.Add(this.hScrollPlayback);
@@ -3270,54 +3277,54 @@ namespace UniversalPatcher
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
             // newProfileToolStripMenuItem
             // 
             this.newProfileToolStripMenuItem.Name = "newProfileToolStripMenuItem";
-            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newProfileToolStripMenuItem.Text = "New profile";
             this.newProfileToolStripMenuItem.Click += new System.EventHandler(this.newProfileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // playbackLogfileToolStripMenuItem
             // 
             this.playbackLogfileToolStripMenuItem.Name = "playbackLogfileToolStripMenuItem";
-            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.playbackLogfileToolStripMenuItem.Text = "Playback logfile";
             this.playbackLogfileToolStripMenuItem.Click += new System.EventHandler(this.playbackLogfileToolStripMenuItem_Click);
             // 
             // saveVPWConsoleToolStripMenuItem
             // 
             this.saveVPWConsoleToolStripMenuItem.Name = "saveVPWConsoleToolStripMenuItem";
-            this.saveVPWConsoleToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.saveVPWConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveVPWConsoleToolStripMenuItem.Text = "Save VPW Console";
             this.saveVPWConsoleToolStripMenuItem.Click += new System.EventHandler(this.saveVPWConsoleToolStripMenuItem_Click);
             // 
             // saveJConsoleToolStripMenuItem
             // 
             this.saveJConsoleToolStripMenuItem.Name = "saveJConsoleToolStripMenuItem";
-            this.saveJConsoleToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.saveJConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveJConsoleToolStripMenuItem.Text = "Save J-Console";
             this.saveJConsoleToolStripMenuItem.Click += new System.EventHandler(this.saveJConsoleToolStripMenuItem_Click);
             // 
@@ -3326,11 +3333,12 @@ namespace UniversalPatcher
             this.actionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.filterSupportedPidsToolStripMenuItem,
             this.connectDisconnectToolStripMenuItem,
-            this.parseLogfileToBinToolStripMenuItem,
             this.parseBinfileToScriptToolStripMenuItem,
-            this.parseCANLogfileToBinToolStripMenuItem,
             this.queryCANDevicesToolStripMenuItem,
-            this.showSavedLogGraphicsToolStripMenuItem});
+            this.showSavedLogGraphicsToolStripMenuItem,
+            this.clearVPWConsoleDataToolStripMenuItem,
+            this.clearJConsoleDataToolStripMenuItem,
+            this.parseLogfileToBinToolStripMenuItem1});
             this.actionToolStripMenuItem.Name = "actionToolStripMenuItem";
             this.actionToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.actionToolStripMenuItem.Text = "Action";
@@ -3349,26 +3357,12 @@ namespace UniversalPatcher
             this.connectDisconnectToolStripMenuItem.Text = "Connect/Disconnect";
             this.connectDisconnectToolStripMenuItem.Click += new System.EventHandler(this.connectDisconnectToolStripMenuItem_Click);
             // 
-            // parseLogfileToBinToolStripMenuItem
-            // 
-            this.parseLogfileToBinToolStripMenuItem.Name = "parseLogfileToBinToolStripMenuItem";
-            this.parseLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.parseLogfileToBinToolStripMenuItem.Text = "Parse logfile to bin";
-            this.parseLogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseLogfileToBinToolStripMenuItem_Click);
-            // 
             // parseBinfileToScriptToolStripMenuItem
             // 
             this.parseBinfileToScriptToolStripMenuItem.Name = "parseBinfileToScriptToolStripMenuItem";
             this.parseBinfileToScriptToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.parseBinfileToScriptToolStripMenuItem.Text = "Parse binfile to script";
             this.parseBinfileToScriptToolStripMenuItem.Click += new System.EventHandler(this.parseBinfileToScriptToolStripMenuItem_Click);
-            // 
-            // parseCANLogfileToBinToolStripMenuItem
-            // 
-            this.parseCANLogfileToBinToolStripMenuItem.Name = "parseCANLogfileToBinToolStripMenuItem";
-            this.parseCANLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.parseCANLogfileToBinToolStripMenuItem.Text = "Parse CAN logfile to bin";
-            this.parseCANLogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCANLogfileToBinToolStripMenuItem_Click);
             // 
             // queryCANDevicesToolStripMenuItem
             // 
@@ -3383,6 +3377,59 @@ namespace UniversalPatcher
             this.showSavedLogGraphicsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.showSavedLogGraphicsToolStripMenuItem.Text = "Show saved log graphics";
             this.showSavedLogGraphicsToolStripMenuItem.Click += new System.EventHandler(this.showSavedLogGraphicsToolStripMenuItem_Click);
+            // 
+            // clearVPWConsoleDataToolStripMenuItem
+            // 
+            this.clearVPWConsoleDataToolStripMenuItem.Name = "clearVPWConsoleDataToolStripMenuItem";
+            this.clearVPWConsoleDataToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.clearVPWConsoleDataToolStripMenuItem.Text = "Clear VPW-Console data";
+            this.clearVPWConsoleDataToolStripMenuItem.Click += new System.EventHandler(this.clearVPWConsoleDataToolStripMenuItem_Click);
+            // 
+            // clearJConsoleDataToolStripMenuItem
+            // 
+            this.clearJConsoleDataToolStripMenuItem.Name = "clearJConsoleDataToolStripMenuItem";
+            this.clearJConsoleDataToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.clearJConsoleDataToolStripMenuItem.Text = "Clear J-Console data";
+            this.clearJConsoleDataToolStripMenuItem.Click += new System.EventHandler(this.clearJConsoleDataToolStripMenuItem_Click);
+            // 
+            // parseLogfileToBinToolStripMenuItem1
+            // 
+            this.parseLogfileToBinToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.parseLogfileToBinToolStripMenuItem,
+            this.parseCANLogfileToBinToolStripMenuItem,
+            this.parseCANMode36LogfileToBinToolStripMenuItem,
+            this.parseCAN23LogfileToBinToolStripMenuItem});
+            this.parseLogfileToBinToolStripMenuItem1.Name = "parseLogfileToBinToolStripMenuItem1";
+            this.parseLogfileToBinToolStripMenuItem1.Size = new System.Drawing.Size(204, 22);
+            this.parseLogfileToBinToolStripMenuItem1.Text = "Parse logfile to bin";
+            // 
+            // parseLogfileToBinToolStripMenuItem
+            // 
+            this.parseLogfileToBinToolStripMenuItem.Name = "parseLogfileToBinToolStripMenuItem";
+            this.parseLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.parseLogfileToBinToolStripMenuItem.Text = "Parse VPW logfile to bin";
+            this.parseLogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseLogfileToBinToolStripMenuItem_Click);
+            // 
+            // parseCANLogfileToBinToolStripMenuItem
+            // 
+            this.parseCANLogfileToBinToolStripMenuItem.Name = "parseCANLogfileToBinToolStripMenuItem";
+            this.parseCANLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.parseCANLogfileToBinToolStripMenuItem.Text = "Parse CAN logfile to bin";
+            this.parseCANLogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCANLogfileToBinToolStripMenuItem_Click);
+            // 
+            // parseCANMode36LogfileToBinToolStripMenuItem
+            // 
+            this.parseCANMode36LogfileToBinToolStripMenuItem.Name = "parseCANMode36LogfileToBinToolStripMenuItem";
+            this.parseCANMode36LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.parseCANMode36LogfileToBinToolStripMenuItem.Text = "Parse CAN36 logfile to bin";
+            this.parseCANMode36LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCANMode36LogfileToBinToolStripMenuItem_Click);
+            // 
+            // parseCAN23LogfileToBinToolStripMenuItem
+            // 
+            this.parseCAN23LogfileToBinToolStripMenuItem.Name = "parseCAN23LogfileToBinToolStripMenuItem";
+            this.parseCAN23LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.parseCAN23LogfileToBinToolStripMenuItem.Text = "Parse CAN23 logfile to bin";
+            this.parseCAN23LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN23LogfileToBinToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -3488,6 +3535,15 @@ namespace UniversalPatcher
             this.labelProtocol.Size = new System.Drawing.Size(34, 15);
             this.labelProtocol.TabIndex = 25;
             this.labelProtocol.Text = "VPW";
+            // 
+            // labelTimeStamp
+            // 
+            this.labelTimeStamp.AutoSize = true;
+            this.labelTimeStamp.Location = new System.Drawing.Point(269, 28);
+            this.labelTimeStamp.Name = "labelTimeStamp";
+            this.labelTimeStamp.Size = new System.Drawing.Size(10, 13);
+            this.labelTimeStamp.TabIndex = 5;
+            this.labelTimeStamp.Text = "-";
             // 
             // frmLogger
             // 
@@ -3743,7 +3799,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.RadioButton radioFindAlgo;
         private System.Windows.Forms.RadioButton radioFindAllKeys;
         private System.Windows.Forms.RadioButton radioFindKey;
-        private System.Windows.Forms.ToolStripMenuItem parseLogfileToBinToolStripMenuItem;
         private System.Windows.Forms.TextBox txtJConsoleConfigs;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Button btnJConsoleAddConfig;
@@ -3795,7 +3850,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.TextBox txtAlgoRange;
         private System.Windows.Forms.Label label38;
-        private System.Windows.Forms.ToolStripMenuItem parseCANLogfileToBinToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem queryCANDevicesToolStripMenuItem;
         private System.Windows.Forms.Timer timerKeepBusQuiet;
         private System.Windows.Forms.Timer timerWaitCANQuery;
@@ -3874,6 +3928,14 @@ namespace UniversalPatcher
         private System.Windows.Forms.Button btnStartIdleTraffic;
         private System.Windows.Forms.NumericUpDown numIdleTrafficInterval;
         private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.ToolStripMenuItem clearVPWConsoleDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearJConsoleDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseLogfileToBinToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem parseLogfileToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseCANLogfileToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseCANMode36LogfileToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseCAN23LogfileToBinToolStripMenuItem;
+        private System.Windows.Forms.Label labelTimeStamp;
     }
 }
 

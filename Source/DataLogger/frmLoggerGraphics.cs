@@ -11,6 +11,7 @@ using System.Resources;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Windows.Threading;
 using static Helpers;
 using static UniversalPatcher.DataLogger;
 using static Upatcher;
@@ -28,7 +29,7 @@ namespace UniversalPatcher
         {
             public PidScalar()
             {
-                On = true;
+                On = false;
                 Bar = false;
                 Pid = "";
                 Scalar = 1;
@@ -36,7 +37,7 @@ namespace UniversalPatcher
             }
             public PidScalar(string pid)
             {
-                On = true;
+                On = false;
                 Bar = false;
                 Pid = pid;
                 Scalar = 1;
@@ -78,6 +79,7 @@ namespace UniversalPatcher
         }
 
         private List<PidScalar> pidScalars;
+
         private string logFile;
         private bool LiveData;
         private bool PlayBack;
@@ -94,7 +96,8 @@ namespace UniversalPatcher
         private List<BarGraph> vbars = new List<BarGraph>();
         private List<Label> vbarLabels = new List<Label>();
         private List<Label> vbarLabels2 = new List<Label>();
-
+        private DispatcherTimer zoomTimer = new DispatcherTimer();
+        private DispatcherTimer startTimer = new DispatcherTimer();
         private void frmLoggerGraphics_Load(object sender, EventArgs e)
         {
             try
@@ -166,6 +169,7 @@ namespace UniversalPatcher
                 chart1.MouseUp += Chart1_MouseUp;
                 chart1.MouseWheel += Chart1_MouseWheel;
                 showPointsToolStripMenuItem.Checked = AppSettings.LoggerGraphicsShowPoints;
+                disableResampleToolStripMenuItem.Checked = AppSettings.LoggerGraphDisableResample;
                 //SetUpDoubleBuffer(this);
                 chart1.MouseClick += Chart1_MouseClick;
                 loadCombobox1();
@@ -173,6 +177,10 @@ namespace UniversalPatcher
                 dataGridPointValues.Columns.Add("Value", "Value");
                 numDisplayInterval.Value = AppSettings.LoggerGraphicsInterval;
                 numShowMax.Value = AppSettings.LoggerGraphicsShowMaxTime;
+                zoomTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                zoomTimer.Tick += Timer_Tick;
+                startTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                startTimer.Tick += StartTimer_Tick;
             }
             catch (Exception ex)
             {
@@ -183,6 +191,18 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
             }
+        }
+
+        private void StartTimer_Tick(object sender, EventArgs e)
+        {
+            startTimer.Stop();
+            ShowSelectedRange();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            zoomTimer.Stop();
+            ShowSelectedRange();
         }
 
         private void Chart1_MouseWheel(object sender, MouseEventArgs e)
@@ -397,7 +417,7 @@ namespace UniversalPatcher
                     if (result.ChartElementType == ChartElementType.DataPoint)
                     {
                         prop = result.Object as DataPoint;
-                        Debug.WriteLine("Hit: " + prop.XValue);
+                        //Debug.WriteLine("Hit: " + prop.XValue);
                     }
                     else
                     {
@@ -412,7 +432,7 @@ namespace UniversalPatcher
                                                 .DefaultIfEmpty(S.Points.Last()).Last();
 */
                         prop = pPrev;
-                        Debug.WriteLine("Prev: " + pPrev.XValue);
+                        //Debug.WriteLine("Prev: " + pPrev.XValue);
                     }
                     //DataPoint prop = nearestpoint;
                     if (prop != null)
@@ -430,7 +450,8 @@ namespace UniversalPatcher
                         {
                             PointData pData = pointDataGroups[pd.Row].pointDatas[s];
                             int r = dataGridPointValues.Rows.Add();
-                            sb.Append(" " + pData.PidName + ": " + pData.Value.ToString("0.00") + ",");
+                            if (sb.Length < 2040)
+                                sb.Append(" " + pData.PidName + ": " + pData.Value.ToString("0.00") + ",");
                             dataGridPointValues.Rows[r].Cells["Pid"].Value = pData.PidName;
                             dataGridPointValues.Rows[r].Cells["Value"].Value = pData.Value.ToString("0.00");
                             UpdateVbarValue(s, pData.Value);
@@ -580,25 +601,37 @@ namespace UniversalPatcher
 
         private void ImportPidProfile()
         {
-            pidScalars = new List<PidScalar>();
-            chart1.Series.Clear();
-            for (int r = 0; r < datalogger.PidProfile.Count; r++)
+            try
             {
-                PidScalar ps = new PidScalar(datalogger.PidProfile[r].PidName);
-                pidScalars.Add(ps);
-                chart1.Series.Add(new Series());
-                chart1.Series[r].ChartType = ChartType;
-                chart1.Series[r].XValueType = ChartValueType.DateTime;
-                if (datalogger.PidProfile[r].PidName != null)
-                    chart1.Series[r].Name = datalogger.PidProfile[r].PidName;
-                chart1.Series[r].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
+                pidScalars = new List<PidScalar>();
+                chart1.Series.Clear();
+                for (int r = 0; r < datalogger.PidProfile.Count; r++)
+                {
+                    PidScalar ps = new PidScalar(datalogger.PidProfile[r].PidName);
+                    pidScalars.Add(ps);
+                    chart1.Series.Add(new Series());
+                    chart1.Series[r].ChartType = ChartType;
+                    chart1.Series[r].XValueType = ChartValueType.DateTime;
+                    if (datalogger.PidProfile[r].PidName != null)
+                        chart1.Series[r].Name = r.ToString() + "-" +  datalogger.PidProfile[r].PidName;
+                    chart1.Series[r].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
+                }
+                dataGridSettings.DataSource = pidScalars;
+                dataGridSettings.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+                dataGridSettings.Columns["On"].Width = 30;
+                dataGridSettings.Columns["Bar"].Width = 30;
+                dataGridSettings.Columns["Max"].Width = 30;
+                AddVBars();
             }
-            dataGridSettings.DataSource = pidScalars;
-            dataGridSettings.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-            dataGridSettings.Columns["On"].Width = 30;
-            dataGridSettings.Columns["Bar"].Width = 30;
-            dataGridSettings.Columns["Max"].Width = 30;
-            AddVBars();
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+            }
         }
 
         public void SetupLiveGraphics()
@@ -848,6 +881,35 @@ namespace UniversalPatcher
             }
         }
 
+        private void DetectMinMax()
+        {
+            try
+            {
+                for (int i = 0; i < pidScalars.Count; i++)
+                {
+                    double min = double.MaxValue;
+                    double max = double.MinValue;
+                    for (int x = 0; x < datalogger.LogDataBuffer.Count; x++)
+                    {
+                        if (datalogger.LogDataBuffer[x].Values[i] > max)
+                            max = datalogger.LogDataBuffer[x].Values[i];
+                        if (datalogger.LogDataBuffer[x].Values[i] < min)
+                            min = datalogger.LogDataBuffer[x].Values[i];
+                    }
+                    pidScalars[i].Min = min;
+                    pidScalars[i].Max = max;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+            }
+        }
         private void ReadDataFromFile()
         {
             try
@@ -858,12 +920,19 @@ namespace UniversalPatcher
                 }
                 LiveData = false;
                 PlayBack = false;
-                Logger("Loading logfile: " + logFile, false);
                 datalogger.LoadLogFile(logFile);
                 ImportPidProfile();
+                DetectMinMax();
                 ImportLogDataBuffer();
-                ShowSelectedRange();
-                Logger(" [OK]");
+                if (datalogger.PidProfile.Count > 10)
+                {
+                    chkSelectAll.Checked = false;
+                    Logger("More than 10 pids, all pids disabled by default. Select pids you want and click Apply");
+                }
+                else
+                {
+                    chkSelectAll.Checked = true;
+                }
             }
             catch (Exception ex)
             {
@@ -940,7 +1009,7 @@ namespace UniversalPatcher
                         startP = 0;
                     }
 
-                    if (ScrollPointsPerScreen.Value > 2000)
+                    if (ScrollPointsPerScreen.Value > 2000 && disableResampleToolStripMenuItem.Checked == false)
                     {
                         pValues = ResampleData();
                         startP = 0;
@@ -951,6 +1020,12 @@ namespace UniversalPatcher
                         labelZoom.ForeColor = Color.Black;
                         labelZoom.Text = "Zoom";
                     }
+                }
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
+                for (int r=0;r< chart1.Series.Count; r++)
+                {
+                    chart1.Series[r].Points.SuspendUpdates();
                 }
                 for (int x = startP; x < endP; x++)
                 {
@@ -974,6 +1049,12 @@ namespace UniversalPatcher
                         }
                     }
                 }
+                for (int r = 0; r < chart1.Series.Count; r++)
+                {
+                    chart1.Series[r].Points.ResumeUpdates();
+                }
+
+                Debug.WriteLine("Graph data set Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
             }
             catch (Exception ex)
             {
@@ -991,6 +1072,9 @@ namespace UniversalPatcher
             try
             {
                 this.Text = Title + " [" + Path.GetFileName(ProfileFile) + "]";
+                labelDataValues.Text = "Click data point to show values";
+                chart1.Series.Clear();
+                chkSelectAll.Checked = false;
                 StreamReader sr = new StreamReader(logFile);
                 string hdrLine = sr.ReadLine();
                 sr.Close();
@@ -1017,12 +1101,14 @@ namespace UniversalPatcher
         {
             try
             {
-                string fName = SelectFile("Select Log file", CsvFilter);
-                if (string.IsNullOrEmpty(fName))
-                    return;
-                logFile = fName;
-                Title = "Logger Graph - " + fName;
-                LoadLogFile();
+                frmImportLogFile fil = new frmImportLogFile();
+                if (fil.ShowDialog() == DialogResult.OK)
+                {
+                    string fName = fil.txtFileName.Text;
+                    logFile = fName;
+                    Title = "Logger Graph - " + fName;
+                    LoadLogFile();
+                }
             }
             catch (Exception ex)
             {
@@ -1244,7 +1330,11 @@ namespace UniversalPatcher
 
         private void ScrollPointsPerScreen_Scroll(object sender, ScrollEventArgs e)
         {
-            ShowSelectedRange();
+            //ShowSelectedRange();
+            if (zoomTimer.IsEnabled) 
+                zoomTimer.Stop();
+            zoomTimer.Start();
+            Debug.WriteLine("ScrollPointsPerScreen_Scroll");
             ShowToolTip(ScrollPointsPerScreen.Value.ToString() + " pt/screen");
         }
 
@@ -1252,7 +1342,11 @@ namespace UniversalPatcher
         {
             try
             {
-                ShowSelectedRange();
+                //ShowSelectedRange();
+                if (startTimer.IsEnabled)
+                    startTimer.Stop();
+                startTimer.Start();
+                Debug.WriteLine("ScrollStartPoint_Scroll");
                 DateTime dt = new DateTime((long)pointDataGroups[ScrollStartPoint.Value].pointDatas[0].TimeStamp);
                 ShowToolTip(dt.ToString("HH:mm:ss.ffff"));
             }
@@ -1351,6 +1445,9 @@ namespace UniversalPatcher
             List<PointDataGroup> retVal = new List<PointDataGroup>();
             try
             {
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
+
                 int samplesize = ScrollPointsPerScreen.Value / 500;
                 int pointsLeft = pointDataGroups.Count - ScrollStartPoint.Value;
                 if (pointsLeft < ScrollPointsPerScreen.Value)
@@ -1403,6 +1500,15 @@ namespace UniversalPatcher
                                 maxrow = pos + x;
                             }
                         }
+                        if (minrow < 0)
+                        {
+                            minrow = pos;
+                        }
+                        if (maxrow < 0)
+                        {
+                            maxrow = pos;
+                        }
+                        //Debug.WriteLine("pid: " + pid + ", minrow: " + minrow + ", maxrow: " + maxrow);
                         if (minrow > maxrow)
                         {
                             //Don't mix pointorder
@@ -1419,6 +1525,8 @@ namespace UniversalPatcher
                     retVal.Add(pdgmax);
                 }
                 Debug.WriteLine("Resampled size: " + retVal.Count.ToString());
+                timer.Stop();
+                Debug.WriteLine("Resample Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
             }
             catch (Exception ex)
             {
@@ -1427,7 +1535,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmLoggerGraphics line " + line + ": " + ex.Message + ", inner exception: " + ex.InnerException);
             }
             return retVal;
         }
@@ -1691,6 +1799,27 @@ namespace UniversalPatcher
             wheelZoomYToolStripMenuItem1.Checked = false;
             wheelZoomXYToolStripMenuItem1.Checked = false;
             noWheelZoomToolStripMenuItem1.Checked = true;
+        }
+
+        private void chkSelectAll_CheckedChanged(object sender, EventArgs e)
+        {
+            for (int i=0; i<pidScalars.Count;i++)
+            {
+                pidScalars[i].On = chkSelectAll.Checked;
+            }
+            this.Refresh();
+        }
+
+        private void disableResampleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            disableResampleToolStripMenuItem.Checked = !disableResampleToolStripMenuItem.Checked;
+            AppSettings.LoggerGraphDisableResample = disableResampleToolStripMenuItem.Checked;
+            ShowSelectedRange();
+        }
+
+        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

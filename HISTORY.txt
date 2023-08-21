@@ -648,3 +648,13 @@
 - Logger: OBDScript: Added "connect:<profile>" Example: connect:VPW.xml (Load profile file from script folder or Logger\J2534Profiles\)
 - Logger: OBDScript: Added "logger:<data>" To show data in log window. Examples: logger:"Variable1 value=$variable1", "logger:PCM Password: key"
 
+0.22.10
+- Logger: Added Action-menu for Clear VPW-Console data & Clear J-Console data
+- Logger: Obdscript: Added commands for parsing log to bin file: savebin:<mode>:<filename> or savebin:<mode>:? 
+	mode: vpw, can, can36, can23
+- Logger: Obdscript: Added command for input variable value: askvariable:variablename:size:hex/int[:comment]
+- Logger: Playback logfile: Bug fixes & improvements
+- Logger: Playback logfile: Improved timestamp handling (autodetect + manual setting)
+- Logger: Graph: Added: Disable resample. + Other improvements
+
+

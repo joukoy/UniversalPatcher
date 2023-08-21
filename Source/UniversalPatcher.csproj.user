@@ -12,7 +12,7 @@
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>advanced patcher</StartArguments>
+    <StartArguments>advanced logger</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug DPS|AnyCPU'">
     <StartArguments>advanced patcher</StartArguments>

@@ -162,10 +162,10 @@ namespace UniversalPatcher
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabCategory = new System.Windows.Forms.TabPage();
             this.tabMultiTree = new System.Windows.Forms.TabPage();
             this.tabDimensions = new System.Windows.Forms.TabPage();
             this.tabValueType = new System.Windows.Forms.TabPage();
-            this.tabCategory = new System.Windows.Forms.TabPage();
             this.tabSegments = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.groupNavigator = new System.Windows.Forms.GroupBox();
@@ -419,21 +419,21 @@ namespace UniversalPatcher
             // touristToolStripMenuItem
             // 
             this.touristToolStripMenuItem.Name = "touristToolStripMenuItem";
-            this.touristToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.touristToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.touristToolStripMenuItem.Text = "Tourist";
             this.touristToolStripMenuItem.Click += new System.EventHandler(this.touristToolStripMenuItem_Click);
             // 
             // basicToolStripMenuItem
             // 
             this.basicToolStripMenuItem.Name = "basicToolStripMenuItem";
-            this.basicToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.basicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.basicToolStripMenuItem.Text = "Basic";
             this.basicToolStripMenuItem.Click += new System.EventHandler(this.basicToolStripMenuItem_Click);
             // 
             // advancedToolStripMenuItem
             // 
             this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
-            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.advancedToolStripMenuItem.Text = "Advanced";
             this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
@@ -1338,6 +1338,16 @@ namespace UniversalPatcher
             this.tabControl1.TabIndex = 1;
             this.tabControl1.Visible = false;
             // 
+            // tabCategory
+            // 
+            this.tabCategory.ImageKey = "category.ico";
+            this.tabCategory.Location = new System.Drawing.Point(4, 31);
+            this.tabCategory.Name = "tabCategory";
+            this.tabCategory.Size = new System.Drawing.Size(441, 246);
+            this.tabCategory.TabIndex = 2;
+            this.tabCategory.UseVisualStyleBackColor = true;
+            this.tabCategory.Click += new System.EventHandler(this.tabCategory_Click);
+            // 
             // tabMultiTree
             // 
             this.tabMultiTree.ImageKey = "listmode.ico";
@@ -1366,15 +1376,6 @@ namespace UniversalPatcher
             this.tabValueType.Size = new System.Drawing.Size(441, 246);
             this.tabValueType.TabIndex = 1;
             this.tabValueType.UseVisualStyleBackColor = true;
-            // 
-            // tabCategory
-            // 
-            this.tabCategory.ImageKey = "category.ico";
-            this.tabCategory.Location = new System.Drawing.Point(4, 31);
-            this.tabCategory.Name = "tabCategory";
-            this.tabCategory.Size = new System.Drawing.Size(441, 246);
-            this.tabCategory.TabIndex = 2;
-            this.tabCategory.UseVisualStyleBackColor = true;
             // 
             // tabSegments
             // 

@@ -2062,14 +2062,14 @@ namespace UniversalPatcher
 
             return true;
         }
-
         public void LoadLogFile(string LogFile)
         {
             try
             {
+                Logger("Loading file: " + LogFile);
                 LogDataBuffer = new List<LogData>();
                 DateTime startTime = DateTime.MinValue;
-                DateTime prevTStamp = DateTime.Now;
+                DateTime prevTStamp = DateTime.MinValue;
                 StreamReader sr = new StreamReader(LogFile);
                 string logLine = sr.ReadLine();
                 int tStamps = LoadProfileFromCsv(LogFile);
@@ -2083,8 +2083,26 @@ namespace UniversalPatcher
                         break;
                     }
                 }
-                bool faketimestamp = false;
+ /*               for (int h=0; h<hdrArray.Length; h++)
+                {
+                    int count = 1;
+                    for (int h2=h+1;h2<hdrArray.Length; h2++)
+                    {
+                        if (hdrArray[h2] == hdrArray[h])
+                        {
+                            Logger("Renaming duplicate column: " + hdrArray[h2] + " => ", false);
+                            hdrArray[h2] = hdrArray[h] + " #" + count.ToString();
+                            Logger(hdrArray[h2]);
+                            count++;
+                        }
+                    }
+                }*/
+                int faketimestamps = 0;
                 int row = 0;
+                DateTime fDT = File.GetCreationTime(LogFile);
+                string tStampDate = fDT.ToString("yyyy.MM.dd.");
+                bool tStampErrorReported = false;
+                TimestampFormat TSF = new TimestampFormat(fDT);
                 while ((logLine = sr.ReadLine()) != null)
                 {
                     string[] lParts = logLine.Split(new string[] { AppSettings.LoggerLogSeparator }, StringSplitOptions.None);
@@ -2092,9 +2110,26 @@ namespace UniversalPatcher
                     {
                         throw new Exception(Environment.NewLine + "Column count don't match header. Check Log separator!");
                     }
+                    if (lParts.Length != hdrArray.Length)
+                    {
+                        Logger("Columns don't match in row " + (row + 1).ToString() + ", skipping");
+                        continue;
+                    }
                     double val;
                     LogData ld = new LogData(lParts.Length - tStamps);
-                    DateTime tStamp = Convert.ToDateTime(lParts[0]);
+                    DateTime tStamp = TSF.ConvertTimeStamp(lParts[0]);
+                    if (tStamp == fDT && !tStampErrorReported)
+                    {
+                        tStampErrorReported = true;
+                        Logger("Timestamp format not match, Format: " + AppSettings.LoggerTimestampFormat + ", Timestamp: " + lParts[0]);
+                    }
+                    if (prevTStamp.Ticks >= tStamp.Ticks)
+                    {
+                        tStamp = prevTStamp.AddMilliseconds(1);
+                        faketimestamps++;
+                    }
+                    prevTStamp = tStamp;
+                    ld.TimeStamp = (ulong)tStamp.Ticks;
                     if (startTime == DateTime.MinValue)
                     {
                         startTime = tStamp;
@@ -2105,13 +2140,6 @@ namespace UniversalPatcher
                         TimeSpan elapsed = TimeSpan.Parse(elapsedStr);
                         tStamp = startTime.Add(elapsed);
                     }
-                    else if (prevTStamp >= tStamp)
-                    {
-                        tStamp = prevTStamp.AddMilliseconds(1);
-                        faketimestamp = true;
-                    }
-                    prevTStamp = tStamp;
-                    ld.TimeStamp = (ulong)tStamp.Ticks;
                     for (int r = tStamps; r < lParts.Length; r++)
                     {
                         if (string.IsNullOrEmpty(lParts[r]))
@@ -2141,10 +2169,11 @@ namespace UniversalPatcher
                     row++;
                 }
                 sr.Close();
-                if (faketimestamp)
+                if (faketimestamps > (LogDataBuffer.Count/100))
                 {
-                    LoggerBold(Environment.NewLine + "Using fake timestamp, timing is not accurate");
+                    Logger(Environment.NewLine + "Timestamps adjusted, timing may not be accurate (" + faketimestamps.ToString() + " of " + LogDataBuffer.Count.ToString()+")");
                 }
+                Logger("[OK]");
             }
             catch (Exception ex)
             {
@@ -2153,7 +2182,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, LoadLogFile line " + line + ": " + ex.Message);
+                LoggerBold("Error, LoadLogFile line " + line + ": " + ex.Message + ", inner exception: " + ex.InnerException);
             }
         }
 

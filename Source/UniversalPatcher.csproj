@@ -119,6 +119,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutBox1.cs">
@@ -133,7 +134,6 @@
     </Compile>
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
-    <Compile Include="DataLogger\CanLogToBin.cs" />
     <Compile Include="DataLogger\CANQuery.cs" />
     <Compile Include="DataLogger\Devices\ElmDeviceImplementation.cs" />
     <Compile Include="DataLogger\Devices\frmJ2534Server.cs">
@@ -168,7 +168,7 @@
     <Compile Include="DataLogger\GmKeys.cs" />
     <Compile Include="DataLogger\JConsole.cs" />
     <Compile Include="DataLogger\KeyAlgorithm.cs" />
-    <Compile Include="DataLogger\LogToBin.cs" />
+    <Compile Include="DataLogger\LogToBinConverter.cs" />
     <Compile Include="DataLogger\MessageReceiver.cs" />
     <Compile Include="DataLogger\NgcKeys.cs" />
     <Compile Include="DataLogger\ObdEmu.cs" />
@@ -216,6 +216,12 @@
     </Compile>
     <Compile Include="frmImportFile.Designer.cs">
       <DependentUpon>frmImportFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmImportLogFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmImportLogFile.Designer.cs">
+      <DependentUpon>frmImportLogFile.cs</DependentUpon>
     </Compile>
     <Compile Include="frmPropertyEditor.cs">
       <SubType>Form</SubType>
@@ -544,6 +550,7 @@
     <Compile Include="TableInfo.cs" />
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
+    <Compile Include="TimestampFormat.cs" />
     <Compile Include="TinyTuner.cs" />
     <Compile Include="TreeParts.cs" />
     <Compile Include="TreeViewMS.cs">
@@ -599,6 +606,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmImportFile.resx">
       <DependentUpon>frmImportFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmImportLogFile.resx">
+      <DependentUpon>frmImportLogFile.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmPropertyEditor.resx">
       <DependentUpon>frmPropertyEditor.cs</DependentUpon>

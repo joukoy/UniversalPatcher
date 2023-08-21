@@ -116,7 +116,7 @@ namespace UniversalPatcher
         const int SB_LINEUP = 0;
         //private uint WM_VSCROLL = 0x115;
 
-        private class LogText
+        public class LogText
         {
             public LogText() { }
             public LogText(Color Color, string LogTxt, ulong TimeStamp) 
@@ -129,9 +129,9 @@ namespace UniversalPatcher
             public string Txt { get; set; }
             public ulong TimeStamp { get; set; }
         }
-        List<LogText> logTexts;
+        public List<LogText> logTexts;
         int lastLogRowCount = 0;
-        List<LogText> jconsolelogTexts;
+        public List<LogText> jconsolelogTexts;
         int jconsolelastLogRowCount = 0;
         Queue<LogText> consoleLogQueue = new Queue<LogText>();
         Queue<LogText> jconsoleLogQueue = new Queue<LogText>();
@@ -2393,6 +2393,7 @@ namespace UniversalPatcher
                 AppSettings.LoggerLogSeparator = txtLogSeparator.Text;
                 AppSettings.Save();
                 labelProgress.Text = "";
+                labelTimeStamp.Text = "-";
                 if (datalogger.PidProfile.Count == 0 || datalogger.PidProfile[0].addr == 0xffffff)
                 {
                     Logger("No profile configured");
@@ -3826,7 +3827,7 @@ namespace UniversalPatcher
             string fName = SelectFile("Select log file", RtfFTxtilter);
             if (fName.Length == 0)
                 return;
-            LogToBin ltb = new LogToBin();
+            LogToBinConverter ltb = new LogToBinConverter(0);
             Logger("Reading file: " + fName);
             Application.DoEvents();
             ltb.ConvertFile(fName);
@@ -4035,7 +4036,7 @@ namespace UniversalPatcher
             string fName = SelectFile("Select log file", RtfFTxtilter);
             if (fName.Length == 0)
                 return;
-            CanLogToBin cltb = new CanLogToBin();
+            LogToBinConverter cltb = new LogToBinConverter(LogToBinConverter.RMode.VPW);
             cltb.ConvertFile(fName);
 
         }
@@ -4148,16 +4149,22 @@ namespace UniversalPatcher
         {
             try
             {
-                string fName = SelectFile("Select Log file", CsvFilter);
-                if (string.IsNullOrEmpty(fName))
-                    return;
-                AppSettings.LoggerTimestampFormat = txtTstampFormat.Text;
-                AppSettings.LoggerDecimalSeparator = txtDecimalSeparator.Text;
-                AppSettings.LoggerLogSeparator = txtLogSeparator.Text;
-                AppSettings.Save();
-                datalogger.LoadLogFile(fName);
-                SetupLogDataGrid();
-                hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
+                //string fName = SelectFile("Select Log file", CsvFilter);
+                //if (string.IsNullOrEmpty(fName))
+                //return;
+                frmImportLogFile fil = new frmImportLogFile();
+                if (fil.ShowDialog() == DialogResult.OK)
+                {
+                    string fName = fil.txtFileName.Text;
+                    AppSettings.LoggerTimestampFormat = txtTstampFormat.Text;
+                    AppSettings.LoggerDecimalSeparator = txtDecimalSeparator.Text;
+                    AppSettings.LoggerLogSeparator = txtLogSeparator.Text;
+                    AppSettings.Save();
+                    datalogger.LoadLogFile(fName);
+                    SetupLogDataGrid();
+                    hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
+                }
+                fil.Dispose();
 
             }
             catch (Exception ex)
@@ -4254,6 +4261,8 @@ namespace UniversalPatcher
             {
                 dataGridLogData.Rows[row].Cells["Value"].Value = ld.CalculatedValues[row].ToString();
             }
+            DateTime dt = new DateTime((long)ld.TimeStamp);
+            labelTimeStamp.Text = dt.ToString("HH.mm.ss.ffff");
             if (GraphicsForm != null && GraphicsForm.Visible)
             {
                 GraphicsForm.PlayBackStep(hScrollPlayback.Value);
@@ -5025,8 +5034,11 @@ namespace UniversalPatcher
                     return;
                 }
                 Logger("Saving to file " + fName, false);
-                RichTextBox rtb = new RichTextBox();
+                //RichTextBox rtb = new RichTextBox();
                 Application.DoEvents();
+                StreamWriter cStream = new StreamWriter(fName);
+                cStream.WriteLine("{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1035{\\fonttbl{\\f0\\fnil\\fcharset0 Courier New;}}");
+                cStream.WriteLine("{\\colortbl ;\\red127\\green255\\blue212;\\red0\\green100\\blue0;\\red255\\green0\\blue0;\\red128\\green0\\blue128;}");
                 for (int r = 0; r < logTexts.Count; r++)
                 {
                     if (r % 300 == 0)
@@ -5034,10 +5046,22 @@ namespace UniversalPatcher
                         Logger(".", false);
                         Application.DoEvents();
                     }
-                    rtb.SelectionColor = logTexts[r].color;
-                    rtb.AppendText(logTexts[r].Txt);
+                    //rtb.SelectionColor = logTexts[r].color;
+                    //rtb.AppendText(logTexts[r].Txt);
+                    string colort = "cf1";
+                    if (logTexts[r].color == Color.Aquamarine)
+                        colort = "cf1";
+                    else if (logTexts[r].color == Color.DarkGreen)
+                        colort = "cf2";
+                    else if (logTexts[r].color == Color.Red)
+                        colort = "cf3";
+                    else if (logTexts[r].color == Color.Purple)
+                        colort = "cf4";
+                    cStream.WriteLine("\\" + colort + " " + logTexts[r].Txt + "\\par");
                 }
-                rtb.SaveFile(fName);
+                cStream.WriteLine("}");
+                cStream.Close();
+                //rtb.SaveFile(fName);
                 Logger(" [OK]");
             }
             catch (Exception ex)
@@ -5062,7 +5086,11 @@ namespace UniversalPatcher
                 }
                 Logger("Saving to file " + fName, false);
                 Application.DoEvents();
-                RichTextBox rtb = new RichTextBox();
+                //RichTextBox rtb = new RichTextBox();
+                StreamWriter jStream = new StreamWriter(fName);
+                jStream.WriteLine("{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1035{\\fonttbl{\\f0\\fnil\\fcharset0 Courier New;}}");
+                jStream.WriteLine("{\\colortbl ;\\red127\\green255\\blue212;\\red0\\green100\\blue0;\\red255\\green0\\blue0;\\red128\\green0\\blue128;}");
+
                 for (int r = 0; r < jconsolelogTexts.Count; r++)
                 {
                     if (r%300 == 0)
@@ -5070,10 +5098,22 @@ namespace UniversalPatcher
                         Logger(".", false);
                         Application.DoEvents();
                     }
-                    rtb.SelectionColor = jconsolelogTexts[r].color;
-                    rtb.AppendText(jconsolelogTexts[r].Txt);
+                    //rtb.SelectionColor = jconsolelogTexts[r].color;
+                    //rtb.AppendText(jconsolelogTexts[r].Txt);
+                    string colort = "cf1";
+                    if (jconsolelogTexts[r].color == Color.Aquamarine)
+                            colort = "cf1";
+                    else if (jconsolelogTexts[r].color == Color.DarkGreen)
+                            colort = "cf2";
+                    else if (jconsolelogTexts[r].color == Color.Red)
+                        colort = "cf3";
+                    else if (jconsolelogTexts[r].color == Color.Purple)
+                        colort = "cf4";                    
+                    jStream.WriteLine("\\"+colort+" " + jconsolelogTexts[r].Txt + "\\par");
                 }
-                rtb.SaveFile(fName);
+                jStream.WriteLine("}");
+                jStream.Close();
+                //rtb.SaveFile(fName);
                 Logger(" [OK]");
             }
             catch (Exception ex)
@@ -5341,5 +5381,36 @@ namespace UniversalPatcher
                 datalogger.LogDevice.StartIdleTraffic((int)numIdleTrafficInterval.Value);
             }
         }
+
+        private void clearVPWConsoleDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logTexts = new List<LogText>();
+            richVPWmessages.Clear();
+        }
+
+        private void clearJConsoleDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            jconsolelogTexts = new List<LogText>();
+            richJConsole.Clear();
+        }
+
+        private void parseCANMode36LogfileToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select log file", RtfFTxtilter);
+            if (fName.Length == 0)
+                return;
+            LogToBinConverter cltb = new LogToBinConverter(LogToBinConverter.RMode.CAN36);
+            cltb.ConvertFile(fName);
+        }
+
+        private void parseCAN23LogfileToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select log file", RtfFTxtilter);
+            if (fName.Length == 0)
+                return;
+            LogToBinConverter cltb = new LogToBinConverter(LogToBinConverter.RMode.CAN23);
+            cltb.ConvertFile(fName);
+        }
+
     }
 }

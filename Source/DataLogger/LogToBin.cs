@@ -39,7 +39,7 @@ namespace UniversalPatcher
             return CalcChksm;
         }
 
-        private void ParseLine(string Line, bool SizeOnly)
+        private void ParseLine_VPW(string Line, bool SizeOnly)
         {
             try
             {
@@ -137,6 +137,80 @@ namespace UniversalPatcher
             }
         }
 
+        public void ConvertLines(string[] lines, string FileName)
+        {
+            //Parse file and check file size:
+            row = 0;
+            corrupted = false;
+            foreach (string Line in lines)
+            {
+                row++;
+                ParseLine(Line, true);
+            }
+
+            if (FileSize == 0)
+            {
+                Logger("Data not found");
+                return;
+            }
+            buf = new byte[FileSize];
+            compareBuf = new byte[FileSize];
+            for (int a = 0; a < FileSize; a++)
+            {
+                buf[a] = 0xFF;
+                compareBuf[a] = 0xFF;
+            }
+
+            //Parse again but get data this time:
+            foreach (string Line in lines)
+            {
+                ParseLine(Line, false);
+            }
+            List<string> skipped = new List<string>();
+            string range = "";
+            for (int a = 0; a < FileSize; a++)
+            {
+                if (compareBuf[a] == 0xFF)
+                {
+                    if (range.Length == 0)
+                    {
+                        range = a.ToString("X4");
+                    }
+                }
+                else if (range.Length > 0)
+                {
+                    range += " - " + a.ToString("X4");
+                    skipped.Add(range);
+                    range = "";
+                }
+            }
+            if (range.Length > 0)
+            {
+                range += " - " + FileSize.ToString("X4");
+                skipped.Add(range);
+            }
+            if (skipped.Count > 0)
+            {
+                Logger("Missed parts in log:");
+                foreach (string r in skipped)
+                {
+                    Logger(r);
+                }
+            }
+            if (corrupted)
+            {
+                DialogResult res = MessageBox.Show("File may be corrupted, save anyway?", "Warning", MessageBoxButtons.YesNo);
+                if (res == DialogResult.No)
+                {
+                    Logger("Cancel saving");
+                    return;
+                }
+            }
+            Logger("Writing to file: " + FileName);
+            WriteBinToFile(FileName, buf);
+            Logger("Done");
+
+        }
         public void ConvertFile(string FileName)
         {
             try
@@ -153,77 +227,11 @@ namespace UniversalPatcher
                     text = ReadTextFile(FileName);
                 }
                 string[] lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                //Parse file and check file size:
-                row = 0;
-                corrupted = false;
-                foreach (string Line in lines)
+                string binFile = SelectSaveFile(BinFilter, FileName + ".bin");
+                if (!string.IsNullOrEmpty(binFile))
                 {
-                    row++;
-                    ParseLine(Line, true);
+                    ConvertLines(lines, FileName + ".bin");
                 }
-
-                if (FileSize == 0)
-                {
-                    Logger("Data not found");
-                    return;
-                }
-                buf = new byte[FileSize];
-                compareBuf = new byte[FileSize];
-                for (int a = 0; a < FileSize; a++)
-                {
-                    buf[a] = 0xFF;
-                    compareBuf[a] = 0xFF;
-                }
-
-                //Parse again but get data this time:
-                foreach (string Line in lines)
-                {
-                    ParseLine(Line, false);
-                }
-                List<string> skipped = new List<string>();
-                string range = "";
-                for (int a=0;a<FileSize;a++)
-                {
-                    if (compareBuf[a] == 0xFF)
-                    {
-                        if (range.Length == 0)
-                        {
-                            range = a.ToString("X4");
-                        }
-                    }
-                    else if (range.Length > 0)
-                    {
-                        range += " - " + a.ToString("X4");
-                        skipped.Add(range);
-                        range = "";
-                    }
-                }
-                if (range.Length > 0)
-                {
-                    range += " - " + FileSize.ToString("X4");
-                    skipped.Add(range);
-                }
-                if (skipped.Count > 0)
-                {
-                    Logger("Missed parts in log:");
-                    foreach(string r in skipped)
-                    {
-                        Logger(r);
-                    }
-                }
-                if (corrupted)
-                {
-                    DialogResult res = MessageBox.Show("File may be corrupted, save anyway?", "Warning", MessageBoxButtons.YesNo);
-                    if (res == DialogResult.No)
-                    {
-                        Logger("Cancel saving");
-                        return;
-                    }
-                }
-                Logger("Writing to file: " + FileName + ".bin");
-                WriteBinToFile(FileName + ".bin", buf);
-                Logger("Done");
             }
             catch (Exception ex)
             {

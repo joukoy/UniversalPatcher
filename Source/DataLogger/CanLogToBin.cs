@@ -26,7 +26,7 @@ namespace UniversalPatcher
         private bool dataRows = false;
         private int reqRow;
 
-        private void ParseLine(string Line, bool SizeOnly)
+        private void ParseLine_CAN(string Line, bool SizeOnly)
         {
             try
             {
@@ -107,25 +107,10 @@ namespace UniversalPatcher
             }
         }
 
-        public void ConvertFile(string FileName)
+        public void ConvertLines(string[] lines, string FileName)
         {
             try
             {
-                string text;
-                PCMid = 0;
-                toolId = 0; 
-                if (FileName.ToLower().EndsWith(".rtf"))
-                {
-                    RichTextBox rtb = new RichTextBox();
-                    rtb.LoadFile(FileName);
-                    text = rtb.Text;
-                }
-                else
-                {
-                    text = ReadTextFile(FileName);
-                }
-                string[] lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
                 //Parse file and check file size:
                 Logger("Calculating file size", false);
                 Application.DoEvents();
@@ -157,7 +142,7 @@ namespace UniversalPatcher
                     compareBuf[a] = 0xFF;
                 }
 
-                Logger("Parsing file ... ", false);
+                Logger("Parsing data ... ", false);
                 Application.DoEvents();
 
                 //Parse again but get data this time:
@@ -206,9 +191,44 @@ namespace UniversalPatcher
                 }
 
                 Logger(" [OK]");
-                Logger("Writing to file: " + FileName + ".bin");
-                WriteBinToFile(FileName + ".bin", buf);
+                Logger("Writing to file: " + FileName );
+                WriteBinToFile(FileName, buf);
                 Logger("Done");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Convertfile, line " + line + ": " + ex.Message);
+                LoggerBold("File row: " + row);
+            }
+        }
+        public void ConvertFile(string FileName)
+        {
+            try
+            {
+                string text;
+                PCMid = 0;
+                toolId = 0; 
+                if (FileName.ToLower().EndsWith(".rtf"))
+                {
+                    RichTextBox rtb = new RichTextBox();
+                    rtb.LoadFile(FileName);
+                    text = rtb.Text;
+                }
+                else
+                {
+                    text = ReadTextFile(FileName);
+                }
+                string[] lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                string binFile = SelectSaveFile(BinFilter, FileName + ".bin");
+                if (!string.IsNullOrEmpty(binFile))
+                {
+                    ConvertLines(lines, FileName + ".bin");
+                }
             }
             catch (Exception ex)
             {

@@ -76,9 +76,9 @@ namespace UniversalPatcher
 
         private void MessageEventLoop()
         {
-            try
+            while (running)
             {
-                while (running)
+                try
                 {
                     if (msgEventQueue.Count > 0)
                     {
@@ -91,13 +91,13 @@ namespace UniversalPatcher
                         Thread.Sleep(100);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                var frame = st.GetFrame(st.FrameCount - 1);
-                var line = frame.GetFileLineNumber();
-                Logger("Error, j2534Server line " + line + ": " + ex.Message);
+                catch (Exception ex)
+                {
+                    var st = new StackTrace(ex, true);
+                    var frame = st.GetFrame(st.FrameCount - 1);
+                    var line = frame.GetFileLineNumber();
+                    Debug.WriteLine("Error, j2534Server line " + line + ": " + ex.Message);
+                }
             }
         }
 

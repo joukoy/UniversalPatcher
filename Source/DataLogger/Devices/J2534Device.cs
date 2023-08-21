@@ -358,8 +358,21 @@ namespace UniversalPatcher
             int Interval = 1000;
             if (secondary)
             {
+                if (periodicMsgIds2.ContainsKey(PeriodicMsg))
+                {
+                    Logger("Periodic message already started, skipping");
+                    return true;
+                }
                 proto = Protocol2;
                 ChID = ChannelID2;
+            }
+            else
+            {
+                if (periodicMsgIds1.ContainsKey(PeriodicMsg))
+                {
+                    Logger("Periodic message already started, skipping");
+                    return true;
+                }
             }
             TxFlag tf = TxFlag.NONE;
             string[] pParts = PeriodicMsg.Split(':');

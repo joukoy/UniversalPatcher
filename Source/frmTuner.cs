@@ -3502,102 +3502,149 @@ namespace UniversalPatcher
         private void SetWorkingMode()
         {
             int workingMode = AppSettings.WorkingMode;
-            if (workingMode == 1)
+
+            switch(workingMode)
             {
-                basicToolStripMenuItem.Checked = true;
-                EnableTunerModeColumns();
+                case 0: //Tourist
+                    touristToolStripMenuItem.Checked = true;
+                    advancedToolStripMenuItem.Checked = false;
+                    basicToolStripMenuItem.Checked = false;
+                    settingsToolStripMenuItem.Visible = false;
+                    utilitiesToolStripMenuItem.Visible = false;
+
+                    xmlToolStripMenuItem.Visible = false;
+                    tableListToolStripMenuItem.Visible = false;
+                    findDifferencesHEXToolStripMenuItem.Visible = false;
+                    findDifferencesToolStripMenuItem.Visible = false;
+                    applyPatchToolStripMenuItem.Visible = false;
+
+                    saveAllBINFilesToolStripMenuItem.Visible = false;
+                    openMultipleBINToolStripMenuItem.Visible = false;
+                    reloadFileFromDiskToolStripMenuItem.Visible = false;
+                    openCompareBINToolStripMenuItem.Visible = false;
+
+                    cSVexperimentalToolStripMenuItem.Visible = false;
+                    cSV2ExperimentalToolStripMenuItem.Visible = false;
+                    xMLGeneratorExportToolStripMenuItem.Visible = false;
+                    xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
+                    insertRowToolStripMenuItem.Enabled = false;
+                    deleteRowToolStripMenuItem.Enabled = false;
+                    editRowToolStripMenuItem.Enabled = false;
+                    duplicateTableConfigToolStripMenuItem.Enabled = false;
+
+                    dTCToolStripMenuItem.Visible = false;
+                    tableSeekToolStripMenuItem.Visible = false;
+                    tinyTunerDBV6OnlyToolStripMenuItem.Visible = false;
+                    xMLGeneratorExportToolStripMenuItem.Visible = false;
+                    xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
+                    cSVexperimentalToolStripMenuItem.Visible = false;
+                    cSV2ExperimentalToolStripMenuItem.Visible = false;
+                    massModifyTableListsToolStripMenuItem.Visible = false;
+                    massModifyTableListsSelectFilesToolStripMenuItem.Visible = false;
+                    swapSegmentsToolStripMenuItem.Visible = false;
+
+                    showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
+                    unitsToolStripMenuItem.Visible = false;
+                    resetTunerModeColumnsToolStripMenuItem.Visible = false;
+                    groupExtraOffset.Visible = false;
+                    btnFlash.Visible = false;
+
+                    break;
+                case 1: //Basic
+                    basicToolStripMenuItem.Checked = true;
+                    touristToolStripMenuItem.Checked = false;
+                    advancedToolStripMenuItem.Checked = false;
+
+                    settingsToolStripMenuItem.Visible = true;
+                    utilitiesToolStripMenuItem.Visible = true;
+                    xmlToolStripMenuItem.Visible = true;
+                    tableListToolStripMenuItem.Visible = true;
+                    findDifferencesHEXToolStripMenuItem.Visible = true;
+                    findDifferencesToolStripMenuItem.Visible = true;
+                    applyPatchToolStripMenuItem.Visible = true;
+                    swapSegmentsToolStripMenuItem.Visible = true;
+
+                    saveAllBINFilesToolStripMenuItem.Visible = true;
+                    openMultipleBINToolStripMenuItem.Visible = true;
+                    reloadFileFromDiskToolStripMenuItem.Visible = true;
+                    openCompareBINToolStripMenuItem.Visible = true;
+
+                    cSVexperimentalToolStripMenuItem.Visible = false;
+                    cSV2ExperimentalToolStripMenuItem.Visible = false;
+                    xMLGeneratorExportToolStripMenuItem.Visible = false;
+                    xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
+                    insertRowToolStripMenuItem.Enabled = false;
+                    deleteRowToolStripMenuItem.Enabled = false;
+                    editRowToolStripMenuItem.Enabled = false;
+                    duplicateTableConfigToolStripMenuItem.Enabled = false;
+
+                    dTCToolStripMenuItem.Visible = false;
+                    tableSeekToolStripMenuItem.Visible = false;
+                    tinyTunerDBV6OnlyToolStripMenuItem.Visible = false;
+                    xMLGeneratorExportToolStripMenuItem.Visible = false;
+                    xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
+                    cSVexperimentalToolStripMenuItem.Visible = false;
+                    cSV2ExperimentalToolStripMenuItem.Visible = false;
+                    massModifyTableListsToolStripMenuItem.Visible = false;
+                    massModifyTableListsSelectFilesToolStripMenuItem.Visible = false;
+                    swapSegmentsToolStripMenuItem.Visible = false;
+
+                    showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
+                    unitsToolStripMenuItem.Visible = false;
+                    resetTunerModeColumnsToolStripMenuItem.Visible = false;
+                    groupExtraOffset.Visible = false;
+                    btnFlash.Visible = false;
+
+                    EnableTunerModeColumns();
+                    break;
+                case 2: //Advanced
+                    basicToolStripMenuItem.Checked = false;
+                    touristToolStripMenuItem.Checked = false;
+                    advancedToolStripMenuItem.Checked = true;
+                    settingsToolStripMenuItem.Visible = true;
+
+                    utilitiesToolStripMenuItem.Visible = true;
+                    xmlToolStripMenuItem.Visible = true;
+                    tableListToolStripMenuItem.Visible = true;
+                    findDifferencesHEXToolStripMenuItem.Visible = true;
+                    findDifferencesToolStripMenuItem.Visible = true;
+                    applyPatchToolStripMenuItem.Visible = true;
+                    swapSegmentsToolStripMenuItem.Visible = true;
+
+                    saveAllBINFilesToolStripMenuItem.Visible = true;
+                    openMultipleBINToolStripMenuItem.Visible = true;
+                    reloadFileFromDiskToolStripMenuItem.Visible = true;
+                    openCompareBINToolStripMenuItem.Visible = true;
+
+                    advancedToolStripMenuItem.Checked = true;
+                    cSVexperimentalToolStripMenuItem.Visible = true;
+                    cSV2ExperimentalToolStripMenuItem.Visible = true;
+                    xMLGeneratorExportToolStripMenuItem.Visible = true;
+                    xMlgeneratorImportCSVToolStripMenuItem.Visible = true;
+                    insertRowToolStripMenuItem.Enabled = true;
+                    deleteRowToolStripMenuItem.Enabled = true;
+                    editRowToolStripMenuItem.Enabled = true;
+                    duplicateTableConfigToolStripMenuItem.Enabled = true;
+
+                    dTCToolStripMenuItem.Visible = true;
+                    tableSeekToolStripMenuItem.Visible = true;
+                    tinyTunerDBV6OnlyToolStripMenuItem.Visible = true;
+                    xMLGeneratorExportToolStripMenuItem.Visible = true;
+                    xMlgeneratorImportCSVToolStripMenuItem.Visible = true;
+                    cSVexperimentalToolStripMenuItem.Visible = true;
+                    cSV2ExperimentalToolStripMenuItem.Visible = true;
+                    massModifyTableListsToolStripMenuItem.Visible = true;
+                    massModifyTableListsSelectFilesToolStripMenuItem.Visible = true;
+
+                    showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
+                    unitsToolStripMenuItem.Visible = true;
+                    resetTunerModeColumnsToolStripMenuItem.Visible = false;
+                    groupExtraOffset.Visible = true;
+                    btnFlash.Visible = true;
+
+                    break;
             }
-            if (workingMode == 0)   //Tourist mode
-            {
-                touristToolStripMenuItem.Checked = true;
-                settingsToolStripMenuItem.Visible = false;
-                utilitiesToolStripMenuItem.Visible = false;
 
-                xmlToolStripMenuItem.Visible = false;
-                tableListToolStripMenuItem.Visible = false;
-                findDifferencesHEXToolStripMenuItem.Visible = false;
-                findDifferencesToolStripMenuItem.Visible = false;
-                applyPatchToolStripMenuItem.Visible = false;
-
-                saveAllBINFilesToolStripMenuItem.Visible = false;
-                openMultipleBINToolStripMenuItem.Visible = false;
-                reloadFileFromDiskToolStripMenuItem.Visible = false;
-                openCompareBINToolStripMenuItem.Visible = false;
-            }
-            else
-            {                
-                settingsToolStripMenuItem.Visible = true;
-                utilitiesToolStripMenuItem.Visible = true;
-                xmlToolStripMenuItem.Visible = true;
-                tableListToolStripMenuItem.Visible = true;
-                findDifferencesHEXToolStripMenuItem.Visible = true;
-                findDifferencesToolStripMenuItem.Visible = true;
-                applyPatchToolStripMenuItem.Visible = true;
-                swapSegmentsToolStripMenuItem.Visible = true;
-
-                saveAllBINFilesToolStripMenuItem.Visible = true;
-                openMultipleBINToolStripMenuItem.Visible = true;
-                reloadFileFromDiskToolStripMenuItem.Visible = true;
-                openCompareBINToolStripMenuItem.Visible = true;
-
-            }
-            if (workingMode == 2) //advanced
-            {
-                advancedToolStripMenuItem.Checked = true;
-                cSVexperimentalToolStripMenuItem.Visible = true;
-                cSV2ExperimentalToolStripMenuItem.Visible = true;
-                xMLGeneratorExportToolStripMenuItem.Visible = true;
-                xMlgeneratorImportCSVToolStripMenuItem.Visible = true;
-                insertRowToolStripMenuItem.Enabled = true;
-                deleteRowToolStripMenuItem.Enabled = true;
-                editRowToolStripMenuItem.Enabled = true;
-                duplicateTableConfigToolStripMenuItem.Enabled = true;
-
-                dTCToolStripMenuItem.Visible = true;
-                tableSeekToolStripMenuItem.Visible = true;
-                tinyTunerDBV6OnlyToolStripMenuItem.Visible = true;
-                xMLGeneratorExportToolStripMenuItem.Visible = true;
-                xMlgeneratorImportCSVToolStripMenuItem.Visible = true;
-                cSVexperimentalToolStripMenuItem.Visible = true;
-                cSV2ExperimentalToolStripMenuItem.Visible = true;
-                massModifyTableListsToolStripMenuItem.Visible = true;
-                massModifyTableListsSelectFilesToolStripMenuItem.Visible = true;
-
-                showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
-                unitsToolStripMenuItem.Visible = true;
-                resetTunerModeColumnsToolStripMenuItem.Visible = false;
-                groupExtraOffset.Visible = true;
-                btnFlash.Visible = true;
-
-            }
-            else
-            {
-                cSVexperimentalToolStripMenuItem.Visible = false;
-                cSV2ExperimentalToolStripMenuItem.Visible = false;
-                xMLGeneratorExportToolStripMenuItem.Visible = false;
-                xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
-                insertRowToolStripMenuItem.Enabled = false;
-                deleteRowToolStripMenuItem.Enabled = false;
-                editRowToolStripMenuItem.Enabled = false;
-                duplicateTableConfigToolStripMenuItem.Enabled = false;
-
-                dTCToolStripMenuItem.Visible = false;
-                tableSeekToolStripMenuItem.Visible = false;
-                tinyTunerDBV6OnlyToolStripMenuItem.Visible = false;
-                xMLGeneratorExportToolStripMenuItem.Visible = false;
-                xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
-                cSVexperimentalToolStripMenuItem.Visible = false;
-                cSV2ExperimentalToolStripMenuItem.Visible = false;
-                massModifyTableListsToolStripMenuItem.Visible = false;
-                massModifyTableListsSelectFilesToolStripMenuItem.Visible = false;
-                swapSegmentsToolStripMenuItem.Visible = false;
-
-                showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
-                unitsToolStripMenuItem.Visible = false;
-                resetTunerModeColumnsToolStripMenuItem.Visible = false;
-                groupExtraOffset.Visible = false;
-                btnFlash.Visible = false;
-            }
         }
 
         private void SelectTreemode()
@@ -4896,7 +4943,7 @@ namespace UniversalPatcher
                 return;
 
                 //Old code:
-                Logger("Reading file: " + fileName, false);
+/*                Logger("Reading file: " + fileName, false);
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(SWCNT));
                 System.IO.StreamReader file = new System.IO.StreamReader(fileName);
                 SWCNT swcnt = (SWCNT)reader.Deserialize(file);
@@ -4966,6 +5013,7 @@ namespace UniversalPatcher
                     fList.Add(fileName);
                     OpenNewBinFile(false, fList);
                 }
+*/
             }
             catch (Exception ex)
             {
@@ -6206,6 +6254,11 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine(ex.Message);
             }
+
+        }
+
+        private void tabCategory_Click(object sender, EventArgs e)
+        {
 
         }
     }

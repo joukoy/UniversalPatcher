@@ -162,6 +162,92 @@ namespace UniversalPatcher
                         return ReConnect(null);
                     }
                 }
+                else if (Line.ToLower().StartsWith("savebin:"))
+                {
+                    string[] sParts = Line.Split(':');
+                    string mode = "vpw";
+                    int secondP = Line.Length;
+                    if (sParts.Length >= 3)
+                    {
+                        mode = sParts[1].ToLower();
+                        secondP = Line.IndexOf(":", 9) + 1 ;
+                    }
+                    string fName = Line.Substring(secondP);
+                    if (fName.StartsWith("?") || string.IsNullOrEmpty(fName))
+                    {
+                        fName = SelectSaveFile(BinFilter);
+                    }
+                    if (fName.Length == 0)
+                    {
+                        LoggerBold("Missing filename for savebin!");
+                        return false;
+                    }
+                    string[] logTxt;
+                    if (jconsole == null)
+                    {
+                        logTxt = new string[frmlogger.logTexts.Count];
+                        for (int r = 0; r < frmlogger.logTexts.Count; r++)
+                        {
+                            logTxt[r] = frmlogger.logTexts[r].Txt;
+                        }
+                    }
+                    else
+                    {
+                        logTxt = new string[frmlogger.jconsolelogTexts.Count];
+                        for (int r = 0; r < frmlogger.jconsolelogTexts.Count; r++)
+                        {
+                            logTxt[r] = frmlogger.jconsolelogTexts[r].Txt;
+                        }
+                    }
+                    LogToBinConverter.RMode rMode = (LogToBinConverter.RMode)Enum.Parse(typeof(LogToBinConverter.RMode),mode.ToUpper());
+                    LogToBinConverter ltb = new LogToBinConverter(rMode);
+                    Application.DoEvents();
+                    ltb.ConvertLines(logTxt, fName);
+                }
+                else if (Line.ToLower().StartsWith("askvariable:"))
+                {
+                    string[] vParts = Line.Split(':');
+                    if (vParts.Length < 4)
+                    {
+                        LoggerBold("Usage: askvariable:variablename:size:hex/int[:comment]");
+                        return false;
+                    }
+                    Variable v = new Variable();
+                    v.Name = vParts[1];
+                    v.Size = Convert.ToInt32(vParts[2]);
+                    FrmAsk fa = new FrmAsk();
+                    fa.Text = "Input value";
+                    if (vParts.Length > 4)
+                        fa.labelAsk.Text = vParts[4] + " (" + vParts[3] + ")";
+                    else
+                        fa.labelAsk.Text = vParts[2] + " (" + vParts[3] + ")";
+                    if (fa.ShowDialog() == DialogResult.OK)
+                    {
+                        if (vParts[3].Contains("hex"))
+                        {
+                            if (HexToUint64(fa.TextBox1.Text, out UInt64 val))
+                            {
+                                v.Value = val;
+                                variables.Add(v);
+                            }
+                            else
+                            {
+                                LoggerBold("Can't convert from HEX: " + fa.TextBox1.Text);
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            v.Value = Convert.ToUInt64(fa.TextBox1.Text);
+                            variables.Add(v);
+                        }
+                    }
+                    else
+                    {
+                        Logger("User cancel");
+                        return false;
+                    }
+                }
                 else if (Line.ToLower().StartsWith("printall"))
                 {
                     bool printPrimary = true;

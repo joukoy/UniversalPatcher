@@ -71,6 +71,7 @@ namespace UniversalPatcher
             RetryWriteDelay = 10;
             LoggerResetAfterMiss = 50;
             ClearFuncAddrOnDisconnect = true;
+            LoggerGraphDisableResample = false;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
             TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
@@ -250,6 +251,9 @@ namespace UniversalPatcher
         public int RetryWriteDelay { get; set; }
         public int LoggerResetAfterMiss { get; set; }
         public bool ClearFuncAddrOnDisconnect { get; set; }
+        public string LogImportTimeStampFormat { get; set; }
+        public bool LogImportTimeStampElapsed { get; set; }
+        public bool LoggerGraphDisableResample { get; set; }
 
         public TimeoutScenario TimeoutLoggingActive { get; set; }
         public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }

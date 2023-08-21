@@ -59,7 +59,7 @@ public static class SerialPortService
             arrival.Start();
             removal.Start();
         }
-        catch (ManagementException err)
+        catch 
         {
 
         }

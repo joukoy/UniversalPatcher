@@ -33,6 +33,12 @@ namespace UniversalPatcher
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLoggerGraphics));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -43,6 +49,7 @@ namespace UniversalPatcher
             this.btnPause = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.chkSelectAll = new System.Windows.Forms.CheckBox();
             this.dataGridSettings = new System.Windows.Forms.DataGridView();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -87,11 +94,12 @@ namespace UniversalPatcher
             this.resetZoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timerDisplayData = new System.Windows.Forms.Timer(this.components);
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.labelDataValues = new System.Windows.Forms.Label();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
             this.timerPlayback = new System.Windows.Forms.Timer(this.components);
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.disableResampleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verticalProgressBar1 = new UniversalPatcher.VerticalProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -155,6 +163,7 @@ namespace UniversalPatcher
             this.splitContainer1.Panel1.Controls.Add(this.labelZoom);
             this.splitContainer1.Panel1.Controls.Add(this.ScrollPointsPerScreen);
             this.splitContainer1.Panel1.Controls.Add(this.groupLiveSeconds);
+            this.splitContainer1.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
             // 
             // splitContainer1.Panel2
             // 
@@ -249,6 +258,7 @@ namespace UniversalPatcher
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.chkSelectAll);
             this.tabSettings.Controls.Add(this.dataGridSettings);
             this.tabSettings.Controls.Add(this.comboBox1);
             this.tabSettings.Controls.Add(this.label1);
@@ -262,14 +272,50 @@ namespace UniversalPatcher
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
+            // chkSelectAll
+            // 
+            this.chkSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkSelectAll.AutoSize = true;
+            this.chkSelectAll.Location = new System.Drawing.Point(144, 335);
+            this.chkSelectAll.Name = "chkSelectAll";
+            this.chkSelectAll.Size = new System.Drawing.Size(70, 17);
+            this.chkSelectAll.TabIndex = 14;
+            this.chkSelectAll.Text = "Select All";
+            this.chkSelectAll.UseVisualStyleBackColor = true;
+            this.chkSelectAll.CheckedChanged += new System.EventHandler(this.chkSelectAll_CheckedChanged);
+            // 
             // dataGridSettings
             // 
             this.dataGridSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridSettings.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridSettings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridSettings.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridSettings.Location = new System.Drawing.Point(3, 33);
             this.dataGridSettings.Name = "dataGridSettings";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridSettings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridSettings.RowHeadersWidth = 5;
             this.dataGridSettings.Size = new System.Drawing.Size(379, 294);
             this.dataGridSettings.TabIndex = 2;
@@ -326,10 +372,34 @@ namespace UniversalPatcher
             // 
             // dataGridPointValues
             // 
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridPointValues.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridPointValues.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridPointValues.DefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridPointValues.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridPointValues.Location = new System.Drawing.Point(3, 3);
             this.dataGridPointValues.Name = "dataGridPointValues";
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridPointValues.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridPointValues.Size = new System.Drawing.Size(376, 353);
             this.dataGridPointValues.TabIndex = 0;
             // 
@@ -337,7 +407,7 @@ namespace UniversalPatcher
             // 
             this.labelZoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelZoom.AutoSize = true;
-            this.labelZoom.Location = new System.Drawing.Point(13, 514);
+            this.labelZoom.Location = new System.Drawing.Point(13, 511);
             this.labelZoom.Name = "labelZoom";
             this.labelZoom.Size = new System.Drawing.Size(34, 13);
             this.labelZoom.TabIndex = 12;
@@ -347,7 +417,7 @@ namespace UniversalPatcher
             // 
             this.ScrollPointsPerScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScrollPointsPerScreen.Location = new System.Drawing.Point(3, 531);
+            this.ScrollPointsPerScreen.Location = new System.Drawing.Point(3, 528);
             this.ScrollPointsPerScreen.Maximum = 1000;
             this.ScrollPointsPerScreen.Minimum = 10;
             this.ScrollPointsPerScreen.Name = "ScrollPointsPerScreen";
@@ -438,7 +508,7 @@ namespace UniversalPatcher
             // 
             this.ScrollStartPoint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScrollStartPoint.Location = new System.Drawing.Point(0, 531);
+            this.ScrollStartPoint.Location = new System.Drawing.Point(0, 529);
             this.ScrollStartPoint.Maximum = 1000;
             this.ScrollStartPoint.Name = "ScrollStartPoint";
             this.ScrollStartPoint.Size = new System.Drawing.Size(790, 20);
@@ -517,7 +587,8 @@ namespace UniversalPatcher
             this.autoscaleToolStripMenuItem,
             this.mouseFunctionToolStripMenuItem,
             this.mouseWheelToolStripMenuItem,
-            this.resetZoomToolStripMenuItem});
+            this.resetZoomToolStripMenuItem,
+            this.disableResampleToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -525,14 +596,14 @@ namespace UniversalPatcher
             // showPointsToolStripMenuItem
             // 
             this.showPointsToolStripMenuItem.Name = "showPointsToolStripMenuItem";
-            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showPointsToolStripMenuItem.Text = "Show points";
             this.showPointsToolStripMenuItem.Click += new System.EventHandler(this.showPointsToolStripMenuItem_Click);
             // 
             // autoscaleToolStripMenuItem
             // 
             this.autoscaleToolStripMenuItem.Name = "autoscaleToolStripMenuItem";
-            this.autoscaleToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.autoscaleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.autoscaleToolStripMenuItem.Text = "Autoscale";
             this.autoscaleToolStripMenuItem.Click += new System.EventHandler(this.autoscaleToolStripMenuItem_Click);
             // 
@@ -549,7 +620,7 @@ namespace UniversalPatcher
             this.cursorXYToolStripMenuItem,
             this.noCursorToolStripMenuItem});
             this.mouseFunctionToolStripMenuItem.Name = "mouseFunctionToolStripMenuItem";
-            this.mouseFunctionToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.mouseFunctionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.mouseFunctionToolStripMenuItem.Text = "Mouse function";
             // 
             // zoomXToolStripMenuItem
@@ -621,7 +692,7 @@ namespace UniversalPatcher
             this.wheelZoomXYToolStripMenuItem1,
             this.noWheelZoomToolStripMenuItem1});
             this.mouseWheelToolStripMenuItem.Name = "mouseWheelToolStripMenuItem";
-            this.mouseWheelToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.mouseWheelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.mouseWheelToolStripMenuItem.Text = "Mouse wheel";
             // 
             // wheelZoomXToolStripMenuItem1
@@ -655,7 +726,7 @@ namespace UniversalPatcher
             // resetZoomToolStripMenuItem
             // 
             this.resetZoomToolStripMenuItem.Name = "resetZoomToolStripMenuItem";
-            this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.resetZoomToolStripMenuItem.Text = "Reset zoom";
             this.resetZoomToolStripMenuItem.Click += new System.EventHandler(this.resetZoomToolStripMenuItem_Click);
             // 
@@ -684,24 +755,38 @@ namespace UniversalPatcher
             this.splitContainer2.SplitterDistance = 551;
             this.splitContainer2.TabIndex = 4;
             // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.txtResult);
+            this.splitContainer3.Size = new System.Drawing.Size(1199, 89);
+            this.splitContainer3.SplitterDistance = 157;
+            this.splitContainer3.TabIndex = 1;
+            // 
             // txtResult
             // 
             this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(1038, 85);
+            this.txtResult.Size = new System.Drawing.Size(1038, 89);
             this.txtResult.TabIndex = 0;
             this.txtResult.Text = "";
             // 
             // labelDataValues
             // 
-            this.labelDataValues.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelDataValues.AutoSize = true;
             this.labelDataValues.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labelDataValues.Location = new System.Drawing.Point(0, 670);
+            this.labelDataValues.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelDataValues.Location = new System.Drawing.Point(0, 674);
             this.labelDataValues.Name = "labelDataValues";
-            this.labelDataValues.Size = new System.Drawing.Size(156, 15);
+            this.labelDataValues.Size = new System.Drawing.Size(1199, 15);
             this.labelDataValues.TabIndex = 5;
             this.labelDataValues.Text = "Click data point to show values";
             // 
@@ -720,18 +805,12 @@ namespace UniversalPatcher
             // 
             this.timerPlayback.Tick += new System.EventHandler(this.timerPlayback_Tick);
             // 
-            // splitContainer3
+            // disableResampleToolStripMenuItem
             // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Name = "splitContainer3";
-            // 
-            // splitContainer3.Panel2
-            // 
-            this.splitContainer3.Panel2.Controls.Add(this.txtResult);
-            this.splitContainer3.Size = new System.Drawing.Size(1199, 85);
-            this.splitContainer3.SplitterDistance = 157;
-            this.splitContainer3.TabIndex = 1;
+            this.disableResampleToolStripMenuItem.Name = "disableResampleToolStripMenuItem";
+            this.disableResampleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.disableResampleToolStripMenuItem.Text = "Disable resample";
+            this.disableResampleToolStripMenuItem.Click += new System.EventHandler(this.disableResampleToolStripMenuItem_Click);
             // 
             // verticalProgressBar1
             // 
@@ -745,8 +824,8 @@ namespace UniversalPatcher
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1199, 689);
-            this.Controls.Add(this.chkGetLiveData);
             this.Controls.Add(this.labelDataValues);
+            this.Controls.Add(this.chkGetLiveData);
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -849,5 +928,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem noWheelZoomToolStripMenuItem1;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private VerticalProgressBar verticalProgressBar1;
+        private System.Windows.Forms.CheckBox chkSelectAll;
+        private System.Windows.Forms.ToolStripMenuItem disableResampleToolStripMenuItem;
     }
 }

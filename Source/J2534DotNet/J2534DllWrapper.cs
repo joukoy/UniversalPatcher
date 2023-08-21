@@ -254,7 +254,7 @@ namespace J2534DotNet
                                                                                         pAddressOfFunctionToCall,
                                                                                         typeof(PassThruStartMsgFilter));
 
-#warning This address may not be correct
+//#warning This address may not be correct
             pAddressOfFunctionToCall = NativeMethods.GetProcAddress(m_pDll, "PassThruStartMsgFilter");
             if (pAddressOfFunctionToCall != IntPtr.Zero)
                 StartPassBlockMsgFilter = (PassThruStartPassBlockMsgFilter)Marshal.GetDelegateForFunctionPointer(
