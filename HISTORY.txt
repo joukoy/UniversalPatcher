@@ -657,4 +657,10 @@
 - Logger: Playback logfile: Improved timestamp handling (autodetect + manual setting)
 - Logger: Graph: Added: Disable resample. + Other improvements
 
+0.22.11
+- Logger Graphics: Fixed bug, Bars not updated with live data
+- Logger: Added button: "Send Control Command" - Send Control commands to PCM
+- Logger: Fixed bug: Bus reset after sending queued command
+- Patcher: Fixed bug: DTC tab not updated after modifying DTC
+
 

@@ -2805,7 +2805,7 @@ public class Upatcher
         }
         else
         {
-            buffer[dtc.milAddrInt - bufferOffset] = dtc.Status;
+            buffer[dtc.statusAddrInt - bufferOffset] = dtc.Status;
             if (PCM.dtcCombined)
             {
                 PCM.dtcCodes[codeIndex].StatusTxt = PCM.dtcValues[dtc.Status].ToString();

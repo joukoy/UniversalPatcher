@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Forms;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO.Ports;
@@ -135,6 +135,7 @@ namespace UniversalPatcher
         int jconsolelastLogRowCount = 0;
         Queue<LogText> consoleLogQueue = new Queue<LogText>();
         Queue<LogText> jconsoleLogQueue = new Queue<LogText>();
+        ContextMenuStrip rtcMenu = new ContextMenuStrip();
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
@@ -200,6 +201,43 @@ namespace UniversalPatcher
                 }
             }
             comboFilterByOS.SelectedIndexChanged += new System.EventHandler(comboFilterByOS_SelectedIndexChanged);
+            for (int r = 0; r < RealTimeControls.Count; r++)
+            {
+                ToolStripMenuItem mi = new ToolStripMenuItem();
+                mi.Text = RealTimeControls[r].Control;
+                mi.Tag = RealTimeControls[r].CommandSet;
+                mi.Click += rtcMenu_Click;
+                rtcMenu.Items.Add(mi);
+            }
+        }
+
+        private void rtcMenu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+                string cmd = (string)menuitem.Tag;
+                byte[] msg = cmd.Replace(" ","").ToBytes();
+                OBDMessage oMsg = new OBDMessage(msg);
+                if (datalogger.LogRunning)
+                {
+                    QueuedCommand qcmd = new QueuedCommand();
+                    datalogger.QueueCustomCmd(oMsg, menuitem.Text);
+                }
+                else
+                {
+                    datalogger.LogDevice.SendMessage(oMsg, 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void LoadOsPidFiles()
@@ -5412,5 +5450,12 @@ namespace UniversalPatcher
             cltb.ConvertFile(fName);
         }
 
+        private void btnSendControlCommand_Click(object sender, EventArgs e)
+        {
+            //rtcMenu.Show(btnSendControlCommand, new Point(0, btnSendControlCommand.Height));
+            frmControlCommands fcc = new frmControlCommands();
+            fcc.datalogger = datalogger;
+            fcc.Show();
+        }
     }
 }

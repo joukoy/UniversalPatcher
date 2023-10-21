@@ -23,6 +23,7 @@ namespace UniversalPatcher
         {
             Receiver = new MessageReceiver();
             VPWProtocol = UseVPW;
+            RealTimeControls = LoadRealTimeControls();
         }
         private CancellationTokenSource logTokenSource = new CancellationTokenSource();
         private CancellationTokenSource logWriterTokenSource = new CancellationTokenSource();
@@ -73,13 +74,13 @@ namespace UniversalPatcher
         public byte CanPcmAddrByte1;
         public byte CanPcmAddrByte2;
 
-        private enum QueueCmd
+        public enum QueueCmd
         {
             Getdtc,
             GetVin,
             Custom
         }
-        private class QueuedCommand
+        public class QueuedCommand
         {
             public QueueCmd Cmd { get; set; }
             public byte param1 { get; set; }
@@ -2199,11 +2200,11 @@ namespace UniversalPatcher
             }
 
             Application.DoEvents();
-            SetBusQuiet();
-            Thread.Sleep(10);
+            //SetBusQuiet();
+            //Thread.Sleep(10);
             datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
-            Thread.Sleep(10);
-            SetBusQuiet();
+            //Thread.Sleep(10);
+            //SetBusQuiet();
 /*            OBDMessage resp = LogDevice.ReceiveMessage();
             while (resp != null)
             {
@@ -2221,15 +2222,15 @@ namespace UniversalPatcher
                 case QueueCmd.Custom:
                     Logger("Sending queued command: " + command.Description);
                     LogDevice.SendMessage(command.CustomMsg, 1);
-                    LogDevice.ReceiveMessage(true);
+                    //LogDevice.ReceiveMessage(true);
                     break;
             }
             if (passive)
             {
-                maxSlotsPerMessage = 4;
+                //maxSlotsPerMessage = 4;
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
-                AllSlotsRequested = false;
-                RequestPassiveModeSlots();
+                //AllSlotsRequested = false;
+                //RequestPassiveModeSlots();
                 SendTesterPresent(false);
             }
             else

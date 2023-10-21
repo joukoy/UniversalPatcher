@@ -183,6 +183,12 @@
     <Compile Include="frmByteSwap.Designer.cs">
       <DependentUpon>frmByteSwap.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataLogger\frmControlCommands.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmControlCommands.Designer.cs">
+      <DependentUpon>frmControlCommands.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmCredits.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -517,6 +523,9 @@
     <Compile Include="DataLogger\Utility.cs" />
     <Compile Include="DataLogger\VPW.cs" />
     <Compile Include="MathConverter.cs" />
+    <Compile Include="MyCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PcmPlatform.cs" />
     <Compile Include="RootFinding.cs" />
     <Compile Include="SavingMath.cs" />
@@ -585,6 +594,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmByteSwap.resx">
       <DependentUpon>frmByteSwap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmControlCommands.resx">
+      <DependentUpon>frmControlCommands.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCredits.resx">
       <DependentUpon>frmCredits.cs</DependentUpon>

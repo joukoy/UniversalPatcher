@@ -35,14 +35,16 @@ namespace UniversalPatcher
                 Scalar = 1;
                 Max = 1;
             }
-            public PidScalar(string pid)
+            public PidScalar(string pid, int pidId)
             {
                 On = false;
                 Bar = false;
                 Pid = pid;
                 Scalar = 1;
                 Max = 1;
+                PidId = pidId;
             }
+            public int PidId { get; set; }
             public bool On { get; set; }
             public string Pid { get; set; }
             public float Scalar { get; set; }
@@ -54,14 +56,16 @@ namespace UniversalPatcher
 
         private class PointData
         {
-            public PointData(string Pid, ulong TStamp, double Val, double ScaledVal, int row)
+            public PointData(int pidId, string Pid, ulong TStamp, double Val, double ScaledVal, int row)
             {
+                PidId = pidId;
                 PidName = Pid;
                 TimeStamp = TStamp;
                 Value = Val;
                 ScaledValue = ScaledVal;
                 Row = row;
             }
+            public int PidId { get; set; }
             public string PidName { get; set; }
             public ulong TimeStamp { get; set; }
             public double Value { get; set; }
@@ -607,7 +611,7 @@ namespace UniversalPatcher
                 chart1.Series.Clear();
                 for (int r = 0; r < datalogger.PidProfile.Count; r++)
                 {
-                    PidScalar ps = new PidScalar(datalogger.PidProfile[r].PidName);
+                    PidScalar ps = new PidScalar(datalogger.PidProfile[r].PidName, datalogger.PidProfile[r].addr);
                     pidScalars.Add(ps);
                     chart1.Series.Add(new Series());
                     chart1.Series[r].ChartType = ChartType;
@@ -693,7 +697,7 @@ namespace UniversalPatcher
                         orgVal = 0;
                     }
                     double scaledVal = orgVal * pidScalars[p].Scalar;
-                    PointData pd = new PointData(pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal, pointDataGroups.Count-1);
+                    PointData pd = new PointData(pidScalars[p].PidId, pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal, pointDataGroups.Count-1);
                     pdg.pointDatas[p] = pd;
                 }
                 pointDataGroups.Add(pdg);
@@ -1048,6 +1052,12 @@ namespace UniversalPatcher
                             chart1.Series[r].Points.Add(point);
                         }
                     }
+                }
+                //Show vbars for last value:
+                PointDataGroup pdg2 = pValues[endP-1];
+                for (int r = 0; r < pdg2.pointDatas.Length; r++)
+                {
+                    UpdateVbarValue(r ,pdg2.pointDatas[r].ScaledValue);
                 }
                 for (int r = 0; r < chart1.Series.Count; r++)
                 {
@@ -1671,7 +1681,7 @@ namespace UniversalPatcher
                         }
 */                       
                         double scaledVal = orgVal;
-                        PointData pd = new PointData(pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal, pointDataGroups.Count - 1);
+                        PointData pd = new PointData(pidScalars[p].PidId, pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal, pointDataGroups.Count - 1);
                         pdg.pointDatas[p] = pd;
                     }
                     pointDataGroups.Add(pdg);

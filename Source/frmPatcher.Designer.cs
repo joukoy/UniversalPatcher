@@ -194,6 +194,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
             this.tabChecksumUtil = new System.Windows.Forms.TabPage();
+            this.numCsUtilInitValue = new System.Windows.Forms.NumericUpDown();
+            this.label24 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.chkCsUtilFilter = new System.Windows.Forms.CheckBox();
             this.btnCsutilSearchBosch = new System.Windows.Forms.Button();
@@ -285,8 +287,9 @@
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pIDSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pIDDescriptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.realtimeControlCommandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deviceNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.functionNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -302,8 +305,6 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
-            this.label24 = new System.Windows.Forms.Label();
-            this.numCsUtilInitValue = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -342,6 +343,7 @@
             this.tabExtractSegments.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabChecksumUtil.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).BeginInit();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).BeginInit();
             this.groupBox5.SuspendLayout();
@@ -361,7 +363,6 @@
             this.splitPatcher.Panel1.SuspendLayout();
             this.splitPatcher.Panel2.SuspendLayout();
             this.splitPatcher.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -2250,6 +2251,27 @@
             this.tabChecksumUtil.Text = "Checksum research";
             this.tabChecksumUtil.UseVisualStyleBackColor = true;
             // 
+            // numCsUtilInitValue
+            // 
+            this.numCsUtilInitValue.Location = new System.Drawing.Point(369, 93);
+            this.numCsUtilInitValue.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
+            this.numCsUtilInitValue.Name = "numCsUtilInitValue";
+            this.numCsUtilInitValue.Size = new System.Drawing.Size(136, 20);
+            this.numCsUtilInitValue.TabIndex = 159;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(298, 96);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(63, 13);
+            this.label24.TabIndex = 158;
+            this.label24.Text = "Initial value:";
+            // 
             // groupBox6
             // 
             this.groupBox6.Controls.Add(this.chkCsUtilFilter);
@@ -3116,8 +3138,9 @@
             this.dTCSearchToolStripMenuItem,
             this.pIDSearchToolStripMenuItem,
             this.pIDDescriptionsToolStripMenuItem,
-            this.tableSeekToolStripMenuItem,
+            this.realtimeControlCommandsToolStripMenuItem,
             this.segmentSeekToolStripMenuItem,
+            this.tableSeekToolStripMenuItem,
             this.oBD2CodesToolStripMenuItem,
             this.deviceNamesToolStripMenuItem,
             this.functionNamesToolStripMenuItem,
@@ -3201,12 +3224,12 @@
             this.pIDDescriptionsToolStripMenuItem.Text = "PID Descriptions";
             this.pIDDescriptionsToolStripMenuItem.Click += new System.EventHandler(this.pIDDescriptionsToolStripMenuItem_Click);
             // 
-            // tableSeekToolStripMenuItem
+            // realtimeControlCommandsToolStripMenuItem
             // 
-            this.tableSeekToolStripMenuItem.Name = "tableSeekToolStripMenuItem";
-            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.tableSeekToolStripMenuItem.Text = "TableSeek";
-            this.tableSeekToolStripMenuItem.Click += new System.EventHandler(this.tableSeekToolStripMenuItem_Click);
+            this.realtimeControlCommandsToolStripMenuItem.Name = "realtimeControlCommandsToolStripMenuItem";
+            this.realtimeControlCommandsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.realtimeControlCommandsToolStripMenuItem.Text = "Realtime Control Commands";
+            this.realtimeControlCommandsToolStripMenuItem.Click += new System.EventHandler(this.realtimeControlCommandsToolStripMenuItem_Click);
             // 
             // segmentSeekToolStripMenuItem
             // 
@@ -3214,6 +3237,13 @@
             this.segmentSeekToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.segmentSeekToolStripMenuItem.Text = "SegmentSeek";
             this.segmentSeekToolStripMenuItem.Click += new System.EventHandler(this.segmentSeekToolStripMenuItem_Click);
+            // 
+            // tableSeekToolStripMenuItem
+            // 
+            this.tableSeekToolStripMenuItem.Name = "tableSeekToolStripMenuItem";
+            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.tableSeekToolStripMenuItem.Text = "TableSeek";
+            this.tableSeekToolStripMenuItem.Click += new System.EventHandler(this.tableSeekToolStripMenuItem_Click);
             // 
             // oBD2CodesToolStripMenuItem
             // 
@@ -3333,27 +3363,6 @@
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
             // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(298, 96);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(63, 13);
-            this.label24.TabIndex = 158;
-            this.label24.Text = "Initial value:";
-            // 
-            // numCsUtilInitValue
-            // 
-            this.numCsUtilInitValue.Location = new System.Drawing.Point(369, 93);
-            this.numCsUtilInitValue.Maximum = new decimal(new int[] {
-            100000000,
-            0,
-            0,
-            0});
-            this.numCsUtilInitValue.Name = "numCsUtilInitValue";
-            this.numCsUtilInitValue.Size = new System.Drawing.Size(136, 20);
-            this.numCsUtilInitValue.TabIndex = 159;
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3427,6 +3436,7 @@
             this.groupBox2.PerformLayout();
             this.tabChecksumUtil.ResumeLayout(false);
             this.tabChecksumUtil.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).EndInit();
@@ -3457,7 +3467,6 @@
             this.splitPatcher.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).EndInit();
             this.splitPatcher.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3738,5 +3747,6 @@
         private System.Windows.Forms.ToolStripMenuItem cANModulesToolStripMenuItem;
         private System.Windows.Forms.NumericUpDown numCsUtilInitValue;
         private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.ToolStripMenuItem realtimeControlCommandsToolStripMenuItem;
     }
 }

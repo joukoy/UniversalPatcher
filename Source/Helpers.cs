@@ -224,7 +224,7 @@ public static class Helpers
         {
             fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
         }
-        else if (defaultFile.Length > 0)
+        else if (!string.IsNullOrEmpty(defaultFile))
         {
 
             fdlg.FileName = Path.GetFileName(defaultFile);

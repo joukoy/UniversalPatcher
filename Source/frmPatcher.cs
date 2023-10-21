@@ -476,28 +476,29 @@ namespace UniversalPatcher
                 tabPIDList.Text = "PIDs (" + pidList.Count.ToString() + ")";
         }
 
-        public void RefreshDtcList()
+        public void RefreshDtcList(PcmFile PCM)
         {
             dtcBindingSource.DataSource = null;
             dataGridDTC.DataSource = null;
             if (radioDtcPrimary.Checked)
             {
-                dtcBindingSource.DataSource = basefile.dtcCodes;
-                if (basefile.dtcCodes == null)
+                dtcBindingSource.DataSource = PCM.dtcCodes;
+                if (PCM.dtcCodes == null)
                     tabDTC.Text = "DTC";
                 else
-                    tabDTC.Text = "DTC (" + basefile.dtcCodes.Count.ToString() + ")";
+                    tabDTC.Text = "DTC (" + PCM.dtcCodes.Count.ToString() + ")";
             }
             else
             {
-                dtcBindingSource.DataSource = basefile.dtcCodes2;
-                if (basefile.dtcCodes2 == null)
+                dtcBindingSource.DataSource = PCM.dtcCodes2;
+                if (PCM.dtcCodes2 == null)
                     tabDTC.Text = "DTC";
                 else
-                    tabDTC.Text = "DTC (" + basefile.dtcCodes2.Count.ToString() + ")";
+                    tabDTC.Text = "DTC (" + PCM.dtcCodes2.Count.ToString() + ")";
             }
             dataGridDTC.DataSource = dtcBindingSource;
             dataGridDTC.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            this.Refresh();
 
         }
         public void RefreshTableSeek()
@@ -635,20 +636,34 @@ namespace UniversalPatcher
                 }
             }
         }
-        private void GetPidList()
+        private void GetPidList(PcmFile PCM)
         {
             try
             {
                 pidList = new List<PidSearch.PID>();
                 if (chkSearchPids.Checked)
                 {
-                    PidSearch pidSearch = new PidSearch(basefile);
+                    PidSearch pidSearch = new PidSearch(PCM);
                     if (pidSearch.pidList == null)
                     {
                         Logger("PIDs not found");
                         return;
                     }
                     pidList.AddRange(pidSearch.pidList);
+
+/*                    for (int i=0;i< pidSearch.pidList.Count;i++)
+                    {
+                        PidSearch.PID pid = pidSearch.pidList[i];
+                        if (pid.PidNumber == "FC1E")
+                        {
+                            if (pid.RamAddressInt == 0x9C82)
+                            {
+                                MessageBox.Show("PID FC1E = 9C82");
+                            }
+                            break;
+                        }
+                    }
+*/ 
                 }
             }
             catch (Exception ex)
@@ -881,7 +896,7 @@ namespace UniversalPatcher
                     PCM.dtcCodes = DS.SearchDtc(PCM, true);
                     PCM.dtcCodes2 = DS.SearchDtc(PCM, false);
                 }
-                RefreshDtcList();
+                RefreshDtcList(PCM);
 
                 TableSeek TS = new TableSeek();
                 if (chkTableSeek.Checked)
@@ -890,8 +905,10 @@ namespace UniversalPatcher
                     Logger(TS.SeekTables(PCM));
                 }
                 RefreshTableSeek();
-
-                GetPidList();
+                if (chkSearchPids.Checked)
+                {
+                    GetPidList(PCM);
+                }
             }
             catch (Exception ex)
             {
@@ -1255,7 +1272,7 @@ namespace UniversalPatcher
                     {
                         string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                         PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, basefile.configFileFullName);
-                        GetFileInfo(FileName, ref PCM, true);
+                        GetFileInfo(FileName, ref PCM, false);
                     }
                     if (!chkLogtodisplay.Checked)
                         txtResult.AppendText(Environment.NewLine + "[Done]" + Environment.NewLine);
@@ -1643,7 +1660,8 @@ namespace UniversalPatcher
             XmlPatch CurrentP = PatchList[row];
             PatchList.RemoveAt(row);
             PatchList.Insert(row - 1, CurrentP);
-            RefreshPatch();
+            //RefreshPatch();
+            this.Refresh();
             dataPatch.CurrentCell = dataPatch.Rows[row - 1].Cells[0];
             dataPatch.Rows[row - 1].Selected = true;
         }
@@ -1656,7 +1674,8 @@ namespace UniversalPatcher
             XmlPatch CurrentP = PatchList[row];
             PatchList.RemoveAt(row);
             PatchList.Insert(row + 1, CurrentP);
-            RefreshPatch();
+            //RefreshPatch();
+            this.Refresh();
             dataPatch.CurrentCell = dataPatch.Rows[row + 1].Cells[0];
             dataPatch.Rows[row + 1].Selected = true;
         }
@@ -2579,7 +2598,7 @@ namespace UniversalPatcher
 
         private void btnGetPidList_Click(object sender, EventArgs e)
         {
-            GetPidList();
+            GetPidList(basefile);
         }
 
         private void btnClearPidList_Click(object sender, EventArgs e)
@@ -2858,7 +2877,7 @@ namespace UniversalPatcher
 
         private void btnClearDTC_Click(object sender, EventArgs e)
         {
-            RefreshDtcList();
+            RefreshDtcList(basefile);
         }
 
         private void btnSaveCsvDTC_Click(object sender, EventArgs e)
@@ -2906,7 +2925,8 @@ namespace UniversalPatcher
                         }
                     }
                     SetDtcCode(ref basefile.buf, 0, codeIndex, dtcCodes[codeIndex], basefile);
-                    RefreshDtcList();
+                    //RefreshDtcList();
+                    this.Refresh();
                     tabFunction.SelectedTab = tabApply;
                     Logger("DTC modified, you can now save bin");
                 }
@@ -4449,7 +4469,7 @@ namespace UniversalPatcher
 
         private void radioDtcPrimary_CheckedChanged(object sender, EventArgs e)
         {
-            RefreshDtcList();
+            RefreshDtcList(basefile);
         }
 
         private void cVNDatabaseToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4790,6 +4810,12 @@ namespace UniversalPatcher
             }
         }
 
+        private void realtimeControlCommandsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML frmE = new frmEditXML();
+            frmE.Show();
+            frmE.LoadRealTimeControlCommands();
+        }
     }
 }
 

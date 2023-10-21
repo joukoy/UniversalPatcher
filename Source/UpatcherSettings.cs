@@ -254,7 +254,7 @@ namespace UniversalPatcher
         public string LogImportTimeStampFormat { get; set; }
         public bool LogImportTimeStampElapsed { get; set; }
         public bool LoggerGraphDisableResample { get; set; }
-
+        public string ControlCommandsFile { get; set; }
         public TimeoutScenario TimeoutLoggingActive { get; set; }
         public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }
         public TimeoutScenario TimeoutLoggingPassive { get; set; }

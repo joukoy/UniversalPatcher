@@ -43,6 +43,7 @@ namespace UniversalPatcher
             funcnames,
             obd2codes,
             CANmodules,
+            realtimecontrol,
         }
 
         private XMLTYPE xmlType = XMLTYPE.autodetect;
@@ -55,6 +56,7 @@ namespace UniversalPatcher
         private PcmFile PCM;
         private List<TableSeek> tSeeks;
         private List<SegmentSeek> sSeeks;
+        public List<RealTimeControl> rtControls;
         private List<CVN> sCVN;
         private List<DtcSearchConfig> dtcSC;
         private List<PidSearchConfig> pidSC;
@@ -277,6 +279,29 @@ namespace UniversalPatcher
             else
                 sSeeks = new List<SegmentSeek>();
             RefreshSegmentSeek();
+            FillFilterBy();
+        }
+
+        public void LoadRealTimeControlCommands()
+        {
+            xmlType = XMLTYPE.realtimecontrol;
+            if (!string.IsNullOrEmpty(AppSettings.ControlCommandsFile))
+            {
+                fileName = AppSettings.ControlCommandsFile;
+            }
+            else
+            {
+                fileName = Path.Combine(Application.StartupPath, "XML", "realtimecontrol.xml");
+
+            }
+            this.Text = "Edit Realtime Control Commands";
+            currentObj = new RealTimeControl();
+            currentType = typeof(RealTimeControl);
+            if (File.Exists(fileName))
+                rtControls = LoadRealTimeControls();
+            else
+                rtControls = new List<RealTimeControl>();
+            RefreshRealTimeControls();
             FillFilterBy();
         }
 
@@ -548,10 +573,14 @@ namespace UniversalPatcher
             bindingSource.DataSource = tSeeks;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
-
-            //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
-            //dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";
-            //dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
+            UseComboBoxForEnums(dataGridView1);
+        }
+        private void RefreshRealTimeControls()
+        {
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = rtControls;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
         }
 
@@ -561,10 +590,6 @@ namespace UniversalPatcher
             bindingSource.DataSource = sSeeks;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
-
-            //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
-            //dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";
-            //dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
             UseComboBoxForEnums(dataGridView1);
         }
 
@@ -732,6 +757,21 @@ namespace UniversalPatcher
                             stream.Close();
                         }
                         DeviceNames = devicenames;
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.realtimecontrol:
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "realtimecontrol.xml");
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<RealTimeControl>));
+                            writer.Serialize(stream, rtControls);
+                            stream.Close();
+                        }
+                        RealTimeControls = rtControls;
+                        AppSettings.ControlCommandsFile = fName;
+                        AppSettings.Save();
                         Logger(" [OK]");
                         break;
                     case XMLTYPE.CANmodules:
@@ -1101,6 +1141,14 @@ namespace UniversalPatcher
                         else
                             compareSegmentConfigs = compareSegmentConfigs.OrderByDescending(x => typeof(SegmentConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareSegmentConfigs;
+                        break;
+                    case XMLTYPE.realtimecontrol:
+                        List<RealTimeControl> compareRtcs = rtControls.Where(t => typeof(RealTimeControl).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
+                        if (strSortOrder == SortOrder.Ascending)
+                            compareRtcs = compareRtcs.OrderBy(x => typeof(RealTimeControl).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        else
+                            compareRtcs = compareRtcs.OrderByDescending(x => typeof(RealTimeControl).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        bindingSource.DataSource = compareRtcs;
                         break;
                     case XMLTYPE.units:
                         List<Units> compareUnitList = unitList.Where(t => typeof(Units).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();

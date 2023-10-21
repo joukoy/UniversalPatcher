@@ -57,6 +57,7 @@ namespace UniversalPatcher
             this.btnShowGraphics = new System.Windows.Forms.Button();
             this.groupLogSettings = new System.Windows.Forms.GroupBox();
             this.groupPlayback = new System.Windows.Forms.GroupBox();
+            this.labelTimeStamp = new System.Windows.Forms.Label();
             this.label39 = new System.Windows.Forms.Label();
             this.numPlaybackSpeed = new System.Windows.Forms.NumericUpDown();
             this.hScrollPlayback = new System.Windows.Forms.HScrollBar();
@@ -336,7 +337,7 @@ namespace UniversalPatcher
             this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
-            this.labelTimeStamp = new System.Windows.Forms.Label();
+            this.btnSendControlCommand = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -429,6 +430,7 @@ namespace UniversalPatcher
             // 
             // tabLog
             // 
+            this.tabLog.Controls.Add(this.btnSendControlCommand);
             this.tabLog.Controls.Add(this.btnShowHistogram);
             this.tabLog.Controls.Add(this.btnShowGraphics);
             this.tabLog.Controls.Add(this.groupLogSettings);
@@ -491,6 +493,15 @@ namespace UniversalPatcher
             this.groupPlayback.TabIndex = 31;
             this.groupPlayback.TabStop = false;
             this.groupPlayback.Text = "Playback";
+            // 
+            // labelTimeStamp
+            // 
+            this.labelTimeStamp.AutoSize = true;
+            this.labelTimeStamp.Location = new System.Drawing.Point(269, 28);
+            this.labelTimeStamp.Name = "labelTimeStamp";
+            this.labelTimeStamp.Size = new System.Drawing.Size(10, 13);
+            this.labelTimeStamp.TabIndex = 5;
+            this.labelTimeStamp.Text = "-";
             // 
             // label39
             // 
@@ -3277,54 +3288,54 @@ namespace UniversalPatcher
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
             // newProfileToolStripMenuItem
             // 
             this.newProfileToolStripMenuItem.Name = "newProfileToolStripMenuItem";
-            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.newProfileToolStripMenuItem.Text = "New profile";
             this.newProfileToolStripMenuItem.Click += new System.EventHandler(this.newProfileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
             // 
             // playbackLogfileToolStripMenuItem
             // 
             this.playbackLogfileToolStripMenuItem.Name = "playbackLogfileToolStripMenuItem";
-            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.playbackLogfileToolStripMenuItem.Text = "Playback logfile";
             this.playbackLogfileToolStripMenuItem.Click += new System.EventHandler(this.playbackLogfileToolStripMenuItem_Click);
             // 
             // saveVPWConsoleToolStripMenuItem
             // 
             this.saveVPWConsoleToolStripMenuItem.Name = "saveVPWConsoleToolStripMenuItem";
-            this.saveVPWConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveVPWConsoleToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveVPWConsoleToolStripMenuItem.Text = "Save VPW Console";
             this.saveVPWConsoleToolStripMenuItem.Click += new System.EventHandler(this.saveVPWConsoleToolStripMenuItem_Click);
             // 
             // saveJConsoleToolStripMenuItem
             // 
             this.saveJConsoleToolStripMenuItem.Name = "saveJConsoleToolStripMenuItem";
-            this.saveJConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveJConsoleToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveJConsoleToolStripMenuItem.Text = "Save J-Console";
             this.saveJConsoleToolStripMenuItem.Click += new System.EventHandler(this.saveJConsoleToolStripMenuItem_Click);
             // 
@@ -3536,14 +3547,15 @@ namespace UniversalPatcher
             this.labelProtocol.TabIndex = 25;
             this.labelProtocol.Text = "VPW";
             // 
-            // labelTimeStamp
+            // btnSendControlCommand
             // 
-            this.labelTimeStamp.AutoSize = true;
-            this.labelTimeStamp.Location = new System.Drawing.Point(269, 28);
-            this.labelTimeStamp.Name = "labelTimeStamp";
-            this.labelTimeStamp.Size = new System.Drawing.Size(10, 13);
-            this.labelTimeStamp.TabIndex = 5;
-            this.labelTimeStamp.Text = "-";
+            this.btnSendControlCommand.Location = new System.Drawing.Point(241, 6);
+            this.btnSendControlCommand.Name = "btnSendControlCommand";
+            this.btnSendControlCommand.Size = new System.Drawing.Size(157, 22);
+            this.btnSendControlCommand.TabIndex = 34;
+            this.btnSendControlCommand.Text = "Send Control Command";
+            this.btnSendControlCommand.UseVisualStyleBackColor = true;
+            this.btnSendControlCommand.Click += new System.EventHandler(this.btnSendControlCommand_Click);
             // 
             // frmLogger
             // 
@@ -3936,6 +3948,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem parseCANMode36LogfileToBinToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem parseCAN23LogfileToBinToolStripMenuItem;
         private System.Windows.Forms.Label labelTimeStamp;
+        private System.Windows.Forms.Button btnSendControlCommand;
     }
 }
 

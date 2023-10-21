@@ -13,11 +13,32 @@ using System.IO;
 using System.Threading;
 using System.Drawing;
 using static UniversalPatcher.PidConfig;
+using System.Windows.Forms;
 
 public static class LoggerUtils
 {
     public static List<OBDMessage> analyzerData { get; set; }
+
     public static Dictionary<byte, string> PcmResponses;
+    public static List<RealTimeControl> RealTimeControls { get; set; }
+
+    public enum ControlType
+    {
+        Slider,
+        Set
+    }
+    public class RealTimeControl
+    {
+        public string Control { get; set; }
+        public ControlType Controltype { get; set; }
+        //public string Command { get; set; }
+        public string CommandSet { get; set; }
+        public string CommandClear { get; set; }
+        public int MinValue { get; set; }
+        public int MaxValue { get; set; }
+        public string EnumValues { get; set; }
+        public int Interval { get; set; }
+    }
 
     public class Parameter
     {
@@ -607,6 +628,18 @@ public static class LoggerUtils
         }
     }
 
+    public static List<RealTimeControl> LoadRealTimeControls()
+    {
+        List<RealTimeControl> rtcs = new List<RealTimeControl>();
+        if (File.Exists(AppSettings.ControlCommandsFile))
+        {
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<RealTimeControl>));
+            System.IO.StreamReader file = new System.IO.StreamReader(AppSettings.ControlCommandsFile);
+            rtcs = (List<RealTimeControl>) reader.Deserialize(file);
+            file.Close();
+        }
+        return rtcs;
+    }
     public static void initPcmResponses()
     {
         PcmResponses = new Dictionary<byte, string>();
