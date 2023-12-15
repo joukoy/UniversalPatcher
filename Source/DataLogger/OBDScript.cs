@@ -823,6 +823,7 @@ namespace UniversalPatcher
 
         private UInt64 GetSeed(string Line, string Line2)
         {
+            int byteCount = 2;
             ushort returnValue = 0xFFFF;
             for (int x = 0; x < variables.Count; x++)
             {
@@ -836,10 +837,18 @@ namespace UniversalPatcher
             string[] parts = Line.Split(':');
             if (parts[0].ToLower().StartsWith("ngcengineseed"))
             {
-                if (parts.Length != 2)
+                if (parts.Length != 2 && parts.Length !=3)
                 {
-                    LoggerBold(parts[0] + " must be in format: " + parts[0] + ":position");
+                    LoggerBold(parts[0] + " must be in format: " + parts[0] + ":position[:bytes(2/4)]");
                     return 0xFFFF;
+                }
+                if (parts.Length == 3)
+                {
+                    if (!int.TryParse(parts[2], out byteCount))
+                    {
+                        LoggerBold("Unknown number of bytes: " + parts[2]);
+                        return 0xFFFF;
+                    }
                 }
             }
             else if (parts.Length < 3)
@@ -922,7 +931,16 @@ namespace UniversalPatcher
             else if (parts[0].ToLower().StartsWith("ngcengine"))
             {
                 NgcKeys nk = new NgcKeys();
-                int seed = (ushort)((rMsg[position] << 8) + rMsg[position + 1]);
+                int seed;
+
+                if (byteCount == 2)
+                {
+                    seed = (ushort)((rMsg[position] << 8) + rMsg[position + 1]);
+                }
+                else
+                {
+                    seed = (int)((rMsg[position] << 24) + (rMsg[position+1] << 16) + (rMsg[position+2] << 8) + rMsg[position + 3]);
+                }
                 key = (ulong)nk.unlockengine(seed);
                 Debug.WriteLine("Seed: " + seed.ToString("X4") + ", Key: " + key.ToString("X4") );
                 return key;

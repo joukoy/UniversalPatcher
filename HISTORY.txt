@@ -663,4 +663,10 @@
 - Logger: Fixed bug: Bus reset after sending queued command
 - Patcher: Fixed bug: DTC tab not updated after modifying DTC
 
+0.22.12
+- Tuner: added support for bitmapped tables (1 row = 1 bit)
+- Tuner: added more options to "Show as HEX" display
+- Tuner: added OS:Address editor
+
+
 

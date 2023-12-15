@@ -56,6 +56,9 @@ namespace UniversalPatcher
             this.autoResizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.swapXyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showRawHEXValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.binaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decimalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTooltipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberCompareSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,8 +69,8 @@ namespace UniversalPatcher
             this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fwdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.downToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.upToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
             this.numColumn = new System.Windows.Forms.NumericUpDown();
             this.labelColumn = new System.Windows.Forms.Label();
@@ -302,10 +305,35 @@ namespace UniversalPatcher
             // 
             // showRawHEXValuesToolStripMenuItem
             // 
+            this.showRawHEXValuesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addressToolStripMenuItem,
+            this.binaryToolStripMenuItem,
+            this.decimalToolStripMenuItem});
             this.showRawHEXValuesToolStripMenuItem.Name = "showRawHEXValuesToolStripMenuItem";
             this.showRawHEXValuesToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.showRawHEXValuesToolStripMenuItem.Text = "Show Raw HEX values";
             this.showRawHEXValuesToolStripMenuItem.Click += new System.EventHandler(this.showRawHEXValuesToolStripMenuItem_Click);
+            // 
+            // addressToolStripMenuItem
+            // 
+            this.addressToolStripMenuItem.Name = "addressToolStripMenuItem";
+            this.addressToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addressToolStripMenuItem.Text = "Address";
+            this.addressToolStripMenuItem.Click += new System.EventHandler(this.addressToolStripMenuItem_Click);
+            // 
+            // binaryToolStripMenuItem
+            // 
+            this.binaryToolStripMenuItem.Name = "binaryToolStripMenuItem";
+            this.binaryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.binaryToolStripMenuItem.Text = "Binary";
+            this.binaryToolStripMenuItem.Click += new System.EventHandler(this.binaryToolStripMenuItem_Click);
+            // 
+            // decimalToolStripMenuItem
+            // 
+            this.decimalToolStripMenuItem.Name = "decimalToolStripMenuItem";
+            this.decimalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.decimalToolStripMenuItem.Text = "Decimal";
+            this.decimalToolStripMenuItem.Click += new System.EventHandler(this.decimalToolStripMenuItem_Click);
             // 
             // disableTooltipsToolStripMenuItem
             // 
@@ -379,19 +407,19 @@ namespace UniversalPatcher
             this.fwdToolStripMenuItem.Text = ">";
             this.fwdToolStripMenuItem.Click += new System.EventHandler(this.fwdToolStripMenuItem_Click);
             // 
-            // downToolStripMenuItem
-            // 
-            this.downToolStripMenuItem.Name = "downToolStripMenuItem";
-            this.downToolStripMenuItem.Size = new System.Drawing.Size(26, 20);
-            this.downToolStripMenuItem.Text = "˅";
-            this.downToolStripMenuItem.Click += new System.EventHandler(this.downToolStripMenuItem_Click);
-            // 
             // upToolStripMenuItem
             // 
             this.upToolStripMenuItem.Name = "upToolStripMenuItem";
             this.upToolStripMenuItem.Size = new System.Drawing.Size(26, 20);
             this.upToolStripMenuItem.Text = "˄";
             this.upToolStripMenuItem.Click += new System.EventHandler(this.upToolStripMenuItem_Click);
+            // 
+            // downToolStripMenuItem
+            // 
+            this.downToolStripMenuItem.Name = "downToolStripMenuItem";
+            this.downToolStripMenuItem.Size = new System.Drawing.Size(26, 20);
+            this.downToolStripMenuItem.Text = "˅";
+            this.downToolStripMenuItem.Click += new System.EventHandler(this.downToolStripMenuItem_Click);
             // 
             // chkSwapXY
             // 
@@ -760,5 +788,8 @@ namespace UniversalPatcher
         private ToolStripMenuItem fwdToolStripMenuItem;
         private ToolStripMenuItem downToolStripMenuItem;
         private ToolStripMenuItem upToolStripMenuItem;
+        private ToolStripMenuItem addressToolStripMenuItem;
+        private ToolStripMenuItem binaryToolStripMenuItem;
+        private ToolStripMenuItem decimalToolStripMenuItem;
     }
 }

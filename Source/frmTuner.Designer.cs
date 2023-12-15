@@ -109,6 +109,7 @@ namespace UniversalPatcher
             this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addNewTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateAddressesByOSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -224,6 +225,7 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
+            this.editOSAddressPairsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -419,21 +421,21 @@ namespace UniversalPatcher
             // touristToolStripMenuItem
             // 
             this.touristToolStripMenuItem.Name = "touristToolStripMenuItem";
-            this.touristToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.touristToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.touristToolStripMenuItem.Text = "Tourist";
             this.touristToolStripMenuItem.Click += new System.EventHandler(this.touristToolStripMenuItem_Click);
             // 
             // basicToolStripMenuItem
             // 
             this.basicToolStripMenuItem.Name = "basicToolStripMenuItem";
-            this.basicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.basicToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.basicToolStripMenuItem.Text = "Basic";
             this.basicToolStripMenuItem.Click += new System.EventHandler(this.basicToolStripMenuItem_Click);
             // 
             // advancedToolStripMenuItem
             // 
             this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
-            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.advancedToolStripMenuItem.Text = "Advanced";
             this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
@@ -828,7 +830,8 @@ namespace UniversalPatcher
             this.saveXMLToolStripMenuItem,
             this.saveXMLAsToolStripMenuItem,
             this.clearTableToolStripMenuItem,
-            this.addNewTableToolStripMenuItem});
+            this.addNewTableToolStripMenuItem,
+            this.updateAddressesByOSToolStripMenuItem});
             this.xmlToolStripMenuItem.Name = "xmlToolStripMenuItem";
             this.xmlToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.xmlToolStripMenuItem.Text = "Xml";
@@ -881,6 +884,13 @@ namespace UniversalPatcher
             this.addNewTableToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
             this.addNewTableToolStripMenuItem.Text = "Add new table";
             this.addNewTableToolStripMenuItem.Click += new System.EventHandler(this.addNewTableToolStripMenuItem_Click);
+            // 
+            // updateAddressesByOSToolStripMenuItem
+            // 
+            this.updateAddressesByOSToolStripMenuItem.Name = "updateAddressesByOSToolStripMenuItem";
+            this.updateAddressesByOSToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.updateAddressesByOSToolStripMenuItem.Text = "Update Addresses by OS";
+            this.updateAddressesByOSToolStripMenuItem.Click += new System.EventHandler(this.updateAddressesByOSToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -950,6 +960,7 @@ namespace UniversalPatcher
             this.insertRowToolStripMenuItem,
             this.deleteRowToolStripMenuItem,
             this.duplicateTableConfigToolStripMenuItem,
+            this.editOSAddressPairsToolStripMenuItem,
             this.toolStripSeparator3,
             this.addressRelativeDiffToolStripMenuItem,
             this.createPatchToolStripMenuItem,
@@ -958,7 +969,7 @@ namespace UniversalPatcher
             this.toolStripSeparator2,
             this.axistablesToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 528);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 572);
             // 
             // cutToolStripMenuItem
             // 
@@ -2165,6 +2176,13 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
             // 
+            // editOSAddressPairsToolStripMenuItem
+            // 
+            this.editOSAddressPairsToolStripMenuItem.Name = "editOSAddressPairsToolStripMenuItem";
+            this.editOSAddressPairsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editOSAddressPairsToolStripMenuItem.Text = "Edit OS:Address pairs";
+            this.editOSAddressPairsToolStripMenuItem.Click += new System.EventHandler(this.editOSAddressPairsToolStripMenuItem_Click);
+            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2422,5 +2440,7 @@ namespace UniversalPatcher
         private Label label4;
         private ToolStripMenuItem copyRowToolStripMenuItem1;
         private ToolStripMenuItem pasteRowToolStripMenuItem;
+        private ToolStripMenuItem updateAddressesByOSToolStripMenuItem;
+        private ToolStripMenuItem editOSAddressPairsToolStripMenuItem;
     }
 }

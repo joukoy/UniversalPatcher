@@ -425,6 +425,27 @@ namespace UniversalPatcher
             Logger(tt.ReadTinyDBtoTableData(this, tableDatas));
         }
 
+        public void UpdateAddressesByOS()
+        {
+            Logger("Updating addresses", false);
+            int i = 0;
+            if (string.IsNullOrEmpty(OS))
+            {
+                Logger(" [No OS]");
+                return;
+            }
+            foreach (TableData td in tableDatas)
+            {
+                td.UpdateAddressByOS(OS);
+                i++;
+                if (i % 300 == 0)
+                {
+                    Logger(".", false);
+                    Application.DoEvents();
+                }
+            }
+            Logger(" [Done]");
+        }
         public void AutoLoadTunerConfig()
         {
             if (!AppSettings.disableTunerAutoloadSettings)
@@ -455,6 +476,10 @@ namespace UniversalPatcher
                 {
                     defaultTunerFile = OS + ".xml";
                     tFile = filterdFiles.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
+                }
+                if (tFile == null)
+                {
+                    tFile = filterdFiles.Where(x => x.Name.Contains(OS)).FirstOrDefault();
                 }
                 compXml = "";
                 if (tFile != null)
@@ -541,6 +566,7 @@ namespace UniversalPatcher
                   //  tableCategories.Add("DTC");
 
                 Logger(" [OK]");
+                UpdateAddressesByOS();
                 Application.DoEvents();
                 //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }

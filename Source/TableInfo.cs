@@ -14,6 +14,17 @@ namespace UniversalPatcher
         {
 
         }
+        public TableCell(TableData td, TableInfo tinfo, uint addr, int column, int row, string rowheader, string colheader)
+        {
+            this.td = td;
+            this.tableInfo = tinfo;
+            this.addr = addr;
+            this.Column = column;
+            this.Row = row;
+            this.RowhHeader = rowheader;
+            this.ColHeader = colheader;
+            lastRawBytes = new byte[td.ElementSize()];
+        }
         public int Column { get; set; }
         public int Row { get; set; }
         public string RowhHeader { get; set; }
@@ -22,11 +33,26 @@ namespace UniversalPatcher
         //public uint tableId { get; set; }
         public TableData td { get; set; }
         public object lastValue { get; set; }
-        public object origValue { get { return GetValue(tableInfo.compareFile.pcm.buf,addr, td, 0, tableInfo.compareFile.pcm); }}
         public double origRawValue {get {return GetRawValue(tableInfo.compareFile.pcm.buf, addr, td, 0,tableInfo.compareFile.pcm.platformConfig.MSB); }}
         public double lastRawValue  { get; set; }
+        public byte[] lastRawBytes { get; set; }
         public double cmpValue { get; set; }
         public TableInfo tableInfo { get; set; }
+        public object origValue 
+        { 
+            get 
+            { 
+                if (td.OutputType == OutDataType.Bitmap)
+                {
+                    byte mask = (byte)(0x01 << (Row % 8));
+                    if ((tableInfo.compareFile.pcm.buf[addr] & mask) == mask)
+                        return 1;
+                    else
+                        return 0;
+                }
+                return GetValue(tableInfo.compareFile.pcm.buf, addr, td, 0, tableInfo.compareFile.pcm); 
+            } 
+        }
         private bool MSB 
         { 
             get 
@@ -103,6 +129,13 @@ namespace UniversalPatcher
                 {
                     bool flag = Convert.ToBoolean(val);
                     SaveFlag(bufAddr, flag);
+                    return true;
+                }
+                if (td.OutputType == OutDataType.Bitmap)
+                {
+                    bool flag = Convert.ToBoolean(val);
+                    //bufAddr = (uint)(td.addrInt + td.Offset + td.ExtraOffset - tableInfo.compareFile.tableBufferOffset);
+                    SaveBitmap(bufAddr, flag);
                     return true;
                 }
                 double newRawValue;
@@ -193,6 +226,7 @@ namespace UniversalPatcher
                     retVal = true;
                 lastValue = CalculatedValue(newRawValue);
                 lastRawValue = newRawValue;
+                Array.Copy(tableBuffer, bufAddr, lastRawBytes, 0, td.ElementSize());
             }
             catch(Exception ex)
             {
@@ -225,6 +259,7 @@ namespace UniversalPatcher
                 }
                 lastValue = newVal;
                 lastRawValue = newVal;
+                Array.Copy(tableBuffer, bufAddr, lastRawBytes, 0, td.ElementSize());
             }
             else if (td.DataType == InDataType.SWORD || td.DataType == InDataType.UWORD)
             {
@@ -237,12 +272,13 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    mask = (byte)~mask;
+                    mask = (ushort)~mask;
                     newVal = (ushort)(curVal & mask);
                 }
                 SaveUshort(tableBuffer, bufAddr, newVal, MSB);
                 lastValue = newVal;
                 lastRawValue = newVal;
+                Array.Copy(tableBuffer, bufAddr, lastRawBytes, 0, td.ElementSize());
             }
             else if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
@@ -261,6 +297,7 @@ namespace UniversalPatcher
                 SaveUint32(tableBuffer, bufAddr, newVal, MSB);
                 lastValue = newVal;
                 lastRawValue = newVal;
+                Array.Copy(tableBuffer, bufAddr, lastRawBytes, 0, td.ElementSize());
             }
             else if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
             {
@@ -279,9 +316,35 @@ namespace UniversalPatcher
                 SaveUint64(tableBuffer, bufAddr, newVal, MSB);
                 lastValue = newVal;
                 lastRawValue = newVal;
+                Array.Copy(tableBuffer, bufAddr, lastRawBytes, 0, td.ElementSize());
             }
         }
+        private void SaveBitmap(uint bufAddr, bool flag)
+        {
+            byte[] tableBuffer = tableInfo.compareFile.buf;
+            byte bit = (byte)(Row % 8);
+            byte mask = (byte)(0x01 << bit );
+            byte newVal;
+            if (flag)
+            {
+                newVal = (byte)(tableBuffer[bufAddr] | mask);
+                tableBuffer[bufAddr] = newVal;
+                lastValue = 1;
+            }
+            else
+            {
+                mask = (byte)~mask;
+                newVal = (byte)(tableBuffer[bufAddr] & mask);
+                tableBuffer[bufAddr] = newVal;
+                lastValue = 0;
+            }
+            lastRawValue = newVal;
+            Array.Copy(tableBuffer, bufAddr, lastRawBytes, 0, td.ElementSize());
+        }
+
     }
+
+
 
     public class TableInfo
     {

@@ -1,4 +1,5 @@
 # UniversalPatcher
+Tuning tool
 - Make/apply patches for bin files
 - Get information of PCM binary files
 - Extract / swap segments
@@ -27,8 +28,6 @@ https://www.facebook.com/universalpatcher
 
 # Facebook group
 https://www.facebook.com/groups/universalpatcher.net
-(Previous Facebook group is offline)
-
 
 # PCM Hammer github page
 https://github.com/LegacyNsfw/PcmHacks

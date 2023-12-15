@@ -53,6 +53,7 @@ namespace UniversalPatcher
             this.comboSerialPort = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabLog = new System.Windows.Forms.TabPage();
+            this.btnSendControlCommand = new System.Windows.Forms.Button();
             this.btnShowHistogram = new System.Windows.Forms.Button();
             this.btnShowGraphics = new System.Windows.Forms.Button();
             this.groupLogSettings = new System.Windows.Forms.GroupBox();
@@ -281,6 +282,8 @@ namespace UniversalPatcher
             this.radioJConsoleProto1 = new System.Windows.Forms.RadioButton();
             this.tabAlgoTest = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.radioFindNgc4 = new System.Windows.Forms.RadioButton();
+            this.radioFindSbec = new System.Windows.Forms.RadioButton();
             this.chkEecvSecondKey = new System.Windows.Forms.CheckBox();
             this.radioEecv = new System.Windows.Forms.RadioButton();
             this.txtAlgoRange = new System.Windows.Forms.TextBox();
@@ -337,7 +340,6 @@ namespace UniversalPatcher
             this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
-            this.btnSendControlCommand = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -442,6 +444,16 @@ namespace UniversalPatcher
             this.tabLog.TabIndex = 0;
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
+            // 
+            // btnSendControlCommand
+            // 
+            this.btnSendControlCommand.Location = new System.Drawing.Point(241, 6);
+            this.btnSendControlCommand.Name = "btnSendControlCommand";
+            this.btnSendControlCommand.Size = new System.Drawing.Size(157, 22);
+            this.btnSendControlCommand.TabIndex = 34;
+            this.btnSendControlCommand.Text = "Send Control Command";
+            this.btnSendControlCommand.UseVisualStyleBackColor = true;
+            this.btnSendControlCommand.Click += new System.EventHandler(this.btnSendControlCommand_Click);
             // 
             // btnShowHistogram
             // 
@@ -3020,6 +3032,8 @@ namespace UniversalPatcher
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.radioFindNgc4);
+            this.groupBox5.Controls.Add(this.radioFindSbec);
             this.groupBox5.Controls.Add(this.chkEecvSecondKey);
             this.groupBox5.Controls.Add(this.radioEecv);
             this.groupBox5.Controls.Add(this.txtAlgoRange);
@@ -3034,10 +3048,34 @@ namespace UniversalPatcher
             this.groupBox5.Controls.Add(this.labelSeed);
             this.groupBox5.Location = new System.Drawing.Point(3, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(167, 252);
+            this.groupBox5.Size = new System.Drawing.Size(167, 357);
             this.groupBox5.TabIndex = 9;
             this.groupBox5.TabStop = false;
             this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
+            // 
+            // radioFindNgc4
+            // 
+            this.radioFindNgc4.AutoSize = true;
+            this.radioFindNgc4.Location = new System.Drawing.Point(6, 159);
+            this.radioFindNgc4.Name = "radioFindNgc4";
+            this.radioFindNgc4.Size = new System.Drawing.Size(97, 17);
+            this.radioFindNgc4.TabIndex = 11;
+            this.radioFindNgc4.TabStop = true;
+            this.radioFindNgc4.Text = "Find NGC4 key";
+            this.radioFindNgc4.UseVisualStyleBackColor = true;
+            this.radioFindNgc4.Visible = false;
+            // 
+            // radioFindSbec
+            // 
+            this.radioFindSbec.AutoSize = true;
+            this.radioFindSbec.Location = new System.Drawing.Point(6, 136);
+            this.radioFindSbec.Name = "radioFindSbec";
+            this.radioFindSbec.Size = new System.Drawing.Size(91, 17);
+            this.radioFindSbec.TabIndex = 10;
+            this.radioFindSbec.TabStop = true;
+            this.radioFindSbec.Text = "Find sbec key";
+            this.radioFindSbec.UseVisualStyleBackColor = true;
+            this.radioFindSbec.Visible = false;
             // 
             // chkEecvSecondKey
             // 
@@ -3065,7 +3103,7 @@ namespace UniversalPatcher
             // txtAlgoRange
             // 
             this.txtAlgoRange.Enabled = false;
-            this.txtAlgoRange.Location = new System.Drawing.Point(78, 141);
+            this.txtAlgoRange.Location = new System.Drawing.Point(77, 242);
             this.txtAlgoRange.Name = "txtAlgoRange";
             this.txtAlgoRange.Size = new System.Drawing.Size(84, 20);
             this.txtAlgoRange.TabIndex = 7;
@@ -3074,7 +3112,7 @@ namespace UniversalPatcher
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(11, 143);
+            this.label38.Location = new System.Drawing.Point(10, 244);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(61, 13);
             this.label38.TabIndex = 6;
@@ -3093,7 +3131,7 @@ namespace UniversalPatcher
             // 
             // btnAlgoTest
             // 
-            this.btnAlgoTest.Location = new System.Drawing.Point(78, 218);
+            this.btnAlgoTest.Location = new System.Drawing.Point(77, 319);
             this.btnAlgoTest.Name = "btnAlgoTest";
             this.btnAlgoTest.Size = new System.Drawing.Size(82, 24);
             this.btnAlgoTest.TabIndex = 5;
@@ -3103,7 +3141,7 @@ namespace UniversalPatcher
             // 
             // txtAlgo
             // 
-            this.txtAlgo.Location = new System.Drawing.Point(78, 193);
+            this.txtAlgo.Location = new System.Drawing.Point(77, 294);
             this.txtAlgo.Name = "txtAlgo";
             this.txtAlgo.Size = new System.Drawing.Size(82, 20);
             this.txtAlgo.TabIndex = 2;
@@ -3111,7 +3149,7 @@ namespace UniversalPatcher
             // labelAlgo
             // 
             this.labelAlgo.AutoSize = true;
-            this.labelAlgo.Location = new System.Drawing.Point(10, 196);
+            this.labelAlgo.Location = new System.Drawing.Point(9, 297);
             this.labelAlgo.Name = "labelAlgo";
             this.labelAlgo.Size = new System.Drawing.Size(31, 13);
             this.labelAlgo.TabIndex = 0;
@@ -3130,7 +3168,7 @@ namespace UniversalPatcher
             // 
             // txtSeed
             // 
-            this.txtSeed.Location = new System.Drawing.Point(78, 167);
+            this.txtSeed.Location = new System.Drawing.Point(77, 268);
             this.txtSeed.Name = "txtSeed";
             this.txtSeed.Size = new System.Drawing.Size(82, 20);
             this.txtSeed.TabIndex = 3;
@@ -3151,7 +3189,7 @@ namespace UniversalPatcher
             // labelSeed
             // 
             this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(11, 170);
+            this.labelSeed.Location = new System.Drawing.Point(10, 271);
             this.labelSeed.Name = "labelSeed";
             this.labelSeed.Size = new System.Drawing.Size(35, 13);
             this.labelSeed.TabIndex = 1;
@@ -3547,16 +3585,6 @@ namespace UniversalPatcher
             this.labelProtocol.TabIndex = 25;
             this.labelProtocol.Text = "VPW";
             // 
-            // btnSendControlCommand
-            // 
-            this.btnSendControlCommand.Location = new System.Drawing.Point(241, 6);
-            this.btnSendControlCommand.Name = "btnSendControlCommand";
-            this.btnSendControlCommand.Size = new System.Drawing.Size(157, 22);
-            this.btnSendControlCommand.TabIndex = 34;
-            this.btnSendControlCommand.Text = "Send Control Command";
-            this.btnSendControlCommand.UseVisualStyleBackColor = true;
-            this.btnSendControlCommand.Click += new System.EventHandler(this.btnSendControlCommand_Click);
-            // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3949,6 +3977,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem parseCAN23LogfileToBinToolStripMenuItem;
         private System.Windows.Forms.Label labelTimeStamp;
         private System.Windows.Forms.Button btnSendControlCommand;
+        private System.Windows.Forms.RadioButton radioFindNgc4;
+        private System.Windows.Forms.RadioButton radioFindSbec;
     }
 }
 

@@ -3758,6 +3758,32 @@ namespace UniversalPatcher
                 txtAlgoTest.AppendText("Seed: " + txtSeed.Text + ", Seedbyte: " + txtAlgo.Text + ", Key: " + EecvAlgoTest().ToString("X4"));
                 return;
             }
+            if (radioFindNgc4.Checked)
+            {
+                NgcKeys nk = new NgcKeys();
+                int ngcSeed;
+                int key;
+                if (HexToInt(txtSeed.Text, out ngcSeed))
+                {
+                    key = nk.unlockengine(ngcSeed);
+                    txtAlgoTest.AppendText("Seed: " + ngcSeed.ToString("X8") + ", Key: " + key.ToString("X8") + Environment.NewLine);
+                }
+                return;
+            }
+            if (radioFindSbec.Checked)
+            {
+                SBEC sb = new SBEC();
+                uint sbSeed;
+                uint key;
+                if (HexToUint(txtSeed.Text, out sbSeed))
+                {
+                    key = sb.calculateKey(sbSeed);
+                    txtAlgoTest.AppendText("Seed: " + sbSeed.ToString("X8") + ", Key (calculateKey): " + key.ToString("X8") + Environment.NewLine);
+                    key = sb.unlock(sbSeed);
+                    txtAlgoTest.AppendText("Seed: " + sbSeed.ToString("X8") + ", Key (unlock): " + key.ToString("X8") + Environment.NewLine);
+                }
+                return;
+            }
             if (txtAlgoRange.Text.Contains("-"))
             {
                 string[] parts = txtAlgoRange.Text.Split('-');

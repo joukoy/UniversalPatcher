@@ -177,6 +177,7 @@
     <Compile Include="DataLogger\PopupWindow.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DataLogger\SBEC.cs" />
     <Compile Include="frmByteSwap.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,6 +205,12 @@
     </Compile>
     <Compile Include="frmDB.Designer.cs">
       <DependentUpon>frmDB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditPairs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditPairs.Designer.cs">
+      <DependentUpon>frmEditPairs.cs</DependentUpon>
     </Compile>
     <Compile Include="frmExtraOffset.cs">
       <SubType>Form</SubType>
@@ -609,6 +616,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmDB.resx">
       <DependentUpon>frmDB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditPairs.resx">
+      <DependentUpon>frmEditPairs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmExtraOffset.resx">
       <DependentUpon>frmExtraOffset.cs</DependentUpon>

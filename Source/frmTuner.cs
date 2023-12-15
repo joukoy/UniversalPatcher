@@ -402,7 +402,7 @@ namespace UniversalPatcher
                 if (tableTds == null || tableTds.Count == 0 || tableTds[0] == null)
                     return;
                 TableData td = tableTds[0];
-                if (td.Values.StartsWith("Patch:"))
+                if (!string.IsNullOrEmpty(td.Values) && td.Values.StartsWith("Patch:"))
                 {
                     if (MessageBox.Show(td.TableDescription, "Apply patch?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
@@ -410,7 +410,7 @@ namespace UniversalPatcher
                     }
                     return;
                 }
-                else if (td.Values.StartsWith("TablePatch:"))
+                else if (!string.IsNullOrEmpty(td.Values) && td.Values.StartsWith("TablePatch:"))
                 {
                     if (MessageBox.Show(td.TableDescription, "Apply patch?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
@@ -1796,6 +1796,11 @@ namespace UniversalPatcher
                     Debug.WriteLine("No address defined");
                     return;
                 }
+                if (shTd.OutputType == OutDataType.Bitmap)
+                {
+                    Debug.WriteLine("Bitmap peek not implemented");
+                    return;
+                }
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
                 txtDescription.SelectionColor = color;
                 string minMax = " [";
@@ -1908,6 +1913,7 @@ namespace UniversalPatcher
                     StringBuilder tblData = new StringBuilder("Current values: " + minMax + Environment.NewLine);
                     uint addr = (uint)(shTd.addrInt + shTd.Offset + shTd.ExtraOffset);
                     double firstVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
+                    uint elemSize = (uint)shTd.ElementSize();
                     if (shTd.RowMajor)
                     {
                         for (int r = 0; r < shTd.Rows; r++)
@@ -1915,7 +1921,7 @@ namespace UniversalPatcher
                             for (int c = 0; c < shTd.Columns; c++)
                             {
                                 double curVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
-                                addr += (uint)GetElementSize(shTd.DataType);
+                                addr += elemSize;
                                 tblData.Append("[" + curVal.ToString("#0.0") + "]");
                                 if (!ShowMinMax)
                                 {
@@ -1939,7 +1945,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < shTd.Rows; r++)
                             {
                                 double curVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
-                                addr += (uint)GetElementSize(shTd.DataType);
+                                addr += elemSize;
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                                 if (!ShowMinMax)
                                 {
@@ -3544,6 +3550,7 @@ namespace UniversalPatcher
                     swapSegmentsToolStripMenuItem.Visible = false;
 
                     showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
+                    showTablesWithEmptyAddressToolStripMenuItem.Checked = false;
                     unitsToolStripMenuItem.Visible = false;
                     resetTunerModeColumnsToolStripMenuItem.Visible = false;
                     groupExtraOffset.Visible = false;
@@ -3590,6 +3597,7 @@ namespace UniversalPatcher
                     swapSegmentsToolStripMenuItem.Visible = false;
 
                     showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
+                    showTablesWithEmptyAddressToolStripMenuItem.Checked = false;
                     unitsToolStripMenuItem.Visible = false;
                     resetTunerModeColumnsToolStripMenuItem.Visible = false;
                     groupExtraOffset.Visible = false;
@@ -3637,6 +3645,7 @@ namespace UniversalPatcher
                     massModifyTableListsSelectFilesToolStripMenuItem.Visible = true;
 
                     showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
+                    showTablesWithEmptyAddressToolStripMenuItem.Checked = true;
                     unitsToolStripMenuItem.Visible = true;
                     resetTunerModeColumnsToolStripMenuItem.Visible = false;
                     groupExtraOffset.Visible = true;
@@ -6260,6 +6269,38 @@ namespace UniversalPatcher
         private void tabCategory_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void updateAddressesByOSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (PCM == null || string.IsNullOrEmpty(PCM.OS))
+                return;
+            PCM.UpdateAddressesByOS();
+            RefreshTablelist(false);
+        }
+
+        private void editOSAddressPairsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmEditPairs fep = new frmEditPairs();
+                fep.pairStr = lastSelectTd.OS;
+                if (fep.ShowDialog() == DialogResult.OK)
+                {
+                    lastSelectTd.OS = fep.pairStr;
+                    this.Refresh();
+                }
+                fep.Dispose();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
         }
     }
 }

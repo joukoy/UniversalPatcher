@@ -50,7 +50,7 @@ namespace UniversalPatcher
             public MultiTableName(string fullName, int columnPos)
             {
                 RowName = "";
-                string[] separators = AppSettings.MulitableChars.Split(' ');
+                string[] separators = AppSettings.MultitableChars.Split(' ');
                 string[] nParts = fullName.Split(separators, StringSplitOptions.RemoveEmptyEntries);
                 //string[] nParts = fullName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
                 TableName = nParts[0];
@@ -125,6 +125,9 @@ namespace UniversalPatcher
 
                 numTuneValue.Tag = numTuneValue.Value;
                 autoResizeToolStripMenuItem.Checked = AppSettings.TableEditorAutoResize;
+                addressToolStripMenuItem.Checked = AppSettings.TableEditorHexShowAddress;
+                binaryToolStripMenuItem.Checked = AppSettings.TableEditorHexShowBinary;
+                decimalToolStripMenuItem.Checked = AppSettings.TableEditorHexShowDecimal;
                 if (AppSettings.TableEditorAutoResize)
                 {
                     AutoResize();
@@ -422,8 +425,12 @@ namespace UniversalPatcher
                 }
                 string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
                 labelInfo.Text = minMaxTxt + valTxt;
-                if (!tData.Math.StartsWith("DTC"))
+                if (!tData.Math.StartsWith("DTC") )
                     labelInfo.Text += " Address: " + tCell.addr.ToString("X");
+                if (tData.OutputType == OutDataType.Bitmap)
+                {
+                    labelInfo.Text += " Bit: " + (tCell.Row % 8).ToString();
+                }
                 if (ftvd != null && ftvd.Visible)
                 {
                     this.Invoke((MethodInvoker)delegate ()
@@ -562,28 +569,47 @@ namespace UniversalPatcher
                             rowHeaders.Add(RowPrefix + rHdr);
                     }
 
+                    if (tData.OutputType == OutDataType.Bitmap)
+                    {
+                        tData.DataType = InDataType.UBYTE;
+                    }
                     uint addr = (uint)(tData.addrInt + tData.Offset + tData.ExtraOffset);
                     int step = GetElementSize(tData.DataType);
+                    byte mask = 1;
                     if (tData.RowMajor)
                     {
                         for (int r = 0; r < tData.Rows; r++)
                         {
                             for (int c = 0; c < tData.Columns; c++)
                             {
-                                TableCell tc = new TableCell();
-                                tc.tableInfo = tInfo;
-                                tc.td = tData;
-                                tc.Column = c;
-                                tc.Row = r;
-                                tc.ColHeader = colHeaders[c];
-                                tc.RowhHeader = rowHeaders[r];
-                                tc.addr = addr;
-                                tc.lastValue = GetValue(pcm.buf, addr, tData, 0, pcm);
-                                tc.lastRawValue = GetRawValue(pcm.buf, addr, tData, 0,pcm.platformConfig.MSB);
-                                addr += (uint)step;
+                                TableCell tc = new TableCell(tData,tInfo,addr,c,r,rowHeaders[r], colHeaders[c]);
+                                if (tData.OutputType == OutDataType.Bitmap)
+                                {
+
+                                    if ((pcm.buf[addr] & mask) == mask)
+                                        tc.lastValue = 1;
+                                    else
+                                        tc.lastValue = 0;
+                                    tc.lastRawValue = pcm.buf[addr];
+                                    if (mask == 0x80)
+                                    {
+                                        mask = 1;
+                                        addr++;
+                                    }
+                                    else
+                                    {
+                                        mask = (byte)(mask << 1);
+                                    }
+                                }
+                                else
+                                {
+                                    tc.lastValue = GetValue(pcm.buf, addr, tData, 0, pcm);
+                                    tc.lastRawValue = GetRawValue(pcm.buf, addr, tData, 0, pcm.platformConfig.MSB);
+                                    Array.Copy(pcm.buf,addr, tc.lastRawBytes, 0, step);
+                                    addr += (uint)step;
+                                }
                                 tInfo.tableCells.Add(tc);
                             }
-
                         }
                     }
                     else
@@ -593,17 +619,32 @@ namespace UniversalPatcher
                         {
                             for (int r = 0; r < tData.Rows; r++)
                             {
-                                TableCell tc = new TableCell();
-                                tc.tableInfo = tInfo;
-                                tc.td = tData;
-                                tc.Column = c;
-                                tc.Row = r;
-                                tc.ColHeader = colHeaders[c];
-                                tc.RowhHeader = rowHeaders[r];
-                                tc.addr = addr;
-                                tc.lastValue = GetValue(pcm.buf, addr, tData, 0, pcm);
-                                tc.lastRawValue = GetRawValue(pcm.buf, addr, tData, 0,pcm.platformConfig.MSB);
-                                addr += (uint)step;
+                                TableCell tc = new TableCell(tData, tInfo,addr,c,r, rowHeaders[r], colHeaders[c]);
+                                if (tData.OutputType == OutDataType.Bitmap)
+                                {
+
+                                    if ((pcm.buf[addr] & mask) == mask)
+                                        tc.lastValue = 1;
+                                    else
+                                        tc.lastValue = 0;
+                                    tc.lastRawValue = pcm.buf[addr];
+                                    if (mask == 0x80)
+                                    {
+                                        mask = 1;
+                                        addr++;
+                                    }
+                                    else
+                                    {
+                                        mask = (byte)(mask << 1);
+                                    }
+                                }
+                                else
+                                {
+                                    tc.lastValue = GetValue(pcm.buf, addr, tData, 0, pcm);
+                                    tc.lastRawValue = GetRawValue(pcm.buf, addr, tData, 0, pcm.platformConfig.MSB);
+                                    Array.Copy(pcm.buf, addr, tc.lastRawBytes, 0, step);
+                                    addr += (uint)step;
+                                }
                                 tInfo.tableCells.Add(tc);
                             }
 
@@ -682,7 +723,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    string[] separators = AppSettings.MulitableChars.Split(' ');
+                    string[] separators = AppSettings.MultitableChars.Split(' ');
                     //if (td.TableName.Contains("[") || td.TableName.Contains("."))
                     if (separators.Any(td.TableName.Contains))
                     {
@@ -1039,7 +1080,7 @@ namespace UniversalPatcher
                                 //cmpTxt = ReadTextBlock(cmpTCell.tableInfo.compareFile.buf, (int)(cmpTCell.addr - cmpTCell.tableInfo.compareFile.tableBufferOffset), cmpTCell.td.Columns);
                             }
                         }
-                        else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
+                        else if (mathTd.OutputType == OutDataType.Bitmap || (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0))
                         {
                             curTxt = curVal.ToString();
                             if (cmpRawValue < UInt64.MaxValue)
@@ -1112,43 +1153,104 @@ namespace UniversalPatcher
 
                 if (showRawHex)
                 {
-                    switch (mathTd.DataType)
+                    if (mathTd.OutputType == OutDataType.Bitmap)
                     {
-                        case InDataType.FLOAT32:
-                            dataGridView1.Rows[row].Cells[col].Value = (Int32)showRawVal;
-                            break;
-                        case InDataType.FLOAT64:
-                            dataGridView1.Rows[row].Cells[col].Value = (Int64)showRawVal;
-                            break;
-                        case InDataType.INT64:
-                            dataGridView1.Rows[row].Cells[col].Value = (Int64)showRawVal;
-                            break;
-                        case InDataType.INT32:
-                            dataGridView1.Rows[row].Cells[col].Value = (Int32)showRawVal;
-                            break;
-                        case InDataType.UINT64:
-                            dataGridView1.Rows[row].Cells[col].Value = (UInt64)showRawVal;
-                            break;
-                        case InDataType.UINT32:
-                            dataGridView1.Rows[row].Cells[col].Value = (UInt32)showRawVal;
-                            break;
-                        case InDataType.SWORD:
-                            dataGridView1.Rows[row].Cells[col].Value = (Int16)showRawVal;
-                            break;
-                        case InDataType.UWORD:
-                            dataGridView1.Rows[row].Cells[col].Value = (UInt16)showRawVal;
-                            break;
-                        case InDataType.SBYTE:
-                            dataGridView1.Rows[row].Cells[col].Value = (sbyte)showRawVal;
-                            break;
-                        case InDataType.UBYTE:
-                            dataGridView1.Rows[row].Cells[col].Value = (byte)showRawVal;
-                            break;
-                        default:
-                            dataGridView1.Rows[row].Cells[col].Value = (Int32)showRawVal;
-                            break;
+                        dataGridView1.Rows[row].Cells[col].Value = Convert.ToByte(tCell.lastRawValue).ToString("X2") + " [" + Convert.ToString((byte)curRawValue, 2).PadLeft(8,'0') + "]";
                     }
-                    //dataGridView1.Rows[row].Cells[col].Value = Convert.ToInt64(showRawVal);
+                    else
+                    {
+                        if (!addressToolStripMenuItem.Checked && !binaryToolStripMenuItem.Checked && !decimalToolStripMenuItem.Checked)
+                        {
+                            switch (mathTd.DataType)
+                            {
+                                case InDataType.FLOAT32:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToSingle(tCell.lastRawValue);
+                                    break;
+                                case InDataType.FLOAT64:
+                                    dataGridView1.Rows[row].Cells[col].Value = tCell.lastRawValue;
+                                    break;
+                                case InDataType.INT64:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToInt64(tCell.lastRawValue);
+                                    break;
+                                case InDataType.INT32:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToInt32(tCell.lastRawValue);
+                                    break;
+                                case InDataType.UINT64:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToUInt64(tCell.lastRawValue);
+                                    break;
+                                case InDataType.UINT32:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToUInt32(tCell.lastRawValue);
+                                    break;
+                                case InDataType.SWORD:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToInt16(tCell.lastRawValue);
+                                    break;
+                                case InDataType.UWORD:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToUInt16(tCell.lastRawValue);
+                                    break;
+                                case InDataType.SBYTE:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToSByte(tCell.lastRawValue);
+                                    break;
+                                case InDataType.UBYTE:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToByte(tCell.lastRawValue);
+                                    break;
+                                default:
+                                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToInt32(tCell.lastRawValue);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            string formatStr = "X" + (mathTd.ElementSize() * 2).ToString();
+                            StringBuilder hexStr = new StringBuilder();
+                            if (addressToolStripMenuItem.Checked)
+                                hexStr.Append(tCell.addr.ToString("X8") + ": ");
+                            if (Convert.ToDouble(tCell.lastValue) < 0)
+                                Debug.WriteLine("Neg");
+                            hexStr.Append(string.Join("", Array.ConvertAll(tCell.lastRawBytes, b => b.ToString("X2"))));
+                            if (binaryToolStripMenuItem.Checked)
+                                hexStr.Append(" [" + string.Join("", Array.ConvertAll(tCell.lastRawBytes, b => Convert.ToString(b, 2))).PadLeft(mathTd.ElementSize() * 8, '0') + "]");
+                            if (decimalToolStripMenuItem.Checked)
+                            {
+                                switch (mathTd.DataType)
+                                {
+                                    case InDataType.FLOAT32:
+                                        hexStr.Append("[" + Convert.ToSingle(tCell.lastRawValue) + "]");
+                                        break;
+                                    case InDataType.FLOAT64:
+                                        hexStr.Append("[" + tCell.lastRawValue + "]");
+                                        break;
+                                    case InDataType.INT64:
+                                        hexStr.Append("[" + Convert.ToInt64(tCell.lastRawValue) + "]");
+                                        break;
+                                    case InDataType.INT32:
+                                        hexStr.Append("[" + Convert.ToInt32(tCell.lastRawValue) + "]");
+                                        break;
+                                    case InDataType.UINT64:
+                                        hexStr.Append("[" + Convert.ToUInt64(tCell.lastRawValue) + "]");
+                                        break;
+                                    case InDataType.UINT32:
+                                        hexStr.Append("[" + Convert.ToUInt32(tCell.lastRawValue) + "]");
+                                        break;
+                                    case InDataType.SWORD:
+                                        hexStr.Append("[" + Convert.ToInt16(tCell.lastRawValue) + "]");
+                                        break;
+                                    case InDataType.UWORD:
+                                        hexStr.Append("[" + Convert.ToUInt16(tCell.lastRawValue) + "]");
+                                        break;
+                                    case InDataType.SBYTE:
+                                        hexStr.Append("[" + Convert.ToSByte(tCell.lastRawValue) + "]");
+                                        break;
+                                    case InDataType.UBYTE:
+                                        hexStr.Append("[" + Convert.ToByte(tCell.lastRawValue) + "]");
+                                        break;
+                                    default:
+                                        hexStr.Append("[" + Convert.ToInt32(tCell.lastRawValue) + "]");
+                                        break;
+                                }
+                            }
+                            dataGridView1.Rows[row].Cells[col].Value = hexStr.ToString();
+                        }
+                    }
                 }
                 else
                 {
@@ -1156,6 +1258,9 @@ namespace UniversalPatcher
                     {
                         case OutDataType.Float:
                             dataGridView1.Rows[row].Cells[col].Value = showVal;
+                            break;
+                        case OutDataType.Bitmap:
+                            dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
                             break;
                         case OutDataType.Flag:
                             dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
@@ -1285,7 +1390,11 @@ namespace UniversalPatcher
                 if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
                     dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
                 {
-                    if (curVal != origVal)
+                    if (dataGridView1.Rows[row].Cells[col].ReadOnly)
+                    {
+                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightGray;
+                    }
+                    else if (curVal != origVal)
                     {
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
                         if (!disableTooltips)
@@ -1376,11 +1485,15 @@ namespace UniversalPatcher
             try
             {
                 TableValueType vt = ft.ValueType();
-                if (vt == TableValueType.boolean || vt == TableValueType.bitmask)
+                if (vt == TableValueType.boolean || vt == TableValueType.bitmask || vt == TableValueType.bitmap)
                 {
                     DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
                     dgc.Style.NullValue = false;
                     dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
+                    if (vt == TableValueType.bitmap && dataGridView1.Rows[gridRow].HeaderCell.Value.ToString().ToLower().StartsWith("not defined"))
+                    {
+                        dataGridView1.Rows[gridRow].Cells[gridCol].ReadOnly = true;
+                    }
                 }
                 else if (vt == TableValueType.selection)
                 {
@@ -1510,7 +1623,7 @@ namespace UniversalPatcher
                     }
 
                     DrawingControl.SuspendDrawing(dataGridView1);
-
+                    uint prevAddr = 0;
                     for (int cell = 0; cell < cellCount; cell++)
                     {
                         TableCell cmpCell = null;
@@ -1535,8 +1648,22 @@ namespace UniversalPatcher
                             string rowHdr;
                             if (!xySwapped)
                             {
-                                colHdr = tcell.ColHeader;
-                                rowHdr = tcell.RowhHeader;
+                                if (ft.OutputType == OutDataType.Bitmap && showRawHex)
+                                {
+                                    if (tcell.addr == prevAddr)
+                                    {
+                                        //Bitmapped table have max 8 cells/address, show only 1 cell/address
+                                        continue;
+                                    }
+                                    prevAddr = tcell.addr;
+                                    rowHdr = tcell.addr.ToString("X2");
+                                    colHdr = "";
+                                }
+                                else
+                                {
+                                    colHdr = tcell.ColHeader;
+                                    rowHdr = tcell.RowhHeader;
+                                }
                                 if (only1d)
                                 {
                                     colHdr = "[" + selectedFile.fileLetter + "] "; //Show only [A]
@@ -1556,8 +1683,22 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                colHdr = tcell.RowhHeader;
-                                rowHdr = tcell.ColHeader;
+                                if (ft.OutputType == OutDataType.Bitmap && showRawHex)
+                                {
+                                    if (tcell.addr == prevAddr)
+                                    {
+                                        //Bitmapped table have max 8 cells/address, show only 1 cell/address
+                                        continue;
+                                    }
+                                    prevAddr = tcell.addr;
+                                    colHdr = tcell.addr.ToString("X2");
+                                    rowHdr = "";
+                                }
+                                else
+                                {
+                                    colHdr = tcell.RowhHeader;
+                                    rowHdr = tcell.ColHeader;
+                                }
                                 if (only1d)
                                 {
                                     rowHdr = "[" + selectedFile.fileLetter + "] "; //Show only [A]
@@ -1626,6 +1767,10 @@ namespace UniversalPatcher
                                             else
                                                 cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.ColHeader;
                                         }
+                                        if (ft.OutputType == OutDataType.Bitmap && showRawHex)
+                                        {
+                                            cmpRowHdr = cmpCell.addr.ToString("X2");
+                                        }
                                     }
                                     else
                                     {
@@ -1649,6 +1794,10 @@ namespace UniversalPatcher
                                                 cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.RowhHeader;
                                             }
                                         }
+                                        if (ft.OutputType == OutDataType.Bitmap && showRawHex)
+                                        {
+                                            cmpColHdr = cmpCell.addr.ToString("X2");
+                                        }
                                     }
                                     gridCol = GetColumnByHeader(cmpColHdr);
                                     gridRow = GetRowByHeader(cmpRowHdr);
@@ -1663,7 +1812,7 @@ namespace UniversalPatcher
 
                 }
                 
-                if (td.TableName.StartsWith("DTC"))
+                if (td.TableName.StartsWith("DTC") && (td.OutputType != OutDataType.Bitmap || showRawHex == false))
                 {
                     ShowDtcDescriptions();
                 }
@@ -1861,12 +2010,12 @@ namespace UniversalPatcher
                     this.numDecimals.ValueChanged += new System.EventHandler(this.numDecimals_ValueChanged);
                 }
                 string formatStr = "0";
-                if (showRawHEXValuesToolStripMenuItem.Checked || td.OutputType == OutDataType.Hex)
+                if ((showRawHEXValuesToolStripMenuItem.Checked && !addressToolStripMenuItem.Checked && 
+                    !binaryToolStripMenuItem.Checked && !decimalToolStripMenuItem.Checked )|| td.OutputType == OutDataType.Hex)
                 {
-                    //formatStr = "X" + ((int)numDecimals.Value).ToString();
-                    formatStr = "X" + (GetElementSize(td.DataType) *2).ToString();
+                    formatStr = "X" + (td.ElementSize() * 2).ToString();
                 }
-                else if (td.OutputType == OutDataType.Text || td.OutputType == OutDataType.Flag )
+                else if (td.OutputType == OutDataType.Text || td.OutputType == OutDataType.Flag || td.OutputType == OutDataType.Bitmap)
                 {
                     formatStr = "";
                 }
@@ -1882,7 +2031,9 @@ namespace UniversalPatcher
                 foreach (DataGridViewColumn dgvc in dataGridView1.Columns)
                 {
                     dgvc.SortMode = DataGridViewColumnSortMode.NotSortable;
-                    if (dgvc.HeaderText != "Description")
+                    if (showRawHEXValuesToolStripMenuItem.Checked || td.OutputType == OutDataType.Hex)
+                        dgvc.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                    else if (dgvc.HeaderText != "Description")
                         dgvc.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                     dgvc.DefaultCellStyle.Font = dataFont;
                     if (formatStr != "" && dgvc.GetType() != typeof(DataGridViewComboBoxColumn) )
@@ -1989,6 +2140,11 @@ namespace UniversalPatcher
             TableData mathTd = tCell.td;
             try
             {
+                if (chkRawHex.Checked && (addressToolStripMenuItem.Checked || binaryToolStripMenuItem.Checked || decimalToolStripMenuItem.Checked))
+                {
+                    Debug.WriteLine("Can't save in extended HEX mode");
+                    return;
+                }
                 if (value == double.MinValue)
                 {
                     if (dataGridView1.Rows[r].Cells[c].GetType() == typeof(DataGridViewComboBoxCell))
@@ -3255,5 +3411,26 @@ namespace UniversalPatcher
             ShowUpToolTip();
         }
 
+
+        private void addressToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            addressToolStripMenuItem.Checked = !addressToolStripMenuItem.Checked;
+            AppSettings.TableEditorHexShowAddress = addressToolStripMenuItem.Checked;
+            LoadTable();
+        }
+
+        private void binaryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            binaryToolStripMenuItem.Checked = !binaryToolStripMenuItem.Checked;
+            AppSettings.TableEditorHexShowBinary = binaryToolStripMenuItem.Checked;
+            LoadTable();
+        }
+
+        private void decimalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            decimalToolStripMenuItem.Checked = !decimalToolStripMenuItem.Checked;
+            AppSettings.TableEditorHexShowDecimal = decimalToolStripMenuItem.Checked; 
+            LoadTable();
+        }
     }
 }

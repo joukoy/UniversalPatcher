@@ -54,6 +54,10 @@ namespace UniversalPatcher
         {
             get
             {
+                if (OutputType == OutDataType.Bitmap)
+                {
+                    DataType = InDataType.UBYTE;
+                }
                 if (_guid == Guid.Empty)
                 {
                     _guid = Guid.NewGuid();
@@ -135,7 +139,26 @@ namespace UniversalPatcher
                 }
             }
         }
+        public void UpdateAddressByOS(string PcmOS)
+        {
+            if (string.IsNullOrEmpty(OS))
+                return;
 
+            string[] oParts = OS.Split(',');
+            foreach(string osAddr in oParts)
+            {
+                string[] oaParts = osAddr.Split(':');
+                if (oaParts.Length == 2)
+                {
+                    if (oaParts[0] == PcmOS && HexToUint(oaParts[1], out uint addr))
+                    {
+                        addrInt = addr;
+                        OS = PcmOS;
+                        return;
+                    }
+                }
+            }
+        }
         public List<string> SubCategories()
         {
             List<string> cats = new List<string>();
@@ -227,21 +250,25 @@ namespace UniversalPatcher
             {
                 retVal = TableValueType.patch;
             }
+            else if (Values.StartsWith("Enum: "))
+            {
+                retVal = TableValueType.selection;
+            }
+            else if (OutputType == OutDataType.Bitmap)
+            {
+                retVal = TableValueType.bitmap;
+            }
             else if (BitMask != null && BitMask.Length > 0)
             {
                 retVal = TableValueType.bitmask;
             }
-            else if (Units.ToLower().Contains("boolean") || Units.ToLower().Contains("t/f"))
+            else if (OutputType == OutDataType.Bitmap ||  Units.ToLower().Contains("boolean") || Units.ToLower().Contains("t/f"))
             {
                 retVal = TableValueType.boolean;
             }
             else if (Units.ToLower().Contains("true") && Units.ToLower().Contains("false"))
             {
                 retVal = TableValueType.boolean;
-            }
-            else if (Values.StartsWith("Enum: "))
-            {
-                retVal = TableValueType.selection;
             }
             else
             {

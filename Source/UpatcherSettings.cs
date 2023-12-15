@@ -29,7 +29,7 @@ namespace UniversalPatcher
             TableExplorerIconSize = 16;
             TunerTreeMode = true;
             TunerAutomulti1d = true;
-            MulitableChars = ". [ ]";
+            MultitableChars = ". [ ]";
             WorkingMode = 0;
             RequireValidVerForStock = true;
             TunerShowUnitsUndefined = true;
@@ -72,6 +72,9 @@ namespace UniversalPatcher
             LoggerResetAfterMiss = 50;
             ClearFuncAddrOnDisconnect = true;
             LoggerGraphDisableResample = false;
+            TableEditorHexShowAddress = false;
+            TableEditorHexShowBinary = false;
+            TableEditorHexShowDecimal = false;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
             TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
@@ -148,6 +151,9 @@ namespace UniversalPatcher
         public int TableEditorMinTableEquivalency { get; set; }
         public int keyPressWait100ms { get; set; }
         public int TableEditorMinOtherEquivalency { get; set; }
+        public bool TableEditorHexShowAddress { get; set; }
+        public bool TableEditorHexShowBinary { get; set; }
+        public bool TableEditorHexShowDecimal { get; set; }
         public Point MassCopyTableWindowLocation { get; set; }
         public FormWindowState MassCopyTableWindowState { get; set; }
         public Size MassCopyTableWindowSize { get; set; }
@@ -167,7 +173,7 @@ namespace UniversalPatcher
         public bool TunerTreeMode { get; set; }
         public bool TunerAutomulti1d { get; set; }
         public int TunerListModeTreeWidth { get; set; }
-        public string MulitableChars { get; set; }
+        public string MultitableChars { get; set; }
         public bool DisableAutoFixChecksum { get; set; }
         public int WorkingMode { get; set; }
         public bool CvnPopupAccepted { get; set; }

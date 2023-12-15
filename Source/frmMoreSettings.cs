@@ -23,7 +23,7 @@ namespace UniversalPatcher
             AppSettings.TunerMinTableEquivalency = (int)numTunerTableMinEquivalency.Value;
             AppSettings.keyPressWait100ms = (int)numKeypressWait.Value;
             AppSettings.TableEditorMinOtherEquivalency = (int)numTunerMinEqOther.Value;
-            AppSettings.MulitableChars = txtMultitableChars.Text;
+            AppSettings.MultitableChars = txtMultitableChars.Text;
             AppSettings.DisableAutoFixChecksum = chkDisableAutoCS.Checked;
             AppSettings.RequireValidVerForStock = chkRequireValidVerForStock.Checked;
             AppSettings.AutomaticOpenImportedFile = chkAutoOpenImportedFile.Checked;
@@ -46,7 +46,7 @@ namespace UniversalPatcher
             numTunerTableMinEquivalency.Value = AppSettings.TunerMinTableEquivalency;
             numKeypressWait.Value = AppSettings.keyPressWait100ms;
             numTunerMinEqOther.Value = AppSettings.TableEditorMinOtherEquivalency;
-            txtMultitableChars.Text = AppSettings.MulitableChars;
+            txtMultitableChars.Text = AppSettings.MultitableChars;
             chkDisableAutoCS.Checked = AppSettings.DisableAutoFixChecksum;
             chkRequireValidVerForStock.Checked = AppSettings.RequireValidVerForStock;
             chkAutoOpenImportedFile.Checked = AppSettings.AutomaticOpenImportedFile;

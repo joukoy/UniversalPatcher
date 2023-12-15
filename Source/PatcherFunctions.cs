@@ -529,6 +529,7 @@ public class Upatcher
         Hex = 3,
         Text = 4,
         Flag = 5,
+        Bitmap = 6,
         Filename = 10
     }
 
@@ -553,6 +554,7 @@ public class Upatcher
         boolean,
         selection,
         bitmask,
+        bitmap,
         number,
         patch
     }
@@ -1193,6 +1195,169 @@ public class Upatcher
         }
         return retVal;
     }
+    public static double GetValueByRowColumn(byte[] myBuffer, TableData mathTd, int offset, ushort row, ushort column, PcmFile PCM)
+    {
+        double retVal = 0;
+        try
+        {
+            bool msb = PCM.platformConfig.MSB;
+            switch (mathTd.ByteOrder)
+            {
+                case Byte_Order.PlatformOrder:
+                    msb = PCM.platformConfig.MSB;
+                    break;
+                case Byte_Order.MSB:
+                    msb = true;
+                    break;
+                case Byte_Order.LSB:
+                    msb = false;
+                    break;
+            }
+
+            uint addr = (uint)(mathTd.addrInt + mathTd.Offset + mathTd.ExtraOffset);
+            UInt32 bufAddr = (UInt32)(addr - offset);
+            uint elemSize = (uint)mathTd.ElementSize();
+            byte byteMask = 0x80;
+            if (mathTd.RowMajor)
+            {
+                for (int r = 0; r < mathTd.Rows; r++)
+                {
+                    if (r > row) break;
+                    for (int c = 0; c < mathTd.Columns; c++)
+                    {
+                        if (mathTd.OutputType == OutDataType.Bitmap)
+                        {
+
+                            if (byteMask == 1)
+                            {
+                                byteMask = 0x80;
+                                bufAddr++;
+                            }
+                            else
+                            {
+                                byteMask = (byte)(byteMask >> 1);
+                            }
+                        }
+                        else
+                        {
+                            bufAddr += elemSize;
+                        }
+                        if (r == row && c == column) break;
+                    }
+                }
+            }
+            else
+            {
+                for (int c = 0; c < mathTd.Columns; c++)
+                {
+                    if (c > column) break;
+                    for (int r = 0; r < mathTd.Rows; r++)
+                    {
+                        if (mathTd.OutputType == OutDataType.Bitmap)
+                        {
+
+                            if (byteMask == 1)
+                            {
+                                byteMask = 0x80;
+                                bufAddr++;
+                            }
+                            else
+                            {
+                                byteMask = (byte)(byteMask >> 1);
+                            }
+                        }
+                        else
+                        {
+                            bufAddr += elemSize;
+                        }
+                        if (r == row && c == column) break;
+                    }
+                }
+            }
+
+            if (mathTd.Math.StartsWith("DTC"))
+            {
+                int codeIndex = (int)(addr - mathTd.addrInt);
+                switch (mathTd.Math.Substring(4))
+                {
+                    case "DTC_Enable":
+                        return PCM.dtcCodes[codeIndex].Status;
+                    case "MIL_Enable":
+                        return PCM.dtcCodes[codeIndex].MilStatus;
+                    case "Type":
+                        return PCM.dtcCodes[codeIndex].Type;
+                    default:
+                        throw new Exception("Unknown Math: " + mathTd.Math);
+                }
+            }
+
+            if (mathTd.OutputType == OutDataType.Bitmap)
+            {
+                if ((myBuffer[bufAddr] & byteMask) == byteMask)
+                    return 1;
+                else
+                    return 0;
+            }
+
+            if (mathTd.OutputType == OutDataType.Flag && !string.IsNullOrEmpty(mathTd.BitMask))
+            {
+                UInt64 mask;
+                mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
+                UInt64 rawVal = (UInt64)GetRawValue(myBuffer, bufAddr, mathTd, offset, PCM.platformConfig.MSB);
+                if (((UInt64)rawVal & mask) == mask)
+                    return 1;
+                else
+                    return 0;
+            }
+
+
+            if (mathTd.DataType == InDataType.SBYTE)
+                retVal = (sbyte)myBuffer[bufAddr];
+            if (mathTd.DataType == InDataType.UBYTE)
+                retVal = myBuffer[bufAddr];
+            if (mathTd.DataType == InDataType.SWORD)
+                retVal = ReadInt16(myBuffer, bufAddr, msb);
+            if (mathTd.DataType == InDataType.UWORD)
+                retVal = ReadUint16(myBuffer, bufAddr, msb);
+            if (mathTd.DataType == InDataType.INT32)
+                retVal = ReadInt32(myBuffer, bufAddr, msb);
+            if (mathTd.DataType == InDataType.UINT32)
+                retVal = ReadUint32(myBuffer, bufAddr, msb);
+            if (mathTd.DataType == InDataType.INT64)
+                retVal = ReadInt64(myBuffer, bufAddr, msb);
+            if (mathTd.DataType == InDataType.UINT64)
+                retVal = ReadUint64(myBuffer, bufAddr, msb);
+            if (mathTd.DataType == InDataType.FLOAT32)
+                retVal = ReadFloat32(myBuffer, bufAddr, msb);
+            if (mathTd.DataType == InDataType.FLOAT64)
+                retVal = ReadFloat64(myBuffer, bufAddr, msb);
+
+            if (string.IsNullOrEmpty(mathTd.Math))
+                mathTd.Math = "X";
+            string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
+            if (mathStr.Contains("table:"))
+            {
+                mathStr = ReadConversionTable(mathStr, PCM);
+            }
+            if (mathStr.Contains("raw:"))
+            {
+                mathStr = ReadConversionRaw(mathStr, PCM);
+            }
+            retVal = parser.Parse(mathStr, false);
+            //Debug.WriteLine(mathStr);
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
+        }
+        return retVal;
+    }
+
 
     //
     //Get value from defined table, using defined math functions.
@@ -1203,10 +1368,18 @@ public class Upatcher
         try
         {
             bool msb = PCM.platformConfig.MSB;
-            if (mathTd.ByteOrder == Byte_Order.MSB)
-                msb = true;
-            else if (mathTd.ByteOrder == Byte_Order.LSB)
-                msb = false;
+            switch (mathTd.ByteOrder)
+            {
+                case Byte_Order.PlatformOrder:
+                    msb = PCM.platformConfig.MSB;
+                    break;
+                case Byte_Order.MSB:
+                    msb = true;
+                    break;
+                case Byte_Order.LSB:
+                    msb = false;
+                    break;
+            }
 
             if (mathTd.Math.StartsWith("DTC"))
             {
@@ -1224,18 +1397,19 @@ public class Upatcher
                 }
             }
 
+            UInt32 bufAddr = (UInt32)(addr - offset);
+
             if (mathTd.OutputType == OutDataType.Flag && !string.IsNullOrEmpty(mathTd.BitMask))
             {
                 UInt64 mask;
                 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
-                UInt64 rawVal = (UInt64)GetRawValue(myBuffer, addr, mathTd, offset, msb);
+                UInt64 rawVal = (UInt64)GetRawValue(myBuffer, bufAddr, mathTd, offset, PCM.platformConfig.MSB);
                 if (((UInt64) rawVal & mask) == mask)
                     return 1;
                 else
                     return 0;
             }
 
-            UInt32 bufAddr = (UInt32)(addr - offset);
 
             if (mathTd.DataType == InDataType.SBYTE)
                 retVal = (sbyte)myBuffer[bufAddr];
@@ -1291,10 +1465,25 @@ public class Upatcher
         try
         {
             bool msb = platformMsb;
-            if (mathTd.ByteOrder == Byte_Order.MSB)
+            if (mathTd.OutputType == OutDataType.Bitmap)
+            {
                 msb = true;
-            else if (mathTd.ByteOrder == Byte_Order.LSB)
-                msb = false;
+            }
+            else
+            {
+                switch(mathTd.ByteOrder)
+                {
+                    case Byte_Order.PlatformOrder:
+                        msb = platformMsb;
+                        break;
+                    case Byte_Order.MSB:
+                        msb = true;
+                        break;
+                    case Byte_Order.LSB:
+                        msb = false;
+                        break;
+                }
+            }
             switch (mathTd.DataType)
             {
                 case InDataType.SBYTE:
