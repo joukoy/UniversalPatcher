@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version>1</Version>
+    <Addresses>@520*5,@548*2&lt;80000</Addresses>
+    <SwapAddress>@520*5,@548*2&lt;80000</SwapAddress>
+    <CS1Address>51a:2:hex</CS1Address>
+    <CS2Address>500:2:hex</CS2Address>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
+    <CS1Blocks>@558*8,@598*2&lt;80000</CS1Blocks>
+    <CS2Blocks>@5a8*7,@5e0*2&lt;80000</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>504:4:int</PNAddr>
+    <VerAddr>508:2:text</VerAddr>
+    <SegNrAddr>502:2:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Calibration</Name>
+    <Version>1</Version>
+    <Addresses>@5f4</Addresses>
+    <SwapAddress>@5f4</SwapAddress>
+    <CS1Address>#1a:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
+    <CS1Blocks>@5fc*2</CS1Blocks>
+    <CS2Blocks>@60c</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#2:2</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Eeprom</Name>
+    <Version />
+    <Addresses>Search</Addresses>
+    <SwapAddress />
+    <CS1Address />
+    <CS2Address />
+    <Checksum1Method>None</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks />
+    <CS2Blocks />
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo>Vin:#68:17:text,Bcc:#62:4:text,Serial:#26:56:text,Hardware:#5e:4:int,Seed:#02:2:hex,Key:#04:2:hex</ExtraInfo>
+    <Comment />
+    <CheckWords />
+    <SearchAddresses>4000-5fff,6000-7fff</SearchAddresses>
+    <Searchfor>ffffffff:0:N</Searchfor>
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

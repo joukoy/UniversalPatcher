@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentSeek>
+    <Name>cs1</Name>
+    <SearchStr>70 60 * * 50 63 * * 00 04 70 60 * * 50 63 * * 00 04 70 60 @ @ 50 63 @ @</SearchStr>
+    <Offset>-3758096384</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>start1</Name>
+    <SearchStr>70 60 @ @ 50 63 @ @ 00 04 70 60 * * 50 63 * * 00 04 70 60 * * 50 63 * *</SearchStr>
+    <Offset>-3758096384</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>end1</Name>
+    <SearchStr>70 60 * * 50 63 * * 00 04 70 60 * * 50 63 * * 00 04 70 60 @ @ 50 63 @ @</SearchStr>
+    <Offset>-3758096385</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>cs1</Name>
+    <SearchStr>80 00 20 3C 60 @ @ 80 63 @ @ 4E 80 00 20 7C</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>start1</Name>
+    <SearchStr>41 82 00 14 48 00 00 1C 3C 60 @ @ 38 63 @ @ 4E 80 00 20 3C 60</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>end1</Name>
+    <SearchStr>80 00 20 3C 60 @ @ 80 63 @ @ 4E 80 00 20 7C</SearchStr>
+    <Offset>-1</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+</ArrayOfSegmentSeek>

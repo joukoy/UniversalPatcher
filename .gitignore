@@ -11,3 +11,7 @@ XML/Pikakäyttö – Pikakuvake.lnk
 Create-Zip.cmd
 Create-Zip.ps1
 Create-Zip-No-github.cmd
+Source/Debug/
+Source/Release/
+Uptools/Debug/
+Uptools/Release/
