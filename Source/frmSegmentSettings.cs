@@ -224,7 +224,6 @@ namespace UniversalPatcher
                 Res = frmE.Result;
             }
             return Res;
-
         }
         private void txtCS1Address_Doubleclick(object sender,EventArgs e)
         {

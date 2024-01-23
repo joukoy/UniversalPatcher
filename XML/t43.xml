@@ -3,11 +3,12 @@
   <SegmentConfig>
     <Name>BootBlock</Name>
     <Version>3</Version>
-    <Addresses>@2A022*2</Addresses>
+    <Addresses>@2A022*1</Addresses>
+    <SwapAddress />
     <CS1Address>#A01c:2:hex</CS1Address>
     <CS2Address>#A000:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@2A02A*3</CS1Blocks>
     <CS2Blocks>@2A042*2</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -22,14 +23,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>OS</Name>
+    <Version />
     <Addresses>@60022*2</Addresses>
     <CS1Address>#3001c:2:hex</CS1Address>
     <CS2Address>#30000:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@60032*4</CS1Blocks>
     <CS2Blocks>@60052*3</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -44,14 +50,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Trans</Name>
+    <Version />
     <Addresses>@6006e</Addresses>
     <CS1Address>#1c:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@60076*2</CS1Blocks>
     <CS2Blocks>@60086</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -66,14 +77,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Diag</Name>
+    <Version />
     <Addresses>@60091</Addresses>
     <CS1Address>#1c:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@60099*2</CS1Blocks>
     <CS2Blocks>@600a9</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -88,14 +104,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>System</Name>
+    <Version />
     <Addresses>@600b4</Addresses>
     <CS1Address>#1c:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@600bc*2</CS1Blocks>
     <CS2Blocks>@600cc</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -110,14 +131,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>EEPROM_DATA</Name>
+    <Version />
     <Addresses>Search</Addresses>
     <CS1Address />
     <CS2Address />
-    <CS1Method>0</CS1Method>
-    <CS2Method>0</CS2Method>
+    <Checksum1Method>None</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
     <CS1Blocks />
     <CS2Blocks />
     <CS1Complement>2</CS1Complement>
@@ -134,5 +160,9 @@
     <CheckWords>a5a0:326:1cc:CWvin,a5a0:1da:b4:CWvin,a5a0:1be:b8:CWvin</CheckWords>
     <SearchAddresses>8000-9fff,a000-bfff,c000-dfff,e000-ffff</SearchAddresses>
     <Searchfor>a5a5:284:y</Searchfor>
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
   </SegmentConfig>
 </ArrayOfSegmentConfig>

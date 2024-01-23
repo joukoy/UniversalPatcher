@@ -6,8 +6,8 @@
     <Addresses>@fda5</Addresses>
     <CS1Address>#fda0:2:hex</CS1Address>
     <CS2Address>#fd80:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@fdad*3</CS1Blocks>
     <CS2Blocks>@fdc5*2</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -22,6 +22,10 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>OS</Name>
@@ -29,8 +33,8 @@
     <Addresses>@C0126,@C012E</Addresses>
     <CS1Address>#120:2:hex</CS1Address>
     <CS2Address>#100:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@C0136*3</CS1Blocks>
     <CS2Blocks>@c014e*2</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -45,14 +49,47 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>SYSSPD ext</Name>
+    <Version />
+    <Addresses />
+    <SwapAddress />
+    <CS1Address>seek:cs4:4</CS1Address>
+    <CS2Address>seek:cs5:4</CS2Address>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
+    <CS1Blocks>seek:start4-seek:end4</CS1Blocks>
+    <CS2Blocks>seek:start5-seek:end5</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>true</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>System</Name>
+    <Version />
     <Addresses>@C0162</Addresses>
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@c016a*2</CS1Blocks>
     <CS2Blocks>@c017a</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -67,14 +104,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Fuel</Name>
+    <Version />
     <Addresses>@C0186</Addresses>
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@c018e*2</CS1Blocks>
     <CS2Blocks>@c019e</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -89,14 +131,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Speedo</Name>
+    <Version />
     <Addresses>@C01AA</Addresses>
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@c01b2*2</CS1Blocks>
     <CS2Blocks>@c01c2</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -111,14 +158,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>EngineDiag</Name>
+    <Version />
     <Addresses>@C01CE</Addresses>
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@c01d6*2</CS1Blocks>
     <CS2Blocks>@c01e6</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -133,15 +185,20 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>ENG extra 1</Name>
+    <Version />
     <Addresses />
     <SwapAddress />
     <CS1Address>seek:cs1:4:hex</CS1Address>
     <CS2Address>seek:cs2:4:hex</CS2Address>
-    <CS1Method>4</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>seek:start1-seek:end1</CS1Blocks>
     <CS2Blocks>seek:start2-seek:end2</CS2Blocks>
     <CS1Complement>2</CS1Complement>
@@ -156,15 +213,20 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>true</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>ENG extra 2</Name>
+    <Version />
     <Addresses />
     <SwapAddress />
     <CS1Address>seek:cs3:4:hex</CS1Address>
     <CS2Address />
-    <CS1Method>4</CS1Method>
-    <CS2Method>0</CS2Method>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
     <CS1Blocks>seek:start3-seek:end3</CS1Blocks>
     <CS2Blocks />
     <CS1Complement>2</CS1Complement>
@@ -179,14 +241,19 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>true</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Engine</Name>
+    <Version />
     <Addresses>@C01F2</Addresses>
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@c01fa*2</CS1Blocks>
     <CS2Blocks>@c020a</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -201,5 +268,9 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
 </ArrayOfSegmentConfig>

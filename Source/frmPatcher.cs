@@ -21,6 +21,10 @@ using System.Xml.Linq;
 using System.Globalization;
 using System.Xml;
 using static Helpers;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Runtime.InteropServices;
+
 //using PcmHacking;
 
 namespace UniversalPatcher
@@ -36,7 +40,7 @@ namespace UniversalPatcher
         }
 
         private frmSegmenList frmSL;
-        private PcmFile basefile;
+        public PcmFile basefile;
         private PcmFile modfile;
         private CheckBox[] chkSegments;
         private CheckBox[] chkExtractSegments;
@@ -59,7 +63,7 @@ namespace UniversalPatcher
         private RichTextBoxTraceListener DebugListener;
 
         private uint lastCustomSearchResult = 0;
-
+        private bool stopCustomSearch;
         private string cvnSortBy = "";
         private int cvnSortIndex = 0;
         SortOrder cvnStrSortOrder = SortOrder.Ascending;
@@ -355,8 +359,6 @@ namespace UniversalPatcher
                         tabFunction.TabPages.Add(tabExtract);
                     if (!tabFunction.TabPages.Contains(tabExtractSegments))
                         tabFunction.TabPages.Add(tabExtractSegments);
-                    if (!tabFunction.TabPages.Contains(tabChecksumUtil))
-                        tabFunction.TabPages.Add(tabChecksumUtil);
                     if (!tabFunction.TabPages.Contains(tabEditExtra))
                         tabFunction.TabPages.Add(tabEditExtra);
                     if (!tabFunction.TabPages.Contains(tabSorter))
@@ -416,7 +418,6 @@ namespace UniversalPatcher
                     tabFunction.TabPages.Remove(tabCreate);
                     tabFunction.TabPages.Remove(tabExtract);
                     tabFunction.TabPages.Remove(tabExtractSegments);
-                    tabFunction.TabPages.Remove(tabChecksumUtil);
 
                     tabFunction.TabPages.Remove(tabFakeCvn);
                     tabFunction.TabPages.Remove(tabEditExtra);
@@ -2724,23 +2725,36 @@ namespace UniversalPatcher
             try
             {
                 uint startAddr = 0;
+                if (string.IsNullOrEmpty(txtCustomSearchString.Text))
+                {
+                    Logger("Empty search string");
+                    return;
+                }
+                btnCustomFindStop.Enabled = true;
+                stopCustomSearch = false;
                 if (txtCustomSearchStartAddress.Text.Length == 0 || !HexToUint(txtCustomSearchStartAddress.Text, out startAddr))
                     startAddr = 0;
                 while (startAddr < uint.MaxValue)
                 {
+                    if (stopCustomSearch)
+                    {
+                        Logger("Stopped");
+                        break;
+                    }
                     uint addr = SearchBytes(basefile, txtCustomSearchString.Text, startAddr, basefile.fsize);
                     if (addr < uint.MaxValue)
                     {
                         ShowCustomSearchResult(addr);
                         startAddr = lastCustomSearchResult + 1;
+                        Application.DoEvents();
                     }
                     else
                     {
                         Logger("Done");
-                        return;
+                        break;
                     }
-
                 }
+                btnCustomFindStop.Enabled = false;
             }
             catch (Exception ex)
             {
@@ -3293,194 +3307,6 @@ namespace UniversalPatcher
                 frmEditXML frmE = new frmEditXML();
                 frmE.LoadPIDSearchConfig();
                 frmE.Show();
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
-            }
-        }
-
-        private UInt64 csUtilCalcCS(bool calcOnly, UInt64 oldVal)
-        {
-            CSMethod method = csUtilSelectedMethod();
-            List<Block> blocks;
-            ParseAddress(txtChecksumRange.Text, basefile, out blocks);
-            List<Block> excludes = new List<Block>();
-            if (txtExclude.Text.Length > 0)
-            {
-                ParseAddress(txtExclude.Text, basefile, out excludes);
-            }
-            AddressData csAddr;
-            csAddr.Address = uint.MaxValue - 4;
-            if (!string.IsNullOrEmpty(txtCSAddr.Text) && HexToUint(txtCSAddr.Text, out uint addr))
-            {
-                csAddr.Address = addr;
-            }
-            csAddr.Bytes = (ushort)numCSBytes.Value;
-            csAddr.Name = "CS";
-            csAddr.Type = 0;
-            short complement = 0;
-
-            if (chkCSUtilTryAll.Checked && calcOnly)
-            {
-                for (complement = 0; complement <= 2; complement++)
-                {
-                    UInt64 csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod.crc16, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked,true,(UInt64)numCsUtilInitValue.Value);
-                    if (csCalc == oldVal)
-                        LoggerBold("Method: CRC16,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-                    else
-                        Logger("Method: CRC16,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-
-                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod.crc32, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
-                    if (csCalc == oldVal)
-                        LoggerBold("Method: CRC32,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-                    else
-                        Logger("Method: CRC32,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-
-                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod.Bytesum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
-                    if (csCalc == oldVal)
-                        LoggerBold("Method: Bytesum,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-                    else
-                        Logger("Method: Bytesum,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-
-                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod.Wordsum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
-                    if (csCalc == oldVal)
-                        LoggerBold("Method: WordSum,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-                    else
-                        Logger("Method: WordSum,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-
-                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod.Dwordsum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
-                    if (csCalc == oldVal)
-                        LoggerBold("Method: DwordSum, Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-                    else
-                        Logger("Method: DwordSum, Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-
-                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod.BoschInv, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
-                    if (csCalc == oldVal)
-                        LoggerBold("Method: Bosch Inv,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-                    else
-                        Logger("Method: Bosch Inv,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
-
-                }
-                return 0;
-            }
-            else
-            {
-
-                if (radioCSUtilComplement1.Checked)
-                    complement = 1;
-                if (radioCSUtilComplement2.Checked)
-                    complement = 2;
-                return CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, method, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
-            }
-        }
-
-        private CSMethod csUtilSelectedMethod()
-        {
-            CSMethod method = CSMethod.Bytesum;
-            if (radioCSUtilCrc16.Checked)
-                method = CSMethod.crc16;
-            if (radioCSUtilCrc32.Checked)
-                method = CSMethod.crc32;
-            if (radioCSUtilDwordSum.Checked)
-                method = CSMethod.Dwordsum;
-            if (radioCSUtilSUM.Checked)
-                method = CSMethod.Bytesum;
-            if (radioCSUtilWordSum.Checked)
-                method = CSMethod.Wordsum;
-            if (radioCsUtilBosch.Checked)
-                method = CSMethod.BoschInv;
-            return method;
-        }
-
-        private void btnTestChecksum_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Logger("Checksum research:");
-
-                UInt64 savedVal = 0;
-                uint csAddr = uint.MaxValue;
-                CSMethod method = csUtilSelectedMethod();
-
-                if (!string.IsNullOrEmpty(txtCSAddr.Text) && HexToUint(txtCSAddr.Text, out csAddr))
-                {
-                    if (numCSBytes.Value == 1)
-                        savedVal = basefile.buf[csAddr];
-                    else if (numCSBytes.Value == 2)
-                        savedVal = ReadUint16(basefile.buf, csAddr, chkCsMSB.Checked);
-                    else if (numCSBytes.Value == 4)
-                        savedVal = ReadUint32(basefile.buf, csAddr, chkCsMSB.Checked);
-                    else if (numCSBytes.Value == 8)
-                        savedVal = ReadUint64(basefile.buf, csAddr, chkCsMSB.Checked);
-                    Logger("Saved value: ", false);
-                    Logger(SegmentInfo.CsToString(savedVal, (int)numCSBytes.Value, method, chkCsMSB.Checked));
-                }
-
-                if (chkCSUtilTryAll.Checked)
-                {
-                    csUtilCalcCS(true, savedVal);
-                }
-                else
-                {
-                    Logger("Result: ", false);
-                    ulong calCval = csUtilCalcCS(true, savedVal);
-                    Logger(SegmentInfo.CsToString(calCval, (int)numCSBytes.Value, method, chkCsMSB.Checked), false);
-                    if (savedVal == calCval)
-                        Logger(" [Match]");
-                    else
-                        Logger("");
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
-            }
-        }
-
-        private void btnCsUtilFix_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                CSMethod method = csUtilSelectedMethod();
-                UInt64 CS1Calc = csUtilCalcCS(false, 0);
-                uint csAddr;
-                HexToUint(txtCSAddr.Text, out csAddr);
-
-                UInt64 oldVal = 0;
-                if (numCSBytes.Value == 1)
-                {
-                    oldVal = basefile.ReadByte(csAddr);
-                    basefile.buf[csAddr] = (byte)CS1Calc;
-                }
-                else if (numCSBytes.Value == 2)
-                {
-                    oldVal = basefile.ReadUInt16(csAddr);
-                    basefile.SaveUshort(csAddr, (ushort)CS1Calc);
-                }
-                else if (numCSBytes.Value == 4)
-                {
-                    oldVal = basefile.ReadUInt32(csAddr);
-                    basefile.SaveUint32(csAddr, (uint)CS1Calc);
-                }
-                else if (numCSBytes.Value == 8)
-                {
-                    oldVal = basefile.ReadUInt64(csAddr);
-                    basefile.SaveUint64(csAddr, CS1Calc);
-                }
-                ShowChkData();
-                Logger("Checksum: " + SegmentInfo.CsToString(oldVal, (int)numCSBytes.Value, method, chkCsMSB.Checked) + " => " + SegmentInfo.CsToString(CS1Calc, (int)numCSBytes.Value, method, chkCsMSB.Checked) + " [Fixed]");
-                Logger("You can save BIN file now");
             }
             catch (Exception ex)
             {
@@ -4195,147 +4021,7 @@ namespace UniversalPatcher
             fcs.Show();
         }
 
-        private void ShowChkData()
-        {
-            uint chkAddr = 0;
-            if (!HexToUint(txtCSAddr.Text, out chkAddr))
-                return;
 
-            try
-            {
-                int seg = basefile.GetSegmentNumber(chkAddr);
-                richChkData.Text = "";
-                uint segStartAddr = 0;
-                uint segEndAddr = basefile.fsize;
-                uint rStart = uint.MaxValue;
-                uint rEnd = 0;
-
-                if (txtChecksumRange.Text.Contains("-"))
-                {
-                    string[] rParts = txtChecksumRange.Text.Split('-');
-                    if (rParts.Length == 2)
-                    {
-                        HexToUint(rParts[0], out rStart);
-                        HexToUint(rParts[1], out rEnd);
-                    }
-                }
-
-                if (seg > -1)
-                {
-                    segStartAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[0].Start;
-                    segEndAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End;
-                }
-                uint start = segStartAddr;
-                if ((int)(chkAddr - 4) > 0)
-                    start = chkAddr - 4;
-                uint prevSegAddr = uint.MaxValue;
-                uint nextSegAddr = uint.MaxValue;
-                for (uint a = start; a < basefile.fsize && a < (chkAddr + 10); a++)
-                {
-                    if (a >= chkAddr && a < (chkAddr + numCSBytes.Value))
-                    {
-                        richChkData.SelectionColor = Color.Red;
-                    }
-                    else if (a >= segStartAddr && a <= segEndAddr)
-                    {
-                        richChkData.SelectionColor = Color.Black;
-                    }
-                    else if (a < segStartAddr)
-                    {
-                        richChkData.SelectionColor = Color.LightBlue;
-                        prevSegAddr = a;
-                    }
-                    else
-                    {
-                        richChkData.SelectionColor = Color.LightGreen;
-                        nextSegAddr = a;
-                    }
-                    if (a >= rStart && a <= rEnd)
-                        richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Underline);
-                    else
-                        richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Regular);
-                    if (a == segEndAddr || a == (segStartAddr - 1))
-                        richChkData.AppendText(basefile.buf[a].ToString("X2") + "|");
-                    else
-                        richChkData.AppendText(basefile.buf[a].ToString("X2") + " ");
-                }
-
-                if (rEnd > (chkAddr + 8))
-                {
-                    richChkData.AppendText("... ");
-                    for (uint a = rEnd - 4; a < basefile.fsize && a < (rEnd + 4); a++)
-                    {
-                        if (a >= chkAddr && a < (chkAddr + numCSBytes.Value))
-                        {
-                            richChkData.SelectionColor = Color.Red;
-                        }
-                        else if (a >= segStartAddr && a <= segEndAddr)
-                        {
-                            richChkData.SelectionColor = Color.Black;
-                        }
-                        else if (a < segStartAddr)
-                        {
-                            richChkData.SelectionColor = Color.LightBlue;
-                            prevSegAddr = a;
-                        }
-                        else
-                        {
-                            richChkData.SelectionColor = Color.LightGreen;
-                            nextSegAddr = a;
-                        }
-                        if (a >= rStart && a <= rEnd)
-                            richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Underline);
-                        else
-                            richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Regular);
-                        if (a == segEndAddr || a == (segStartAddr - 1))
-                            richChkData.AppendText(basefile.buf[a].ToString("X2") + "|");
-                        else
-                            richChkData.AppendText(basefile.buf[a].ToString("X2") + " ");
-                    }
-                }
-
-                richChkData.SelectionColor = Color.Black;
-                richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Underline);
-                richChkData.AppendText(Environment.NewLine + "Underlined:selected range");
-                richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Regular);
-                if (seg > -1)
-                    richChkData.AppendText(Environment.NewLine + "Black:" + basefile.Segments[seg].Name);
-                string prevSegment = basefile.GetSegmentName(prevSegAddr);
-                if (prevSegment != "")
-                {
-                    richChkData.SelectionColor = Color.LightBlue;
-                    richChkData.AppendText(Environment.NewLine + "Lightblue:" + prevSegment);
-                }
-                string nextSegment = basefile.GetSegmentName(nextSegAddr);
-                if (nextSegment != "")
-                {
-                    richChkData.SelectionColor = Color.LightGreen;
-                    richChkData.AppendText(Environment.NewLine + "LightGreen:" + nextSegment);
-                }
-                richChkData.SelectionColor = Color.Red;
-                richChkData.AppendText(Environment.NewLine + "Red:Selected bytes");
-
-                richChkData.SelectionColor = Color.Black;
-
-            }
-            catch { };
-
-        }
-
-        private void txtCSAddr_TextChanged(object sender, EventArgs e)
-        {
-            ShowChkData();
-        }
-
-        private void numCSBytes_ValueChanged(object sender, EventArgs e)
-        {
-            ShowChkData();
-        }
-
-        private void txtChecksumRange_TextChanged(object sender, EventArgs e)
-        {
-            ShowChkData();
-        }
 
         private void homepageToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -4428,33 +4114,6 @@ namespace UniversalPatcher
                 Logger("New data:" + txtExtrainfoData.Text);
                 basefile.segmentinfos[seg].SetExtraData(ind, txtExtrainfoData.Text);
                 Logger("OK, you can save BIN-file now");
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
-            }
-        }
-
-        private void btnCsutilSearchBosch_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                for (uint a = 0; a < (basefile.fsize - 7); a++)
-                {
-                    uint dWord1 = basefile.ReadUInt32(a);
-                    uint dWord2 = basefile.ReadUInt32(a + 4);
-                    if (dWord1 == ~dWord2)
-                    {
-                        if (!chkCsUtilFilter.Checked || dWord1.ToString("X8").Replace("F", "").Replace("0", "") != "")
-                            Logger("Address: " + a.ToString("X8") + ": " + dWord1.ToString("X8") + " " + dWord2.ToString("X8"));
-                    }
-                }
-                Logger("Done.");
             }
             catch (Exception ex)
             {
@@ -4815,6 +4474,24 @@ namespace UniversalPatcher
             frmEditXML frmE = new frmEditXML();
             frmE.Show();
             frmE.LoadRealTimeControlCommands();
+        }
+
+
+        private void btnCsutilSelectSettings_Click(object sender, EventArgs e)
+        {
+            if (basefile.FileName == null)
+            {
+                Logger("No BIN file selected");
+                return;
+            }
+            frmChecksumResearch fcr = new frmChecksumResearch();
+            //fcr.basefile = basefile;
+            fcr.Show();
+        }
+
+        private void btnCustomFindStop_Click(object sender, EventArgs e)
+        {
+            stopCustomSearch = true;
         }
     }
 }

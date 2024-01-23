@@ -2142,7 +2142,7 @@ namespace UniversalPatcher
         {
             for (int i=0; i< segmentinfos.Length; i++)
             {
-                if (!Segments[i].Missing && segmentinfos[i].SegNr == nr.Trim())
+                if (!Segments[i].Missing && segmentinfos[i] != null && segmentinfos[i].SegNr == nr.Trim())
                     return i;
             }
 

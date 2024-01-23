@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -37,7 +38,9 @@ namespace UniversalPatcher
 
             if (OldAddr.Length == 0)
                 return;
-            if (OldAddr.StartsWith("@"))
+            if (OldAddr.StartsWith("seek:"))
+                radioStartSeek.Checked = true;
+            else if (OldAddr.StartsWith("@"))
                 radioStartRead.Checked = true;
             else
                 radioStartAbsolute.Checked = true;
@@ -53,10 +56,23 @@ namespace UniversalPatcher
             if (Parts[0].Contains(":"))
             { 
                 string[] Parts2 = Parts[0].Split(':');
-                Parts[0] = Parts2[0];
-                ushort x;
-                if (UInt16.TryParse(Parts2[1], out x))
-                    numBytes.Value = x;
+                if (Parts2[0] == "seek")
+                {
+                    Parts[0] = Parts2[1];
+                    if (Parts2.Length > 2)
+                    {
+                        ushort x;
+                        if (UInt16.TryParse(Parts2[2], out x))
+                            numBytes.Value = x;
+                    }
+                }
+                else
+                {
+                    Parts[0] = Parts2[0];
+                    ushort x;
+                    if (UInt16.TryParse(Parts2[1], out x))
+                        numBytes.Value = x;
+                }
             }
             txtStart.Text = Parts[0].Replace("@", "");
 
@@ -74,11 +90,13 @@ namespace UniversalPatcher
                     Parts[1] = Parts2[0];
                     txtOffset.Text = Parts2[1];
                 }
-                if (Parts[1].StartsWith("@"))
+                if (Parts[1].StartsWith("seek"))
+                    radioEndSeek.Checked = true;
+                else if (Parts[1].StartsWith("@"))
                     radioReadEnd.Checked = true;
                 else if (Parts[1].StartsWith("L@"))
                     radioReadSize.Checked = true;
-                else if (Parts[1].StartsWith(""))
+                else if (Parts[1].StartsWith("L"))
                     radioSize.Checked = true;
                 else
                     radioEndAbsolute.Checked = true;
@@ -87,7 +105,7 @@ namespace UniversalPatcher
                 else
                     chkEnd.Checked = false;
 
-                txtEnd.Text = Parts[1].Replace("@", "").Replace("L","");
+                txtEnd.Text = Parts[1].Replace("@", "").Replace("L","").Replace("seek:","");
             }
         }
 
@@ -96,16 +114,20 @@ namespace UniversalPatcher
             string BlockText = "";
             if (txtStart.Text.Length == 0)
                 return false;
-            if (radioStartAbsolute.Checked)
+            if (radioStartSeek.Checked)
+            {
+                BlockText = "seek:";
+            }
+            else if (radioStartAbsolute.Checked)
             {
                 if (txtEnd.Text.Length == 0)
                     return false;
-                BlockText += txtStart.Text;
             }
             else
             {
-                BlockText += "@" + txtStart.Text;
+                BlockText += "@";
             }
+            BlockText += txtStart.Text;
             BlockText += ":" + numBytes.Value.ToString();
             if (numReadPairs.Value > 1)
             {
@@ -114,17 +136,18 @@ namespace UniversalPatcher
 
             if (radioEndAbsolute.Checked)
                 BlockText += "-" + txtEnd.Text;
-
-            if (radioReadEnd.Checked)
+            else if (radioEndSeek.Checked)
+                BlockText += "-seek:" + txtEnd.Text;
+            else if (radioReadEnd.Checked)
                 BlockText += "-@" + txtEnd.Text;
 
-            if (chkEnd.Checked)
+            else if (chkEnd.Checked)
                 BlockText += "@";
 
-            if (radioSize.Checked)
+            else if (radioSize.Checked)
                 BlockText += "-L" + txtEnd.Text;
 
-            if (radioReadSize.Checked)
+            else if (radioReadSize.Checked)
                 BlockText += "-L@" + txtEnd.Text;
 
             if (txtOffset.Text.Length > 0)
@@ -226,6 +249,27 @@ namespace UniversalPatcher
         private void radioSize_CheckedChanged(object sender, EventArgs e)
         {
             ShowEndAddress();
+        }
+        private void EditSegmentSeek(TextBox tBox)
+        {
+            frmEditXML frmE = new frmEditXML();
+            frmE.LoadSegmentSeek(frmpatcher.basefile.SegmentSeekFile);
+            if (frmE.ShowDialog() == DialogResult.OK)
+            {
+                SegmentSeek ss = (SegmentSeek)frmE.SelectedObject;
+                if (ss != null)
+                {
+                    tBox.Text = ss.Name;
+                }
+            }
+        }
+        private void btnStartSeek_Click(object sender, EventArgs e)
+        {
+            EditSegmentSeek(txtStart);
+        }
+        private void btnEndSeek_Click(object sender, EventArgs e)
+        {
+            EditSegmentSeek(txtEnd);
         }
     }
 }

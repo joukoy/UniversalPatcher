@@ -72,7 +72,7 @@ namespace UniversalPatcher
         private object currentObj;
         private object currentList;
         private Type currentType;
-
+        public object SelectedObject;
         private void frmEditXML_Load(object sender, EventArgs e)
         {
             if (AppSettings.MainWindowPersistence)
@@ -818,9 +818,23 @@ namespace UniversalPatcher
         }
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SaveThis(fileName);
-            this.Close();
-            this.DialogResult = DialogResult.OK;
+            try
+            {
+                SaveThis(fileName);
+                if (dataGridView1.SelectedRows.Count > 0)
+                    SelectedObject = dataGridView1.SelectedRows[0].DataBoundItem;
+                else if (dataGridView1.SelectedCells.Count > 0)
+                    SelectedObject = dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].DataBoundItem;
+                else
+                    SelectedObject = dataGridView1.Rows[0].DataBoundItem;
+                this.Close();
+                this.DialogResult = DialogResult.OK;
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+                this.DialogResult = DialogResult.Abort;
+            }
         }
 
         private void SaveCSV()

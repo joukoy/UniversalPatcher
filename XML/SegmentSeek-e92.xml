@@ -11,6 +11,7 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
   <SegmentSeek>
     <Name>cs2</Name>
@@ -23,6 +24,7 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
   <SegmentSeek>
     <Name>cs3</Name>
@@ -35,6 +37,7 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
   <SegmentSeek>
     <Name>start1</Name>
@@ -47,6 +50,7 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
   <SegmentSeek>
     <Name>start2</Name>
@@ -59,6 +63,7 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
   <SegmentSeek>
     <Name>start3</Name>
@@ -71,6 +76,7 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
   <SegmentSeek>
     <Name>end1</Name>
@@ -83,6 +89,7 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
   <SegmentSeek>
     <Name>end2</Name>
@@ -95,6 +102,7 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
   <SegmentSeek>
     <Name>end3</Name>
@@ -107,5 +115,6 @@
     <Segments />
     <ValidationSearchStr />
     <Description />
+    <MSB>true</MSB>
   </SegmentSeek>
 </ArrayOfSegmentSeek>

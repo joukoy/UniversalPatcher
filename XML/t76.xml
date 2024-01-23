@@ -3,9 +3,8 @@
   <SegmentConfig>
     <Name>BootBlock</Name>
     <Version>3</Version>
-    <Addresses>@1A022</Addresses>
-    <SwapAddress />
-    <CS1Address>#A01C:2:hex</CS1Address>
+    <Addresses>@1A022*2</Addresses>
+    <CS1Address>#A01c:2:hex</CS1Address>
     <CS2Address>#A000:2:hex</CS2Address>
     <Checksum1Method>crc16</Checksum1Method>
     <Checksum2Method>Wordsum</Checksum2Method>
@@ -30,13 +29,14 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>OS</Name>
+    <Version />
     <Addresses>@20422</Addresses>
     <SwapAddress />
-    <CS1Address>#41C:2:hex</CS1Address>
+    <CS1Address>#41c:2:hex</CS1Address>
     <CS2Address>#400:2:hex</CS2Address>
     <Checksum1Method>crc16</Checksum1Method>
     <Checksum2Method>Wordsum</Checksum2Method>
-    <CS1Blocks>@2042A*3</CS1Blocks>
+    <CS1Blocks>@2042a*3</CS1Blocks>
     <CS2Blocks>@20442*2</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
@@ -56,15 +56,15 @@
     <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
-    <Name>System</Name>
+    <Name>Trans</Name>
+    <Version />
     <Addresses>@20456</Addresses>
-    <SwapAddress />
-    <CS1Address>#1C:2:hex</CS1Address>
+    <CS1Address>#1c:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
     <Checksum1Method>crc16</Checksum1Method>
     <Checksum2Method>Wordsum</Checksum2Method>
-    <CS1Blocks>@2045E*2</CS1Blocks>
-    <CS2Blocks>@2046E</CS2Blocks>
+    <CS1Blocks>@2045e*2</CS1Blocks>
+    <CS2Blocks>@2046e</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
@@ -83,10 +83,10 @@
     <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
-    <Name>Trans</Name>
+    <Name>Diag</Name>
+    <Version />
     <Addresses>@20479</Addresses>
-    <SwapAddress />
-    <CS1Address>#1C:2:hex</CS1Address>
+    <CS1Address>#1c:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
     <Checksum1Method>crc16</Checksum1Method>
     <Checksum2Method>Wordsum</Checksum2Method>
@@ -110,15 +110,15 @@
     <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
-    <Name>Diag</Name>
-    <Addresses>@2049C</Addresses>
-    <SwapAddress />
-    <CS1Address>#1C:2:hex</CS1Address>
+    <Name>System</Name>
+    <Version />
+    <Addresses>@2049c</Addresses>
+    <CS1Address>#1c:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
     <Checksum1Method>crc16</Checksum1Method>
     <Checksum2Method>Wordsum</Checksum2Method>
-    <CS1Blocks>@204A4*2</CS1Blocks>
-    <CS2Blocks>@204B4</CS2Blocks>
+    <CS1Blocks>@204a4*2</CS1Blocks>
+    <CS2Blocks>@204b4</CS2Blocks>
     <CS1Complement>0</CS1Complement>
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
@@ -138,8 +138,8 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>EEPROM_DATA</Name>
+    <Version />
     <Addresses>Search</Addresses>
-    <SwapAddress />
     <CS1Address />
     <CS2Address />
     <Checksum1Method>None</Checksum1Method>
@@ -152,14 +152,14 @@
     <CS2SwapBytes>false</CS2SwapBytes>
     <CVN>0</CVN>
     <Eeprom>false</Eeprom>
-    <PNAddr>#2C:4:text</PNAddr>
+    <PNAddr>#2:3:text</PNAddr>
     <VerAddr />
     <SegNrAddr />
-    <ExtraInfo>PCM:#34:4:int,PCMid2:#3c:4:int,VIN:#60:17:text,trace code:#40:16:text,Trace2:#58:8:text,BCC:#2c:4:text,Tool:#94:10:text,Programdate:#7c:4:hex</ExtraInfo>
+    <ExtraInfo>PCM:#280:4:int,VIN:#300:17:text,trace code:#298:16:text,BCC:#22c:4:text,Tool:#2c8:10:text,Programdate:#2a8:4:hex,PCM1:#e:20:text,PCM2:#cf:27:text</ExtraInfo>
     <Comment />
-    <CheckWords />
-    <SearchAddresses>A000-BFFF,E000-FFFF</SearchAddresses>
-    <Searchfor>A5A5:2A:y</Searchfor>
+    <CheckWords>a5a0:326:1cc:CWvin,a5a0:1da:b4:CWvin,a5a0:1be:b8:CWvin</CheckWords>
+    <SearchAddresses>8000-9fff,a000-bfff,c000-dfff,e000-ffff</SearchAddresses>
+    <Searchfor>a5a5:284:y</Searchfor>
     <Hidden>false</Hidden>
     <Missing>false</Missing>
     <CS1Method>0</CS1Method>

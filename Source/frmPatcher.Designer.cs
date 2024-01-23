@@ -143,6 +143,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnCsutilSelectSettings = new System.Windows.Forms.Button();
             this.btnByteSwap = new System.Windows.Forms.Button();
             this.btnStartFlashApp = new System.Windows.Forms.Button();
             this.btnLogger = new System.Windows.Forms.Button();
@@ -156,6 +157,7 @@
             this.btnDisplayFileInfo = new System.Windows.Forms.Button();
             this.btnVisualSegments = new System.Windows.Forms.Button();
             this.groupSearch = new System.Windows.Forms.GroupBox();
+            this.btnCustomFindStop = new System.Windows.Forms.Button();
             this.txtCustomSearchString = new System.Windows.Forms.TextBox();
             this.txtCustomSearchStartAddress = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -193,37 +195,6 @@
             this.txtSegmentDescription = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
-            this.tabChecksumUtil = new System.Windows.Forms.TabPage();
-            this.numCsUtilInitValue = new System.Windows.Forms.NumericUpDown();
-            this.label24 = new System.Windows.Forms.Label();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.chkCsUtilFilter = new System.Windows.Forms.CheckBox();
-            this.btnCsutilSearchBosch = new System.Windows.Forms.Button();
-            this.chkCsMSB = new System.Windows.Forms.CheckBox();
-            this.richChkData = new System.Windows.Forms.RichTextBox();
-            this.chkCsUtilSwapBytes = new System.Windows.Forms.CheckBox();
-            this.btnCsUtilFix = new System.Windows.Forms.Button();
-            this.numCSBytes = new System.Windows.Forms.NumericUpDown();
-            this.label20 = new System.Windows.Forms.Label();
-            this.txtExclude = new System.Windows.Forms.TextBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.txtCSAddr = new System.Windows.Forms.TextBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.txtChecksumRange = new System.Windows.Forms.TextBox();
-            this.btnTestChecksum = new System.Windows.Forms.Button();
-            this.chkCSUtilTryAll = new System.Windows.Forms.CheckBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.radioCSUtilComplement2 = new System.Windows.Forms.RadioButton();
-            this.radioCSUtilComplement1 = new System.Windows.Forms.RadioButton();
-            this.radioCSUtilComplement0 = new System.Windows.Forms.RadioButton();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioCsUtilBosch = new System.Windows.Forms.RadioButton();
-            this.radioCSUtilDwordSum = new System.Windows.Forms.RadioButton();
-            this.radioCSUtilWordSum = new System.Windows.Forms.RadioButton();
-            this.radioCSUtilSUM = new System.Windows.Forms.RadioButton();
-            this.radioCSUtilCrc32 = new System.Windows.Forms.RadioButton();
-            this.radioCSUtilCrc16 = new System.Windows.Forms.RadioButton();
             this.tabFakeCvn = new System.Windows.Forms.TabPage();
             this.richEndOfSegment = new System.Windows.Forms.RichTextBox();
             this.btnFakeCvnAddtoStock = new System.Windows.Forms.Button();
@@ -342,12 +313,6 @@
             this.tabExtract.SuspendLayout();
             this.tabExtractSegments.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.tabChecksumUtil.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).BeginInit();
-            this.groupBox6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).BeginInit();
-            this.groupBox5.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.tabFakeCvn.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -391,7 +356,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBaseFile.Location = new System.Drawing.Point(96, 34);
             this.txtBaseFile.Name = "txtBaseFile";
-            this.txtBaseFile.Size = new System.Drawing.Size(745, 20);
+            this.txtBaseFile.Size = new System.Drawing.Size(782, 20);
             this.txtBaseFile.TabIndex = 15;
             // 
             // txtModifierFile
@@ -400,7 +365,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtModifierFile.Location = new System.Drawing.Point(90, 6);
             this.txtModifierFile.Name = "txtModifierFile";
-            this.txtModifierFile.Size = new System.Drawing.Size(720, 20);
+            this.txtModifierFile.Size = new System.Drawing.Size(757, 20);
             this.txtModifierFile.TabIndex = 111;
             // 
             // btnCompare
@@ -416,7 +381,7 @@
             // btnSaveBin
             // 
             this.btnSaveBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveBin.Location = new System.Drawing.Point(723, 6);
+            this.btnSaveBin.Location = new System.Drawing.Point(760, 6);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(108, 25);
             this.btnSaveBin.TabIndex = 188;
@@ -430,7 +395,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPatchDescription.Location = new System.Drawing.Point(129, 56);
             this.txtPatchDescription.Name = "txtPatchDescription";
-            this.txtPatchDescription.Size = new System.Drawing.Size(449, 20);
+            this.txtPatchDescription.Size = new System.Drawing.Size(486, 20);
             this.txtPatchDescription.TabIndex = 116;
             // 
             // labelBinSize
@@ -546,7 +511,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(844, 358);
+            this.tabControl1.Size = new System.Drawing.Size(881, 346);
             this.tabControl1.TabIndex = 200;
             // 
             // tabInfo
@@ -566,7 +531,7 @@
             this.tabInfo.Location = new System.Drawing.Point(4, 22);
             this.tabInfo.Name = "tabInfo";
             this.tabInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInfo.Size = new System.Drawing.Size(836, 332);
+            this.tabInfo.Size = new System.Drawing.Size(873, 320);
             this.tabInfo.TabIndex = 0;
             this.tabInfo.Text = "Log";
             this.tabInfo.UseVisualStyleBackColor = true;
@@ -614,14 +579,14 @@
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(2, 26);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(834, 305);
+            this.txtResult.Size = new System.Drawing.Size(871, 293);
             this.txtResult.TabIndex = 202;
             this.txtResult.Text = "";
             // 
             // btnSaveFileInfo
             // 
             this.btnSaveFileInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveFileInfo.Location = new System.Drawing.Point(758, 2);
+            this.btnSaveFileInfo.Location = new System.Drawing.Point(795, 2);
             this.btnSaveFileInfo.Name = "btnSaveFileInfo";
             this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 23);
             this.btnSaveFileInfo.TabIndex = 171;
@@ -638,7 +603,7 @@
             this.tabDebug.Location = new System.Drawing.Point(4, 22);
             this.tabDebug.Name = "tabDebug";
             this.tabDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDebug.Size = new System.Drawing.Size(836, 332);
+            this.tabDebug.Size = new System.Drawing.Size(873, 320);
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
@@ -673,7 +638,7 @@
             this.txtDebug.HideSelection = false;
             this.txtDebug.Location = new System.Drawing.Point(2, 24);
             this.txtDebug.Name = "txtDebug";
-            this.txtDebug.Size = new System.Drawing.Size(835, 309);
+            this.txtDebug.Size = new System.Drawing.Size(865, 294);
             this.txtDebug.TabIndex = 212;
             this.txtDebug.Text = "";
             // 
@@ -706,7 +671,7 @@
             this.tabPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPatch.Location = new System.Drawing.Point(4, 22);
             this.tabPatch.Name = "tabPatch";
-            this.tabPatch.Size = new System.Drawing.Size(836, 332);
+            this.tabPatch.Size = new System.Drawing.Size(873, 320);
             this.tabPatch.TabIndex = 2;
             this.tabPatch.Text = "Patch editor";
             this.tabPatch.UseVisualStyleBackColor = true;
@@ -739,14 +704,14 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dataPatch);
-            this.splitContainer1.Size = new System.Drawing.Size(777, 304);
-            this.splitContainer1.SplitterDistance = 209;
+            this.splitContainer1.Size = new System.Drawing.Size(777, 282);
+            this.splitContainer1.SplitterDistance = 207;
             this.splitContainer1.TabIndex = 261;
             // 
             // btnDelPatch
             // 
             this.btnDelPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDelPatch.Location = new System.Drawing.Point(53, 274);
+            this.btnDelPatch.Location = new System.Drawing.Point(53, 252);
             this.btnDelPatch.Name = "btnDelPatch";
             this.btnDelPatch.Size = new System.Drawing.Size(46, 20);
             this.btnDelPatch.TabIndex = 262;
@@ -757,7 +722,7 @@
             // btnAddPatch
             // 
             this.btnAddPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddPatch.Location = new System.Drawing.Point(5, 274);
+            this.btnAddPatch.Location = new System.Drawing.Point(5, 252);
             this.btnAddPatch.Name = "btnAddPatch";
             this.btnAddPatch.Size = new System.Drawing.Size(42, 20);
             this.btnAddPatch.TabIndex = 261;
@@ -773,7 +738,7 @@
             this.listPatches.FormattingEnabled = true;
             this.listPatches.Location = new System.Drawing.Point(0, 0);
             this.listPatches.Name = "listPatches";
-            this.listPatches.Size = new System.Drawing.Size(209, 264);
+            this.listPatches.Size = new System.Drawing.Size(207, 212);
             this.listPatches.TabIndex = 260;
             this.listPatches.SelectedIndexChanged += new System.EventHandler(this.listPatches_SelectedIndexChanged);
             // 
@@ -784,7 +749,7 @@
             this.dataPatch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataPatch.Location = new System.Drawing.Point(0, 0);
             this.dataPatch.Name = "dataPatch";
-            this.dataPatch.Size = new System.Drawing.Size(564, 304);
+            this.dataPatch.Size = new System.Drawing.Size(566, 282);
             this.dataPatch.TabIndex = 0;
             this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
             // 
@@ -835,7 +800,7 @@
             // btnHelp
             // 
             this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHelp.Location = new System.Drawing.Point(785, 138);
+            this.btnHelp.Location = new System.Drawing.Point(786, 113);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(43, 22);
             this.btnHelp.TabIndex = 257;
@@ -846,7 +811,7 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.Location = new System.Drawing.Point(785, 56);
+            this.btnEdit.Location = new System.Drawing.Point(786, 31);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(43, 22);
             this.btnEdit.TabIndex = 254;
@@ -857,7 +822,7 @@
             // btnDown
             // 
             this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDown.Location = new System.Drawing.Point(786, 219);
+            this.btnDown.Location = new System.Drawing.Point(787, 183);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(43, 22);
             this.btnDown.TabIndex = 259;
@@ -868,7 +833,7 @@
             // btnUp
             // 
             this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUp.Location = new System.Drawing.Point(785, 191);
+            this.btnUp.Location = new System.Drawing.Point(786, 155);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(43, 22);
             this.btnUp.TabIndex = 258;
@@ -879,7 +844,7 @@
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.Location = new System.Drawing.Point(785, 110);
+            this.btnDelete.Location = new System.Drawing.Point(786, 85);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(43, 22);
             this.btnDelete.TabIndex = 256;
@@ -890,7 +855,7 @@
             // btnManualPatch
             // 
             this.btnManualPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnManualPatch.Location = new System.Drawing.Point(785, 84);
+            this.btnManualPatch.Location = new System.Drawing.Point(786, 59);
             this.btnManualPatch.Name = "btnManualPatch";
             this.btnManualPatch.Size = new System.Drawing.Size(43, 22);
             this.btnManualPatch.TabIndex = 255;
@@ -916,7 +881,7 @@
             this.tabCVN.Controls.Add(this.dataCVN);
             this.tabCVN.Location = new System.Drawing.Point(4, 22);
             this.tabCVN.Name = "tabCVN";
-            this.tabCVN.Size = new System.Drawing.Size(836, 332);
+            this.tabCVN.Size = new System.Drawing.Size(873, 320);
             this.tabCVN.TabIndex = 3;
             this.tabCVN.Text = "CVN";
             this.tabCVN.UseVisualStyleBackColor = true;
@@ -973,7 +938,7 @@
             this.dataCVN.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataCVN.Location = new System.Drawing.Point(0, 33);
             this.dataCVN.Name = "dataCVN";
-            this.dataCVN.Size = new System.Drawing.Size(836, 299);
+            this.dataCVN.Size = new System.Drawing.Size(870, 282);
             this.dataCVN.TabIndex = 0;
             // 
             // tabBadCvn
@@ -983,7 +948,7 @@
             this.tabBadCvn.Controls.Add(this.dataGridBadCvn);
             this.tabBadCvn.Location = new System.Drawing.Point(4, 22);
             this.tabBadCvn.Name = "tabBadCvn";
-            this.tabBadCvn.Size = new System.Drawing.Size(836, 332);
+            this.tabBadCvn.Size = new System.Drawing.Size(873, 320);
             this.tabBadCvn.TabIndex = 9;
             this.tabBadCvn.Text = "Mismatch CVN";
             this.tabBadCvn.UseVisualStyleBackColor = true;
@@ -1016,7 +981,7 @@
             this.dataGridBadCvn.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridBadCvn.Location = new System.Drawing.Point(0, 34);
             this.dataGridBadCvn.Name = "dataGridBadCvn";
-            this.dataGridBadCvn.Size = new System.Drawing.Size(837, 298);
+            this.dataGridBadCvn.Size = new System.Drawing.Size(873, 281);
             this.dataGridBadCvn.TabIndex = 1;
             // 
             // tabFinfo
@@ -1029,7 +994,7 @@
             this.tabFinfo.Controls.Add(this.dataFileInfo);
             this.tabFinfo.Location = new System.Drawing.Point(4, 22);
             this.tabFinfo.Name = "tabFinfo";
-            this.tabFinfo.Size = new System.Drawing.Size(836, 332);
+            this.tabFinfo.Size = new System.Drawing.Size(873, 320);
             this.tabFinfo.TabIndex = 4;
             this.tabFinfo.Text = "File info";
             this.tabFinfo.UseVisualStyleBackColor = true;
@@ -1097,7 +1062,7 @@
             this.dataFileInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataFileInfo.Location = new System.Drawing.Point(1, 31);
             this.dataFileInfo.Name = "dataFileInfo";
-            this.dataFileInfo.Size = new System.Drawing.Size(832, 298);
+            this.dataFileInfo.Size = new System.Drawing.Size(873, 284);
             this.dataFileInfo.TabIndex = 0;
             this.dataFileInfo.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentDoubleClick);
             // 
@@ -1109,7 +1074,7 @@
             this.tabCsAddress.Controls.Add(this.listCSAddresses);
             this.tabCsAddress.Location = new System.Drawing.Point(4, 22);
             this.tabCsAddress.Name = "tabCsAddress";
-            this.tabCsAddress.Size = new System.Drawing.Size(836, 332);
+            this.tabCsAddress.Size = new System.Drawing.Size(873, 320);
             this.tabCsAddress.TabIndex = 5;
             this.tabCsAddress.Text = "Gm-v6 info";
             this.tabCsAddress.UseVisualStyleBackColor = true;
@@ -1152,7 +1117,7 @@
             this.listCSAddresses.HideSelection = false;
             this.listCSAddresses.Location = new System.Drawing.Point(2, 31);
             this.listCSAddresses.Name = "listCSAddresses";
-            this.listCSAddresses.Size = new System.Drawing.Size(834, 301);
+            this.listCSAddresses.Size = new System.Drawing.Size(868, 284);
             this.listCSAddresses.TabIndex = 0;
             this.listCSAddresses.UseCompatibleStateImageBehavior = false;
             // 
@@ -1166,7 +1131,7 @@
             this.tabBadChkFile.Controls.Add(this.dataBadChkFile);
             this.tabBadChkFile.Location = new System.Drawing.Point(4, 22);
             this.tabBadChkFile.Name = "tabBadChkFile";
-            this.tabBadChkFile.Size = new System.Drawing.Size(836, 332);
+            this.tabBadChkFile.Size = new System.Drawing.Size(873, 320);
             this.tabBadChkFile.TabIndex = 6;
             this.tabBadChkFile.Text = "bad chk file";
             this.tabBadChkFile.UseVisualStyleBackColor = true;
@@ -1231,7 +1196,7 @@
             this.dataBadChkFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataBadChkFile.Location = new System.Drawing.Point(-1, 30);
             this.dataBadChkFile.Name = "dataBadChkFile";
-            this.dataBadChkFile.Size = new System.Drawing.Size(837, 303);
+            this.dataBadChkFile.Size = new System.Drawing.Size(875, 289);
             this.dataBadChkFile.TabIndex = 6;
             this.dataBadChkFile.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataBadChkFile_CellContentDoubleClick);
             // 
@@ -1244,7 +1209,7 @@
             this.tabSearchedTables.Controls.Add(this.dataGridSearchedTables);
             this.tabSearchedTables.Location = new System.Drawing.Point(4, 22);
             this.tabSearchedTables.Name = "tabSearchedTables";
-            this.tabSearchedTables.Size = new System.Drawing.Size(836, 332);
+            this.tabSearchedTables.Size = new System.Drawing.Size(873, 320);
             this.tabSearchedTables.TabIndex = 7;
             this.tabSearchedTables.Text = "Searched Tables";
             this.tabSearchedTables.UseVisualStyleBackColor = true;
@@ -1298,7 +1263,7 @@
             this.dataGridSearchedTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridSearchedTables.Location = new System.Drawing.Point(1, 35);
             this.dataGridSearchedTables.Name = "dataGridSearchedTables";
-            this.dataGridSearchedTables.Size = new System.Drawing.Size(835, 298);
+            this.dataGridSearchedTables.Size = new System.Drawing.Size(869, 283);
             this.dataGridSearchedTables.TabIndex = 0;
             this.dataGridSearchedTables.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridSearchedTables_CellContentDoubleClick);
             // 
@@ -1309,7 +1274,7 @@
             this.tabPIDList.Controls.Add(this.dataGridPIDlist);
             this.tabPIDList.Location = new System.Drawing.Point(4, 22);
             this.tabPIDList.Name = "tabPIDList";
-            this.tabPIDList.Size = new System.Drawing.Size(836, 332);
+            this.tabPIDList.Size = new System.Drawing.Size(873, 320);
             this.tabPIDList.TabIndex = 8;
             this.tabPIDList.Text = "PIDs";
             this.tabPIDList.UseVisualStyleBackColor = true;
@@ -1342,7 +1307,7 @@
             this.dataGridPIDlist.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridPIDlist.Location = new System.Drawing.Point(1, 33);
             this.dataGridPIDlist.Name = "dataGridPIDlist";
-            this.dataGridPIDlist.Size = new System.Drawing.Size(835, 299);
+            this.dataGridPIDlist.Size = new System.Drawing.Size(869, 282);
             this.dataGridPIDlist.TabIndex = 0;
             // 
             // tabDTC
@@ -1355,7 +1320,7 @@
             this.tabDTC.Controls.Add(this.dataGridDTC);
             this.tabDTC.Location = new System.Drawing.Point(4, 22);
             this.tabDTC.Name = "tabDTC";
-            this.tabDTC.Size = new System.Drawing.Size(836, 332);
+            this.tabDTC.Size = new System.Drawing.Size(873, 320);
             this.tabDTC.TabIndex = 10;
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
@@ -1445,7 +1410,7 @@
             this.dataGridDTC.Location = new System.Drawing.Point(1, 32);
             this.dataGridDTC.MultiSelect = false;
             this.dataGridDTC.Name = "dataGridDTC";
-            this.dataGridDTC.Size = new System.Drawing.Size(835, 300);
+            this.dataGridDTC.Size = new System.Drawing.Size(873, 283);
             this.dataGridDTC.TabIndex = 5;
             this.dataGridDTC.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridDTC_CellContentDoubleClick);
             // 
@@ -1461,7 +1426,7 @@
             this.tabTableSeek.Controls.Add(this.btnClearTableSeek);
             this.tabTableSeek.Location = new System.Drawing.Point(4, 22);
             this.tabTableSeek.Name = "tabTableSeek";
-            this.tabTableSeek.Size = new System.Drawing.Size(836, 332);
+            this.tabTableSeek.Size = new System.Drawing.Size(873, 320);
             this.tabTableSeek.TabIndex = 11;
             this.tabTableSeek.Text = "Table Seek";
             this.tabTableSeek.UseVisualStyleBackColor = true;
@@ -1534,7 +1499,7 @@
             this.dataGridTableSeek.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridTableSeek.Location = new System.Drawing.Point(-2, 32);
             this.dataGridTableSeek.Name = "dataGridTableSeek";
-            this.dataGridTableSeek.Size = new System.Drawing.Size(838, 300);
+            this.dataGridTableSeek.Size = new System.Drawing.Size(875, 286);
             this.dataGridTableSeek.TabIndex = 1;
             this.dataGridTableSeek.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTableSeek_CellContentDoubleClick);
             // 
@@ -1552,7 +1517,7 @@
             // 
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(692, 36);
+            this.label13.Location = new System.Drawing.Point(729, 36);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(73, 13);
             this.label13.TabIndex = 120;
@@ -1562,7 +1527,7 @@
             // btnCrossTableSearch
             // 
             this.btnCrossTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCrossTableSearch.Location = new System.Drawing.Point(695, 57);
+            this.btnCrossTableSearch.Location = new System.Drawing.Point(732, 57);
             this.btnCrossTableSearch.Name = "btnCrossTableSearch";
             this.btnCrossTableSearch.Size = new System.Drawing.Size(116, 23);
             this.btnCrossTableSearch.TabIndex = 118;
@@ -1648,7 +1613,6 @@
             this.tabFunction.Controls.Add(this.tabCreate);
             this.tabFunction.Controls.Add(this.tabExtract);
             this.tabFunction.Controls.Add(this.tabExtractSegments);
-            this.tabFunction.Controls.Add(this.tabChecksumUtil);
             this.tabFunction.Controls.Add(this.tabFakeCvn);
             this.tabFunction.Controls.Add(this.tabEditExtra);
             this.tabFunction.Controls.Add(this.tabSorter);
@@ -1656,11 +1620,12 @@
             this.tabFunction.Location = new System.Drawing.Point(0, 0);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
-            this.tabFunction.Size = new System.Drawing.Size(844, 144);
+            this.tabFunction.Size = new System.Drawing.Size(881, 215);
             this.tabFunction.TabIndex = 100;
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnCsutilSelectSettings);
             this.tabApply.Controls.Add(this.btnByteSwap);
             this.tabApply.Controls.Add(this.btnStartFlashApp);
             this.tabApply.Controls.Add(this.btnLogger);
@@ -1674,10 +1639,20 @@
             this.tabApply.Location = new System.Drawing.Point(4, 22);
             this.tabApply.Name = "tabApply";
             this.tabApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabApply.Size = new System.Drawing.Size(836, 118);
+            this.tabApply.Size = new System.Drawing.Size(873, 189);
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // btnCsutilSelectSettings
+            // 
+            this.btnCsutilSelectSettings.Location = new System.Drawing.Point(574, 6);
+            this.btnCsutilSelectSettings.Name = "btnCsutilSelectSettings";
+            this.btnCsutilSelectSettings.Size = new System.Drawing.Size(89, 56);
+            this.btnCsutilSelectSettings.TabIndex = 167;
+            this.btnCsutilSelectSettings.Text = "Checksum Research";
+            this.btnCsutilSelectSettings.UseVisualStyleBackColor = true;
+            this.btnCsutilSelectSettings.Click += new System.EventHandler(this.btnCsutilSelectSettings_Click);
             // 
             // btnByteSwap
             // 
@@ -1786,7 +1761,7 @@
             this.tabFileinfo.Controls.Add(this.chkSize);
             this.tabFileinfo.Location = new System.Drawing.Point(4, 22);
             this.tabFileinfo.Name = "tabFileinfo";
-            this.tabFileinfo.Size = new System.Drawing.Size(836, 118);
+            this.tabFileinfo.Size = new System.Drawing.Size(873, 189);
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
@@ -1815,6 +1790,7 @@
             // 
             this.groupSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupSearch.Controls.Add(this.btnCustomFindStop);
             this.groupSearch.Controls.Add(this.txtCustomSearchString);
             this.groupSearch.Controls.Add(this.txtCustomSearchStartAddress);
             this.groupSearch.Controls.Add(this.label11);
@@ -1825,9 +1801,20 @@
             this.groupSearch.Controls.Add(this.btnCustomSearchNext);
             this.groupSearch.Location = new System.Drawing.Point(342, 30);
             this.groupSearch.Name = "groupSearch";
-            this.groupSearch.Size = new System.Drawing.Size(486, 70);
+            this.groupSearch.Size = new System.Drawing.Size(523, 70);
             this.groupSearch.TabIndex = 190;
             this.groupSearch.TabStop = false;
+            // 
+            // btnCustomFindStop
+            // 
+            this.btnCustomFindStop.Enabled = false;
+            this.btnCustomFindStop.Location = new System.Drawing.Point(459, 38);
+            this.btnCustomFindStop.Name = "btnCustomFindStop";
+            this.btnCustomFindStop.Size = new System.Drawing.Size(51, 23);
+            this.btnCustomFindStop.TabIndex = 187;
+            this.btnCustomFindStop.Text = "Stop";
+            this.btnCustomFindStop.UseVisualStyleBackColor = true;
+            this.btnCustomFindStop.Click += new System.EventHandler(this.btnCustomFindStop_Click);
             // 
             // txtCustomSearchString
             // 
@@ -1835,7 +1822,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCustomSearchString.Location = new System.Drawing.Point(121, 13);
             this.txtCustomSearchString.Name = "txtCustomSearchString";
-            this.txtCustomSearchString.Size = new System.Drawing.Size(265, 20);
+            this.txtCustomSearchString.Size = new System.Drawing.Size(302, 20);
             this.txtCustomSearchString.TabIndex = 179;
             // 
             // txtCustomSearchStartAddress
@@ -1858,7 +1845,7 @@
             // 
             this.chkCustomTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkCustomTableSearch.AutoSize = true;
-            this.chkCustomTableSearch.Location = new System.Drawing.Point(392, 15);
+            this.chkCustomTableSearch.Location = new System.Drawing.Point(430, 15);
             this.chkCustomTableSearch.Name = "chkCustomTableSearch";
             this.chkCustomTableSearch.Size = new System.Drawing.Size(88, 17);
             this.chkCustomTableSearch.TabIndex = 186;
@@ -1969,7 +1956,7 @@
             this.tabCreate.Location = new System.Drawing.Point(4, 22);
             this.tabCreate.Name = "tabCreate";
             this.tabCreate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCreate.Size = new System.Drawing.Size(836, 118);
+            this.tabCreate.Size = new System.Drawing.Size(873, 189);
             this.tabCreate.TabIndex = 0;
             this.tabCreate.Text = "Create Patch";
             this.tabCreate.UseVisualStyleBackColor = true;
@@ -1988,7 +1975,7 @@
             // numCrossVariation
             // 
             this.numCrossVariation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numCrossVariation.Location = new System.Drawing.Point(774, 32);
+            this.numCrossVariation.Location = new System.Drawing.Point(811, 32);
             this.numCrossVariation.Name = "numCrossVariation";
             this.numCrossVariation.Size = new System.Drawing.Size(36, 20);
             this.numCrossVariation.TabIndex = 119;
@@ -2036,7 +2023,7 @@
             this.tabExtract.Controls.Add(this.txtExtractRange);
             this.tabExtract.Location = new System.Drawing.Point(4, 22);
             this.tabExtract.Name = "tabExtract";
-            this.tabExtract.Size = new System.Drawing.Size(836, 118);
+            this.tabExtract.Size = new System.Drawing.Size(873, 189);
             this.tabExtract.TabIndex = 3;
             this.tabExtract.Text = "Extract table";
             this.tabExtract.UseVisualStyleBackColor = true;
@@ -2060,7 +2047,7 @@
             // btnExtract
             // 
             this.btnExtract.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExtract.Location = new System.Drawing.Point(742, 9);
+            this.btnExtract.Location = new System.Drawing.Point(779, 9);
             this.btnExtract.Name = "btnExtract";
             this.btnExtract.Size = new System.Drawing.Size(66, 23);
             this.btnExtract.TabIndex = 154;
@@ -2111,7 +2098,7 @@
             this.tabExtractSegments.Controls.Add(this.btnExtractSegments);
             this.tabExtractSegments.Location = new System.Drawing.Point(4, 22);
             this.tabExtractSegments.Name = "tabExtractSegments";
-            this.tabExtractSegments.Size = new System.Drawing.Size(836, 118);
+            this.tabExtractSegments.Size = new System.Drawing.Size(873, 189);
             this.tabExtractSegments.TabIndex = 4;
             this.tabExtractSegments.Text = "Extract segments";
             this.tabExtractSegments.UseVisualStyleBackColor = true;
@@ -2119,7 +2106,7 @@
             // btnRebuild
             // 
             this.btnRebuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRebuild.Location = new System.Drawing.Point(632, 73);
+            this.btnRebuild.Location = new System.Drawing.Point(669, 73);
             this.btnRebuild.Name = "btnRebuild";
             this.btnRebuild.Size = new System.Drawing.Size(171, 25);
             this.btnRebuild.TabIndex = 507;
@@ -2186,7 +2173,7 @@
             // btnExtractSegmentsFolder
             // 
             this.btnExtractSegmentsFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(632, 9);
+            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(669, 9);
             this.btnExtractSegmentsFolder.Name = "btnExtractSegmentsFolder";
             this.btnExtractSegmentsFolder.Size = new System.Drawing.Size(171, 26);
             this.btnExtractSegmentsFolder.TabIndex = 505;
@@ -2200,7 +2187,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSegmentDescription.Location = new System.Drawing.Point(84, 45);
             this.txtSegmentDescription.Name = "txtSegmentDescription";
-            this.txtSegmentDescription.Size = new System.Drawing.Size(542, 20);
+            this.txtSegmentDescription.Size = new System.Drawing.Size(579, 20);
             this.txtSegmentDescription.TabIndex = 500;
             // 
             // label8
@@ -2215,360 +2202,13 @@
             // btnExtractSegments
             // 
             this.btnExtractSegments.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExtractSegments.Location = new System.Drawing.Point(632, 41);
+            this.btnExtractSegments.Location = new System.Drawing.Point(669, 41);
             this.btnExtractSegments.Name = "btnExtractSegments";
             this.btnExtractSegments.Size = new System.Drawing.Size(171, 26);
             this.btnExtractSegments.TabIndex = 501;
             this.btnExtractSegments.Text = "Extract current file";
             this.btnExtractSegments.UseVisualStyleBackColor = true;
             this.btnExtractSegments.Click += new System.EventHandler(this.btnExtractSegments_Click);
-            // 
-            // tabChecksumUtil
-            // 
-            this.tabChecksumUtil.Controls.Add(this.numCsUtilInitValue);
-            this.tabChecksumUtil.Controls.Add(this.label24);
-            this.tabChecksumUtil.Controls.Add(this.groupBox6);
-            this.tabChecksumUtil.Controls.Add(this.chkCsMSB);
-            this.tabChecksumUtil.Controls.Add(this.richChkData);
-            this.tabChecksumUtil.Controls.Add(this.chkCsUtilSwapBytes);
-            this.tabChecksumUtil.Controls.Add(this.btnCsUtilFix);
-            this.tabChecksumUtil.Controls.Add(this.numCSBytes);
-            this.tabChecksumUtil.Controls.Add(this.label20);
-            this.tabChecksumUtil.Controls.Add(this.txtExclude);
-            this.tabChecksumUtil.Controls.Add(this.label19);
-            this.tabChecksumUtil.Controls.Add(this.txtCSAddr);
-            this.tabChecksumUtil.Controls.Add(this.label18);
-            this.tabChecksumUtil.Controls.Add(this.label17);
-            this.tabChecksumUtil.Controls.Add(this.txtChecksumRange);
-            this.tabChecksumUtil.Controls.Add(this.btnTestChecksum);
-            this.tabChecksumUtil.Controls.Add(this.chkCSUtilTryAll);
-            this.tabChecksumUtil.Controls.Add(this.groupBox5);
-            this.tabChecksumUtil.Controls.Add(this.groupBox1);
-            this.tabChecksumUtil.Location = new System.Drawing.Point(4, 22);
-            this.tabChecksumUtil.Name = "tabChecksumUtil";
-            this.tabChecksumUtil.Size = new System.Drawing.Size(836, 118);
-            this.tabChecksumUtil.TabIndex = 5;
-            this.tabChecksumUtil.Text = "Checksum research";
-            this.tabChecksumUtil.UseVisualStyleBackColor = true;
-            // 
-            // numCsUtilInitValue
-            // 
-            this.numCsUtilInitValue.Location = new System.Drawing.Point(369, 93);
-            this.numCsUtilInitValue.Maximum = new decimal(new int[] {
-            100000000,
-            0,
-            0,
-            0});
-            this.numCsUtilInitValue.Name = "numCsUtilInitValue";
-            this.numCsUtilInitValue.Size = new System.Drawing.Size(136, 20);
-            this.numCsUtilInitValue.TabIndex = 159;
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(298, 96);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(63, 13);
-            this.label24.TabIndex = 158;
-            this.label24.Text = "Initial value:";
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.chkCsUtilFilter);
-            this.groupBox6.Controls.Add(this.btnCsutilSearchBosch);
-            this.groupBox6.Location = new System.Drawing.Point(512, 56);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(112, 59);
-            this.groupBox6.TabIndex = 157;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Search Bosch inv";
-            // 
-            // chkCsUtilFilter
-            // 
-            this.chkCsUtilFilter.AutoSize = true;
-            this.chkCsUtilFilter.Location = new System.Drawing.Point(20, 14);
-            this.chkCsUtilFilter.Name = "chkCsUtilFilter";
-            this.chkCsUtilFilter.Size = new System.Drawing.Size(69, 17);
-            this.chkCsUtilFilter.TabIndex = 157;
-            this.chkCsUtilFilter.Text = "Filter 0+F";
-            this.chkCsUtilFilter.UseVisualStyleBackColor = true;
-            // 
-            // btnCsutilSearchBosch
-            // 
-            this.btnCsutilSearchBosch.Location = new System.Drawing.Point(22, 31);
-            this.btnCsutilSearchBosch.Name = "btnCsutilSearchBosch";
-            this.btnCsutilSearchBosch.Size = new System.Drawing.Size(70, 25);
-            this.btnCsutilSearchBosch.TabIndex = 156;
-            this.btnCsutilSearchBosch.Text = "Search ";
-            this.btnCsutilSearchBosch.UseVisualStyleBackColor = true;
-            this.btnCsutilSearchBosch.Click += new System.EventHandler(this.btnCsutilSearchBosch_Click);
-            // 
-            // chkCsMSB
-            // 
-            this.chkCsMSB.AutoSize = true;
-            this.chkCsMSB.Checked = true;
-            this.chkCsMSB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCsMSB.Location = new System.Drawing.Point(6, 90);
-            this.chkCsMSB.Name = "chkCsMSB";
-            this.chkCsMSB.Size = new System.Drawing.Size(49, 17);
-            this.chkCsMSB.TabIndex = 155;
-            this.chkCsMSB.Text = "MSB";
-            this.chkCsMSB.UseVisualStyleBackColor = true;
-            // 
-            // richChkData
-            // 
-            this.richChkData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.richChkData.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richChkData.Location = new System.Drawing.Point(627, 3);
-            this.richChkData.Name = "richChkData";
-            this.richChkData.Size = new System.Drawing.Size(210, 112);
-            this.richChkData.TabIndex = 154;
-            this.richChkData.Text = "";
-            // 
-            // chkCsUtilSwapBytes
-            // 
-            this.chkCsUtilSwapBytes.AutoSize = true;
-            this.chkCsUtilSwapBytes.Location = new System.Drawing.Point(81, 90);
-            this.chkCsUtilSwapBytes.Name = "chkCsUtilSwapBytes";
-            this.chkCsUtilSwapBytes.Size = new System.Drawing.Size(81, 17);
-            this.chkCsUtilSwapBytes.TabIndex = 133;
-            this.chkCsUtilSwapBytes.Text = "Swap bytes";
-            this.chkCsUtilSwapBytes.UseVisualStyleBackColor = true;
-            // 
-            // btnCsUtilFix
-            // 
-            this.btnCsUtilFix.Location = new System.Drawing.Point(512, 33);
-            this.btnCsUtilFix.Name = "btnCsUtilFix";
-            this.btnCsUtilFix.Size = new System.Drawing.Size(109, 23);
-            this.btnCsUtilFix.TabIndex = 153;
-            this.btnCsUtilFix.Text = "Write Checksum";
-            this.btnCsUtilFix.UseVisualStyleBackColor = true;
-            this.btnCsUtilFix.Click += new System.EventHandler(this.btnCsUtilFix_Click);
-            // 
-            // numCSBytes
-            // 
-            this.numCSBytes.Location = new System.Drawing.Point(369, 69);
-            this.numCSBytes.Maximum = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numCSBytes.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numCSBytes.Name = "numCSBytes";
-            this.numCSBytes.Size = new System.Drawing.Size(137, 20);
-            this.numCSBytes.TabIndex = 152;
-            this.numCSBytes.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numCSBytes.ValueChanged += new System.EventHandler(this.numCSBytes_ValueChanged);
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(298, 74);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(36, 13);
-            this.label20.TabIndex = 151;
-            this.label20.Text = "Bytes:";
-            // 
-            // txtExclude
-            // 
-            this.txtExclude.Location = new System.Drawing.Point(369, 24);
-            this.txtExclude.Name = "txtExclude";
-            this.txtExclude.Size = new System.Drawing.Size(137, 20);
-            this.txtExclude.TabIndex = 150;
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(298, 29);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(48, 13);
-            this.label19.TabIndex = 149;
-            this.label19.Text = "Exclude:";
-            // 
-            // txtCSAddr
-            // 
-            this.txtCSAddr.Location = new System.Drawing.Point(369, 46);
-            this.txtCSAddr.Name = "txtCSAddr";
-            this.txtCSAddr.Size = new System.Drawing.Size(137, 20);
-            this.txtCSAddr.TabIndex = 148;
-            this.txtCSAddr.TextChanged += new System.EventHandler(this.txtCSAddr_TextChanged);
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(298, 52);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(64, 13);
-            this.label18.TabIndex = 147;
-            this.label18.Text = "CS address:";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(298, 5);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(42, 13);
-            this.label17.TabIndex = 146;
-            this.label17.Text = "Range:";
-            // 
-            // txtChecksumRange
-            // 
-            this.txtChecksumRange.Location = new System.Drawing.Point(369, 2);
-            this.txtChecksumRange.Name = "txtChecksumRange";
-            this.txtChecksumRange.Size = new System.Drawing.Size(137, 20);
-            this.txtChecksumRange.TabIndex = 145;
-            this.txtChecksumRange.TextChanged += new System.EventHandler(this.txtChecksumRange_TextChanged);
-            // 
-            // btnTestChecksum
-            // 
-            this.btnTestChecksum.Location = new System.Drawing.Point(512, 10);
-            this.btnTestChecksum.Name = "btnTestChecksum";
-            this.btnTestChecksum.Size = new System.Drawing.Size(109, 23);
-            this.btnTestChecksum.TabIndex = 144;
-            this.btnTestChecksum.Text = "Calculate";
-            this.btnTestChecksum.UseVisualStyleBackColor = true;
-            this.btnTestChecksum.Click += new System.EventHandler(this.btnTestChecksum_Click);
-            // 
-            // chkCSUtilTryAll
-            // 
-            this.chkCSUtilTryAll.AutoSize = true;
-            this.chkCSUtilTryAll.Location = new System.Drawing.Point(178, 90);
-            this.chkCSUtilTryAll.Name = "chkCSUtilTryAll";
-            this.chkCSUtilTryAll.Size = new System.Drawing.Size(54, 17);
-            this.chkCSUtilTryAll.TabIndex = 143;
-            this.chkCSUtilTryAll.Text = "Try all";
-            this.chkCSUtilTryAll.UseVisualStyleBackColor = true;
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.radioCSUtilComplement2);
-            this.groupBox5.Controls.Add(this.radioCSUtilComplement1);
-            this.groupBox5.Controls.Add(this.radioCSUtilComplement0);
-            this.groupBox5.Location = new System.Drawing.Point(178, 3);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(114, 81);
-            this.groupBox5.TabIndex = 142;
-            this.groupBox5.TabStop = false;
-            // 
-            // radioCSUtilComplement2
-            // 
-            this.radioCSUtilComplement2.AutoSize = true;
-            this.radioCSUtilComplement2.Location = new System.Drawing.Point(6, 54);
-            this.radioCSUtilComplement2.Name = "radioCSUtilComplement2";
-            this.radioCSUtilComplement2.Size = new System.Drawing.Size(99, 17);
-            this.radioCSUtilComplement2.TabIndex = 132;
-            this.radioCSUtilComplement2.Text = "2\'s Complement";
-            this.radioCSUtilComplement2.UseVisualStyleBackColor = true;
-            // 
-            // radioCSUtilComplement1
-            // 
-            this.radioCSUtilComplement1.AutoSize = true;
-            this.radioCSUtilComplement1.Location = new System.Drawing.Point(6, 34);
-            this.radioCSUtilComplement1.Name = "radioCSUtilComplement1";
-            this.radioCSUtilComplement1.Size = new System.Drawing.Size(99, 17);
-            this.radioCSUtilComplement1.TabIndex = 131;
-            this.radioCSUtilComplement1.Text = "1\'s Complement";
-            this.radioCSUtilComplement1.UseVisualStyleBackColor = true;
-            // 
-            // radioCSUtilComplement0
-            // 
-            this.radioCSUtilComplement0.AutoSize = true;
-            this.radioCSUtilComplement0.Checked = true;
-            this.radioCSUtilComplement0.Location = new System.Drawing.Point(6, 16);
-            this.radioCSUtilComplement0.Name = "radioCSUtilComplement0";
-            this.radioCSUtilComplement0.Size = new System.Drawing.Size(28, 17);
-            this.radioCSUtilComplement0.TabIndex = 130;
-            this.radioCSUtilComplement0.TabStop = true;
-            this.radioCSUtilComplement0.Text = "-";
-            this.radioCSUtilComplement0.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.radioCsUtilBosch);
-            this.groupBox1.Controls.Add(this.radioCSUtilDwordSum);
-            this.groupBox1.Controls.Add(this.radioCSUtilWordSum);
-            this.groupBox1.Controls.Add(this.radioCSUtilSUM);
-            this.groupBox1.Controls.Add(this.radioCSUtilCrc32);
-            this.groupBox1.Controls.Add(this.radioCSUtilCrc16);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(169, 81);
-            this.groupBox1.TabIndex = 141;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Checksum method";
-            // 
-            // radioCsUtilBosch
-            // 
-            this.radioCsUtilBosch.AutoSize = true;
-            this.radioCsUtilBosch.Location = new System.Drawing.Point(6, 53);
-            this.radioCsUtilBosch.Name = "radioCsUtilBosch";
-            this.radioCsUtilBosch.Size = new System.Drawing.Size(72, 17);
-            this.radioCsUtilBosch.TabIndex = 126;
-            this.radioCsUtilBosch.TabStop = true;
-            this.radioCsUtilBosch.Text = "Bosch inv";
-            this.radioCsUtilBosch.UseVisualStyleBackColor = true;
-            // 
-            // radioCSUtilDwordSum
-            // 
-            this.radioCSUtilDwordSum.AutoSize = true;
-            this.radioCSUtilDwordSum.Location = new System.Drawing.Point(78, 54);
-            this.radioCSUtilDwordSum.Name = "radioCSUtilDwordSum";
-            this.radioCSUtilDwordSum.Size = new System.Drawing.Size(80, 17);
-            this.radioCSUtilDwordSum.TabIndex = 125;
-            this.radioCSUtilDwordSum.Text = "Dword Sum";
-            this.radioCSUtilDwordSum.UseVisualStyleBackColor = true;
-            // 
-            // radioCSUtilWordSum
-            // 
-            this.radioCSUtilWordSum.AutoSize = true;
-            this.radioCSUtilWordSum.Location = new System.Drawing.Point(78, 19);
-            this.radioCSUtilWordSum.Name = "radioCSUtilWordSum";
-            this.radioCSUtilWordSum.Size = new System.Drawing.Size(75, 17);
-            this.radioCSUtilWordSum.TabIndex = 124;
-            this.radioCSUtilWordSum.Text = "Word Sum";
-            this.radioCSUtilWordSum.UseVisualStyleBackColor = true;
-            // 
-            // radioCSUtilSUM
-            // 
-            this.radioCSUtilSUM.AutoSize = true;
-            this.radioCSUtilSUM.Location = new System.Drawing.Point(78, 36);
-            this.radioCSUtilSUM.Name = "radioCSUtilSUM";
-            this.radioCSUtilSUM.Size = new System.Drawing.Size(73, 17);
-            this.radioCSUtilSUM.TabIndex = 123;
-            this.radioCSUtilSUM.Text = "Byte SUM";
-            this.radioCSUtilSUM.UseVisualStyleBackColor = true;
-            // 
-            // radioCSUtilCrc32
-            // 
-            this.radioCSUtilCrc32.AutoSize = true;
-            this.radioCSUtilCrc32.Location = new System.Drawing.Point(6, 36);
-            this.radioCSUtilCrc32.Name = "radioCSUtilCrc32";
-            this.radioCSUtilCrc32.Size = new System.Drawing.Size(59, 17);
-            this.radioCSUtilCrc32.TabIndex = 122;
-            this.radioCSUtilCrc32.Text = "CRC32";
-            this.radioCSUtilCrc32.UseVisualStyleBackColor = true;
-            // 
-            // radioCSUtilCrc16
-            // 
-            this.radioCSUtilCrc16.AutoSize = true;
-            this.radioCSUtilCrc16.Checked = true;
-            this.radioCSUtilCrc16.Location = new System.Drawing.Point(6, 19);
-            this.radioCSUtilCrc16.Name = "radioCSUtilCrc16";
-            this.radioCSUtilCrc16.Size = new System.Drawing.Size(59, 17);
-            this.radioCSUtilCrc16.TabIndex = 121;
-            this.radioCSUtilCrc16.TabStop = true;
-            this.radioCSUtilCrc16.Text = "CRC16";
-            this.radioCSUtilCrc16.UseVisualStyleBackColor = true;
             // 
             // tabFakeCvn
             // 
@@ -2584,7 +2224,7 @@
             this.tabFakeCvn.Controls.Add(this.label3);
             this.tabFakeCvn.Location = new System.Drawing.Point(4, 22);
             this.tabFakeCvn.Name = "tabFakeCvn";
-            this.tabFakeCvn.Size = new System.Drawing.Size(836, 118);
+            this.tabFakeCvn.Size = new System.Drawing.Size(873, 189);
             this.tabFakeCvn.TabIndex = 6;
             this.tabFakeCvn.Text = "CVN Research";
             this.tabFakeCvn.UseVisualStyleBackColor = true;
@@ -2596,7 +2236,7 @@
             this.richEndOfSegment.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richEndOfSegment.Location = new System.Drawing.Point(551, 0);
             this.richEndOfSegment.Name = "richEndOfSegment";
-            this.richEndOfSegment.Size = new System.Drawing.Size(282, 84);
+            this.richEndOfSegment.Size = new System.Drawing.Size(319, 84);
             this.richEndOfSegment.TabIndex = 15;
             this.richEndOfSegment.Text = "";
             // 
@@ -2829,7 +2469,7 @@
             this.tabEditExtra.Controls.Add(this.comboExtrainfoSegment);
             this.tabEditExtra.Location = new System.Drawing.Point(4, 22);
             this.tabEditExtra.Name = "tabEditExtra";
-            this.tabEditExtra.Size = new System.Drawing.Size(836, 118);
+            this.tabEditExtra.Size = new System.Drawing.Size(873, 189);
             this.tabEditExtra.TabIndex = 7;
             this.tabEditExtra.Text = "Edit Extrainfo";
             this.tabEditExtra.UseVisualStyleBackColor = true;
@@ -2904,7 +2544,7 @@
             this.tabSorter.Controls.Add(this.groupBox8);
             this.tabSorter.Location = new System.Drawing.Point(4, 22);
             this.tabSorter.Name = "tabSorter";
-            this.tabSorter.Size = new System.Drawing.Size(836, 118);
+            this.tabSorter.Size = new System.Drawing.Size(873, 189);
             this.tabSorter.TabIndex = 8;
             this.tabSorter.Text = "Sort files";
             this.tabSorter.UseVisualStyleBackColor = true;
@@ -3049,7 +2689,7 @@
             this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(844, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(881, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuMain";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -3355,8 +2995,8 @@
             // splitPatcher.Panel2
             // 
             this.splitPatcher.Panel2.Controls.Add(this.tabControl1);
-            this.splitPatcher.Size = new System.Drawing.Size(844, 506);
-            this.splitPatcher.SplitterDistance = 144;
+            this.splitPatcher.Size = new System.Drawing.Size(881, 565);
+            this.splitPatcher.SplitterDistance = 215;
             this.splitPatcher.TabIndex = 201;
             // 
             // timerDebug
@@ -3367,7 +3007,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(844, 565);
+            this.ClientSize = new System.Drawing.Size(881, 624);
             this.Controls.Add(this.splitPatcher);
             this.Controls.Add(this.chkAutodetect);
             this.Controls.Add(this.labelXML);
@@ -3434,16 +3074,6 @@
             this.tabExtractSegments.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.tabChecksumUtil.ResumeLayout(false);
-            this.tabChecksumUtil.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).EndInit();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).EndInit();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.tabFakeCvn.ResumeLayout(false);
             this.tabFakeCvn.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -3641,29 +3271,6 @@
         private System.Windows.Forms.ToolStripMenuItem oBD2CodesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem segmentSeekToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pIDSearchToolStripMenuItem;
-        private System.Windows.Forms.TabPage tabChecksumUtil;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.TextBox txtChecksumRange;
-        private System.Windows.Forms.Button btnTestChecksum;
-        private System.Windows.Forms.CheckBox chkCSUtilTryAll;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.RadioButton radioCSUtilComplement2;
-        private System.Windows.Forms.RadioButton radioCSUtilComplement1;
-        private System.Windows.Forms.RadioButton radioCSUtilComplement0;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton radioCSUtilDwordSum;
-        private System.Windows.Forms.RadioButton radioCSUtilWordSum;
-        private System.Windows.Forms.RadioButton radioCSUtilSUM;
-        private System.Windows.Forms.RadioButton radioCSUtilCrc32;
-        private System.Windows.Forms.RadioButton radioCSUtilCrc16;
-        private System.Windows.Forms.TextBox txtCSAddr;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.TextBox txtExclude;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.NumericUpDown numCSBytes;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Button btnCsUtilFix;
-        private System.Windows.Forms.CheckBox chkCsUtilSwapBytes;
         private System.Windows.Forms.ListBox listPatches;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnSaveAllPatches;
@@ -3699,13 +3306,10 @@
         private System.Windows.Forms.RichTextBox richEndOfSegment;
         private System.Windows.Forms.Button btnVisualSegments;
         private System.Windows.Forms.ToolStripMenuItem createProgramShortcutsToolStripMenuItem;
-        private System.Windows.Forms.RichTextBox richChkData;
         private System.Windows.Forms.ToolStripMenuItem homepageToolStripMenuItem;
         private System.Windows.Forms.Button btnDisplayFileInfo;
         private System.Windows.Forms.ToolStripMenuItem editPlatformConfigToolStripMenuItem;
-        private System.Windows.Forms.CheckBox chkCsMSB;
         private System.Windows.Forms.ToolStripMenuItem loadPlatformConfigToolStripMenuItem1;
-        private System.Windows.Forms.RadioButton radioCsUtilBosch;
         private System.Windows.Forms.TabPage tabEditExtra;
         private System.Windows.Forms.Button btnExtrainfoApply;
         private System.Windows.Forms.TextBox txtExtrainfoData;
@@ -3714,9 +3318,6 @@
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox comboExtrainfoSegment;
-        private System.Windows.Forms.Button btnCsutilSearchBosch;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.CheckBox chkCsUtilFilter;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.RadioButton radioDtcSecondary;
         private System.Windows.Forms.RadioButton radioDtcPrimary;
@@ -3745,8 +3346,8 @@
         private System.Windows.Forms.ToolStripMenuItem allSettingsToolStripMenuItem;
         private System.Windows.Forms.Button btnByteSwap;
         private System.Windows.Forms.ToolStripMenuItem cANModulesToolStripMenuItem;
-        private System.Windows.Forms.NumericUpDown numCsUtilInitValue;
-        private System.Windows.Forms.Label label24;
         private System.Windows.Forms.ToolStripMenuItem realtimeControlCommandsToolStripMenuItem;
+        private System.Windows.Forms.Button btnCsutilSelectSettings;
+        private System.Windows.Forms.Button btnCustomFindStop;
     }
 }

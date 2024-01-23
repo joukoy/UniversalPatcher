@@ -28,7 +28,7 @@ namespace UniversalPatcher
         }
         public string Name { get; set; }
         public string SearchStr { get; set; }
-        public int Offset { get; set; }
+        public Int64 Offset { get; set; }
         public bool ConditionalOffset { get; set; }
         public bool SignedOffset { get; set; }
         public string UseHit { get; set; }
@@ -411,9 +411,28 @@ namespace UniversalPatcher
                         for (int y = 0; y < segStrings.Length; y++)
                         {
                             int segNr = 0;
-                            segNr = PCM.GetSegmentByNr(segStrings[y]);
-                            for (int b = 0; b < PCM.segmentAddressDatas[segNr].SegmentBlocks.Count; b++)
-                                addrList.Add(PCM.segmentAddressDatas[segNr].SegmentBlocks[b]);
+                            if (int.TryParse(segStrings[y], out segNr))
+                            {
+                                if (PCM.Segments[segNr].Addresses.Contains("seek:"))
+                                {
+                                    Debug.WriteLine("Segmentseek: Parsing address for segment " + segNr.ToString() + " contains seek:, can't use it");
+                                    block.Start = 0;
+                                    block.End = PCM.fsize;
+                                    addrList.Add(block);
+                                }
+                                else if (PCM.ParseSegmentAddresses(PCM.Segments[segNr].Addresses, PCM.Segments[segNr], out List<Block> sBlocks))
+                                {
+                                    Debug.WriteLine("Segmentseek: Parsing address for segment " + segNr.ToString());
+                                    addrList.AddRange(sBlocks);
+                                }
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Segmentseek: unknown segment number: " + segStrings[y] );
+                                block.Start = 0;
+                                block.End = PCM.fsize;
+                                addrList.Add(block);
+                            }
                         }
                     }
                     else
@@ -466,12 +485,12 @@ namespace UniversalPatcher
                                 string numOnly = ssParts[jump].Replace("+", "").Replace("D", "").Replace("W", "");
                                 int offset = Convert.ToInt32(numOnly);  //For first jump, use SegmentSeek offset, for other jumps use searchstring offset
                                 uint currentAddr = (uint)(sAddr.Addr + offset);
-                                Debug.WriteLine("seekTables: Reading new address from:" + currentAddr.ToString("X"));
+                                Debug.WriteLine("SegmentSeek: Reading new address from:" + currentAddr.ToString("X"));
                                 if (ssParts[jump].Contains("D"))
                                     sAddr.Addr = (uint)(PCM.ReadUInt32(currentAddr));
                                 else
                                     sAddr.Addr = (uint)(PCM.ReadUInt16(currentAddr));
-                                Debug.WriteLine("seekTables: New address:" + sAddr.Addr.ToString("X"));
+                                Debug.WriteLine("SegmentSeek: New address:" + sAddr.Addr.ToString("X"));
                             }
 
                             if ((sAddr.Addr + segmentSeeks[s].Offset) < PCM.fsize)
@@ -485,7 +504,7 @@ namespace UniversalPatcher
                                 fs.Name = segmentSeeks[s].Name.Replace("£", (wHit + 1).ToString());
                                 fs.Description = segmentSeeks[s].Description.Replace("£", (wHit + 1).ToString());
                                 fs.addrInt = (uint)(sAddr.Addr + segmentSeeks[s].Offset);
-                                fs.Address = fs.addrInt.ToString("X8");
+                                //fs.Address = fs.addrInt.ToString("X8");
                                 PCM.foundSegments.Add(fs);
                                 wHit++;
                             }

@@ -232,7 +232,7 @@ namespace UniversalPatcher
                 string[] sParts = searchStr.Trim().Split(' ');
                 startAddr = addr + (uint)sParts.Length;
 
-                if (tSeek.ValidationSearchStr != null && tSeek.ValidationSearchStr != "")
+                if (!string.IsNullOrEmpty(tSeek.ValidationSearchStr))
                 {
                     bool validated = false;
                     string[] validationList = tSeek.ValidationSearchStr.Split(',');
@@ -470,6 +470,8 @@ namespace UniversalPatcher
                         return retVal;
                     }
                 }
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
 
                 startBytes = new List<byte>();
                 starters = new List<Starter>();
@@ -527,6 +529,8 @@ namespace UniversalPatcher
                     if (ind > -1)
                         starters[ind].addresses.Add(addr);
                 }
+                timer.Stop();
+                Debug.WriteLine("Starters search Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
 
 
                 for (int s = 0; s < tableSeeks.Count; s++)

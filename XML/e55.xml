@@ -30,6 +30,7 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Boot block 1</Name>
+    <Version />
     <Addresses>0-1ffff</Addresses>
     <SwapAddress />
     <CS1Address>1ffc8:8:hex</CS1Address>
@@ -57,6 +58,7 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Boot block 2</Name>
+    <Version />
     <Addresses>0-1ffff</Addresses>
     <SwapAddress />
     <CS1Address>1ffe8:8:hex</CS1Address>
@@ -112,14 +114,15 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>EngineOper</Name>
-    <Addresses>1c2000-1FFFFF</Addresses>
+    <Version />
+    <Addresses>1c2000-1dcf27</Addresses>
     <SwapAddress />
     <CS1Address>#0:2:hex</CS1Address>
     <CS2Address>#:4:hex</CS2Address>
     <Checksum1Method>Wordsum</Checksum1Method>
     <Checksum2Method>crc32</Checksum2Method>
-    <CS1Blocks>1c2000-1FFFFF</CS1Blocks>
-    <CS2Blocks>1c2000-1FFFFF</CS2Blocks>
+    <CS1Blocks>1c2000-1dcf27</CS1Blocks>
+    <CS2Blocks>1c2000-1dcf27</CS2Blocks>
     <CS1Complement>2</CS1Complement>
     <CS2Complement>0</CS2Complement>
     <CS1SwapBytes>false</CS1SwapBytes>
@@ -138,7 +141,64 @@
     <CS2Method>2</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
+    <Name>System</Name>
+    <Version />
+    <Addresses>1dcf28-1def17</Addresses>
+    <SwapAddress>1dcf28-1def17</SwapAddress>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address>#:4:hex</CS2Address>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc32</Checksum2Method>
+    <CS1Blocks>1dcf28-1def17</CS1Blocks>
+    <CS2Blocks>1dcf28-1def17</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:8:text</PNAddr>
+    <VerAddr />
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>2</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>ControlMod</Name>
+    <Version />
+    <Addresses>1def18-1dffff</Addresses>
+    <SwapAddress>1def18-1dffff</SwapAddress>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address>#:4:hex</CS2Address>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc32</Checksum2Method>
+    <CS1Blocks>1def18-1dffff</CS1Blocks>
+    <CS2Blocks>1def18-1dffff</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:8:text</PNAddr>
+    <VerAddr />
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>2</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
     <Name>ECM extra info</Name>
+    <Version />
     <Addresses />
     <SwapAddress />
     <CS1Address />

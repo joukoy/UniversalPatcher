@@ -668,5 +668,13 @@
 - Tuner: added more options to "Show as HEX" display
 - Tuner: added OS:Address editor
 
+0.22.13
+- Patcher: Checksum research: Tab removed, new window with button in "Modify bin" -tab
+- Patcher: Checksum research: Big rework, "Unknown range" search with UpTools.DLL (C++)
+- Segmentseek: Bug fixes & improvements
+- XML files: Lot of updates and support for new bin files
+
+
+
 
 

@@ -43,6 +43,14 @@ public class Upatcher
         Imperial
     }
 
+    public enum CSBytes
+    {
+        _1=1,
+        _2 = 2,
+        _4=4,
+        _8 = 8,
+    }
+
     public class XmlPatch
     {
         public XmlPatch() { }
@@ -644,7 +652,8 @@ public class Upatcher
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "ospids")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "ospids"));
-
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "ChecksumSearch")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "ChecksumSearch"));
             if (AppSettings.LastXMLfolder == "")
                 AppSettings.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
             if (AppSettings.LastPATCHfolder == "")
@@ -2267,6 +2276,7 @@ public class Upatcher
         catch (Exception ex)
         {
             Debug.WriteLine("Checksum calc: " + ex.Message);
+            return UInt64.MaxValue;
         }
         return sum;
     }
@@ -2331,26 +2341,32 @@ public class Upatcher
                 B.End = PCM.ReadUInt32(tmpStart + 4);
                 tmpStart += 8;
             }
-            else
+            else if (StartEnd.Length > 1)
             {
                 if (!HexToUint(StartEnd[1].Replace("@", ""), out B.End))
                     throw new Exception("Can't decode from HEX: " + StartEnd[1].Replace("@", "") + " (" + Line + ")");
                 if (B.End >= PCM.buf.Length)    //Make 1MB config work with 512kB bin
                     B.End = (uint)PCM.buf.Length - 1;
             }
-            if (StartEnd.Length > 1 && StartEnd[1].StartsWith("@"))
+            else if (StartEnd.Length == 1)
             {
-                //Read End address from bin at this address
-                B.End = PCM.ReadUInt32(B.End);
+                B.End = B.Start;
             }
-            if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
+            else
             {
-                //Address is relative to end of bin
-                uint end;
-                if (HexToUint(StartEnd[1].Replace("@", ""), out end))
-                    B.End = (uint)PCM.buf.Length - end - 1;
+                if (StartEnd[1].StartsWith("@"))
+                {
+                    //Read End address from bin at this address
+                    B.End = PCM.ReadUInt32(B.End);
+                }
+                if (StartEnd[1].EndsWith("@"))
+                {
+                    //Address is relative to end of bin
+                    uint end;
+                    if (HexToUint(StartEnd[1].Replace("@", ""), out end))
+                        B.End = (uint)PCM.buf.Length - end - 1;
+                }
             }
-
             if (useLength)
             {
                 B.End = B.Start - 1 + B.End;

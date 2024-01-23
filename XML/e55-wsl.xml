@@ -30,6 +30,7 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Boot block 1</Name>
+    <Version />
     <Addresses>0-1ffff</Addresses>
     <SwapAddress />
     <CS1Address>1ffc8:8:hex</CS1Address>
@@ -57,6 +58,7 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Boot block 2</Name>
+    <Version />
     <Addresses>0-1ffff</Addresses>
     <SwapAddress />
     <CS1Address>1ffe8:8:hex</CS1Address>
@@ -111,7 +113,36 @@
     <CS2Method>2</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
+    <Name>System</Name>
+    <Version />
+    <Addresses>1dcf28-1def17</Addresses>
+    <SwapAddress>1dcf28-1def17</SwapAddress>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address>#:4:hex</CS2Address>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc32</Checksum2Method>
+    <CS1Blocks>1dcf28-1def17</CS1Blocks>
+    <CS2Blocks>1dcf28-1def17</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:8:text</PNAddr>
+    <VerAddr />
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>2</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
     <Name>EngineOper</Name>
+    <Version />
     <Addresses>1c2000-1FFFFF</Addresses>
     <SwapAddress />
     <CS1Address>#0:2:hex</CS1Address>
@@ -139,13 +170,14 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Seg3_OS</Name>
-    <Addresses>@201ff0&lt;1FFFFF</Addresses>
+    <Version />
+    <Addresses>@201ff0&lt;200000</Addresses>
     <SwapAddress />
     <CS1Address>201ff8:8:hex</CS1Address>
     <CS2Address />
     <Checksum1Method>BoschInv</Checksum1Method>
     <Checksum2Method>None</Checksum2Method>
-    <CS1Blocks>@201ff0&lt;1FFFFF</CS1Blocks>
+    <CS1Blocks>@201ff0&lt;200000</CS1Blocks>
     <CS2Blocks />
     <CS1Complement>0</CS1Complement>
     <CS2Complement>0</CS2Complement>
@@ -166,6 +198,7 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>Seg-3</Name>
+    <Version />
     <Addresses>204000-27ffff</Addresses>
     <SwapAddress />
     <CS1Address>#0:2:hex</CS1Address>
@@ -193,6 +226,7 @@
   </SegmentConfig>
   <SegmentConfig>
     <Name>ECM extra info</Name>
+    <Version />
     <Addresses />
     <SwapAddress />
     <CS1Address />

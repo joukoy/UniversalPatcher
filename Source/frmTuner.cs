@@ -1744,11 +1744,6 @@ namespace UniversalPatcher
             }
 
         }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-        }
-
         private void PeekTableValuesWithCompare(TableData shTd)
         {
             PeekTableValues(shTd, PCM,true, Color.Blue); //Show values from current file 
