@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using static Upatcher;
 using static Helpers;
 using System.IO;
+using System.Windows.Forms;
 
 namespace UniversalPatcher
 {
@@ -24,7 +25,7 @@ namespace UniversalPatcher
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate int CheckSumSearch(IntPtr Buffer, IntPtr Settings);
+        public delegate int CheckSumSearch(IntPtr Buffer, IntPtr Settings, IntPtr ChekcsumValues, IntPtr FilterValues);
         private static CheckSumSearch CkSearch;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -32,7 +33,7 @@ namespace UniversalPatcher
         private static ChecksumSearchIsRunning CkIsRunning;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate CkResult ChecksumSearchGetResults();
+        public delegate void ChecksumSearchGetResults(out CkResult result);
         private static ChecksumSearchGetResults CkGetResults;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -50,6 +51,9 @@ namespace UniversalPatcher
             public UInt32 End;
             public UInt32 CsAddress;
             public UInt64 Cheksum;
+            public int Method;
+            public byte Complement;
+            public bool ByteSwap;
         }
 
         [StructLayoutAttribute(LayoutKind.Sequential)]
@@ -59,38 +63,82 @@ namespace UniversalPatcher
             public UInt32 End;
             public UInt32 MinRangeLen;
             public int Method;
-            public int Complement;
+            public byte Complement;
             public int CsBytes;
             public bool MSB;
             public bool SwapBytes;
+            public bool NoSwapBytes;
             public bool SkipCsAddress;
+            public int CsValueCount;
             public int Threads;
             public UInt64 InitialValue;
+            public int FilterCount;
             public int CsAddressCount;
             public IntPtr CsAddresses;
         }
         public class CkSearchResult
         {
-            public CkSearchResult() { }
-            public CkSearchResult(uint start,uint end,uint csaddress,UInt64 csum) 
+            public CkSearchResult() 
+            {
+                this.useValue = false;
+            }
+            public CkSearchResult(uint start,uint end,uint csaddress,UInt64 csum, bool useVal, CSMethod method, byte complement, bool byteswap) 
             {
                 this.Start = start;
                 this.End = end;
-                this.CsAddress = csaddress;
+                this.csAddr = csaddress;
                 this.Cheksum = csum;
+                this.useValue = useVal;
+                this.Method = method;
+                this.Complement = complement;
+                this.ByteSwap = byteswap;
             }
-            public CkSearchResult(CkResult result)
+            public CkSearchResult(CkResult result,bool useVal)
             {
                 this.Start = result.Start;
                 this.End = result.End;
-                this.CsAddress = result.CsAddress;
+                this.csAddr = result.CsAddress;
                 this.Cheksum = result.Cheksum;
+                this.useValue = useVal;
+                this.Method = (CSMethod)result.Method;
+                this.Complement = result.Complement;
+                this.ByteSwap = result.ByteSwap;
             }
             public bool Select { get; set; }
             public UInt32 Start { get; set; }
             public UInt32 End { get; set; }
-            public UInt32 CsAddress { get; set; }
+            public string CsAddress 
+            {
+                get 
+                { 
+                    if (useValue || csAddr == uint.MaxValue)
+                    {
+                        return "";
+                    }
+                    else
+                    {
+                        return csAddr.ToString("X");
+                    }
+                }
+                set 
+                {
+                    if (string.IsNullOrEmpty(value) || useValue)
+                    {
+                        csAddr = uint.MaxValue;
+                    }
+                    else
+                    {
+                        HexToUint(value, out csAddr);
+                    }
+                } 
+            }
             public UInt64 Cheksum { get; set; }
+            public CSMethod Method { get; set; }
+            public byte Complement { get; set; }
+            public bool ByteSwap { get; set; }
+
+            private bool useValue;
+            private UInt32 csAddr;
         }
 
         public enum RangeType
@@ -98,20 +146,8 @@ namespace UniversalPatcher
             Exact,
             SearchRange,
             AfterRange,
+            UseValue,
             All
-        }
-        private IntPtr UintArrayToPtr(uint[] buff)
-        {
-            //Create a blob big enough for all elements
-            IntPtr Ptr = Marshal.AllocHGlobal(buff.Length * Marshal.SizeOf(typeof(uint)));
-            //Set array length: (First value in structure)
-            byte[] tmp = new byte[buff.Length * sizeof(uint)];
-            for (int i = 0; i < buff.Length; i++)
-            {
-                Array.Copy(BitConverter.GetBytes(buff[i]), 0, tmp, i * sizeof(uint), sizeof(uint));
-            }
-            Marshal.Copy(tmp, 0, Ptr, tmp.Length);
-            return Ptr;
         }
 
         public class CsUtilMethod
@@ -148,20 +184,25 @@ namespace UniversalPatcher
             public string Exclude { get; set; }
             public uint MinRangeLen { get; set; }
             public List<CsUtilMethod> Methods { get; set; }
-            public ushort Complement { get; set; }
+            public List<byte> Complements { get; set; }
             public string CSAddress { get; set; }
             public RangeType CSAddressType { get; set; }
             public bool BoschFilter0F { get; set; }
             public bool MSB { get; set; }
             public bool SwapBytes { get; set; }
+            public bool NoSwapBytes { get; set; }
+            public bool ShowResults { get; set; }
             public UInt64 InitialValue { get; set; }
             public uint Threads { get; set; }
+            public string FilterValues { get; set; }
         }
-
         private IntPtr pDll;
-        private IntPtr pnt;
-        private IntPtr settingsPnt;
+        private IntPtr buffPtr;
+        private IntPtr settingsPtr;
+        private IntPtr valuesPtr;
+        private IntPtr filterPtr;
         public int QueueStartSize;
+        private bool useCsValue;
         public bool LoadCkLibrary()
         {
             pDll = LoadLibrary("uptools.dll");
@@ -200,21 +241,82 @@ namespace UniversalPatcher
         public void FreeCkLibrary()
         {
             FreeLibrary(pDll);
-            Marshal.FreeHGlobal(pnt);
-            Marshal.FreeHGlobal(settingsPnt);
+            Marshal.FreeHGlobal(buffPtr);
+            Marshal.FreeHGlobal(settingsPtr);
+            Marshal.FreeHGlobal(valuesPtr);
+            Marshal.FreeHGlobal(filterPtr);
+        }
+        private IntPtr Uint64ArrayToPtr(UInt64[] buff)
+        {
+            //Create a blob big enough for all elements
+            IntPtr Ptr = Marshal.AllocHGlobal(buff.Length * Marshal.SizeOf(typeof(UInt64)));
+            byte[] tmp = new byte[buff.Length * sizeof(UInt64)];
+            for (int i = 0; i < buff.Length; i++)
+            {
+                Array.Copy(BitConverter.GetBytes(buff[i]), 0, tmp, i * sizeof(UInt64), sizeof(UInt64));
+            }
+            Marshal.Copy(tmp, 0, Ptr, tmp.Length);
+            return Ptr;
+        }
+        private IntPtr UintArrayToPtr(uint[] buff)
+        {
+            //Create a blob big enough for all elements
+            IntPtr Ptr = Marshal.AllocHGlobal(buff.Length * Marshal.SizeOf(typeof(uint)));
+            byte[] tmp = new byte[buff.Length * sizeof(uint)];
+            for (int i = 0; i < buff.Length; i++)
+            {
+                Array.Copy(BitConverter.GetBytes(buff[i]), 0, tmp, i * sizeof(uint), sizeof(uint));
+            }
+            Marshal.Copy(tmp, 0, Ptr, tmp.Length);
+            return Ptr;
+        }
+        private IntPtr ByteArrayToPtr(byte[] buff)
+        {
+            //Create a blob big enough for all elements
+            IntPtr Ptr = Marshal.AllocHGlobal(buff.Length);
+            Marshal.Copy(buff, 0, Ptr, buff.Length);
+            return Ptr;
         }
 
-        public void StartCkCalc(byte[] buf, uint start, uint end, uint minrangelen, CSMethod method, int complement,int CsBytes, bool MSB, bool SwapBytes, bool SkipCsAddr, int threads,UInt64 InitialValue, uint[] CsAddresses)
+        public void StartCkCalc(byte[] buf, uint start, uint end, uint minrangelen, CSMethod method, List<byte> complements,int CsBytes, bool MSB, bool SwapBytes, bool NoSwapBytes, bool SkipCsAddr, string CsValues, int threads,UInt64 InitialValue, UInt64[] FilterValues, uint[] CsAddresses)
         {
-            pnt = Marshal.AllocHGlobal(buf.Length + 16);
             try
-            {
+            {                
+                buffPtr = Marshal.AllocHGlobal(buf.Length + 16);
+                List<UInt64> csvalues = new List<UInt64>();
+                if (!string.IsNullOrEmpty(CsValues))
+                {
+                    this.useCsValue = true;
+                    string[] csvParts = CsValues.Split(',');
+                    foreach(string cPart in csvParts)
+                    {
+                        if (HexToUint64(cPart,out UInt64 csVal))
+                            csvalues.Add(csVal);
+                    }
+                    valuesPtr = Uint64ArrayToPtr(csvalues.ToArray());
+                }
+                else
+                {
+                    this.useCsValue = false;
+                }
+                if (FilterValues.Length > 0)
+                {
+                    filterPtr = Uint64ArrayToPtr(FilterValues);
+                }
                 // Copy the array to unmanaged memory.
-                Marshal.Copy(buf, 0, pnt, buf.Length);
+                Marshal.Copy(buf, 0, buffPtr, buf.Length);
                 SearchSettings searchSettings = new SearchSettings();
-                searchSettings.Complement = complement;
+                searchSettings.Complement = 0;
+                foreach (byte comp in complements)
+                {
+                    if (comp == 0)
+                        searchSettings.Complement = (byte)(searchSettings.Complement | 4);
+                    else
+                        searchSettings.Complement = (byte)(searchSettings.Complement | comp);
+                }
                 searchSettings.CsAddressCount = CsAddresses.Length;
                 searchSettings.CsAddresses = UintArrayToPtr(CsAddresses);
+                searchSettings.FilterCount = FilterValues.Length;
                 searchSettings.CsBytes = CsBytes;
                 searchSettings.End = end;
                 searchSettings.InitialValue = InitialValue;
@@ -224,11 +326,13 @@ namespace UniversalPatcher
                 searchSettings.SkipCsAddress = SkipCsAddr;
                 searchSettings.Start = start;
                 searchSettings.SwapBytes = SwapBytes;
+                searchSettings.NoSwapBytes = NoSwapBytes;
                 searchSettings.Threads = threads;
+                searchSettings.CsValueCount = csvalues.Count;
                 int ptrLen = Marshal.SizeOf(searchSettings) + CsAddresses.Length * sizeof(uint);
-                settingsPnt = Marshal.AllocHGlobal(ptrLen);
-                Marshal.StructureToPtr(searchSettings, settingsPnt, false);
-                QueueStartSize = CkSearch(pnt, settingsPnt);
+                settingsPtr = Marshal.AllocHGlobal(ptrLen);
+                Marshal.StructureToPtr(searchSettings, settingsPtr, false);
+                QueueStartSize = CkSearch(buffPtr, settingsPtr, valuesPtr, filterPtr);
             }
             finally
             {
@@ -246,30 +350,36 @@ namespace UniversalPatcher
         public string GetResultStr(bool FilterZero)
         {
             StringBuilder sb = new StringBuilder();
-            CkResult result = CkGetResults();            
+            CkResult result;
+            CkGetResults(out result);            
             while (result.Start < uint.MaxValue)
             {
                 if (result.Cheksum != 0 || FilterZero == false)
                 {
                     sb.Append("Range: " + result.Start.ToString("X8") + " - " + result.End.ToString("X8") + ", Address: " + result.CsAddress.ToString("X8") + ", result: " + result.Cheksum.ToString("X") + Environment.NewLine);
                 }
-                result = CkGetResults();
+                CkGetResults(out result);
             }
             return sb.ToString();
         }
 
-        public List<CkSearchResult> GetResults(bool FilterZero)
+        public List<CkSearchResult> GetResults(List<ulong> FilterValues)
         {
+            CkResult result;
             List<CkSearchResult> results = new List<CkSearchResult>();
-            CkResult result = CkGetResults();
+            CkGetResults(out result);
             while (result.Start < uint.MaxValue)
             {
-                if (result.Cheksum != 0 || FilterZero == false)
+                if (!FilterValues.Contains(result.Cheksum))
                 {
-                    CkSearchResult cr = new CkSearchResult(result);
+                    CkSearchResult cr = new CkSearchResult(result, useCsValue);
                     results.Add(cr);
                 }
-                result = CkGetResults();
+                CkGetResults(out result);
+                if (results.Count > 100)
+                {
+                    break;
+                }
             }
             return results;
         }

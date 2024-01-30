@@ -47,6 +47,9 @@ struct Result
     UINT32 End;
     UINT32 CsAddress;
     UINT64 Cheksum;
+    int Method;
+    BYTE Complement;
+    BOOL ByteSwap;
 };
 struct SearchSettings
 {
@@ -58,9 +61,12 @@ struct SearchSettings
     int CsBytes;
     BOOL MSB;
     BOOL SwapBytes;
+    BOOL NoSwapBytes;
     BOOL SkipCsAddress;
+    int CsValueCount;
     int Threads;
     UINT64 InitialValue;
+    int FilterCount;
     int CsAddressCount;
     UINT32* CsAddresses;
 };
@@ -69,11 +75,11 @@ struct SearchSettings
 SafeQueue<Result> outq;
 SafeQueue<StartEnd> workqueue;
 SearchSettings *searchsettings;
+UINT64* csvalues;
+UINT64* filtervalues;
 
 DWORD WINAPI CalcWordSum(_In_  LPVOID lpParameter)
 {
-    INT_PTR id = reinterpret_cast<INT_PTR>(lpParameter);
-    //std::cout << "Thread: " << id << "\n";
     while (!workqueue.empty())
     {
         StartEnd range = workqueue.dequeue();
@@ -86,14 +92,29 @@ DWORD WINAPI CalcWordSum(_In_  LPVOID lpParameter)
                 sum += (UINT16)(buffer[a] << 8 | buffer[a + 1]);
                 UINT32 cs = (UINT32)(buffer[a + 2] << 24 | buffer[a + 3] << 16 | buffer[a + 4] << 8 | buffer[a + 5]);
                 UINT32 csCalc = ~sum + 1;
-                if (cs > 0 && cs == csCalc && (a- newStart) >= searchsettings->MinRangeLen)
+                if (cs == csCalc && (a- newStart) >= searchsettings->MinRangeLen)
                 {
-                    Result r;
-                    r.Start = newStart;
-                    r.End = a + 1;
-                    r.CsAddress = a + 2;
-                    r.Cheksum = cs;
-                    outq.enqueue(r);
+                    BOOL skip = false;
+                    for (int f = 0;f < searchsettings->FilterCount;f++)
+                    {
+                        if (filtervalues[f] == csCalc)
+                        {
+                            skip = true;
+                            break;
+                        }
+                    }
+                    if (!skip)
+                    {
+                        Result r;
+                        r.Start = newStart;
+                        r.End = a + 1;
+                        r.CsAddress = a + 2;
+                        r.Cheksum = cs;
+                        r.Method = Wordsum;
+                        r.Complement = 2;
+                        r.ByteSwap = false;
+                        outq.enqueue(r);
+                    }
                 }
             }
             if (StopMe)
@@ -153,14 +174,11 @@ void  InitCrc32()
 
 DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
 {
-    INT_PTR id = reinterpret_cast<INT_PTR>(lpParameter);
-    UINT64 *cs; 
+    UINT64 sum;
     UINT64 csCalc;
-    //UINT32 csAddr = csaddress[0];
+    UINT64* cs; //Checksum array
     BYTE index;
-    UINT32 sum;
     StartEnd range;
-    //std::cout << "Thread: " << id << "\n";
     int step = 1;
     if (searchsettings->Method == Wordsum || searchsettings->Method == BoschInv)
         step = 2;
@@ -172,36 +190,46 @@ DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
     if (searchsettings->Method == crc32)
         InitCrc32();
 
-    cs = new UINT64[searchsettings->CsAddressCount];
-
-    for (int c = 0; c < searchsettings->CsAddressCount;c++)
+    if (searchsettings->CsValueCount > 0)
     {
-        UINT32 csAddr = searchsettings->CsAddresses[c];
-        if (csAddr < UINT32_MAX)
+        cs = csvalues;
+    }
+    else
+    {
+        cs = new UINT64[searchsettings->CsAddressCount];
+        for (int c = 0; c < searchsettings->CsAddressCount;c++)
         {
-            switch (searchsettings->CsBytes)
+            UINT32 csAddr = searchsettings->CsAddresses[c];
+            if (csAddr < UINT32_MAX)
             {
-            case 1:
-                cs[c] = (BYTE)buffer[csAddr];
-                break;
-            case 2:
-                if (searchsettings->MSB)
-                    cs[c] = (UINT16)(buffer[csAddr] << 8 | buffer[csAddr + 1]);
-                else
-                    cs[c] = (UINT16)(buffer[csAddr + 1] << 8 | buffer[csAddr]);
-                break;
-            case 4:
-                if (searchsettings->MSB)
-                    cs[c] = (UINT32)(buffer[csAddr] << 24 | buffer[csAddr + 1] << 16 | buffer[csAddr + 2] << 8 | buffer[csAddr + 3]);
-                else
-                    cs[c] = (UINT32)(buffer[csAddr + 3] << 24 | buffer[csAddr + 2] << 16 | buffer[csAddr + 1] << 8 | buffer[csAddr]);
-                break;
-            case 8:
-                if (searchsettings->MSB)
-                    cs[c] = (UINT64)((UINT64)buffer[csAddr] << 56 | (UINT64)buffer[csAddr + 1] << 48 | (UINT64)buffer[csAddr + 2] << 40 | (UINT64)buffer[csAddr + 3] << 32 | (UINT64)buffer[csAddr + 4] << 24 | (UINT64)buffer[csAddr + 5] << 16 | (UINT64)buffer[csAddr + 6] << 8 | buffer[csAddr + 7]);
-                else
-                    cs[c] = (UINT64)((UINT64)buffer[csAddr + 7] << 56 | (UINT64)buffer[csAddr + 6] << 48 | (UINT64)buffer[csAddr + 5] << 40 | (UINT64)buffer[csAddr + 4] << 32 | (UINT64)buffer[csAddr + 3] << 24 | (UINT64)buffer[csAddr + 2] << 16 | (UINT64)buffer[csAddr + 1] << 8 | buffer[csAddr]);
-                break;
+                switch (searchsettings->CsBytes)
+                {
+                case 1:
+                    cs[c] = (BYTE)buffer[csAddr];
+                    break;
+                case 2:
+                    if (searchsettings->MSB)
+                        cs[c] = (UINT16)(buffer[csAddr] << 8 | buffer[csAddr + 1]);
+                    else
+                        cs[c] = (UINT16)(buffer[csAddr + 1] << 8 | buffer[csAddr]);
+                    break;
+                case 4:
+                    if (searchsettings->MSB)
+                        cs[c] = (UINT32)(buffer[csAddr] << 24 | buffer[csAddr + 1] << 16 | buffer[csAddr + 2] << 8 | buffer[csAddr + 3]);
+                    else
+                        cs[c] = (UINT32)(buffer[csAddr + 3] << 24 | buffer[csAddr + 2] << 16 | buffer[csAddr + 1] << 8 | buffer[csAddr]);
+                    break;
+                case 8:
+                    if (searchsettings->MSB)
+                        cs[c] = (UINT64)((UINT64)buffer[csAddr] << 56 | (UINT64)buffer[csAddr + 1] << 48 | (UINT64)buffer[csAddr + 2] << 40 | (UINT64)buffer[csAddr + 3] << 32 | (UINT64)buffer[csAddr + 4] << 24 | (UINT64)buffer[csAddr + 5] << 16 | (UINT64)buffer[csAddr + 6] << 8 | buffer[csAddr + 7]);
+                    else
+                        cs[c] = (UINT64)((UINT64)buffer[csAddr + 7] << 56 | (UINT64)buffer[csAddr + 6] << 48 | (UINT64)buffer[csAddr + 5] << 40 | (UINT64)buffer[csAddr + 4] << 32 | (UINT64)buffer[csAddr + 3] << 24 | (UINT64)buffer[csAddr + 2] << 16 | (UINT64)buffer[csAddr + 1] << 8 | buffer[csAddr]);
+                    break;
+                }
+            }
+            else
+            {
+                cs[c] = 0;  //Make compiler happy
             }
         }
     }
@@ -285,6 +313,10 @@ DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
                     default:
                         break;
                 }
+                if ((a - newStart) < searchsettings->MinRangeLen)
+                {
+                    continue;
+                }
                 if (searchsettings->CsAddresses[0] == UINT32_MAX)
                 {
                     UINT32 csAddr = a + step;
@@ -313,67 +345,108 @@ DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
                         break;
                     }
                 }
-                if (searchsettings->Complement == 1)
-                    csCalc = ~sum;
-                else if (searchsettings->Complement == 2)
-                    csCalc = ~sum + 1;
-               
-                switch (searchsettings->CsBytes)
-                {
-                case 1:
-                    csCalc = (csCalc & 0xFF);
-                    break;
-                case 2:
-                    if (searchsettings->SwapBytes)
-                        csCalc = csCalc && 0xFF << 8 | csCalc & 0xFF00 >> 8;
-                    else
-                        csCalc = (csCalc & 0xFFFF);
-                    break;
-                case 4:
-                    if (searchsettings->SwapBytes)
-                        csCalc = csCalc && (UINT64)0xFF << 24 | csCalc & 0xFF00 << 8 | csCalc && 0xFF0000 >> 8 | csCalc & 0xFF000000 >> 24;
-                    else
-                        csCalc = (csCalc & 0xFFFFFFFF);
-                    break;
-                case 8:
-                    if (searchsettings->SwapBytes)
-                    {
-                        csCalc = (csCalc & 0x00000000FFFFFFFF) << 32 | (csCalc & 0xFFFFFFFF00000000) >> 32;
-                        csCalc = (csCalc & 0x0000FFFF0000FFFF) << 16 | (csCalc & 0xFFFF0000FFFF0000) >> 16;
-                        csCalc = (csCalc & 0x00FF00FF00FF00FF) << 8 | (csCalc & 0xFF00FF00FF00FF00) >> 8;
-                    }
-                }
-                if (searchsettings->CsAddresses[0] == UINT32_MAX)
-                {
-                    if (cs[0] == csCalc && (a - newStart) >= searchsettings->MinRangeLen)
-                    {
-                        UINT32 csAddr = a + step;
-                        Result result;
-                        result.Start = newStart;
-                        result.End = a + (step - 1);
-                        result.CsAddress = csAddr;
-                        result.Cheksum = cs[0];
-                        outq.enqueue(result);
-                    }
 
-                }
-                else
+                for (int swb = 0; swb <= 1; swb++)
                 {
-                    if (a >= 0x2ffb)
+                    BOOL swapBytes;
+                    if (swb == 0) //Don't swap bytes
                     {
-                        std::cout << "Test";
+                        if (!searchsettings->NoSwapBytes)
+                            continue;
+                        swapBytes = false;
                     }
-                    for (int c = 0; c < searchsettings->CsAddressCount;c++)
+                    else //swb ==1 (Swap bytes)
                     {
-                        if (cs[c] == csCalc && (a - newStart) >= searchsettings->MinRangeLen)
+                        if (!searchsettings->SwapBytes)
+                            continue;
+                        swapBytes = true;
+                    }
+                    for (int comp = 0; comp <= 2; comp++)
+                    {
+                        if (comp == 0 && (searchsettings->Complement & 4) != 4)
+                            continue;   //Not selected, skip
+                        if (comp == 1 && (searchsettings->Complement & 1) != 1)
+                            continue;
+                        if (comp == 2 && (searchsettings->Complement & 2) != 2)
+                            continue;
+                        if (comp == 1)
+                            csCalc = ~sum;
+                        else if (comp == 2)
+                            csCalc = ~sum + 1;
+
+                        switch (searchsettings->CsBytes)
                         {
-                            UINT32 csAddr = searchsettings->CsAddresses[c];
-                            Result result;
-                            result.Start = newStart;
-                            result.End = a + (step - 1);
-                            result.CsAddress = csAddr;
-                            result.Cheksum = cs[c];
-                            outq.enqueue(result);
+                        case 1:
+                            csCalc = (csCalc & 0xFF);
+                            break;
+                        case 2:
+                            if (swapBytes)
+                                csCalc = csCalc && 0xFF << 8 | csCalc & 0xFF00 >> 8;
+                            else
+                                csCalc = (csCalc & 0xFFFF);
+                            break;
+                        case 4:
+                            if (swapBytes)
+                                csCalc = csCalc && (UINT64)0xFF << 24 | csCalc & 0xFF00 << 8 | csCalc && 0xFF0000 >> 8 | csCalc & 0xFF000000 >> 24;
+                            else
+                                csCalc = (csCalc & 0xFFFFFFFF);
+                            break;
+                        case 8:
+                            if (swapBytes)
+                            {
+                                csCalc = (csCalc & 0x00000000FFFFFFFF) << 32 | (csCalc & 0xFFFFFFFF00000000) >> 32;
+                                csCalc = (csCalc & 0x0000FFFF0000FFFF) << 16 | (csCalc & 0xFFFF0000FFFF0000) >> 16;
+                                csCalc = (csCalc & 0x00FF00FF00FF00FF) << 8 | (csCalc & 0xFF00FF00FF00FF00) >> 8;
+                            }
+                        }
+                        BOOL skip = false;
+                        for (int f = 0;f < searchsettings->FilterCount;f++)
+                        {
+                            if (filtervalues[f] == csCalc)
+                            {
+                                skip = true;
+                                break;
+                            }
+                        }
+                        if (skip)
+                        {
+                            continue;
+                        }
+                        if (searchsettings->CsAddresses[0] == UINT32_MAX)
+                        {
+                            if (cs[0] == csCalc)
+                            {
+                                UINT32 csAddr = a + step;
+                                Result result;
+                                result.Start = newStart;
+                                result.End = a + (step - 1);
+                                result.CsAddress = csAddr;
+                                result.Cheksum = cs[0];
+                                result.Method = searchsettings->Method;
+                                result.Complement = comp;
+                                result.ByteSwap = swapBytes;
+                                outq.enqueue(result);
+                            }
+
+                        }
+                        else
+                        {
+                            for (int c = 0; c < searchsettings->CsAddressCount;c++)
+                            {
+                                if (cs[c] == csCalc)
+                                {
+                                    UINT32 csAddr = searchsettings->CsAddresses[c];
+                                    Result result;
+                                    result.Start = newStart;
+                                    result.End = a + (step - 1);
+                                    result.CsAddress = csAddr;
+                                    result.Cheksum = cs[c];
+                                    result.Method = searchsettings->Method;
+                                    result.Complement = comp;
+                                    result.ByteSwap = swapBytes;
+                                    outq.enqueue(result);
+                                }
+                            }
                         }
                     }
                 }
@@ -387,39 +460,27 @@ DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
     return 0;
 }
 
-int WINAPI CheckSumSearch(unsigned char* Buffer, SearchSettings *Settings)
+int WINAPI CheckSumSearch(unsigned char* Buffer, SearchSettings *Settings, UINT64 *CsValues, UINT64* FilterValues)
 {
 #pragma EXPORT
      
     buffer = Buffer;
     searchsettings = Settings;
-    //memcpy(&searchsettings, &Settings, sizeof(Settings));
+    csvalues = CsValues;
+    filtervalues = FilterValues;
     handles = new HANDLE[Settings->Threads];
     
-    /*
-    rangestart = Settings.Start;
-    rangeend = Settings.End;
-    minrangelen = Settings.MinRangeLen;
-    csbytes = Settings.CsBytes;
-    csaddress = Settings.CsAddresses;
-    csACount = Settings.CsAddressCount;
-    threads = Settings.Threads;
-    method = Settings.Method;
-    complement = Settings.Complement;
-    msb = Settings.MSB;
-    swapbytes = Settings.SwapBytes;
-    */
-
     int qSize = 0;
     StopMe = false;
 
     std::cout << "Range: " << std::hex << searchsettings->Start;
     std::cout << " - " << std::hex << searchsettings->End << "\n";
     UINT32 step = (UINT32)((searchsettings->End - searchsettings->Start) / searchsettings->Threads / 1.5);
+    if (step == 0) step = 1;
     if (step > 100) step = 100;
     UINT32 startMin = searchsettings->Start;
     UINT32 startMax = startMin;
-    while (startMax < searchsettings->End)
+    while (startMax < (searchsettings->End - searchsettings->MinRangeLen))
     {
         startMax = startMin + step;
         if ((searchsettings->End - startMax) < step)
@@ -433,19 +494,19 @@ int WINAPI CheckSumSearch(unsigned char* Buffer, SearchSettings *Settings)
         startMin = startMax + 1;
     }
     qSize = workqueue.size();
-    for (INT_PTR id = 0; id < searchsettings->Threads;id++)
+    for (int id = 0; id < searchsettings->Threads;id++)
     {
-        //reinterpret_cast<LPVOID>(id);
-        if (searchsettings->Method == Wordsum && searchsettings->Complement == 2 && searchsettings->CsBytes == 4  && searchsettings->CsAddresses[0] == UINT32_MAX && searchsettings->MSB && !searchsettings->SwapBytes) //Full optimized method for Wordsum,2's complement, MSB
-            handles[id] = CreateThread(0, 0, &CalcWordSum, reinterpret_cast<LPVOID>(id), 0, 0);
+        if (searchsettings->Method == Wordsum && searchsettings->Complement == 2 && searchsettings->CsBytes == 4  && 
+            searchsettings->CsAddresses[0] == UINT32_MAX && searchsettings->MSB && !searchsettings->SwapBytes) //Full optimized method for Wordsum,2's complement, MSB
+            handles[id] = CreateThread(0, 0, &CalcWordSum, 0, 0, 0);
         else
-            handles[id] = CreateThread(0, 0, &CalcCheckSum, reinterpret_cast<LPVOID>(id), 0, 0);
+            handles[id] = CreateThread(0, 0, &CalcCheckSum, 0, 0, 0);
         Sleep(50);
     }
     return qSize;
 }
 
-Result WINAPI ChecksumSearchGetResults()
+void WINAPI ChecksumSearchGetResults(Result *result)
 {
 #pragma EXPORT
     Result r;
@@ -458,7 +519,7 @@ Result WINAPI ChecksumSearchGetResults()
         r = outq.dequeue();
         //outq.pop();
     }
-    return r;
+    memcpy(result, &r, sizeof(r));
 }
 
 BOOL WINAPI ChecksumSearchIsRunning()

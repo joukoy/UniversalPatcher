@@ -25,9 +25,10 @@ namespace UniversalPatcher
         //public PcmFile frmpatcher.basefile;
         private List<uint> BoschInvAddresses;
         private bool stopChecksumResearch = false;
-        ChecksumSearcher.ChecksumSearchSettings settings;
+        ChecksumSearchSettings settings;
         private List<CsUtilMethod> csUtilMethods;
         private List<CkSearchResult> SearchResults;
+        private List<UInt64> FilterValues;
 
         private void frmChecksumResearch_Load(object sender, EventArgs e)
         {
@@ -64,6 +65,7 @@ namespace UniversalPatcher
         private void radioCsUtilRangeExact_CheckedChanged(object sender, EventArgs e)
         {
             txtExclude.Enabled = radioCsUtilRangeExact.Checked;
+            trackBar1.Visible = !radioCsUtilRangeExact.Checked;
         }
         private void SearchBoschInv()
         {
@@ -97,18 +99,30 @@ namespace UniversalPatcher
             }
         }
 
-        private void GetSearchResults(ChecksumSearcher searcher)
+        private bool GetSearchResults(ChecksumSearcher searcher)
         {
-            List<CkSearchResult> cresults = searcher.GetResults(chkCSUtilFilterZero.Checked);
+            List<CkSearchResult> cresults = searcher.GetResults(FilterValues);
             if (cresults.Count > 0)
             {
                 SearchResults.AddRange(cresults);
-                foreach (CkSearchResult result in cresults)
+                if (chkCsUtilLogResults.Checked)
                 {
-                    Logger("Range: " + result.Start.ToString("X8") + " - " + result.End.ToString("X8") + ", Address: " + result.CsAddress.ToString("X8") + ", result: " + result.Cheksum.ToString("X") + Environment.NewLine);
+                    foreach (CkSearchResult result in cresults)
+                    {
+                        if (stopChecksumResearch)
+                            return true;
+                        if (radioCsUtilCSValue.Checked)
+                            Logger("Range: " + result.Start.ToString("X8") + " - " + result.End.ToString("X8") + ", result: " + result.Cheksum.ToString("X") + Environment.NewLine);
+                        else
+                            Logger("Range: " + result.Start.ToString("X8") + " - " + result.End.ToString("X8") + ", Address: " + result.CsAddress + ", result: " + result.Cheksum.ToString("X") + Environment.NewLine);
+                        Application.DoEvents();
+                    }
                 }
             }
-
+            if (cresults.Count > 0)
+                return true;
+            else
+                return false;
         }
         private void csUtilWaitForSearcher(ChecksumSearcher searcher)
         {
@@ -124,30 +138,24 @@ namespace UniversalPatcher
                 if (x >= 10)
                 {
                     x = 0;
-                    richChkData.Text = "Queue: " + searcher.GetQueueSize().ToString() + "/" + searcher.QueueStartSize.ToString();
+                    richChkData.Text = "Queue: " + searcher.GetQueueSize().ToString() + "/" + searcher.QueueStartSize.ToString() +
+                        Environment.NewLine + "Results: " + SearchResults.Count.ToString();
                 }
                 Application.DoEvents();
                 Thread.Sleep(100);
             }
-            GetSearchResults(searcher);
+            while(GetSearchResults(searcher));
         }
 
-        List<int> GetSelectedComplements()
+        List<byte> GetSelectedComplements()
         {
-            List<int> selectedComplements = new List<int>();
-            if (radioCSUtilComplement0.Checked)
+            List<byte> selectedComplements = new List<byte>();
+            if (chkCsUtilComp0.Checked)
                 selectedComplements.Add(0);
-            if (radioCSUtilComplement1.Checked)
+            if (chkCsUtilComp1.Checked)
                 selectedComplements.Add(1);
-            if (radioCSUtilComplement2.Checked)
+            if (chkCsUtilComp2.Checked)
                 selectedComplements.Add(2);
-            if (radioCsUtilComplementAll.Checked)
-            {
-                for (int c = 0; c <= 2; c++)
-                {
-                    selectedComplements.Add(c);
-                }
-            }
             return selectedComplements;
         }
 
@@ -155,12 +163,14 @@ namespace UniversalPatcher
         {
             try
             {
-                uint minRangeLen = (uint)numCsUtilMinRangeLength.Value;
-                List<int> selectedComplements = GetSelectedComplements();
+                List<byte> selectedComplements = GetSelectedComplements();
                 //uint csAddr = uint.MaxValue;
                 List<Block> csAddressBlocks = new List<Block>();
                 List<uint> csAddresses = new List<uint>();
                 BoschInvAddresses = null;
+                string csVals = "";
+                if (radioCsUtilCSValue.Checked)
+                    csVals = txtCSAddr.Text;
                 if (radioCsUtilCsAfterRange.Checked)
                 {
                     Block b = new Block();
@@ -187,6 +197,7 @@ namespace UniversalPatcher
                     start = limitBlocks[0].Start;
                     max = limitBlocks.LastOrDefault().End;
                 }
+                uint minRangeLen = (uint)trackBar1.Value *(max - start) /100;
 
                 int threadCount = (int)numCsUtilThreads.Value;
                 ChecksumSearcher searcher = new ChecksumSearcher();
@@ -200,28 +211,25 @@ namespace UniversalPatcher
                     CSMethod csm = cum.ChecksumMethod();
                     if (cum.Enable)
                     {
-                        foreach (int complement in selectedComplements)
+                        Logger("Method: " + csm.ToString());
+                        if (csm == CSMethod.BoschInv && cum.UseBoschAddresses)
                         {
-                            Logger("Method: " + csm.ToString() + ", Complement: " + complement.ToString());
-                            if (csm == CSMethod.BoschInv && cum.UseBoschAddresses)
-                            {
-                                if (BoschInvAddresses == null)
-                                    SearchBoschInv();
+                            if (BoschInvAddresses == null)
+                                SearchBoschInv();
 
-                                if (stopChecksumResearch) return;
-                                searcher.StartCkCalc(frmpatcher.basefile.buf, start, max, minRangeLen, csm, complement, (int)cum.CsBytes, 
-                                    chkCsMSB.Checked, chkCsUtilSwapBytes.Checked,cum.SkipCsAddress, threadCount,
-                                    (UInt64)numCsUtilInitValue.Value, BoschInvAddresses.ToArray());
-                                csUtilWaitForSearcher(searcher);
-                            }
-                            else
-                            {
-                                if (stopChecksumResearch) return;
-                                searcher.StartCkCalc(frmpatcher.basefile.buf, start, max, minRangeLen, csm, complement, (int)cum.CsBytes, 
-                                    chkCsMSB.Checked, chkCsUtilSwapBytes.Checked,cum.SkipCsAddress, threadCount, 
-                                    (UInt64)numCsUtilInitValue.Value, csAddresses.ToArray());
-                                csUtilWaitForSearcher(searcher);
-                            }
+                            if (stopChecksumResearch) return;
+                            searcher.StartCkCalc(frmpatcher.basefile.buf, start, max, minRangeLen, csm, selectedComplements, (int)cum.CsBytes, 
+                                chkCsMSB.Checked, chkCsUtilSwapBytes.Checked,chkCsUtilNoByteswap.Checked,cum.SkipCsAddress,csVals, threadCount,
+                                (UInt64)numCsUtilInitValue.Value,FilterValues.ToArray(), BoschInvAddresses.ToArray());
+                            csUtilWaitForSearcher(searcher);
+                        }
+                        else
+                        {
+                            if (stopChecksumResearch) return;
+                            searcher.StartCkCalc(frmpatcher.basefile.buf, start, max, minRangeLen, csm, selectedComplements, (int)cum.CsBytes, 
+                                chkCsMSB.Checked, chkCsUtilSwapBytes.Checked,chkCsUtilNoByteswap.Checked,cum.SkipCsAddress,csVals, threadCount, 
+                                (UInt64)numCsUtilInitValue.Value,FilterValues.ToArray(), csAddresses.ToArray());
+                            csUtilWaitForSearcher(searcher);
                         }
                     }
                 }
@@ -255,7 +263,7 @@ namespace UniversalPatcher
         {
             try
             {
-                List<int> selectedComplements = GetSelectedComplements();
+                List<byte> selectedComplements = GetSelectedComplements();
                 List<Block> excludes = new List<Block>();
                 if (txtExclude.Text.Length > 0)
                 {
@@ -280,18 +288,28 @@ namespace UniversalPatcher
                                 UInt64 oldVal = csUtilReadOldvalue(csA, (ushort)cum.CsBytes, chkCsMSB.Checked);
                                 csAddr.Address = csA;
                                 csAddress = csA;
-                                foreach (int complement in selectedComplements)
+                                foreach (byte complement in selectedComplements)
                                 {
                                     csAddr.Bytes = (ushort)cum.CsBytes;
                                     //Logger("Method: " + csm.ToString() + ", Complement: " + complement.ToString());
-                                    UInt64 csCalc = CalculateChecksum(chkCsMSB.Checked, frmpatcher.basefile.buf, csAddr, blocks, excludes, csm, (short)complement, csAddr.Bytes, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
-                                    if (csCalc == oldVal)
+                                    UInt64 csCalc = CalculateChecksum(chkCsMSB.Checked, frmpatcher.basefile.buf, csAddr, blocks, excludes, 
+                                        csm, (short)complement, csAddr.Bytes, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
+                                    UInt64 csCalcSwap = SwapBytes(csCalc, 8);
+                                    if (csCalc == oldVal && chkCsUtilNoByteswap.Checked && !FilterValues.Contains(csCalc))
                                     {
-                                        LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X") + " [Match]");
-                                        CkSearchResult csr = new CkSearchResult(blocks[0].Start, blocks.LastOrDefault().End,csA, csCalc);
+                                        if (chkCsUtilLogResults.Checked)
+                                            LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", No byteswap, result: " + csCalc.ToString("X") + " [Match]");
+                                        CkSearchResult csr = new CkSearchResult(blocks[0].Start, blocks.LastOrDefault().End,csA, csCalc, radioCsUtilCSValue.Checked,csm,complement,false);
                                         SearchResults.Add(csr);
                                     }
-                                    else if (!chkCSUtilMatchOnly.Checked)
+                                    else if (csCalcSwap == oldVal && chkCsUtilSwapBytes.Checked && !FilterValues.Contains(csCalcSwap))
+                                    {
+                                        if (chkCsUtilLogResults.Checked)
+                                            LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", Byteswap, result: " + csCalc.ToString("X") + " [Match]");
+                                        CkSearchResult csr = new CkSearchResult(blocks[0].Start, blocks.LastOrDefault().End, csA, csCalcSwap, radioCsUtilCSValue.Checked,csm,complement,true);
+                                        SearchResults.Add(csr);
+                                    }
+                                    else if (chkCsUtilLogResults.Checked && !chkCSUtilMatchOnly.Checked)
                                     {
                                         Logger("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                                     }
@@ -302,18 +320,27 @@ namespace UniversalPatcher
                         else
                         {
                             UInt64 oldVal = csUtilReadOldvalue(csAddress, (ushort)cum.CsBytes, chkCsMSB.Checked);
-                            foreach (int complement in selectedComplements)
+                            foreach (byte complement in selectedComplements)
                             {
                                 csAddr.Bytes = (ushort)cum.CsBytes;
                                 //Logger("Method: " + csm.ToString() + ", Complement: " + complement.ToString());
                                 UInt64 csCalc = CalculateChecksum(chkCsMSB.Checked, frmpatcher.basefile.buf, csAddr, blocks, excludes, csm, (short)complement, csAddr.Bytes, chkCsUtilSwapBytes.Checked, true, (UInt64)numCsUtilInitValue.Value);
-                                if (csCalc == oldVal)
+                                UInt64 csCalcSwap = SwapBytes(csCalc, 8);
+                                if (csCalc == oldVal && chkCsUtilNoByteswap.Checked && !FilterValues.Contains(csCalc))
                                 {
-                                    LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X") + " [Match]");
-                                    CkSearchResult csr = new CkSearchResult(blocks[0].Start, blocks.LastOrDefault().End, csAddress, csCalc);
+                                    if (chkCsUtilLogResults.Checked)
+                                        LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ",No byteswap, result: " + csCalc.ToString("X") + " [Match]");
+                                    CkSearchResult csr = new CkSearchResult(blocks[0].Start, blocks.LastOrDefault().End, csAddress, csCalc, radioCsUtilCSValue.Checked,csm,complement,true);
                                     SearchResults.Add(csr);
                                 }
-                                else if (!chkCSUtilMatchOnly.Checked)
+                                else if (csCalcSwap == oldVal && chkCsUtilSwapBytes.Checked && !FilterValues.Contains(csCalcSwap))
+                                {
+                                    if (chkCsUtilLogResults.Checked)
+                                        LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ",Byteswap, result: " + csCalc.ToString("X") + " [Match]");
+                                    CkSearchResult csr = new CkSearchResult(blocks[0].Start, blocks.LastOrDefault().End, csAddress, csCalc, radioCsUtilCSValue.Checked, csm, complement, true);
+                                    SearchResults.Add(csr);
+                                }
+                                else if (chkCsUtilLogResults.Checked && !chkCSUtilMatchOnly.Checked)
                                 {
                                     Logger("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                                 }
@@ -347,6 +374,15 @@ namespace UniversalPatcher
                 uint csAddr = uint.MaxValue;
                 List<Block> csaBlocks;
                 SearchResults = new List<CkSearchResult>();
+                FilterValues = new List<ulong>();
+                string[] fParts = txtFilterValues.Text.Split(',');
+                foreach(string fPart in fParts)
+                {
+                    if (HexToUint64(fPart,out ulong x))
+                    {
+                        FilterValues.Add(x);
+                    }
+                }
 
                 if (!radioCsUtilRangeExact.Checked)
                 {
@@ -387,6 +423,7 @@ namespace UniversalPatcher
                         csUtilCalcCS(csAddr, rangeBlocks);
                     }
                 }
+                Logger("Found " + SearchResults.Count.ToString() + " matches");
             }
             catch (Exception ex)
             {
@@ -411,16 +448,19 @@ namespace UniversalPatcher
         {
             stopChecksumResearch = false;
             btnStop.Enabled = true;
+            btnTestChecksum.Enabled = false;
             Application.DoEvents();
             ChecksumResearch();
             btnStop.Enabled = false;
+            btnTestChecksum.Enabled = true;
         }
         private void ShowChkData()
         {
             uint chkAddr = 0;
             if (!HexToUint(txtCSAddr.Text, out chkAddr))
                 return;
-
+            if (radioCsUtilCSValue.Checked)
+                return;
             try
             {
                 int seg = frmpatcher.basefile.GetSegmentNumber(chkAddr);
@@ -571,16 +611,17 @@ namespace UniversalPatcher
                         csBytes = (ushort)csUtilMethods[i].CsBytes;
                     }
                 }
-                if (radioCsUtilComplementAll.Checked)
+
+                short complement = 0;
+                if (chkCsUtilComp1.Checked)
+                    complement++;
+                if (chkCsUtilComp2.Checked)
+                    complement += 2;
+                if (complement > 2 || (chkCsUtilComp0.Checked && complement > 0))
                 {
                     LoggerBold("Select only one complement value");
                     return;
                 }
-                short complement = 0;
-                if (radioCSUtilComplement1.Checked)
-                    complement = 1;
-                else if (radioCSUtilComplement2.Checked)
-                    complement = 2;
                 uint csA;
                 if (HexToUint(txtCSAddr.Text, out csA))
                     csAddr.Address = csA;
@@ -630,7 +671,6 @@ namespace UniversalPatcher
 
         private void chkCSUtilMatchOnly_CheckedChanged(object sender, EventArgs e)
         {
-            chkCSUtilFilterZero.Enabled = chkCSUtilMatchOnly.Checked;
         }
 
         private void radioCsUtilRangeUnknown_CheckedChanged(object sender, EventArgs e)
@@ -657,34 +697,40 @@ namespace UniversalPatcher
             txtCSAddr.Text = settings.CSAddress;
             if (settings.CSAddressType == ChecksumSearcher.RangeType.Exact)
                 radioCsUtilCsExact.Checked = true;
+            else if (settings.CSAddressType == RangeType.UseValue)
+                radioCsUtilCSValue.Checked = true;
             else
                 radioCsUtilCsAfterRange.Checked = true;
-            switch(settings.Complement)
+            for (int c=0;c<settings.Complements.Count;c++)
             {
-                case 0:
-                    radioCSUtilComplement0.Checked = true;
-                    break;
-                case 1:
-                    radioCSUtilComplement1.Checked = true;
-                    break;
-                case 2:
-                    radioCSUtilComplement2.Checked = true;
-                    break;
-                default:
-                    radioCsUtilComplementAll.Checked = true;
-                    break;
+                switch (settings.Complements[c])
+                {
+                    case 0:
+                        chkCsUtilComp0.Checked = true;
+                        break;
+                    case 1:
+                        chkCsUtilComp1.Checked = true;
+                        break;
+                    case 2:
+                        chkCsUtilComp2.Checked = true;
+                        break;
+                }
             }
             chkCsMSB.Checked = settings.MSB;
             chkCsUtilSwapBytes.Checked = settings.SwapBytes;
+            chkCsUtilNoByteswap.Checked = settings.NoSwapBytes;
+            chkCsUtilLogResults.Checked = settings.ShowResults;
+            txtFilterValues.Text = settings.FilterValues;
             numCsUtilInitValue.Value = settings.InitialValue;
             numCsUtilThreads.Value = settings.Threads;
+            trackBar1.Value = (int)settings.MinRangeLen;
             dataGridCsUtilMethods.DataSource = null;
             dataGridCsUtilMethods.DataSource = csUtilMethods;
             UseComboBoxForEnums(dataGridCsUtilMethods);
         }
-        private ChecksumSearcher.ChecksumSearchSettings GetSettings()
+        private ChecksumSearchSettings GetSettings()
         {
-            ChecksumSearcher.ChecksumSearchSettings cSettings = new ChecksumSearcher.ChecksumSearchSettings();
+            ChecksumSearchSettings cSettings = new ChecksumSearcher.ChecksumSearchSettings();
             cSettings.Methods = csUtilMethods;
             cSettings.CalcRange = txtChecksumRange.Text;
             if (radioCsUtilRangeExact.Checked)
@@ -697,20 +743,26 @@ namespace UniversalPatcher
             cSettings.CSAddress= txtCSAddr.Text;
             if (radioCsUtilCsExact.Checked)
                 cSettings.CSAddressType = ChecksumSearcher.RangeType.Exact;
+            else if (radioCsUtilCSValue.Checked)
+                cSettings.CSAddressType = RangeType.UseValue;
             else
-                cSettings.CSAddressType = ChecksumSearcher.RangeType.AfterRange;            
-            if (radioCSUtilComplement0.Checked)
-                cSettings.Complement = 0;
-            else if (radioCSUtilComplement1.Checked)
-                cSettings.Complement = 1;
-            else if (radioCSUtilComplement2.Checked)
-                cSettings.Complement = 2;
-            else if (radioCsUtilComplementAll.Checked)
-                cSettings.Complement = 99;
+                cSettings.CSAddressType = ChecksumSearcher.RangeType.AfterRange;
+            cSettings.Complements = new List<byte>();
+            if (chkCsUtilComp0.Checked)
+                cSettings.Complements.Add(0);
+            if (chkCsUtilComp1.Checked)
+                cSettings.Complements.Add(1);
+            if (chkCsUtilComp2.Checked)
+                cSettings.Complements.Add(2);
             cSettings.MSB = chkCsMSB.Checked;
             cSettings.SwapBytes = chkCsUtilSwapBytes.Checked;
+            cSettings.NoSwapBytes = chkCsUtilNoByteswap.Checked;
+            cSettings.ShowResults = chkCsUtilLogResults.Checked;
+            cSettings.FilterValues = txtFilterValues.Text;
             cSettings.InitialValue = (UInt64)numCsUtilInitValue.Value;
             cSettings.Threads = (uint)numCsUtilThreads.Value;
+            cSettings.MinRangeLen = (uint)trackBar1.Value;
+
             return cSettings;
         }
         private void openSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -777,6 +829,60 @@ namespace UniversalPatcher
         {
             stopChecksumResearch = true;
             btnStop.Enabled = false;
+        }
+
+        private void radioCsUtilCSValue_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioCsUtilCSValue.Checked)
+            {
+                labelCsAddress.Text = "Value:";
+            }
+            else
+            {
+                labelCsAddress.Text = "Address:";
+            }
+        }
+
+        private void chkCsUtilSwapBytes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkCsUtilSwapBytes.Checked)
+                chkCsUtilNoByteswap.Checked = true;
+        }
+
+        private void chkCsUtilNoByteswap_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkCsUtilNoByteswap.Checked)
+                chkCsUtilSwapBytes.Checked = true;
+        }
+
+        private void chkCsUtilComp2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkCsUtilComp2.Checked && !chkCsUtilComp1.Checked)
+                chkCsUtilComp0.Checked = true;
+        }
+
+        private void chkCsUtilComp1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkCsUtilComp2.Checked && !chkCsUtilComp1.Checked)
+                chkCsUtilComp0.Checked = true;
+
+        }
+
+        private void chkCsUtilComp0_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkCsUtilComp0.Checked && !chkCsUtilComp1.Checked)
+                chkCsUtilComp0.Checked = true;
+
+        }
+
+        private void chkCsUtilLogResults_CheckedChanged(object sender, EventArgs e)
+        {
+            chkCSUtilMatchOnly.Enabled = chkCsUtilLogResults.Checked;
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            labelMinRange.Text = trackBar1.Value.ToString() + "%";
         }
     }
 }

@@ -674,7 +674,8 @@
 - Segmentseek: Bug fixes & improvements
 - XML files: Lot of updates and support for new bin files
 
-
+0.22.14
+- Patcher: Checksum research: Bugfixes and speed optimization
 
 
 

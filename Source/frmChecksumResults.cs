@@ -47,7 +47,7 @@ namespace UniversalPatcher
             {
                 SortedResults.DataSource = SearchResults.OrderBy(x => typeof(CkSearchResult).GetProperty(sortBy).GetValue(x, null));
                 dataGridView1.DataSource = SortedResults; //.OrderBy(x => typeof(CkSearchResult).GetProperty(sortBy).GetValue(x, null));
-                for (int c = 1; c < dataGridView1.Columns.Count; c++)
+                for (int c = 1; c < 5; c++)
                 {
                     dataGridView1.Columns[c].DefaultCellStyle.Format = "X";
                 }
