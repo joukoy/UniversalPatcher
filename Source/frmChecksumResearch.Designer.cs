@@ -30,18 +30,9 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.dataGridCsUtilMethods = new System.Windows.Forms.DataGridView();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.chkCsUtilNoByteswap = new System.Windows.Forms.CheckBox();
-            this.chkCsUtilComp2 = new System.Windows.Forms.CheckBox();
-            this.chkCsUtilComp1 = new System.Windows.Forms.CheckBox();
-            this.chkCsUtilComp0 = new System.Windows.Forms.CheckBox();
-            this.chkCsUtilSwapBytes = new System.Windows.Forms.CheckBox();
-            this.chkCsMSB = new System.Windows.Forms.CheckBox();
             this.chkCSUtilMatchOnly = new System.Windows.Forms.CheckBox();
             this.label25 = new System.Windows.Forms.Label();
             this.numCsUtilThreads = new System.Windows.Forms.NumericUpDown();
-            this.numCsUtilInitValue = new System.Windows.Forms.NumericUpDown();
-            this.label24 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.chkCsUtilFilter = new System.Windows.Forms.CheckBox();
             this.btnCsutilSearchBosch = new System.Windows.Forms.Button();
@@ -54,8 +45,10 @@ namespace UniversalPatcher
             this.txtChecksumRange = new System.Windows.Forms.TextBox();
             this.btnTestChecksum = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.labelMinRange = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.radioCsUtilRangeUnknown = new System.Windows.Forms.RadioButton();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.radioCsUtilRangeLimit = new System.Windows.Forms.RadioButton();
             this.radioCsUtilRangeExact = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -67,125 +60,42 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSettingsAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadCalculationRangeFromResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadCalculationRangeFromResultsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.btnStop = new System.Windows.Forms.Button();
             this.chkCsUtilLogResults = new System.Windows.Forms.CheckBox();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.labelMinRange = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtFilterValues = new System.Windows.Forms.TextBox();
+            this.btnAdd = new System.Windows.Forms.Button();
+            this.btnEdit = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridCsUtilMethods)).BeginInit();
-            this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCsUtilThreads)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridCsUtilMethods
             // 
+            this.dataGridCsUtilMethods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridCsUtilMethods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridCsUtilMethods.Location = new System.Drawing.Point(12, 27);
             this.dataGridCsUtilMethods.Name = "dataGridCsUtilMethods";
-            this.dataGridCsUtilMethods.Size = new System.Drawing.Size(524, 169);
+            this.dataGridCsUtilMethods.Size = new System.Drawing.Size(540, 169);
             this.dataGridCsUtilMethods.TabIndex = 168;
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.chkCsUtilNoByteswap);
-            this.groupBox5.Controls.Add(this.chkCsUtilComp2);
-            this.groupBox5.Controls.Add(this.chkCsUtilComp1);
-            this.groupBox5.Controls.Add(this.chkCsUtilComp0);
-            this.groupBox5.Controls.Add(this.chkCsUtilSwapBytes);
-            this.groupBox5.Controls.Add(this.chkCsMSB);
-            this.groupBox5.Location = new System.Drawing.Point(542, 27);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(96, 169);
-            this.groupBox5.TabIndex = 169;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Complement";
-            // 
-            // chkCsUtilNoByteswap
-            // 
-            this.chkCsUtilNoByteswap.AutoSize = true;
-            this.chkCsUtilNoByteswap.Checked = true;
-            this.chkCsUtilNoByteswap.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCsUtilNoByteswap.Location = new System.Drawing.Point(6, 112);
-            this.chkCsUtilNoByteswap.Name = "chkCsUtilNoByteswap";
-            this.chkCsUtilNoByteswap.Size = new System.Drawing.Size(88, 17);
-            this.chkCsUtilNoByteswap.TabIndex = 174;
-            this.chkCsUtilNoByteswap.Text = "No byteswap";
-            this.chkCsUtilNoByteswap.UseVisualStyleBackColor = true;
-            this.chkCsUtilNoByteswap.CheckedChanged += new System.EventHandler(this.chkCsUtilNoByteswap_CheckedChanged);
-            // 
-            // chkCsUtilComp2
-            // 
-            this.chkCsUtilComp2.AutoSize = true;
-            this.chkCsUtilComp2.Checked = true;
-            this.chkCsUtilComp2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCsUtilComp2.Location = new System.Drawing.Point(6, 65);
-            this.chkCsUtilComp2.Name = "chkCsUtilComp2";
-            this.chkCsUtilComp2.Size = new System.Drawing.Size(39, 17);
-            this.chkCsUtilComp2.TabIndex = 173;
-            this.chkCsUtilComp2.Text = "2\'s";
-            this.chkCsUtilComp2.UseVisualStyleBackColor = true;
-            this.chkCsUtilComp2.CheckedChanged += new System.EventHandler(this.chkCsUtilComp2_CheckedChanged);
-            // 
-            // chkCsUtilComp1
-            // 
-            this.chkCsUtilComp1.AutoSize = true;
-            this.chkCsUtilComp1.Location = new System.Drawing.Point(6, 42);
-            this.chkCsUtilComp1.Name = "chkCsUtilComp1";
-            this.chkCsUtilComp1.Size = new System.Drawing.Size(39, 17);
-            this.chkCsUtilComp1.TabIndex = 172;
-            this.chkCsUtilComp1.Text = "1\'s";
-            this.chkCsUtilComp1.UseVisualStyleBackColor = true;
-            this.chkCsUtilComp1.CheckedChanged += new System.EventHandler(this.chkCsUtilComp1_CheckedChanged);
-            // 
-            // chkCsUtilComp0
-            // 
-            this.chkCsUtilComp0.AutoSize = true;
-            this.chkCsUtilComp0.Location = new System.Drawing.Point(6, 19);
-            this.chkCsUtilComp0.Name = "chkCsUtilComp0";
-            this.chkCsUtilComp0.Size = new System.Drawing.Size(29, 17);
-            this.chkCsUtilComp0.TabIndex = 171;
-            this.chkCsUtilComp0.Text = "-";
-            this.chkCsUtilComp0.UseVisualStyleBackColor = true;
-            this.chkCsUtilComp0.CheckedChanged += new System.EventHandler(this.chkCsUtilComp0_CheckedChanged);
-            // 
-            // chkCsUtilSwapBytes
-            // 
-            this.chkCsUtilSwapBytes.AutoSize = true;
-            this.chkCsUtilSwapBytes.Location = new System.Drawing.Point(6, 89);
-            this.chkCsUtilSwapBytes.Name = "chkCsUtilSwapBytes";
-            this.chkCsUtilSwapBytes.Size = new System.Drawing.Size(81, 17);
-            this.chkCsUtilSwapBytes.TabIndex = 170;
-            this.chkCsUtilSwapBytes.Text = "Swap bytes";
-            this.chkCsUtilSwapBytes.UseVisualStyleBackColor = true;
-            this.chkCsUtilSwapBytes.CheckedChanged += new System.EventHandler(this.chkCsUtilSwapBytes_CheckedChanged);
-            // 
-            // chkCsMSB
-            // 
-            this.chkCsMSB.AutoSize = true;
-            this.chkCsMSB.Checked = true;
-            this.chkCsMSB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCsMSB.Location = new System.Drawing.Point(6, 135);
-            this.chkCsMSB.Name = "chkCsMSB";
-            this.chkCsMSB.Size = new System.Drawing.Size(49, 17);
-            this.chkCsMSB.TabIndex = 172;
-            this.chkCsMSB.Text = "MSB";
-            this.chkCsMSB.UseVisualStyleBackColor = true;
             // 
             // chkCSUtilMatchOnly
             // 
             this.chkCSUtilMatchOnly.AutoSize = true;
             this.chkCSUtilMatchOnly.Checked = true;
             this.chkCSUtilMatchOnly.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCSUtilMatchOnly.Location = new System.Drawing.Point(469, 241);
+            this.chkCSUtilMatchOnly.Location = new System.Drawing.Point(562, 212);
             this.chkCSUtilMatchOnly.Name = "chkCSUtilMatchOnly";
             this.chkCSUtilMatchOnly.Size = new System.Drawing.Size(79, 17);
             this.chkCSUtilMatchOnly.TabIndex = 173;
@@ -196,7 +106,7 @@ namespace UniversalPatcher
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(473, 372);
+            this.label25.Location = new System.Drawing.Point(511, 282);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(49, 13);
             this.label25.TabIndex = 192;
@@ -204,7 +114,7 @@ namespace UniversalPatcher
             // 
             // numCsUtilThreads
             // 
-            this.numCsUtilThreads.Location = new System.Drawing.Point(542, 370);
+            this.numCsUtilThreads.Location = new System.Drawing.Point(571, 280);
             this.numCsUtilThreads.Name = "numCsUtilThreads";
             this.numCsUtilThreads.Size = new System.Drawing.Size(70, 20);
             this.numCsUtilThreads.TabIndex = 191;
@@ -213,27 +123,6 @@ namespace UniversalPatcher
             0,
             0,
             0});
-            // 
-            // numCsUtilInitValue
-            // 
-            this.numCsUtilInitValue.Location = new System.Drawing.Point(542, 344);
-            this.numCsUtilInitValue.Maximum = new decimal(new int[] {
-            100000000,
-            0,
-            0,
-            0});
-            this.numCsUtilInitValue.Name = "numCsUtilInitValue";
-            this.numCsUtilInitValue.Size = new System.Drawing.Size(70, 20);
-            this.numCsUtilInitValue.TabIndex = 190;
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(473, 346);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(63, 13);
-            this.label24.TabIndex = 189;
-            this.label24.Text = "Initial value:";
             // 
             // groupBox6
             // 
@@ -270,7 +159,7 @@ namespace UniversalPatcher
             // 
             // btnCsUtilFix
             // 
-            this.btnCsUtilFix.Location = new System.Drawing.Point(515, 481);
+            this.btnCsUtilFix.Location = new System.Drawing.Point(532, 478);
             this.btnCsUtilFix.Name = "btnCsUtilFix";
             this.btnCsUtilFix.Size = new System.Drawing.Size(109, 23);
             this.btnCsUtilFix.TabIndex = 187;
@@ -332,7 +221,7 @@ namespace UniversalPatcher
             // 
             // btnTestChecksum
             // 
-            this.btnTestChecksum.Location = new System.Drawing.Point(515, 427);
+            this.btnTestChecksum.Location = new System.Drawing.Point(532, 424);
             this.btnTestChecksum.Name = "btnTestChecksum";
             this.btnTestChecksum.Size = new System.Drawing.Size(109, 23);
             this.btnTestChecksum.TabIndex = 178;
@@ -359,6 +248,15 @@ namespace UniversalPatcher
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Calculation range";
             // 
+            // labelMinRange
+            // 
+            this.labelMinRange.AutoSize = true;
+            this.labelMinRange.Location = new System.Drawing.Point(37, 64);
+            this.labelMinRange.Name = "labelMinRange";
+            this.labelMinRange.Size = new System.Drawing.Size(21, 13);
+            this.labelMinRange.TabIndex = 188;
+            this.labelMinRange.Text = "0%";
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -381,6 +279,16 @@ namespace UniversalPatcher
             this.radioCsUtilRangeUnknown.Text = "Unknown, search all";
             this.radioCsUtilRangeUnknown.UseVisualStyleBackColor = true;
             this.radioCsUtilRangeUnknown.CheckedChanged += new System.EventHandler(this.radioCsUtilRangeUnknown_CheckedChanged);
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(64, 43);
+            this.trackBar1.Maximum = 100;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(137, 45);
+            this.trackBar1.TabIndex = 187;
+            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // radioCsUtilRangeLimit
             // 
@@ -467,10 +375,11 @@ namespace UniversalPatcher
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.resultsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(640, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(655, 24);
             this.menuStrip1.TabIndex = 196;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -478,9 +387,7 @@ namespace UniversalPatcher
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openSettingsToolStripMenuItem,
-            this.saveSettingsAsToolStripMenuItem,
-            this.saveResultsToolStripMenuItem,
-            this.loadCalculationRangeFromResultsToolStripMenuItem});
+            this.saveSettingsAsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -488,35 +395,52 @@ namespace UniversalPatcher
             // openSettingsToolStripMenuItem
             // 
             this.openSettingsToolStripMenuItem.Name = "openSettingsToolStripMenuItem";
-            this.openSettingsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.openSettingsToolStripMenuItem.Text = "Open settings";
+            this.openSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openSettingsToolStripMenuItem.Text = "Load settings";
             this.openSettingsToolStripMenuItem.Click += new System.EventHandler(this.openSettingsToolStripMenuItem_Click);
             // 
             // saveSettingsAsToolStripMenuItem
             // 
             this.saveSettingsAsToolStripMenuItem.Name = "saveSettingsAsToolStripMenuItem";
-            this.saveSettingsAsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
+            this.saveSettingsAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveSettingsAsToolStripMenuItem.Text = "Save Settings as...";
             this.saveSettingsAsToolStripMenuItem.Click += new System.EventHandler(this.saveSettingsAsToolStripMenuItem_Click);
+            // 
+            // resultsToolStripMenuItem
+            // 
+            this.resultsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveResultsToolStripMenuItem,
+            this.loadCalculationRangeFromResultsToolStripMenuItem1,
+            this.loadCalculationRangeFromResultsToolStripMenuItem});
+            this.resultsToolStripMenuItem.Name = "resultsToolStripMenuItem";
+            this.resultsToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
+            this.resultsToolStripMenuItem.Text = "Results";
             // 
             // saveResultsToolStripMenuItem
             // 
             this.saveResultsToolStripMenuItem.Name = "saveResultsToolStripMenuItem";
-            this.saveResultsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.saveResultsToolStripMenuItem.Text = "Results...";
+            this.saveResultsToolStripMenuItem.Size = new System.Drawing.Size(285, 22);
+            this.saveResultsToolStripMenuItem.Text = "Show Results";
             this.saveResultsToolStripMenuItem.Click += new System.EventHandler(this.saveResultsToolStripMenuItem_Click);
             // 
             // loadCalculationRangeFromResultsToolStripMenuItem
             // 
             this.loadCalculationRangeFromResultsToolStripMenuItem.Name = "loadCalculationRangeFromResultsToolStripMenuItem";
-            this.loadCalculationRangeFromResultsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.loadCalculationRangeFromResultsToolStripMenuItem.Text = "Load Calculation range from results...";
+            this.loadCalculationRangeFromResultsToolStripMenuItem.Size = new System.Drawing.Size(285, 22);
+            this.loadCalculationRangeFromResultsToolStripMenuItem.Text = "Load Calculation range from result file...";
             this.loadCalculationRangeFromResultsToolStripMenuItem.Click += new System.EventHandler(this.loadCalculationRangeFromResultsToolStripMenuItem_Click);
+            // 
+            // loadCalculationRangeFromResultsToolStripMenuItem1
+            // 
+            this.loadCalculationRangeFromResultsToolStripMenuItem1.Name = "loadCalculationRangeFromResultsToolStripMenuItem1";
+            this.loadCalculationRangeFromResultsToolStripMenuItem1.Size = new System.Drawing.Size(285, 22);
+            this.loadCalculationRangeFromResultsToolStripMenuItem1.Text = "Load Calculation range from results....";
+            this.loadCalculationRangeFromResultsToolStripMenuItem1.Click += new System.EventHandler(this.loadCalculationRangeFromResultsToolStripMenuItem1_Click);
             // 
             // btnStop
             // 
             this.btnStop.Enabled = false;
-            this.btnStop.Location = new System.Drawing.Point(515, 454);
+            this.btnStop.Location = new System.Drawing.Point(532, 451);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(109, 23);
             this.btnStop.TabIndex = 197;
@@ -529,7 +453,7 @@ namespace UniversalPatcher
             this.chkCsUtilLogResults.AutoSize = true;
             this.chkCsUtilLogResults.Checked = true;
             this.chkCsUtilLogResults.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCsUtilLogResults.Location = new System.Drawing.Point(469, 218);
+            this.chkCsUtilLogResults.Location = new System.Drawing.Point(474, 212);
             this.chkCsUtilLogResults.Name = "chkCsUtilLogResults";
             this.chkCsUtilLogResults.Size = new System.Drawing.Size(86, 17);
             this.chkCsUtilLogResults.TabIndex = 198;
@@ -537,29 +461,10 @@ namespace UniversalPatcher
             this.chkCsUtilLogResults.UseVisualStyleBackColor = true;
             this.chkCsUtilLogResults.CheckedChanged += new System.EventHandler(this.chkCsUtilLogResults_CheckedChanged);
             // 
-            // trackBar1
-            // 
-            this.trackBar1.Location = new System.Drawing.Point(64, 43);
-            this.trackBar1.Maximum = 100;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(137, 45);
-            this.trackBar1.TabIndex = 187;
-            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
-            // 
-            // labelMinRange
-            // 
-            this.labelMinRange.AutoSize = true;
-            this.labelMinRange.Location = new System.Drawing.Point(37, 64);
-            this.labelMinRange.Name = "labelMinRange";
-            this.labelMinRange.Size = new System.Drawing.Size(21, 13);
-            this.labelMinRange.TabIndex = 188;
-            this.labelMinRange.Text = "0%";
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(466, 264);
+            this.label2.Location = new System.Drawing.Point(471, 232);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 199;
@@ -567,17 +472,50 @@ namespace UniversalPatcher
             // 
             // txtFilterValues
             // 
-            this.txtFilterValues.Location = new System.Drawing.Point(469, 279);
+            this.txtFilterValues.Location = new System.Drawing.Point(474, 247);
             this.txtFilterValues.Name = "txtFilterValues";
-            this.txtFilterValues.Size = new System.Drawing.Size(143, 20);
+            this.txtFilterValues.Size = new System.Drawing.Size(167, 20);
             this.txtFilterValues.TabIndex = 200;
             this.txtFilterValues.Text = "0,1";
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Location = new System.Drawing.Point(566, 27);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(75, 23);
+            this.btnAdd.TabIndex = 201;
+            this.btnAdd.Text = "Add";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Location = new System.Drawing.Point(566, 56);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnEdit.TabIndex = 202;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Location = new System.Drawing.Point(566, 85);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnDelete.TabIndex = 203;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // frmChecksumResearch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(640, 520);
+            this.ClientSize = new System.Drawing.Size(655, 520);
+            this.Controls.Add(this.btnDelete);
+            this.Controls.Add(this.btnEdit);
+            this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.txtFilterValues);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.chkCsUtilLogResults);
@@ -587,12 +525,9 @@ namespace UniversalPatcher
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label25);
             this.Controls.Add(this.numCsUtilThreads);
-            this.Controls.Add(this.numCsUtilInitValue);
-            this.Controls.Add(this.label24);
             this.Controls.Add(this.btnCsUtilFix);
             this.Controls.Add(this.btnTestChecksum);
             this.Controls.Add(this.chkCSUtilMatchOnly);
-            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.dataGridCsUtilMethods);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -600,19 +535,16 @@ namespace UniversalPatcher
             this.Text = "Checksum Research";
             this.Load += new System.EventHandler(this.frmChecksumResearch_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridCsUtilMethods)).EndInit();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCsUtilThreads)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numCsUtilInitValue)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -621,14 +553,9 @@ namespace UniversalPatcher
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridCsUtilMethods;
-        private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.CheckBox chkCSUtilMatchOnly;
-        private System.Windows.Forms.CheckBox chkCsMSB;
-        private System.Windows.Forms.CheckBox chkCsUtilSwapBytes;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.NumericUpDown numCsUtilThreads;
-        private System.Windows.Forms.NumericUpDown numCsUtilInitValue;
-        private System.Windows.Forms.Label label24;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.CheckBox chkCsUtilFilter;
         private System.Windows.Forms.Button btnCsutilSearchBosch;
@@ -653,18 +580,19 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveSettingsAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveResultsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadCalculationRangeFromResultsToolStripMenuItem;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.RadioButton radioCsUtilCSValue;
-        private System.Windows.Forms.CheckBox chkCsUtilNoByteswap;
-        private System.Windows.Forms.CheckBox chkCsUtilComp2;
-        private System.Windows.Forms.CheckBox chkCsUtilComp1;
-        private System.Windows.Forms.CheckBox chkCsUtilComp0;
         private System.Windows.Forms.CheckBox chkCsUtilLogResults;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Label labelMinRange;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtFilterValues;
+        private System.Windows.Forms.Button btnAdd;
+        private System.Windows.Forms.Button btnEdit;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.ToolStripMenuItem resultsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveResultsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadCalculationRangeFromResultsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadCalculationRangeFromResultsToolStripMenuItem1;
     }
 }

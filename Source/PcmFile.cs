@@ -114,7 +114,7 @@ namespace UniversalPatcher
         public Dictionary<string, List<String>> SelectedNode = new Dictionary<string, List<string>>();
         public List<TreeParts.Navi> Navigator = new List<TreeParts.Navi>();
         public int NaviCurrent;
-
+        private string os;
         public List<string> tableCategories
         {
             get 
@@ -142,9 +142,9 @@ namespace UniversalPatcher
         public List<TableData> tableDatas;
         public bool dtcCombined = false;
         //public TableData selectedTable; //Required for Tuner/Compare
-        public int tableDataIndex; //Tuner tabledatalist id
+        //public int tableDataIndex; //Tuner tabledatalist id
         public List<AltTableData> altTableDatas;
-        private int currentTableDatasList;
+        public int currentTableDatasList;
         private string _configFileFullName;
         public string configFileFullName { get { return _configFileFullName; } }
         public string configFile { get { return Path.GetFileNameWithoutExtension(configFileFullName); } }
@@ -169,12 +169,16 @@ namespace UniversalPatcher
         {
             get
             {
-                for (int s=0; s < Segments.Count; s++)
-                { 
-                    if (Segments[s].Name == "OS")
-                        return segmentinfos[s].PN;
+                if (string.IsNullOrEmpty(os))
+                {
+                    os = "";
+                    for (int s = 0; s < Segments.Count; s++)
+                    {
+                        if (Segments[s].Name == "OS")
+                            os = segmentinfos[s].PN;
+                    }
                 }
-                return "";
+                return os;
             }
         }
 
@@ -290,6 +294,7 @@ namespace UniversalPatcher
             altTableDatas = new List<AltTableData>();
             currentTableDatasList = 0;
             SelectTableDatas(0, "");
+            altTableDatas[0].tableDatas = tableDatas;
             seekTablesImported = false;
         }
         public PcmFile ShallowCopy()
@@ -359,7 +364,7 @@ namespace UniversalPatcher
         /// 
         public bool BufModified()
         {
-            if (FileName == null || buf.Length == 0)
+            if (FileName == null || buf == null ||  buf.Length == 0)
                 return false;
             byte[] compareBuf = ReadBin(FileName);
             if (buf.SequenceEqual(compareBuf))
@@ -428,16 +433,14 @@ namespace UniversalPatcher
         public void UpdateAddressesByOS()
         {
             Logger("Updating addresses", false);
-            int i = 0;
             if (string.IsNullOrEmpty(OS))
             {
                 Logger(" [No OS]");
                 return;
             }
-            foreach (TableData td in tableDatas)
+            for (int i=0; i< tableDatas.Count;i++)
             {
-                td.UpdateAddressByOS(OS);
-                i++;
+                tableDatas[i].UpdateAddressByOS(OS);
                 if (i % 300 == 0)
                 {
                     Logger(".", false);
@@ -464,12 +467,24 @@ namespace UniversalPatcher
                         filterdFiles.AddRange(dirs[di].GetFiles("*.*", SearchOption.AllDirectories));
                 }
 
-                string defaultTunerFile = OS;
-                if (OS.Length == 0)
-                    defaultTunerFile = configFile + "-def";
-                else if (OSSegment < segmentinfos.Length)
-                    defaultTunerFile = OS + "-" + segmentinfos[OSSegment].Ver;
-                defaultTunerFile += ".xml";
+                string defaultTunerFile = null;
+                
+                if (!string.IsNullOrEmpty(OS)) 
+                {
+                    defaultTunerFile = OS + ".xml";
+                }
+                else if (!string.IsNullOrEmpty(configFile))
+                {
+                    defaultTunerFile = configFile + "-def.xml";
+                }
+                else if (segmentinfos != null && OSSegment < segmentinfos.Length)
+                {
+                    defaultTunerFile = OS + "-" + segmentinfos[OSSegment].Ver + ".xml";
+                }
+                if (string.IsNullOrEmpty(defaultTunerFile))
+                {
+                    return;
+                }
                 FileInfo tFile = null;
                 tFile = filterdFiles.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
                 if (tFile == null)
@@ -512,8 +527,8 @@ namespace UniversalPatcher
 
         public void ClearTableList()
         {
-            tableDatas = new List<TableData>();
-            Navigator = new List<TreeParts.Navi>();
+            tableDatas.Clear();
+            Navigator.Clear();
             NaviCurrent = 0;
         }
 
@@ -521,7 +536,6 @@ namespace UniversalPatcher
         {
             try
             {
-
                 string defName = Path.Combine(Application.StartupPath, "Tuner", OS + ".xml");
                 //string defName = PCM.OS + ".xml";
                 if (fName == "")
@@ -563,7 +577,12 @@ namespace UniversalPatcher
 */
                 }
                 //if (!tableCategories.Contains("DTC"))
-                  //  tableCategories.Add("DTC");
+                //  tableCategories.Add("DTC");
+                if (altTableDatas[currentTableDatasList].Name == FileName)
+                {
+                    Debug.WriteLine("Renaming tablelist " + FileName + " => " + fName);
+                    RenameTableDatas(fName);
+                }
 
                 Logger(" [OK]");
                 UpdateAddressesByOS();
@@ -618,6 +637,13 @@ namespace UniversalPatcher
             tdl.Name = name;
             altTableDatas.Add(tdl);
             tunerFile = "";
+        }
+
+        public void RenameTableDatas(string newName)
+        {
+            //Logger("Renaming tablelist " + altTableDatas[currentTableDatasList].Name + " => " + newName, false);
+            altTableDatas[currentTableDatasList].Name = newName;
+            Logger(" [OK]");
         }
 
         public void SelectTableDatas(int listNumber, string name)

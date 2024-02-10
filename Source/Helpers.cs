@@ -370,6 +370,13 @@ public static class Helpers
         }
     }
 
+    public static string ReplaceFileNameInvalidChars(string filename)
+    {
+        string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+        Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+        filename = r.Replace(filename, "_");
+        return filename;
+    }
     public static bool HexToUint64(string Hex, out UInt64 x)
     {
         x = 0;

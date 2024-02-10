@@ -1708,6 +1708,14 @@ namespace UniversalPatcher
         {
             try
             {
+                if (AppSettings.ConfirmProgramExit)
+                {
+                    if (MessageBox.Show("Close logger?", "Exit now?", MessageBoxButtons.YesNo) == DialogResult.No)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
                 Debug.WriteLine("Closing frmLogger");
                 if (datalogger != null && datalogger.LogDevice != null)
                 {

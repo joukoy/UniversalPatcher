@@ -40,6 +40,18 @@ namespace UniversalPatcher
             this.labelCellinfo = new System.Windows.Forms.Label();
             this.tabSelectTable = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.groupTemplate = new System.Windows.Forms.GroupBox();
+            this.btnGenRowHeaders = new System.Windows.Forms.Button();
+            this.btnGenColHeaders = new System.Windows.Forms.Button();
+            this.numDecimals = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
+            this.btnApplyTemplate = new System.Windows.Forms.Button();
+            this.txtRowHeaders = new System.Windows.Forms.TextBox();
+            this.txtColHeaders = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.radioTemplateManual = new System.Windows.Forms.RadioButton();
+            this.radioTemplateUseTable = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnColorLow = new System.Windows.Forms.Button();
             this.btnColorHigh = new System.Windows.Forms.Button();
@@ -70,30 +82,19 @@ namespace UniversalPatcher
             this.loadSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
-            this.groupTemplate = new System.Windows.Forms.GroupBox();
-            this.radioTemplateUseTable = new System.Windows.Forms.RadioButton();
-            this.radioTemplateManual = new System.Windows.Forms.RadioButton();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.txtColHeaders = new System.Windows.Forms.TextBox();
-            this.txtRowHeaders = new System.Windows.Forms.TextBox();
-            this.btnApplyTemplate = new System.Windows.Forms.Button();
-            this.label13 = new System.Windows.Forms.Label();
-            this.numDecimals = new System.Windows.Forms.NumericUpDown();
-            this.btnGenColHeaders = new System.Windows.Forms.Button();
-            this.btnGenRowHeaders = new System.Windows.Forms.Button();
+            this.timerLiveData = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabHistogram.SuspendLayout();
             this.tabSettings.SuspendLayout();
+            this.groupTemplate.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).BeginInit();
             this.menuStrip1.SuspendLayout();
-            this.groupTemplate.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -204,6 +205,148 @@ namespace UniversalPatcher
             this.tabSettings.TabIndex = 1;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // groupTemplate
+            // 
+            this.groupTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupTemplate.Controls.Add(this.btnGenRowHeaders);
+            this.groupTemplate.Controls.Add(this.btnGenColHeaders);
+            this.groupTemplate.Controls.Add(this.numDecimals);
+            this.groupTemplate.Controls.Add(this.label13);
+            this.groupTemplate.Controls.Add(this.btnApplyTemplate);
+            this.groupTemplate.Controls.Add(this.txtRowHeaders);
+            this.groupTemplate.Controls.Add(this.txtColHeaders);
+            this.groupTemplate.Controls.Add(this.label12);
+            this.groupTemplate.Controls.Add(this.label11);
+            this.groupTemplate.Controls.Add(this.radioTemplateManual);
+            this.groupTemplate.Controls.Add(this.radioTemplateUseTable);
+            this.groupTemplate.Location = new System.Drawing.Point(260, 135);
+            this.groupTemplate.Name = "groupTemplate";
+            this.groupTemplate.Size = new System.Drawing.Size(524, 128);
+            this.groupTemplate.TabIndex = 17;
+            this.groupTemplate.TabStop = false;
+            this.groupTemplate.Text = "Template";
+            // 
+            // btnGenRowHeaders
+            // 
+            this.btnGenRowHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGenRowHeaders.Location = new System.Drawing.Point(497, 68);
+            this.btnGenRowHeaders.Name = "btnGenRowHeaders";
+            this.btnGenRowHeaders.Size = new System.Drawing.Size(20, 24);
+            this.btnGenRowHeaders.TabIndex = 10;
+            this.btnGenRowHeaders.Text = ">";
+            this.btnGenRowHeaders.UseVisualStyleBackColor = true;
+            this.btnGenRowHeaders.Click += new System.EventHandler(this.btnGenRowHeaders_Click);
+            // 
+            // btnGenColHeaders
+            // 
+            this.btnGenColHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGenColHeaders.Location = new System.Drawing.Point(497, 38);
+            this.btnGenColHeaders.Name = "btnGenColHeaders";
+            this.btnGenColHeaders.Size = new System.Drawing.Size(20, 24);
+            this.btnGenColHeaders.TabIndex = 9;
+            this.btnGenColHeaders.Text = ">";
+            this.btnGenColHeaders.UseVisualStyleBackColor = true;
+            this.btnGenColHeaders.Click += new System.EventHandler(this.btnGenColHeaders_Click);
+            // 
+            // numDecimals
+            // 
+            this.numDecimals.Location = new System.Drawing.Point(124, 95);
+            this.numDecimals.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numDecimals.Name = "numDecimals";
+            this.numDecimals.Size = new System.Drawing.Size(57, 20);
+            this.numDecimals.TabIndex = 8;
+            this.numDecimals.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(16, 97);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(50, 13);
+            this.label13.TabIndex = 7;
+            this.label13.Text = "Decimals";
+            // 
+            // btnApplyTemplate
+            // 
+            this.btnApplyTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApplyTemplate.Enabled = false;
+            this.btnApplyTemplate.Location = new System.Drawing.Point(432, 97);
+            this.btnApplyTemplate.Name = "btnApplyTemplate";
+            this.btnApplyTemplate.Size = new System.Drawing.Size(86, 23);
+            this.btnApplyTemplate.TabIndex = 6;
+            this.btnApplyTemplate.Text = "Apply";
+            this.btnApplyTemplate.UseVisualStyleBackColor = true;
+            this.btnApplyTemplate.Click += new System.EventHandler(this.btnApplyTemplate_Click);
+            // 
+            // txtRowHeaders
+            // 
+            this.txtRowHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRowHeaders.Location = new System.Drawing.Point(124, 71);
+            this.txtRowHeaders.Name = "txtRowHeaders";
+            this.txtRowHeaders.Size = new System.Drawing.Size(369, 20);
+            this.txtRowHeaders.TabIndex = 5;
+            // 
+            // txtColHeaders
+            // 
+            this.txtColHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtColHeaders.Location = new System.Drawing.Point(124, 40);
+            this.txtColHeaders.Name = "txtColHeaders";
+            this.txtColHeaders.Size = new System.Drawing.Size(369, 20);
+            this.txtColHeaders.TabIndex = 4;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(16, 72);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(73, 13);
+            this.label12.TabIndex = 3;
+            this.label12.Text = "Row headers:";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(16, 43);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(86, 13);
+            this.label11.TabIndex = 2;
+            this.label11.Text = "Column headers:";
+            // 
+            // radioTemplateManual
+            // 
+            this.radioTemplateManual.AutoSize = true;
+            this.radioTemplateManual.Location = new System.Drawing.Point(111, 19);
+            this.radioTemplateManual.Name = "radioTemplateManual";
+            this.radioTemplateManual.Size = new System.Drawing.Size(122, 17);
+            this.radioTemplateManual.TabIndex = 1;
+            this.radioTemplateManual.TabStop = true;
+            this.radioTemplateManual.Text = "Use manual headers";
+            this.radioTemplateManual.UseVisualStyleBackColor = true;
+            this.radioTemplateManual.CheckedChanged += new System.EventHandler(this.radioTemplateManual_CheckedChanged);
+            // 
+            // radioTemplateUseTable
+            // 
+            this.radioTemplateUseTable.AutoSize = true;
+            this.radioTemplateUseTable.Checked = true;
+            this.radioTemplateUseTable.Location = new System.Drawing.Point(19, 18);
+            this.radioTemplateUseTable.Name = "radioTemplateUseTable";
+            this.radioTemplateUseTable.Size = new System.Drawing.Size(74, 17);
+            this.radioTemplateUseTable.TabIndex = 0;
+            this.radioTemplateUseTable.TabStop = true;
+            this.radioTemplateUseTable.Text = "Use Table";
+            this.radioTemplateUseTable.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -402,6 +545,7 @@ namespace UniversalPatcher
             this.comboXparam.Name = "comboXparam";
             this.comboXparam.Size = new System.Drawing.Size(121, 21);
             this.comboXparam.TabIndex = 7;
+            this.comboXparam.SelectedIndexChanged += new System.EventHandler(this.comboXparam_SelectedIndexChanged);
             // 
             // label3
             // 
@@ -492,14 +636,14 @@ namespace UniversalPatcher
             // loadSettingsToolStripMenuItem
             // 
             this.loadSettingsToolStripMenuItem.Name = "loadSettingsToolStripMenuItem";
-            this.loadSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadSettingsToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.loadSettingsToolStripMenuItem.Text = "Load settings";
             this.loadSettingsToolStripMenuItem.Click += new System.EventHandler(this.loadSettingsToolStripMenuItem_Click);
             // 
             // saveSettingsToolStripMenuItem
             // 
             this.saveSettingsToolStripMenuItem.Name = "saveSettingsToolStripMenuItem";
-            this.saveSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveSettingsToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.saveSettingsToolStripMenuItem.Text = "Save Settings";
             this.saveSettingsToolStripMenuItem.Click += new System.EventHandler(this.saveSettingsToolStripMenuItem_Click);
             // 
@@ -514,147 +658,11 @@ namespace UniversalPatcher
             this.chkGetLiveData.UseVisualStyleBackColor = true;
             this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
             // 
-            // groupTemplate
+            // timerLiveData
             // 
-            this.groupTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupTemplate.Controls.Add(this.btnGenRowHeaders);
-            this.groupTemplate.Controls.Add(this.btnGenColHeaders);
-            this.groupTemplate.Controls.Add(this.numDecimals);
-            this.groupTemplate.Controls.Add(this.label13);
-            this.groupTemplate.Controls.Add(this.btnApplyTemplate);
-            this.groupTemplate.Controls.Add(this.txtRowHeaders);
-            this.groupTemplate.Controls.Add(this.txtColHeaders);
-            this.groupTemplate.Controls.Add(this.label12);
-            this.groupTemplate.Controls.Add(this.label11);
-            this.groupTemplate.Controls.Add(this.radioTemplateManual);
-            this.groupTemplate.Controls.Add(this.radioTemplateUseTable);
-            this.groupTemplate.Location = new System.Drawing.Point(260, 135);
-            this.groupTemplate.Name = "groupTemplate";
-            this.groupTemplate.Size = new System.Drawing.Size(524, 128);
-            this.groupTemplate.TabIndex = 17;
-            this.groupTemplate.TabStop = false;
-            this.groupTemplate.Text = "Template";
-            // 
-            // radioTemplateUseTable
-            // 
-            this.radioTemplateUseTable.AutoSize = true;
-            this.radioTemplateUseTable.Checked = true;
-            this.radioTemplateUseTable.Location = new System.Drawing.Point(19, 18);
-            this.radioTemplateUseTable.Name = "radioTemplateUseTable";
-            this.radioTemplateUseTable.Size = new System.Drawing.Size(74, 17);
-            this.radioTemplateUseTable.TabIndex = 0;
-            this.radioTemplateUseTable.TabStop = true;
-            this.radioTemplateUseTable.Text = "Use Table";
-            this.radioTemplateUseTable.UseVisualStyleBackColor = true;
-            // 
-            // radioTemplateManual
-            // 
-            this.radioTemplateManual.AutoSize = true;
-            this.radioTemplateManual.Location = new System.Drawing.Point(111, 19);
-            this.radioTemplateManual.Name = "radioTemplateManual";
-            this.radioTemplateManual.Size = new System.Drawing.Size(122, 17);
-            this.radioTemplateManual.TabIndex = 1;
-            this.radioTemplateManual.TabStop = true;
-            this.radioTemplateManual.Text = "Use manual headers";
-            this.radioTemplateManual.UseVisualStyleBackColor = true;
-            this.radioTemplateManual.CheckedChanged += new System.EventHandler(this.radioTemplateManual_CheckedChanged);
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(16, 43);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(86, 13);
-            this.label11.TabIndex = 2;
-            this.label11.Text = "Column headers:";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(16, 72);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(73, 13);
-            this.label12.TabIndex = 3;
-            this.label12.Text = "Row headers:";
-            // 
-            // txtColHeaders
-            // 
-            this.txtColHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtColHeaders.Location = new System.Drawing.Point(124, 40);
-            this.txtColHeaders.Name = "txtColHeaders";
-            this.txtColHeaders.Size = new System.Drawing.Size(369, 20);
-            this.txtColHeaders.TabIndex = 4;
-            // 
-            // txtRowHeaders
-            // 
-            this.txtRowHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtRowHeaders.Location = new System.Drawing.Point(124, 71);
-            this.txtRowHeaders.Name = "txtRowHeaders";
-            this.txtRowHeaders.Size = new System.Drawing.Size(369, 20);
-            this.txtRowHeaders.TabIndex = 5;
-            // 
-            // btnApplyTemplate
-            // 
-            this.btnApplyTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplyTemplate.Enabled = false;
-            this.btnApplyTemplate.Location = new System.Drawing.Point(432, 97);
-            this.btnApplyTemplate.Name = "btnApplyTemplate";
-            this.btnApplyTemplate.Size = new System.Drawing.Size(86, 23);
-            this.btnApplyTemplate.TabIndex = 6;
-            this.btnApplyTemplate.Text = "Apply";
-            this.btnApplyTemplate.UseVisualStyleBackColor = true;
-            this.btnApplyTemplate.Click += new System.EventHandler(this.btnApplyTemplate_Click);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(16, 97);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(50, 13);
-            this.label13.TabIndex = 7;
-            this.label13.Text = "Decimals";
-            // 
-            // numDecimals
-            // 
-            this.numDecimals.Location = new System.Drawing.Point(124, 95);
-            this.numDecimals.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numDecimals.Name = "numDecimals";
-            this.numDecimals.Size = new System.Drawing.Size(57, 20);
-            this.numDecimals.TabIndex = 8;
-            this.numDecimals.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            // 
-            // btnGenColHeaders
-            // 
-            this.btnGenColHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGenColHeaders.Location = new System.Drawing.Point(497, 38);
-            this.btnGenColHeaders.Name = "btnGenColHeaders";
-            this.btnGenColHeaders.Size = new System.Drawing.Size(20, 24);
-            this.btnGenColHeaders.TabIndex = 9;
-            this.btnGenColHeaders.Text = ">";
-            this.btnGenColHeaders.UseVisualStyleBackColor = true;
-            this.btnGenColHeaders.Click += new System.EventHandler(this.btnGenColHeaders_Click);
-            // 
-            // btnGenRowHeaders
-            // 
-            this.btnGenRowHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGenRowHeaders.Location = new System.Drawing.Point(497, 68);
-            this.btnGenRowHeaders.Name = "btnGenRowHeaders";
-            this.btnGenRowHeaders.Size = new System.Drawing.Size(20, 24);
-            this.btnGenRowHeaders.TabIndex = 10;
-            this.btnGenRowHeaders.Text = ">";
-            this.btnGenRowHeaders.UseVisualStyleBackColor = true;
-            this.btnGenRowHeaders.Click += new System.EventHandler(this.btnGenRowHeaders_Click);
+            this.timerLiveData.Enabled = true;
+            this.timerLiveData.Interval = 250;
+            this.timerLiveData.Tick += new System.EventHandler(this.timerLiveData_Tick);
             // 
             // frmHistogram
             // 
@@ -675,6 +683,9 @@ namespace UniversalPatcher
             this.tabHistogram.PerformLayout();
             this.tabSettings.ResumeLayout(false);
             this.tabSettings.PerformLayout();
+            this.groupTemplate.ResumeLayout(false);
+            this.groupTemplate.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMax)).EndInit();
@@ -682,9 +693,6 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.groupTemplate.ResumeLayout(false);
-            this.groupTemplate.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -743,5 +751,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button btnGenRowHeaders;
         private System.Windows.Forms.Button btnGenColHeaders;
+        private System.Windows.Forms.Timer timerLiveData;
     }
 }

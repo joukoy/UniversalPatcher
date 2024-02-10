@@ -93,61 +93,61 @@ namespace UniversalPatcher
             this.insertRowToolStripMenuItem,
             this.testMathToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 224);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(127, 202);
             // 
             // editToolStripMenuItem1
             // 
             this.editToolStripMenuItem1.Name = "editToolStripMenuItem1";
-            this.editToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.editToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             this.editToolStripMenuItem1.Text = "Edit row";
             this.editToolStripMenuItem1.Click += new System.EventHandler(this.editToolStripMenuItem1_Click);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // cutRowToolStripMenuItem
             // 
             this.cutRowToolStripMenuItem.Name = "cutRowToolStripMenuItem";
-            this.cutRowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cutRowToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.cutRowToolStripMenuItem.Text = "Cut row";
             this.cutRowToolStripMenuItem.Click += new System.EventHandler(this.cutRowToolStripMenuItem_Click);
             // 
             // copyRowToolStripMenuItem
             // 
             this.copyRowToolStripMenuItem.Name = "copyRowToolStripMenuItem";
-            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.copyRowToolStripMenuItem.Text = "Copy row";
             this.copyRowToolStripMenuItem.Click += new System.EventHandler(this.copyRowToolStripMenuItem_Click);
             // 
             // pasteRowToolStripMenuItem
             // 
             this.pasteRowToolStripMenuItem.Name = "pasteRowToolStripMenuItem";
-            this.pasteRowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pasteRowToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.pasteRowToolStripMenuItem.Text = "Paste row";
             this.pasteRowToolStripMenuItem.Click += new System.EventHandler(this.pasteRowToolStripMenuItem_Click);
             // 
             // insertRowToolStripMenuItem
             // 
             this.insertRowToolStripMenuItem.Name = "insertRowToolStripMenuItem";
-            this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.insertRowToolStripMenuItem.Text = "Insert row";
             this.insertRowToolStripMenuItem.Click += new System.EventHandler(this.insertRowToolStripMenuItem_Click);
             // 
@@ -155,7 +155,7 @@ namespace UniversalPatcher
             // 
             this.testMathToolStripMenuItem.Enabled = false;
             this.testMathToolStripMenuItem.Name = "testMathToolStripMenuItem";
-            this.testMathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testMathToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.testMathToolStripMenuItem.Text = "Test math";
             this.testMathToolStripMenuItem.Click += new System.EventHandler(this.testMathToolStripMenuItem_Click);
             // 
@@ -281,6 +281,7 @@ namespace UniversalPatcher
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(129, 20);
             this.txtSearch.TabIndex = 8;
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged_1);
             // 
             // comboFilterBy
             // 
@@ -289,6 +290,7 @@ namespace UniversalPatcher
             this.comboFilterBy.Name = "comboFilterBy";
             this.comboFilterBy.Size = new System.Drawing.Size(114, 21);
             this.comboFilterBy.TabIndex = 9;
+            this.comboFilterBy.SelectedIndexChanged += new System.EventHandler(this.comboFilterBy_SelectedIndexChanged_1);
             // 
             // frmEditXML
             // 

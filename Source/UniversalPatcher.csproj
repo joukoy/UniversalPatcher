@@ -249,6 +249,12 @@
     <Compile Include="frmImportLogFile.Designer.cs">
       <DependentUpon>frmImportLogFile.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmMapSession.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMapSession.Designer.cs">
+      <DependentUpon>frmMapSession.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmPropertyEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -471,6 +477,12 @@
     <Compile Include="frmMoreSettings.Designer.cs">
       <DependentUpon>frmMoreSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmTunerMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTunerMain.Designer.cs">
+      <DependentUpon>frmTunerMain.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmVisualSegments.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -655,6 +667,9 @@
     <EmbeddedResource Include="frmImportLogFile.resx">
       <DependentUpon>frmImportLogFile.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmMapSession.resx">
+      <DependentUpon>frmMapSession.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmPropertyEditor.resx">
       <DependentUpon>frmPropertyEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -775,6 +790,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmMoreSettings.resx">
       <DependentUpon>frmMoreSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTunerMain.resx">
+      <DependentUpon>frmTunerMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmVisualSegments.resx">
       <DependentUpon>frmVisualSegments.cs</DependentUpon>

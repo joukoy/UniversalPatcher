@@ -32,7 +32,6 @@ unsigned char* buffer;
 HANDLE* handles;
 BOOL StopMe;
 
-const UINT16 polynomial = 0xA001;
 UINT16 table[256];
 UINT32 table32[256];
 
@@ -66,6 +65,8 @@ struct SearchSettings
     int CsValueCount;
     int Threads;
     UINT64 InitialValue;
+    UINT64 Polynomial;
+    UINT64 Xor;
     int FilterCount;
     int CsAddressCount;
     UINT32* CsAddresses;
@@ -127,8 +128,15 @@ DWORD WINAPI CalcWordSum(_In_  LPVOID lpParameter)
 }
 void InitCrc16()
 {
+    UINT16 polynomial = 0xA001;
     UINT16 value;
     UINT16 temp;
+
+    if (searchsettings->Polynomial <= UINT16_MAX)
+    {
+        polynomial = (UINT16)searchsettings->Polynomial;
+    }
+
     for (UINT16 i = 0; i < 256; ++i)
     {
         value = 0;
@@ -153,6 +161,11 @@ void  InitCrc32()
 {
     UINT32 poly = 0xedb88320;
     UINT32 temp = 0;
+
+    if (searchsettings->Polynomial <= UINT32_MAX)
+    {
+        poly = (UINT32)searchsettings->Polynomial;
+    }
     for (int i = 0; i < 256; ++i)
     {
         temp = i;
@@ -374,6 +387,8 @@ DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
                         else if (comp == 2)
                             csCalc = ~sum + 1;
 
+                        csCalc = csCalc ^ searchsettings->Xor;
+
                         switch (searchsettings->CsBytes)
                         {
                         case 1:
@@ -497,7 +512,7 @@ int WINAPI CheckSumSearch(unsigned char* Buffer, SearchSettings *Settings, UINT6
     for (int id = 0; id < searchsettings->Threads;id++)
     {
         if (searchsettings->Method == Wordsum && searchsettings->Complement == 2 && searchsettings->CsBytes == 4  && 
-            searchsettings->CsAddresses[0] == UINT32_MAX && searchsettings->MSB && !searchsettings->SwapBytes) //Full optimized method for Wordsum,2's complement, MSB
+            searchsettings->CsAddresses[0] == UINT32_MAX && searchsettings->MSB && !searchsettings->SwapBytes && searchsettings->Xor == 0) //Full optimized method for Wordsum,2's complement, MSB
             handles[id] = CreateThread(0, 0, &CalcWordSum, 0, 0, 0);
         else
             handles[id] = CreateThread(0, 0, &CalcCheckSum, 0, 0, 0);

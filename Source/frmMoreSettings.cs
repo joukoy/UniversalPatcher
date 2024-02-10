@@ -36,6 +36,8 @@ namespace UniversalPatcher
             AppSettings.FLashParams = txtFlashParams.Text;
             AppSettings.LoggerUseIntegrated = chkUseIntegratedLogger.Checked;
             AppSettings.LoggerExternalApp = txtExternalLogger.Text;
+            AppSettings.ConfirmProgramExit = chkConfirmExit.Checked;
+            AppSettings.TunerUseSessionTabs = chkUseTunerMain.Checked;
             //AppSettings.startPatcher = chkStartPatcher.Checked;
             AppSettings.Save();
             this.Close();
@@ -58,6 +60,8 @@ namespace UniversalPatcher
             txtFlashApp.Text = AppSettings.FlashApp;
             txtFlashParams.Text = AppSettings.FLashParams;
             txtExternalLogger.Text = AppSettings.LoggerExternalApp;
+            chkConfirmExit.Checked = AppSettings.ConfirmProgramExit;
+            chkUseTunerMain.Checked = AppSettings.TunerUseSessionTabs;
             //chkStartPatcher.Checked = AppSettings.startPatcher;
         }
 

@@ -120,6 +120,8 @@ namespace UniversalPatcher
         public string ExtraCategories { get; set; }
         public string TableDescription { get; set; }
         public string ExtraDescription { get; set; }
+        public string OS_Address { get; set; }
+
         private string altOS;
         public string CompatibleOS 
         { 
@@ -141,10 +143,13 @@ namespace UniversalPatcher
         }
         public void UpdateAddressByOS(string PcmOS)
         {
-            if (string.IsNullOrEmpty(OS))
+            if (!string.IsNullOrEmpty(OS) && OS.Contains(":") && (string.IsNullOrEmpty(OS_Address) || !OS_Address.Contains(":")))
+            {
+                OS_Address = OS;
+            }
+            if (string.IsNullOrEmpty(OS_Address))
                 return;
-
-            string[] oParts = OS.Split(',');
+            string[] oParts = OS_Address.Split(',');
             foreach(string osAddr in oParts)
             {
                 string[] oaParts = osAddr.Split(':');

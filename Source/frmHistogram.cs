@@ -12,6 +12,8 @@ using static Upatcher;
 using static Helpers;
 using System.IO;
 using static LoggerUtils;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace UniversalPatcher
 {
@@ -40,6 +42,7 @@ namespace UniversalPatcher
         private decimal rowMax;
         private decimal rowStep;
         private bool liveData = false;
+        private int lastDataCount = 0;
 
         private void frmHistogram_Load(object sender, EventArgs e)
         {
@@ -266,7 +269,7 @@ namespace UniversalPatcher
                     Histogram.HitData hd = histogram.HitDatas[i];
                     if (hd.Values.Count > 0)
                     {
-                        double cellValue = hd.Average;
+                        double cellValue = hd.CurrentAverage;
                         dataGridView1.Rows[hd.Row].Cells[hd.Column].Value = cellValue;
                         if (cellValue > hSetup.HighValue)
                             dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.HighColor);
@@ -307,7 +310,8 @@ namespace UniversalPatcher
                 return;
             }
             LoadHistogram();
-            tabHistogram.Select();
+            tabControl1.SelectedTab = tabHistogram;
+            //tabHistogram.Select();
         }
 
         private void SetupParameterLists()
@@ -562,44 +566,43 @@ namespace UniversalPatcher
             CopyToClipboard();
         }
 
-        private void AddLogData(double[] logdata)
+        private void UpdateLiveData()
         {
             try
             {
-                Stopwatch timer = new Stopwatch();
-                timer.Start();
-                if (hSetup == null)
+                if (liveData && histogram.LogDatas != null && histogram.LogDataCount != lastDataCount)
                 {
-                    if (string.IsNullOrEmpty(comboXparam.Text) || string.IsNullOrEmpty(comboValueparam.Text))
+                    if (hSetup == null)
                     {
-                        LoggerBold("Select histogram parameters first!");
-                        return;
+                        if (string.IsNullOrEmpty(comboXparam.Text) || string.IsNullOrEmpty(comboValueparam.Text))
+                        {
+                            LoggerBold("Select histogram parameters first!");
+                            return;
+                        }
+                        LoadHistogram();
                     }
-                    LoadHistogram();
-                }
-                histogram.AddData(logdata);
-                histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, (ushort)numDecimals.Value);
-                for (int i = 0; i < histogram.HitDatas.Count; i++)
-                {
-                    Histogram.HitData hd = histogram.HitDatas[i];
-                    if (hd.Values.Count > 0)
+
+                    for (int i = 0; i < histogram.HitDatas.Count; i++)
                     {
-                        double cellValue = hd.Average;
-                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Value = cellValue;
-                        if (cellValue > hSetup.HighValue)
-                            dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.HighColor);
-                        else if (cellValue < hSetup.LowValue)
-                            dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.LowColor);
-                        else
-                            dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.MidColor);
-                        string tipTxt = "Min: " + hd.Values.Min().ToString() + ", Max: " + hd.Values.Max().ToString() + ", Hits: " + hd.Values.Count.ToString();
-                        dataGridView1.Rows[hd.Row].Cells[hd.Column].ToolTipText = tipTxt;
-                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Tag = hd;
+                        Histogram.HitData hd = histogram.HitDatas[i];
+                        if (hd.Values.Count > 0)
+                        {
+                            double cellValue = hd.CurrentAverage;
+                            dataGridView1.Rows[hd.Row].Cells[hd.Column].Value = cellValue;
+                            if (cellValue > hSetup.HighValue)
+                                dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.HighColor);
+                            else if (cellValue < hSetup.LowValue)
+                                dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.LowColor);
+                            else
+                                dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.MidColor);
+                            string tipTxt = "Min: " + hd.Values.Min().ToString() + ", Max: " + hd.Values.Max().ToString() + ", Hits: " + hd.Values.Count.ToString();
+                            dataGridView1.Rows[hd.Row].Cells[hd.Column].ToolTipText = tipTxt;
+                            dataGridView1.Rows[hd.Row].Cells[hd.Column].Tag = hd;
+                        }
                     }
+                    ShowCellInfo();
+                    lastDataCount = histogram.LogDataCount;
                 }
-                ShowCellInfo();
-                timer.Stop();
-                Debug.WriteLine("Histogram AddLogData Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
             }
             catch (Exception ex)
             {
@@ -642,11 +645,12 @@ namespace UniversalPatcher
         {
             try
             {
-                //double[] lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(e.Data.Values);
+                Histogram.CsvData data = histogram.AddData(e.Data.CalculatedValues);
                 this.Invoke((MethodInvoker)delegate () //Event handler, can't directly handle UI
                 {
-                    AddLogData(e.Data.CalculatedValues);
+                    histogram.CountHitsIncrement(data, comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, (ushort)numDecimals.Value);
                 });
+
             }
             catch (Exception ex)
             {
@@ -761,6 +765,16 @@ namespace UniversalPatcher
                 rowStep = fth.numStep.Value;
             }
             fth.Dispose();
+        }
+
+        private void comboXparam_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void timerLiveData_Tick(object sender, EventArgs e)
+        {
+            UpdateLiveData();
         }
     }
 }

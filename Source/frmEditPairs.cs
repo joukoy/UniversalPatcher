@@ -18,6 +18,7 @@ namespace UniversalPatcher
             InitializeComponent();
         }
         public string pairStr { get; set; }
+        public string OS { get; set; }
 
         private void btnApply_Click(object sender, EventArgs e)
         {
@@ -38,19 +39,28 @@ namespace UniversalPatcher
         {
             try
             {
+                bool found = false;
                 dataGridView1.Columns.Add("OS", "OS");
                 dataGridView1.Columns.Add("Address", "Address");
-                if (string.IsNullOrEmpty(pairStr) || !pairStr.Contains(":"))
+                if (!string.IsNullOrEmpty(pairStr) && pairStr.Contains(":"))
                 {
-                    return;
+                    string[] rows = pairStr.Split(',');
+                    foreach (string row in rows)
+                    {
+                        string[] parts = row.Split(':');
+                        int r = dataGridView1.Rows.Add();
+                        dataGridView1.Rows[r].Cells[0].Value = parts[0].Trim();
+                        dataGridView1.Rows[r].Cells[1].Value = parts[1].Trim();
+                        if (parts[0].Trim() == OS)
+                        {
+                            found = true;
+                        }
+                    }
                 }
-                string[] rows = pairStr.Split(',');
-                foreach (string row in rows)
+                if (!found)
                 {
-                    string[] parts = row.Split(':');
-                    int r = dataGridView1.Rows.Add();
-                    dataGridView1.Rows[r].Cells[0].Value = parts[0];
-                    dataGridView1.Rows[r].Cells[1].Value = parts[1];
+                    int row = dataGridView1.Rows.Add();
+                    dataGridView1.Rows[row].Cells[0].Value = OS;
                 }
             }
             catch (Exception ex)
@@ -68,6 +78,7 @@ namespace UniversalPatcher
         {
             ParsePairs();
         }
+
 
         private void btnCancel_Click(object sender, EventArgs e)
         {

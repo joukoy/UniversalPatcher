@@ -71,6 +71,21 @@ namespace UniversalPatcher
                 if (this.FilterBy == null)
                     this.FilterBy = "";
             }
+            public Navi(TabPage Tab, string PathStr, string Filter, string FilterBy, TableData Td)
+            {
+                string[] pParts = PathStr.Split(new string[] { " -> " }, StringSplitOptions.RemoveEmptyEntries);
+                for (int p = pParts.Length - 1; p >= 0; p--)
+                    Path.Add(pParts[p]);
+                this.Tab = Tab;
+                this.Filter = Filter;
+                this.FilterBy = FilterBy;
+                this.Td = Td;
+                if (this.Filter == null)
+                    this.Filter = "";
+                if (this.FilterBy == null)
+                    this.FilterBy = "";
+            }
+
             public TabPage Tab { get; set; }
             public string TabName { 
                 get
@@ -838,7 +853,7 @@ namespace UniversalPatcher
                 }
                 Debug.WriteLine(dbgStr.ToString());
                 if (!tv.Nodes.ContainsKey(path.Last()))
-                    return;
+                   return;
                 TreeNode node = tv.Nodes[path.Last()];
                 for (int i = path.Count - 2; i >= 0; i--)
                 {

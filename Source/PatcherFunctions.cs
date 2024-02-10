@@ -654,6 +654,8 @@ public class Upatcher
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "ospids"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "ChecksumSearch")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "ChecksumSearch"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "TuneSessions")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "TunerSessions"));
             if (AppSettings.LastXMLfolder == "")
                 AppSettings.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
             if (AppSettings.LastPATCHfolder == "")
@@ -678,7 +680,14 @@ public class Upatcher
                 else if (args[1].ToLower().Contains("tuner"))
                 {
                     PcmFile pcm = new PcmFile();
-                    Application.Run(new FrmTuner(pcm));
+                    if (AppSettings.TunerUseSessionTabs)
+                    {
+                        Application.Run(new frmTunerMain(pcm));
+                    }
+                    else
+                    {
+                        Application.Run(new FrmTuner(pcm));
+                    }
                 }
                 else if (args[1].ToLower().Contains("patcher"))
                 {
@@ -698,9 +707,15 @@ public class Upatcher
             else
             {
                 PcmFile pcm = new PcmFile();
-                Application.Run(new FrmTuner(pcm));
-                //Application.Run(new FrmPatcher());
-            }            
+                if (AppSettings.TunerUseSessionTabs)
+                {
+                    Application.Run(new frmTunerMain(pcm));
+                }
+                else
+                {
+                    Application.Run(new FrmTuner(pcm));
+                }
+            }
         }
         catch (Exception ex)
         {

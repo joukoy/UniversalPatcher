@@ -53,6 +53,12 @@ namespace UniversalPatcher
             this.touristToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.openMapSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveMapSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveSessionAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadMapSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showTablesWithEmptyAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableMultitableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,6 +114,8 @@ namespace UniversalPatcher
             this.saveXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameTablelistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.addNewTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateAddressesByOSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -143,6 +151,7 @@ namespace UniversalPatcher
             this.insertRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateTableConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editOSAddressPairsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.addressRelativeDiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -225,7 +234,7 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
-            this.editOSAddressPairsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -346,7 +355,14 @@ namespace UniversalPatcher
             this.openCompareBINToolStripMenuItem,
             this.reloadFileFromDiskToolStripMenuItem,
             this.createProgramShortcutsToolStripMenuItem,
-            this.modeToolStripMenuItem});
+            this.modeToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.openMapSessionToolStripMenuItem,
+            this.saveMapSessionToolStripMenuItem,
+            this.saveSessionAsToolStripMenuItem,
+            this.loadMapSessionToolStripMenuItem,
+            this.closeSessionToolStripMenuItem,
+            this.newSessionToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
@@ -437,6 +453,46 @@ namespace UniversalPatcher
             this.advancedToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.advancedToolStripMenuItem.Text = "Advanced";
             this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(206, 6);
+            // 
+            // openMapSessionToolStripMenuItem
+            // 
+            this.openMapSessionToolStripMenuItem.Name = "openMapSessionToolStripMenuItem";
+            this.openMapSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.openMapSessionToolStripMenuItem.Text = "Create map session";
+            this.openMapSessionToolStripMenuItem.Click += new System.EventHandler(this.openMapSessionToolStripMenuItem_Click);
+            // 
+            // saveMapSessionToolStripMenuItem
+            // 
+            this.saveMapSessionToolStripMenuItem.Name = "saveMapSessionToolStripMenuItem";
+            this.saveMapSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.saveMapSessionToolStripMenuItem.Text = "Save session";
+            this.saveMapSessionToolStripMenuItem.Click += new System.EventHandler(this.saveMapSessionToolStripMenuItem_Click);
+            // 
+            // saveSessionAsToolStripMenuItem
+            // 
+            this.saveSessionAsToolStripMenuItem.Name = "saveSessionAsToolStripMenuItem";
+            this.saveSessionAsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.saveSessionAsToolStripMenuItem.Text = "Save session as...";
+            this.saveSessionAsToolStripMenuItem.Click += new System.EventHandler(this.saveSessionAsToolStripMenuItem_Click);
+            // 
+            // loadMapSessionToolStripMenuItem
+            // 
+            this.loadMapSessionToolStripMenuItem.Name = "loadMapSessionToolStripMenuItem";
+            this.loadMapSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.loadMapSessionToolStripMenuItem.Text = "Load session";
+            this.loadMapSessionToolStripMenuItem.Click += new System.EventHandler(this.loadMapSessionToolStripMenuItem_Click);
+            // 
+            // closeSessionToolStripMenuItem
+            // 
+            this.closeSessionToolStripMenuItem.Name = "closeSessionToolStripMenuItem";
+            this.closeSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.closeSessionToolStripMenuItem.Text = "Close session";
+            this.closeSessionToolStripMenuItem.Click += new System.EventHandler(this.closeSessionToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -829,6 +885,8 @@ namespace UniversalPatcher
             this.saveXMLToolStripMenuItem,
             this.saveXMLAsToolStripMenuItem,
             this.clearTableToolStripMenuItem,
+            this.renameTablelistToolStripMenuItem,
+            this.toolStripSeparator5,
             this.addNewTableToolStripMenuItem,
             this.updateAddressesByOSToolStripMenuItem});
             this.xmlToolStripMenuItem.Name = "xmlToolStripMenuItem";
@@ -876,6 +934,18 @@ namespace UniversalPatcher
             this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
             this.clearTableToolStripMenuItem.Text = "&Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
+            // 
+            // renameTablelistToolStripMenuItem
+            // 
+            this.renameTablelistToolStripMenuItem.Name = "renameTablelistToolStripMenuItem";
+            this.renameTablelistToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.renameTablelistToolStripMenuItem.Text = "Rename tablelist";
+            this.renameTablelistToolStripMenuItem.Click += new System.EventHandler(this.renameTablelistToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(266, 6);
             // 
             // addNewTableToolStripMenuItem
             // 
@@ -968,7 +1038,7 @@ namespace UniversalPatcher
             this.toolStripSeparator2,
             this.axistablesToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 572);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 550);
             // 
             // cutToolStripMenuItem
             // 
@@ -1155,6 +1225,13 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.duplicateTableConfigToolStripMenuItem.Text = "Duplicate table config";
             this.duplicateTableConfigToolStripMenuItem.Click += new System.EventHandler(this.duplicateTableConfigToolStripMenuItem_Click);
+            // 
+            // editOSAddressPairsToolStripMenuItem
+            // 
+            this.editOSAddressPairsToolStripMenuItem.Name = "editOSAddressPairsToolStripMenuItem";
+            this.editOSAddressPairsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editOSAddressPairsToolStripMenuItem.Text = "Edit OS:Address pairs";
+            this.editOSAddressPairsToolStripMenuItem.Click += new System.EventHandler(this.editOSAddressPairsToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
@@ -2175,12 +2252,12 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
             // 
-            // editOSAddressPairsToolStripMenuItem
+            // newSessionToolStripMenuItem
             // 
-            this.editOSAddressPairsToolStripMenuItem.Name = "editOSAddressPairsToolStripMenuItem";
-            this.editOSAddressPairsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.editOSAddressPairsToolStripMenuItem.Text = "Edit OS:Address pairs";
-            this.editOSAddressPairsToolStripMenuItem.Click += new System.EventHandler(this.editOSAddressPairsToolStripMenuItem_Click);
+            this.newSessionToolStripMenuItem.Name = "newSessionToolStripMenuItem";
+            this.newSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.newSessionToolStripMenuItem.Text = "New Session";
+            this.newSessionToolStripMenuItem.Click += new System.EventHandler(this.newSessionToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 
@@ -2441,5 +2518,14 @@ namespace UniversalPatcher
         private ToolStripMenuItem pasteRowToolStripMenuItem;
         private ToolStripMenuItem updateAddressesByOSToolStripMenuItem;
         private ToolStripMenuItem editOSAddressPairsToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator4;
+        private ToolStripMenuItem openMapSessionToolStripMenuItem;
+        private ToolStripMenuItem saveMapSessionToolStripMenuItem;
+        private ToolStripMenuItem loadMapSessionToolStripMenuItem;
+        private ToolStripMenuItem saveSessionAsToolStripMenuItem;
+        private ToolStripMenuItem renameTablelistToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator5;
+        private ToolStripMenuItem closeSessionToolStripMenuItem;
+        private ToolStripMenuItem newSessionToolStripMenuItem;
     }
 }

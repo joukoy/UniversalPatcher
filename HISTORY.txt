@@ -677,5 +677,16 @@
 0.22.14
 - Patcher: Checksum research: Bugfixes and speed optimization
 
+0.22.15
+- Tuner: Added File -> "Create map session" for table mapping
+- Tuner: Added Save/load session
+- Tuner: Multiple sessions in Tabs. Disabled by default, enable from Settings -> More settings
+- Patcher: Checksum research: Allow user add/remove methods + other mods & bugfixes
+- Added confirmation for closing Patcher, Tuner or Logger. Disable from Settings -> More settings
+- Allow adding new table when tablelist is empty
+- Tabledata: New column: OS_Address for OS:Address pairs
+- Histogram: Bug fixes, speed improvements
+
+
 
 

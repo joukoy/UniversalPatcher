@@ -86,8 +86,17 @@ namespace UniversalPatcher
         private void btnTuner_Click(object sender, EventArgs e)
         {
             PcmFile PCM = new PcmFile();
-            FrmTuner frmT = new FrmTuner(PCM);
-            frmT.Show();
+            if (AppSettings.TunerUseSessionTabs)
+            {
+                frmTunerMain ftm = new frmTunerMain(PCM);
+                ftm.Show();
+            }
+            else
+            {
+                FrmTuner ft = new FrmTuner(PCM);
+                ft.Show();
+            }
+
         }
 
         private void btnSettings_Click(object sender, EventArgs e)

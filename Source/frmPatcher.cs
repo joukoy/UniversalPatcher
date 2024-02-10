@@ -523,6 +523,14 @@ namespace UniversalPatcher
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (AppSettings.ConfirmProgramExit)
+            {
+                if (MessageBox.Show("Close patcher?", "Exit now?", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
             if (chkLogtoFile.Checked)
             {
                 chkLogtoFile.Checked = false;
@@ -3175,14 +3183,16 @@ namespace UniversalPatcher
         {
             try
             {
-                if (basefile == null)
+                if (AppSettings.TunerUseSessionTabs)
                 {
-                    LoggerBold("No file loaded");
-                    //return;
+                    frmTunerMain ftm = new frmTunerMain(basefile);
+                    ftm.Show();
                 }
-                //basefile.tableDatas = new List<TableData>();
-                FrmTuner ft = new FrmTuner(basefile);
-                ft.Show();
+                else
+                {
+                    FrmTuner ft = new FrmTuner(basefile);
+                    ft.Show();
+                }
             }
             catch (Exception ex)
             {
@@ -4492,6 +4502,12 @@ namespace UniversalPatcher
         private void btnCustomFindStop_Click(object sender, EventArgs e)
         {
             stopCustomSearch = true;
+        }
+
+        private void btnTunerMain_Click(object sender, EventArgs e)
+        {
+            frmTunerMain ftm = new frmTunerMain();
+            ftm.Show();
         }
     }
 }

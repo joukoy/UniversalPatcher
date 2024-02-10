@@ -59,9 +59,11 @@ namespace UniversalPatcher
             this.txtFlashApp = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.chkUseIntegratedLogger = new System.Windows.Forms.CheckBox();
-            this.txtExternalLogger = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.txtExternalLogger = new System.Windows.Forms.TextBox();
+            this.chkUseIntegratedLogger = new System.Windows.Forms.CheckBox();
+            this.chkConfirmExit = new System.Windows.Forms.CheckBox();
+            this.chkUseTunerMain = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -372,6 +374,22 @@ namespace UniversalPatcher
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Logging program";
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(9, 40);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(103, 13);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "External Application:";
+            // 
+            // txtExternalLogger
+            // 
+            this.txtExternalLogger.Location = new System.Drawing.Point(5, 56);
+            this.txtExternalLogger.Name = "txtExternalLogger";
+            this.txtExternalLogger.Size = new System.Drawing.Size(244, 20);
+            this.txtExternalLogger.TabIndex = 1;
+            // 
             // chkUseIntegratedLogger
             // 
             this.chkUseIntegratedLogger.AutoSize = true;
@@ -384,27 +402,33 @@ namespace UniversalPatcher
             this.chkUseIntegratedLogger.Text = "Use integrated PCM Logger";
             this.chkUseIntegratedLogger.UseVisualStyleBackColor = true;
             // 
-            // txtExternalLogger
+            // chkConfirmExit
             // 
-            this.txtExternalLogger.Location = new System.Drawing.Point(5, 56);
-            this.txtExternalLogger.Name = "txtExternalLogger";
-            this.txtExternalLogger.Size = new System.Drawing.Size(244, 20);
-            this.txtExternalLogger.TabIndex = 1;
+            this.chkConfirmExit.AutoSize = true;
+            this.chkConfirmExit.Location = new System.Drawing.Point(324, 260);
+            this.chkConfirmExit.Name = "chkConfirmExit";
+            this.chkConfirmExit.Size = new System.Drawing.Size(121, 17);
+            this.chkConfirmExit.TabIndex = 21;
+            this.chkConfirmExit.Text = "Confirm program exit";
+            this.chkConfirmExit.UseVisualStyleBackColor = true;
             // 
-            // label8
+            // chkUseTunerMain
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 40);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(103, 13);
-            this.label8.TabIndex = 2;
-            this.label8.Text = "External Application:";
+            this.chkUseTunerMain.AutoSize = true;
+            this.chkUseTunerMain.Location = new System.Drawing.Point(323, 283);
+            this.chkUseTunerMain.Name = "chkUseTunerMain";
+            this.chkUseTunerMain.Size = new System.Drawing.Size(150, 17);
+            this.chkUseTunerMain.TabIndex = 22;
+            this.chkUseTunerMain.Text = "Use Session tabs in Tuner";
+            this.chkUseTunerMain.UseVisualStyleBackColor = true;
             // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(610, 345);
+            this.Controls.Add(this.chkUseTunerMain);
+            this.Controls.Add(this.chkConfirmExit);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.chkXdfUseTableName);
@@ -478,5 +502,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtExternalLogger;
         private System.Windows.Forms.CheckBox chkUseIntegratedLogger;
+        private System.Windows.Forms.CheckBox chkConfirmExit;
+        private System.Windows.Forms.CheckBox chkUseTunerMain;
     }
 }

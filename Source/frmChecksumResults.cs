@@ -25,7 +25,7 @@ namespace UniversalPatcher
         SortOrder strSortOrder = SortOrder.Ascending;
         private string sortBy = "Start";
         private int sortIndex = 1;
-
+        public List<CkSearchResult> SelectedResults = new List<CkSearchResult>();
 
         private void frmChecksumResults_Load(object sender, EventArgs e)
         {
@@ -206,6 +206,13 @@ namespace UniversalPatcher
             }
             dataGridView1.Refresh();
             this.Refresh();
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+            SelectedResults = SearchResults.OrderBy(x => x.Start).Where(Y => Y.Select).ToList();
+            this.Close();
         }
     }
 }

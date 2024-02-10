@@ -43,6 +43,55 @@ namespace UniversalPatcher
             List
         }
 
+        private class Rename
+        {
+            public Rename(int indx,string newName)
+            {
+                this.Indx = indx;
+                this.Newname = newName;
+            }
+            public int Indx { get; set; }
+            public string Newname { get; set; }
+        }
+
+        public class NaviSetting
+        {
+            public Guid TableSelection { get; set; }
+            public string Filter { get; set; }
+            public string FilterBy { get; set; }
+            public List<string> NavPath { get; set; }
+            public string Tab { get; set; }
+        }
+        public class SessionPcm
+        {
+            public SessionPcm()
+            {
+                NaviSettings = new List<NaviSetting>();
+                TdListNames = new List<string>();
+                TdListFiles = new List<string>();
+            }
+            public List<NaviSetting> NaviSettings { get; set; }
+            public string BinFile { get; set; }
+            public int NaviCurrent { get; set; }
+            public int CurrentTdList { get; set; }
+            public List<string> TdListNames { get; set; }
+            public List<string> TdListFiles { get; set; }
+        }
+
+        public class SessionSettings
+        {
+            public SessionSettings()
+            {
+                Pcms = new List<SessionPcm>();
+            }
+            public string SessionName { get; set; }
+            public bool MapSession { get; set; }
+            public string SortBy { get; set; }
+            public int SortIndex { get; set; }
+            public SortOrder StrSortOrder { get; set; }
+            public string CurrentBin { get; set; }
+            public List<SessionPcm> Pcms { get; set; }
+        }
         public PcmFile PCM;
         //private List<TableData> tableDataList;
         private string sortBy = "TableName";
@@ -76,8 +125,22 @@ namespace UniversalPatcher
         private DispMode DisplayMode = DispMode.None;
         bool Navigating = false;
         ToolTip NaviTip = new ToolTip();
-
-
+        private string sessionname;
+        public String SessionName
+        {
+            get { return sessionname; }
+            set
+            {
+                sessionname = value;
+                if (TunerMain != null && myTab != null)
+                {
+                    myTab.Text = sessionname;
+                }
+            }
+        }
+        private bool mapSession = false;
+        public frmTunerMain TunerMain;
+        public TabPage myTab;
         private void frmTuner_Load(object sender, EventArgs e)
         {
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
@@ -175,8 +238,101 @@ namespace UniversalPatcher
             txtFilter.TextChanged += txFilter_TextChanged;
         }
 
+        private bool IsSessionModified()
+        {
+            bool modified = false;
+            try
+            {
+                if (currentFileToolStripMenuItem.DropDownItems.Count == 0)
+                {
+                    return false;
+                }
+                if (string.IsNullOrEmpty(SessionName))
+                {
+                    return true;
+                }
+                string tmpsession = sessionname + "-tmp-" + DateTime.Now.ToString("HH-MM-dd-HH-ss-ffff");
+                string tmpFolder = Path.Combine(Application.StartupPath, "TunerSessions", tmpsession);
+                string sesFodler = Path.Combine(Application.StartupPath, "TunerSessions", SessionName);
+                Directory.Move(sesFodler, tmpFolder);
+                SaveSession(SessionName, false);
+                DirectoryInfo d = new DirectoryInfo(sesFodler);
+                FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
+                DirectoryInfo d2 = new DirectoryInfo(tmpFolder);
+                FileInfo[] tmpFiles = d2.GetFiles("*.*", SearchOption.AllDirectories);
+
+                if (Files.Length != tmpFiles.Length)
+                {
+                    modified = true;
+                }
+                else
+                {
+                    for (int f = 0; f < Files.Length; f++)
+                    {
+                        if (Files[f].Length != tmpFiles[f].Length)
+                        {
+                            modified = true;
+                            break;
+                        }
+                        byte[] content1 = ReadBin(Files[f].FullName);
+                        byte[] content2 = ReadBin(tmpFiles[f].FullName);
+                        if (!content1.SequenceEqual(content2))
+                        {
+                            modified = true;
+                            break;
+                        }
+                    }
+                }
+                foreach (FileInfo f in Files)
+                {
+                    File.Delete(f.FullName);
+                }
+                Directory.Delete(sesFodler);
+                Directory.Move(tmpFolder, sesFodler);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner line " + line + ": " + ex.Message);
+            }
+            return modified;
+        }
         private void frmTuner_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (AppSettings.ConfirmProgramExit)
+            {
+
+                if (IsSessionModified())
+                {
+                    string title;
+                    if (string.IsNullOrEmpty(SessionName))
+                        title = "Save session?";
+                    else
+                        title = "Save session: " + SessionName + " ?";
+                    DialogResult result = MessageBox.Show("Save session before closing?\nCancel=Don't close", title, MessageBoxButtons.YesNoCancel);
+                    if (result == DialogResult.Cancel)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                    else if (result == DialogResult.Yes)
+                    {
+                        SaveSession(SessionName, true);
+                    }
+                }
+                else if (currentFileToolStripMenuItem.DropDownItems.Count > 0)
+                {
+                    if (MessageBox.Show("Close Tuner?", "Exit now?", MessageBoxButtons.YesNo) == DialogResult.No)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+            }
             if (AppSettings.MainWindowPersistence)
             {
                 AppSettings.TunerWindowState = this.WindowState;
@@ -425,7 +581,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                if (td.OS != PCM.OS && !td.CompatibleOS.Contains("," + PCM.OS + ","))
+                if (!td.OS.Contains(PCM.OS) && !td.CompatibleOS.Contains("," + PCM.OS + ","))
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);                
                 }
@@ -2496,7 +2652,7 @@ namespace UniversalPatcher
 
                 ToolStripMenuItem tdMenuItem = new ToolStripMenuItem(newPCM.FileName);
                 tdMenuItem.Name = newPCM.FileName;
-                tdMenuItem.Tag = newPCM.tableDataIndex;
+                tdMenuItem.Tag = newPCM.currentTableDatasList;
                 tableListToolStripMenuItem.DropDownItems.Add(tdMenuItem);
                 tdMenuItem.Click += tablelistSelect_Click;
 
@@ -2834,7 +2990,7 @@ namespace UniversalPatcher
             ImportXperimentalCsv2();
         }
 
-        private void AddNewTableList()
+        private void AddNewTableList(string ListName)
         {
             int l = 0;
             foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
@@ -2843,13 +2999,20 @@ namespace UniversalPatcher
                 mi.Checked = false;
                 l++;
             }
-            string listName = "List" + l.ToString();
-
-            frmData frmD = new frmData();
-            frmD.Text = "Tablelist name (optional)";
-            if (frmD.ShowDialog() == DialogResult.OK)
+            string listName;
+            if (string.IsNullOrEmpty(ListName))
             {
-                listName = frmD.txtData.Text;
+                listName = "List" + l.ToString();
+                frmData frmD = new frmData();
+                frmD.Text = "Tablelist name (optional)";
+                if (frmD.ShowDialog() == DialogResult.OK)
+                {
+                    listName = frmD.txtData.Text;
+                }
+            }
+            else
+            {
+                listName = ListName;
             }
             ToolStripMenuItem mItem = new ToolStripMenuItem(listName);
             mItem.Name = listName;
@@ -2863,7 +3026,7 @@ namespace UniversalPatcher
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddNewTableList();
+            AddNewTableList("");
         }
 
         private void insertRowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3021,7 +3184,7 @@ namespace UniversalPatcher
 
         private void loadTablelistnewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddNewTableList();
+            AddNewTableList("");
             PCM.LoadTableList();
             comboTableCategory.Text = "_All";
             RefreshTablelist(false);
@@ -3954,7 +4117,7 @@ namespace UniversalPatcher
                                     }
                                 }
                 */
-                dataGridView1.DataSource = filteredTableDatas;
+                //dataGridView1.DataSource = filteredTableDatas;
                 treeView1.ContextMenuStrip = contextMenuStripListTree;
                 if (e.Action == TreeViewAction.ByKeyboard || e.Action == TreeViewAction.ByMouse)
                 {
@@ -5704,12 +5867,17 @@ namespace UniversalPatcher
         {
             try
             {
+                int c = 0;
+                int r = 0;
                 TableData newTd = new TableData();
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.LoadTd();
-                int c = dataGridView1.CurrentCell.ColumnIndex;
-                int r = dataGridView1.CurrentCell.RowIndex;
+                if (dataGridView1.Rows.Count > 0)
+                {
+                    c = dataGridView1.CurrentCell.ColumnIndex;
+                    r = dataGridView1.CurrentCell.RowIndex;
+                }
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
                     PCM.tableDatas.Add(fte.td);
@@ -5751,12 +5919,12 @@ namespace UniversalPatcher
                     }
                 }
 
-                if (compTd == null)
+/*                if (compTd == null)
                 {
                     Logger("Please open another file");
                     return;
                 }
-
+*/
                 if (ftvd == null || !ftvd.Visible)
                 {
                     Task.Factory.StartNew(() => StartVisualizer(PCM, selTd, peekPCM, compTd, 0));
@@ -5874,6 +6042,7 @@ namespace UniversalPatcher
 
         private void renameDuplicateTablenamesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            List<Rename> renames = new List<Rename>();
             for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
             {
                 TableData td1 = PCM.tableDatas[t1];
@@ -5888,14 +6057,31 @@ namespace UniversalPatcher
                         if (td1.TableName == tableName)
                         {
                             Logger("Renaming: " + tableName + " (guid: " + td1.guid.ToString() + ") => " + newName);
-                            td1.TableName = newName;
+                            //td1.TableName = newName;
+                            renames.Add(new Rename(t1, newName));
                             counter++;
                         }
                         newName = tableName + "-" + counter.ToString("00");
-                        td2.TableName = newName;
+                        //td2.TableName = newName;
+                        renames.Add(new Rename(t2, newName));
                         Logger("Renaming: " + tableName + " (guid: " + td2.guid.ToString() + ") => " + newName);
                         counter++;
                     }
+                }
+            }
+            if (renames.Count == 0)
+            {
+                Logger("No duplicates found");
+            }
+            else
+            {
+                if (MessageBox.Show("Apply new names?", "Rename tables?",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    foreach(Rename rename in renames)
+                    {
+                        PCM.tableDatas[rename.Indx].TableName = rename.Newname;
+                    }
+                    Logger("Done");
                 }
             }
         }
@@ -6279,10 +6465,11 @@ namespace UniversalPatcher
             try
             {
                 frmEditPairs fep = new frmEditPairs();
-                fep.pairStr = lastSelectTd.OS;
+                fep.pairStr = lastSelectTd.OS_Address;
+                fep.OS = PCM.OS;
                 if (fep.ShowDialog() == DialogResult.OK)
                 {
-                    lastSelectTd.OS = fep.pairStr;
+                    lastSelectTd.OS_Address = fep.pairStr;
                     this.Refresh();
                 }
                 fep.Dispose();
@@ -6295,6 +6482,390 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+        }
+
+        public string CreateMapSession()
+        {
+            try
+            {
+                frmMapSession fms = new frmMapSession();
+                if (fms.ShowDialog() != DialogResult.OK)
+                {
+                    return "";
+                }
+                SessionName = fms.txtSessionName.Text;
+                mapSession = true;
+                string sesPath = Path.Combine(Application.StartupPath, "TunerSessions", SessionName);
+                Directory.CreateDirectory(sesPath);
+
+                string newMapBin = Path.Combine(sesPath, Path.GetFileName(fms.txtMapPin.Text));
+                Logger("Copying " + fms.txtMapPin.Text + " => " + newMapBin);
+                File.Copy(fms.txtMapPin.Text, newMapBin, true);
+                PcmFile mapPCM = new PcmFile(newMapBin, true, "");
+                string mapOS = mapPCM.OS;
+                if (string.IsNullOrEmpty(mapOS))
+                {
+                    mapOS = Path.GetFileNameWithoutExtension(fms.txtMapPin.Text);
+                }
+                string newMapDefFile = Path.Combine(sesPath, mapOS + "-map.XML");
+                string newRefDefFile;
+
+                AddtoCurrentFileMenu(mapPCM, false);
+
+                string newRefBin = Path.Combine(sesPath, Path.GetFileName(fms.txtRefBin.Text));
+                Logger("Copying " + fms.txtRefBin.Text + " => " + newRefBin);
+                File.Copy(fms.txtRefBin.Text, newRefBin, true);
+                PcmFile refPCM = new PcmFile(newRefBin, true, "");
+                AddtoCurrentFileMenu(refPCM, true);
+                if (fms.chkUseAutoloadTables.Checked)
+                {
+                    LoadConfigforPCM(ref refPCM);
+                    newRefDefFile = Path.Combine(sesPath, Path.GetFileNameWithoutExtension(refPCM.FileName) + ".XML");
+                    refPCM.SaveTableList(newRefDefFile);
+                }
+                else
+                {
+                    newRefDefFile = Path.Combine(sesPath, Path.GetFileName(fms.txtRefTableList.Text));
+                    Logger("Copying " + fms.txtRefTableList.Text + " => " + newRefDefFile);
+                    File.Copy(fms.txtRefTableList.Text, newRefDefFile, true);
+                    refPCM.LoadTableList(newRefDefFile);
+                }
+                Logger("Copying " + newRefDefFile + " => " + newMapDefFile);
+                File.Copy(newRefDefFile, newMapDefFile, true);
+                mapPCM.ClearTableList();
+                mapPCM.LoadTableList(newMapDefFile);
+                mapPCM.RenameTableDatas(newMapDefFile);
+
+                PCM = refPCM;
+                SelectPCM();
+                /*
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                {
+                    PcmFile mPCM = (PcmFile)mi.Tag;
+                    if (mPCM.FileName == mapPCM.FileName)
+                    {
+                        mPCM.ClearTableList();
+                        mPCM.LoadTableList(newRefDefFile);
+                    }
+                }
+                */
+                SaveSession(SessionName,true);
+                return SessionName;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+                return "";
+            }
+
+        }
+        private void openMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.AddSession(frmTunerMain.SessionType.Map);
+            }
+            else
+            {
+                CreateMapSession();
+            }
+        }
+
+        public string SaveSession(string SessionName, bool Verbose)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(SessionName))
+                {
+                    FrmAsk fa = new FrmAsk();
+                    fa.Text = "Session name?";
+                    fa.labelAsk.Text = "Session name:";
+                    if (string.IsNullOrEmpty(this.sessionname))
+                        fa.TextBox1.Text = DateTime.Now.ToString("yyyy-MM-dd-HH-mm");
+                    else
+                        fa.TextBox1.Text = sessionname;
+                    if (fa.ShowDialog() == DialogResult.OK)
+                    {
+                        SessionName = fa.TextBox1.Text;
+                    }
+                    else
+                    {
+                        return "";
+                    }
+                }
+                if (string.IsNullOrEmpty(SessionName))
+                {
+                    return "";
+                }
+                this.SessionName = SessionName;
+                string sesPath = Path.Combine(Application.StartupPath, "TunerSessions", SessionName);
+                if (!Directory.Exists(sesPath))
+                    Directory.CreateDirectory(sesPath);
+                string fName = Path.Combine(sesPath, "Session.xml");
+                SessionSettings sessionsettings = new SessionSettings();
+                sessionsettings.SessionName = SessionName;
+                sessionsettings.MapSession = mapSession;
+                if (mapSession)
+                    sessionsettings.CurrentBin = Path.GetFileName(PCM.FileName);
+                else
+                    sessionsettings.CurrentBin = PCM.FileName;
+                sessionsettings.SortBy = sortBy;
+                sessionsettings.SortIndex = sortIndex;
+                sessionsettings.StrSortOrder = strSortOrder;
+                int fNr = 0;
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                {
+                    fNr++;
+                    PcmFile sPCM = (PcmFile)mi.Tag;
+                    SessionPcm sessPcm = new SessionPcm();
+                    if (mapSession)
+                    {
+                        string newBinFile = Path.Combine(sesPath, Path.GetFileName(sPCM.FileName));
+                        if (Verbose)
+                            Logger("Saving " + newBinFile);
+                        WriteBinToFile(newBinFile, sPCM.buf);
+                        sessPcm.BinFile = newBinFile;
+                    }
+                    else
+                    {
+                        sessPcm.BinFile = sPCM.FileName;
+                    }
+                    sessPcm.NaviCurrent = sPCM.NaviCurrent;
+                    sessPcm.CurrentTdList = sPCM.currentTableDatasList;
+                    foreach (Navi navi in sPCM.Navigator)
+                    {
+                        NaviSetting ns = new NaviSetting();
+                        if (navi.Td != null)
+                        {
+                            ns.TableSelection = navi.Td.guid;
+                        }
+                        ns.NavPath = navi.Path;
+                        ns.Filter = navi.Filter;
+                        ns.FilterBy = navi.FilterBy;
+                        ns.Tab = navi.TabName;
+                        sessPcm.NaviSettings.Add(ns);
+                    }
+                    sessionsettings.Pcms.Add(sessPcm);
+                    for (int d=0;d<sPCM.altTableDatas.Count;d++)
+                    {
+                        if (sPCM.altTableDatas[d].tableDatas.Count > 0)
+                        {
+                            //string dFile = Path.Combine(sesPath, "tablelist-" + fNr.ToString() + "-" + d.ToString() + ".xml");
+                            //if (mapSession && sPCM.altTableDatas[d].Name.StartsWith(sPCM.OS + "-map"))
+                              //  dFile = Path.Combine(sesPath, sPCM.OS + "-map.xml");
+                            string dFile = Path.Combine(sesPath, ReplaceFileNameInvalidChars(Path.GetFileNameWithoutExtension(sPCM.altTableDatas[d].Name)) + ".XML");
+                            if (Verbose)
+                                Logger("Saving file " + dFile);
+                            using (FileStream stream = new FileStream(dFile, FileMode.Create))
+                            {
+                                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                                writer.Serialize(stream, sPCM.altTableDatas[d].tableDatas);
+                                stream.Close();
+                            }
+                            sessPcm.TdListNames.Add(Path.GetFileName(sPCM.altTableDatas[d].Name));
+                            sessPcm.TdListFiles.Add(Path.GetFileName(dFile));
+                        }
+                    }
+                }
+                if (Verbose)
+                    Logger("Saving to file " + fName);
+                using (FileStream stream = new FileStream(fName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(SessionSettings));
+                    writer.Serialize(stream, sessionsettings);
+                    stream.Close();
+                }
+                if (Verbose)
+                    Logger("Done");
+                return SessionName;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+                return "";
+            }
+
+        }
+        public string LoadSession()
+        {
+            try
+            {
+                string sesPath = Path.Combine(Application.StartupPath, "TunerSessions");
+                string defFile = Path.Combine(sesPath, "Session.xml");
+                string fName = SelectFile("Select session file", XmlFilter,defFile);
+                if (string.IsNullOrEmpty(fName))
+                {
+                    return "";
+                }
+                sesPath = Path.GetDirectoryName(fName);
+                fName = Path.Combine(sesPath, "Session.xml");
+                Debug.WriteLine("Loading file " + fName); 
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(SessionSettings));
+                System.IO.StreamReader file = new System.IO.StreamReader(fName);
+                SessionSettings sessionsettings = (SessionSettings)reader.Deserialize(file);
+                file.Close();
+                this.SessionName = sessionsettings.SessionName;
+                this.mapSession = sessionsettings.MapSession;
+                string selectedBin = "";
+                foreach (SessionPcm sessPcm in sessionsettings.Pcms)
+                {
+                    string binfile = sessPcm.BinFile;
+                    if (sessionsettings.MapSession)
+                    {
+                        binfile = Path.Combine(sesPath, sessPcm.BinFile);
+                    }
+                    PcmFile newPCM = new PcmFile(Path.Combine(sesPath, sessPcm.BinFile), true, "");
+                    AddtoCurrentFileMenu(newPCM, true);
+                    PCM = newPCM;
+                    SelectPCM();
+                    PCM.ClearTableList();
+                    for (int d=0;d<sessPcm.TdListNames.Count;d++)
+                    {
+                        string dFile = Path.Combine(sesPath, sessPcm.TdListFiles[d]);
+                        if (File.Exists(dFile))
+                        {
+                            if (d > 0)
+                            {
+                                //First tablelist replace original tablelist, other added
+                                AddNewTableList(sessPcm.TdListNames[d]);
+                            }
+                            PCM.LoadTableList(dFile);
+                            comboTableCategory.Text = "_All";
+                            RefreshTablelist(false);
+                        }
+                    }
+                    foreach (NaviSetting ns in sessPcm.NaviSettings)
+                    {
+                        TableData tdN = PCM.tableDatas.Where(X => X.guid.Equals(ns.TableSelection)).FirstOrDefault();
+                        TabPage tabN = null;
+                        foreach (TabPage tab in tabControl1.TabPages)
+                        {
+                            if (tab.Name == ns.Tab)
+                            {
+                                tabN = tab;
+                                break;
+                            }
+                        }
+                        //Navi navi = new Navi(tabN, ns.NavPath.Replace("||","->"), ns.Filter, ns.FilterBy, tdN);
+                        Navi navi = new Navi(tabN, ns.NavPath, ns.Filter, ns.FilterBy, tdN);
+                        PCM.Navigator.Add(navi);
+                    }
+                    PCM.NaviCurrent = sessPcm.NaviCurrent;
+                    PCM.currentTableDatasList = sessPcm.CurrentTdList;
+                }
+                selectedBin = Path.Combine(sesPath, sessionsettings.CurrentBin);
+                sortBy = sessionsettings.SortBy;
+                sortIndex = sessionsettings.SortIndex;
+                strSortOrder = sessionsettings.StrSortOrder;                    
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                {
+                    PcmFile sPCM = (PcmFile)mi.Tag;
+                    if (sPCM.FileName == selectedBin)
+                    {
+                        PCM = sPCM;
+                        SelectPCM();
+                        break;
+                    }
+
+                }
+                Navigate(0);
+                Logger("Done");
+                return SessionName;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+                return "";
+            }
+
+        }
+        private void saveMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveSession(SessionName,true);
+        }
+
+        private void loadMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.AddSession(frmTunerMain.SessionType.Load);
+            }
+            else
+            {
+                LoadSession();
+            }
+        }
+
+        private void saveSessionAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveSession("",true);
+        }
+
+        private void renameTablelistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmData frmD = new frmData();
+            frmD.Text = "New Tablelist name";
+            string listName = "";
+            if (frmD.ShowDialog() == DialogResult.OK)
+            {
+                listName = frmD.txtData.Text;
+                PCM.RenameTableDatas(listName);
+                for (int m = tableListToolStripMenuItem.DropDownItems.Count - 1; m >= 0; m--)
+                {
+
+                    if (tableListToolStripMenuItem.DropDownItems[m].Tag != null)
+                        tableListToolStripMenuItem.DropDownItems.RemoveAt(m);
+                }
+                for (int i = 0; i < PCM.altTableDatas.Count; i++)
+                {
+                    ToolStripMenuItem miNew = new ToolStripMenuItem(PCM.altTableDatas[i].Name);
+                    miNew.Name = PCM.altTableDatas[i].Name;
+                    miNew.Tag = i;
+                    if (i == PCM.currentTableDatasList)
+                        miNew.Checked = true;
+                    tableListToolStripMenuItem.DropDownItems.Add(miNew);
+                    miNew.Click += tablelistSelect_Click;
+                }
+            }
+        }
+
+        private void closeSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.CloseSession(myTab);
+            }
+            else
+            {
+                this.Close();
+            }
+        }
+
+        private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.AddSession(frmTunerMain.SessionType.Empty);
+            }
+            else
+            {
+                SaveSession("",true);
             }
         }
     }

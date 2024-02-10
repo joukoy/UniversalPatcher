@@ -1564,6 +1564,16 @@ namespace UniversalPatcher
 
         }
 
+        private void txtSearch_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboFilterBy_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
 
         /*        private void pidDatatypesToolStripMenuItem_Click(object sender, EventArgs e)
                 {

@@ -75,6 +75,8 @@ namespace UniversalPatcher
             TableEditorHexShowAddress = false;
             TableEditorHexShowBinary = false;
             TableEditorHexShowDecimal = false;
+            ConfirmProgramExit = true;
+            TunerUseSessionTabs = false;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
             TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
@@ -125,6 +127,9 @@ namespace UniversalPatcher
         public Size TunerWindowSize { get; set; }
         public FormWindowState TunerWindowState { get; set; }
         public Point TunerWindowLocation { get; set; }
+        public Size TunerMainWindowSize { get; set; }
+        public FormWindowState TunerMainWindowState { get; set; }
+        public Point TunerMainWindowLocation { get; set; }
         public Size frmGraphicsWindowSize { get; set; }
         public FormWindowState frmGraphicsWindowState { get; set; }
         public Point frmGraphicsWindowLocation { get; set; }
@@ -182,6 +187,7 @@ namespace UniversalPatcher
         public bool TunerShowUnitsUndefined { get; set; }
         public bool TunerShowUnitsImperial { get; set; }
         public bool TunerShowUnitsMetric { get; set; }
+        public bool TunerUseSessionTabs { get; set; }
         public int SplashShowTime { get; set; }
         //public Font PatcherLogFont { get; set; }
         //public Font DebugFont { get; set; }
@@ -261,6 +267,12 @@ namespace UniversalPatcher
         public bool LogImportTimeStampElapsed { get; set; }
         public bool LoggerGraphDisableResample { get; set; }
         public string ControlCommandsFile { get; set; }
+        public string MapSessionMapBin { get; set; }
+        public string MapSessionRefBin { get; set; }
+        public string MapSessionRefTableList { get; set; }
+        //public string MapSessionSessionName { get; set; }
+        public bool MapSessionUseAutoLoadTableList { get; set; }
+        public bool ConfirmProgramExit { get; set; }
         public TimeoutScenario TimeoutLoggingActive { get; set; }
         public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }
         public TimeoutScenario TimeoutLoggingPassive { get; set; }
