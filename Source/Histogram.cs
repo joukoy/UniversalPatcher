@@ -58,7 +58,9 @@ namespace UniversalPatcher
             {
                 Values.Add(val);
                 CurrentAverage += (val - this.CurrentAverage) / Values.Count;
+                LastUpdated = DateTime.Now;
             }
+            public DateTime LastUpdated { get; internal set; }
 /*
             public double Average
             {
@@ -101,6 +103,11 @@ namespace UniversalPatcher
         private double[] rowHeader { get; set; } //   eg MAP
         public ushort Decimals;
 
+        //For CountHitsIncrement()
+        private int col;
+        private int row;
+        private int skip;
+        private int val;
         public int LogDataCount { get { return LogDatas.Count; } }
         public string[] ParseCsvHeader(string headerRow, string separator)
         {
@@ -233,31 +240,31 @@ namespace UniversalPatcher
                 LoggerBold("Error, Histogram line " + line + ": " + ex.Message);
             }
         }
-        public void CountHitsIncrement(CsvData newData, string ColParam, string RowParam, string ValueParam, string SkipParam, double SkipValue, ushort Decimals)
+        public void CountHitsIncrement(double[] newData, string ColParam, string RowParam, string ValueParam, string SkipParam, double SkipValue, ushort Decimals)
         {
             try
             {
-                int col = Array.IndexOf(Parameters, ColParam);
-                if (col < 0)
-                {
-                    LoggerBold("Unknown X parameter: " + ColParam);
-                    return;
-                }
-                int row = Array.IndexOf(Parameters, RowParam);
-                if (row < 0)
-                {
-                    LoggerBold("Unknown Y parameter: " + ColParam);
-                    return;
-                }
-                int val = Array.IndexOf(Parameters, ValueParam);
-                if (val < 0)
-                {
-                    LoggerBold("Unknown Value parameter: " + ColParam);
-                    return;
-                }
-                int skip = Array.IndexOf(Parameters, SkipParam);
                 if (HitDatas == null)
                 {
+                    col = Array.IndexOf(Parameters, ColParam);
+                    if (col < 0)
+                    {
+                        LoggerBold("Unknown X parameter: " + ColParam);
+                        return;
+                    }
+                    row = Array.IndexOf(Parameters, RowParam);
+                    if (row < 0)
+                    {
+                        LoggerBold("Unknown Y parameter: " + ColParam);
+                        return;
+                    }
+                    val = Array.IndexOf(Parameters, ValueParam);
+                    if (val < 0)
+                    {
+                        LoggerBold("Unknown Value parameter: " + ColParam);
+                        return;
+                    }
+                    skip = Array.IndexOf(Parameters, SkipParam);
                     HitDatas = new List<HitData>();
                     for (int c = 0; c < columnHeader.Length; c++)
                     {
@@ -267,16 +274,23 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                if (skip < 0 || newData.Values[skip] >= SkipValue)
+                if (skip < 0 || newData[skip] >= SkipValue)
                 {
-                    double colData = newData.Values[col];
-                    double rowData = newData.Values[row];
+                    if (newData[col] == double.MinValue || newData[col] == double.MaxValue)
+                        newData[col] = 0;
+                    if (newData[row] == double.MinValue || newData[row] == double.MaxValue)
+                        newData[row] = 0;
+                    double colData = newData[col];
+                    double rowData = newData[row];
                     var nearestColumnValue = columnHeader.OrderBy(x => Math.Abs(colData - x)).First();
                     var nearestRowValue = rowHeader.OrderBy(x => Math.Abs(rowData - x)).First();
                     int c = Array.IndexOf(columnHeader, nearestColumnValue);
                     int r = Array.IndexOf(rowHeader, nearestRowValue);
                     HitData hd = HitDatas.Where(x => x.Column == c).Where(y => y.Row == r).FirstOrDefault();
-                    hd.AddValue(newData.Values[val]);
+                    if (newData[val] == double.MinValue || newData[val] == double.MaxValue)
+                        hd.AddValue(0);
+                    else
+                        hd.AddValue(newData[val]);
                 }
             }
             catch (Exception ex)

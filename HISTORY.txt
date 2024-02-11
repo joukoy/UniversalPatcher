@@ -687,6 +687,8 @@
 - Tabledata: New column: OS_Address for OS:Address pairs
 - Histogram: Bug fixes, speed improvements
 
+0.22.16
+- Histogram: Fixed a bug that prevented the table from being used as a template
 
 
 

@@ -43,7 +43,8 @@ namespace UniversalPatcher
         private decimal rowStep;
         private bool liveData = false;
         private int lastDataCount = 0;
-
+        private int dataCount = 0;
+        private DateTime logUpdateTime = DateTime.MinValue;
         private void frmHistogram_Load(object sender, EventArgs e)
         {
             tabHistogram.Enter += TabHistogram_Enter;
@@ -217,6 +218,11 @@ namespace UniversalPatcher
                 AutoResize();
                 labelSelectTable.Visible = false;
                 radioTemplateUseTable.Checked = true;
+                if (liveData)
+                    SetupLiveParameters();
+                else
+                    LoadHistogram();
+
                 Logger("Select parameters in Settings-tab");
             }
             catch (Exception ex)
@@ -570,22 +576,23 @@ namespace UniversalPatcher
         {
             try
             {
-                if (liveData && histogram.LogDatas != null && histogram.LogDataCount != lastDataCount)
+                if (dataCount != lastDataCount)
                 {
                     if (hSetup == null)
                     {
                         if (string.IsNullOrEmpty(comboXparam.Text) || string.IsNullOrEmpty(comboValueparam.Text))
                         {
-                            LoggerBold("Select histogram parameters first!");
+                            //LoggerBold("Select histogram parameters first!");
                             return;
                         }
                         LoadHistogram();
                     }
-
+                    DateTime prevUpdTime = logUpdateTime;
+                    logUpdateTime = DateTime.Now;
                     for (int i = 0; i < histogram.HitDatas.Count; i++)
                     {
                         Histogram.HitData hd = histogram.HitDatas[i];
-                        if (hd.Values.Count > 0)
+                        if (hd.Values.Count > 0 && DateTime.Compare(hd.LastUpdated, prevUpdTime) < 0 )
                         {
                             double cellValue = hd.CurrentAverage;
                             dataGridView1.Rows[hd.Row].Cells[hd.Column].Value = cellValue;
@@ -645,12 +652,11 @@ namespace UniversalPatcher
         {
             try
             {
-                Histogram.CsvData data = histogram.AddData(e.Data.CalculatedValues);
                 this.Invoke((MethodInvoker)delegate () //Event handler, can't directly handle UI
                 {
-                    histogram.CountHitsIncrement(data, comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, (ushort)numDecimals.Value);
+                    histogram.CountHitsIncrement(e.Data.CalculatedValues, comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, (ushort)numDecimals.Value);
                 });
-
+                dataCount++;
             }
             catch (Exception ex)
             {

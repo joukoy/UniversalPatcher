@@ -434,6 +434,10 @@ namespace UniversalPatcher
             {
                 this.Text = "Tuner " + PCM.FileName + " [" + PCM.tunerFile + "]";
                 PCM.SelectTableDatas(0, PCM.FileName);
+                if (TunerMain != null)
+                {
+                    TunerMain.Text = "Tuner " + PCM.FileName + " [" + PCM.tunerFile + "]";
+                }
 /*                frmNavigator fn = new frmNavigator();
                 fn.Show();
                 fn.PCM = PCM;
@@ -4390,18 +4394,15 @@ namespace UniversalPatcher
                 {
                     Histogram.SetupTable(PCM, tableTds[0]);
                 }
+                if (tableTds == null || tableTds.Count == 0)
+                {
+                    ClearPanel2();
+                }
                 else
                 {
-                    if (tableTds == null || tableTds.Count == 0)
-                    {
-                        ClearPanel2();
-                    }
-                    else
-                    {
-                        lastSelectTd = tableTds.LastOrDefault();
-                        EnableTreeModeAxisMenus(lastSelectTd);
-                        OpenTableEditor(tableTds);
-                    }
+                    lastSelectTd = tableTds.LastOrDefault();
+                    EnableTreeModeAxisMenus(lastSelectTd);
+                    OpenTableEditor(tableTds);
                 }
             }
             catch (Exception ex)
