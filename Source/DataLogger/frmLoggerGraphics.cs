@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Windows.Forms;
@@ -20,8 +21,9 @@ namespace UniversalPatcher
 {
     public partial class frmLoggerGraphics : Form
     {
-        public frmLoggerGraphics()
+        public frmLoggerGraphics(bool Live)
         {
+            this.LiveData = Live;
             InitializeComponent();
         }
 
@@ -53,35 +55,6 @@ namespace UniversalPatcher
             public double Max { get; set; }
         }
 
-
-        private class PointData
-        {
-            public PointData(int pidId, string Pid, ulong TStamp, double Val, double ScaledVal, int row)
-            {
-                PidId = pidId;
-                PidName = Pid;
-                TimeStamp = TStamp;
-                Value = Val;
-                ScaledValue = ScaledVal;
-                Row = row;
-            }
-            public int PidId { get; set; }
-            public string PidName { get; set; }
-            public ulong TimeStamp { get; set; }
-            public double Value { get; set; }
-            public double ScaledValue { get; set; }
-            public int Row { get; set; }
-        }
-
-        private class PointDataGroup
-        {
-            public PointDataGroup(int count)
-            {
-                pointDatas = new PointData[count];
-            }
-            public PointData[] pointDatas { get; set; }
-        }
-
         private List<PidScalar> pidScalars;
 
         private string logFile;
@@ -90,7 +63,6 @@ namespace UniversalPatcher
         //private int TStamps = 1;
         private string ProfileFile;
         private string Title;
-        private List<PointDataGroup> pointDataGroups = new List<PointDataGroup>();
         ToolTip ScrollTip = new ToolTip();
         //public string LastLiveLogFile;
         private List<string> dataSourceNames = new List<string>();
@@ -100,12 +72,16 @@ namespace UniversalPatcher
         private List<BarGraph> vbars = new List<BarGraph>();
         private List<Label> vbarLabels = new List<Label>();
         private List<Label> vbarLabels2 = new List<Label>();
-        private DispatcherTimer zoomTimer = new DispatcherTimer();
-        private DispatcherTimer startTimer = new DispatcherTimer();
+        private DispatcherTimer posTimer = new DispatcherTimer();
+        private GraphSettings graphSettings;
+        private int prevDataCount = 0;
         private void frmLoggerGraphics_Load(object sender, EventArgs e)
         {
             try
             {
+                graphSettings = new GraphSettings(chart1);
+                tabAdvanced.Enter += TabAdvanced_Enter;
+                tabZoom.Enter += TabZoom_Enter;
                 if (!string.IsNullOrEmpty(AppSettings.LoggerLogSeparator))
                     txtLogSeparator.Text = AppSettings.LoggerLogSeparator;
                 else
@@ -169,22 +145,37 @@ namespace UniversalPatcher
                 }
                 this.FormClosing += FrmLoggerGraphics_FormClosing;
                 uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
-                chart1.MouseDown += Chart1_MouseDown;
-                chart1.MouseUp += Chart1_MouseUp;
-                chart1.MouseWheel += Chart1_MouseWheel;
+                chart1.MouseDown += Chart_MouseDown;
+                chart1.MouseUp += Chart_MouseUp;
+                chart2.MouseDown += Chart_MouseDown;
+                chart2.MouseUp += Chart_MouseUp;
+                chart1.MouseWheel += Chart_MouseWheel;
+                chart2.MouseWheel += Chart_MouseWheel;
+                chart1.PostPaint += Chart1_PostPaint;
                 showPointsToolStripMenuItem.Checked = AppSettings.LoggerGraphicsShowPoints;
                 disableResampleToolStripMenuItem.Checked = AppSettings.LoggerGraphDisableResample;
-                //SetUpDoubleBuffer(this);
-                chart1.MouseClick += Chart1_MouseClick;
+                chart1.MouseClick += Chart_MouseClick;
+                chart2.MouseClick += Chart_MouseClick;
                 loadCombobox1();
                 dataGridPointValues.Columns.Add("Pid", "Pid");
                 dataGridPointValues.Columns.Add("Value", "Value");
                 numDisplayInterval.Value = AppSettings.LoggerGraphicsInterval;
                 numShowMax.Value = AppSettings.LoggerGraphicsShowMaxTime;
-                zoomTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-                zoomTimer.Tick += Timer_Tick;
-                startTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-                startTimer.Tick += StartTimer_Tick;
+                posTimer.Interval = new TimeSpan(0, 0, 0, 0, 50);
+                posTimer.Tick += PosTimer_Tick;
+                txtShowFrom.KeyUp += TxtShowFrom_KeyUp;
+                txtShowTo.KeyUp += TxtShowTo_KeyUp;
+                if (LiveData)
+                {
+                    //SetupLiveGraphics();
+                }
+                else
+                {
+                    chkGetLiveData.Enabled = false;
+                    numShowMax.Enabled = false;
+                    chkShowLastSeconds.Enabled = false;
+                    chkShowLastSeconds.Checked = false;
+                }
             }
             catch (Exception ex)
             {
@@ -197,82 +188,263 @@ namespace UniversalPatcher
             }
         }
 
-        private void StartTimer_Tick(object sender, EventArgs e)
+        private void Chart1_PostPaint(object sender, ChartPaintEventArgs e)
         {
-            startTimer.Stop();
+            if (timerDisplayData.Enabled)
+            {
+                chart1.ChartAreas[0].CursorX.SetCursorPosition(chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum +
+                (chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum - chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum) / 2);
+            }
+            UpdateChart2();
+        }
+
+        private void TabZoom_Enter(object sender, EventArgs e)
+        {
+            SetupGraphProperties(chart2);
+            UpdateChart2();
+        }
+
+        private void PosTimer_Tick(object sender, EventArgs e)
+        {
+            posTimer.Stop();
+            int diff = graphSettings.ZoomEndPoint - graphSettings.ZoomStartPoint;
+            graphSettings.ZoomStartPoint = scrollPosition.Value - diff/2;
+            graphSettings.ZoomEndPoint = graphSettings.ZoomStartPoint + diff;
+            SetScrollValues();
             ShowSelectedRange();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            zoomTimer.Stop();
-            ShowSelectedRange();
-        }
-
-        private void Chart1_MouseWheel(object sender, MouseEventArgs e)
+        private void TxtShowFrom_KeyUp(object sender, KeyEventArgs e)
         {
             try
             {
-                if (e.Delta < 0)
+                if (e.KeyCode == Keys.Enter)
                 {
-                    chart1.ChartAreas[0].AxisX.ScaleView.ZoomReset();
-                    chart1.ChartAreas[0].AxisY.ScaleView.ZoomReset();
-                }
-
-                if (e.Delta > 0)
-                {
-                    double xMin = chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum;
-                    double xMax = chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum;
-                    double yMin = chart1.ChartAreas[0].AxisY.ScaleView.ViewMinimum;
-                    double yMax = chart1.ChartAreas[0].AxisY.ScaleView.ViewMaximum;
-
-                    double posXStart = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin) / 4;
-                    double posXFinish = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin) / 4;
-                    double posYStart = chart1.ChartAreas[0].AxisY.PixelPositionToValue(e.Location.Y) - (yMax - yMin) / 4;
-                    double posYFinish = chart1.ChartAreas[0].AxisY.PixelPositionToValue(e.Location.Y) + (yMax - yMin) / 4;
-
-                    if (wheelZoomXToolStripMenuItem1.Checked || wheelZoomXYToolStripMenuItem1.Checked)
-                        chart1.ChartAreas[0].AxisX.ScaleView.Zoom(posXStart, posXFinish);
-                    if (wheelZoomYToolStripMenuItem1.Checked || wheelZoomXYToolStripMenuItem1.Checked)
-                        chart1.ChartAreas[0].AxisY.ScaleView.Zoom(posYStart, posYFinish);
+                    e.Handled = true;
+                    DateTime fDT = new DateTime(graphSettings.FirstSampleTime);
+                    string tStampDate = fDT.ToString("yyyy:MM:dd.");
+                    TimestampFormat TSF = new TimestampFormat(fDT);
+                    graphSettings.ZoomStartTime = TSF.ConvertTimeStamp(txtShowFrom.Text).Ticks;
+                    SetScrollValues();
+                    ShowSelectedRange();
                 }
             }
             catch { }
         }
 
-        private void Chart1_MouseDown(object sender, MouseEventArgs e)
+
+        private void TxtShowTo_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    e.Handled = true;
+                    DateTime fDT = new DateTime(graphSettings.FirstSampleTime);
+                    string tStampDate = fDT.ToString("yyyy:MM:dd.");
+                    TimestampFormat TSF = new TimestampFormat(fDT);
+                    graphSettings.ZoomEndTime = TSF.ConvertTimeStamp(txtShowTo.Text).Ticks;
+                    SetScrollValues();
+                    ShowSelectedRange();
+                }
+            }
+            catch { }
+        }
+
+
+        private void TabAdvanced_Enter(object sender, EventArgs e)
+        {
+            ShowAdvSettings();
+        }
+
+        private void ShowAdvSettings()
+        {
+            if (dataGridViewAdv.Columns.Count < 2)
+            {
+                dataGridViewAdv.Columns.Add("Setting", "Setting");
+                dataGridViewAdv.Columns.Add("Value", "Value");
+            }
+            dataGridViewAdv.Rows.Clear();
+            foreach (PropertyInfo prop in graphSettings.GetType().GetProperties())
+            {
+                int row = dataGridViewAdv.Rows.Add();
+                dataGridViewAdv.Rows[row].Cells[0].Value = prop.Name;
+                if (prop.Name.ToLower().Contains("time"))
+                {
+                    long ticks = (long)prop.GetValue(graphSettings, null);
+                    dataGridViewAdv.Rows[row].Cells[1].Value = new DateTime(ticks).ToString("HH:mm:ss:ffff");
+                }
+                else
+                {
+                    dataGridViewAdv.Rows[row].Cells[1].Value = prop.GetValue(graphSettings, null);
+                }
+            }
+        }
+
+        private void Chart_MouseWheel(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Chart chart = (Chart)sender;
+                if (e.Delta < 0)
+                {
+                    //chart1.ChartAreas[0].AxisX.ScaleView.ZoomReset();
+                    if (wheelZoomYToolStripMenuItem1.Checked || wheelZoomXYToolStripMenuItem1.Checked)
+                    {
+                        chart1.ChartAreas[0].AxisY.ScaleView.ZoomReset();
+                    }
+                    if (wheelZoomXToolStripMenuItem1.Checked || wheelZoomXYToolStripMenuItem1.Checked)
+                    {
+                        if (graphSettings.zoomStarts.Count > 1)
+                        {
+                            graphSettings.zoomStarts.RemoveAt(graphSettings.zoomStarts.Count - 1);
+                            graphSettings.ZoomStartTime = graphSettings.zoomStarts.Last();
+                            graphSettings.zoomEnds.RemoveAt(graphSettings.zoomEnds.Count - 1);
+                            graphSettings.ZoomEndTime = graphSettings.zoomEnds.Last();
+                            btnPlay.Enabled = true;
+                        }
+                        else
+                        {
+                            ResetZoom(false);
+                        }
+                        ShowSelectedRange();
+                    }
+                }
+
+                if (e.Delta > 0)
+                {
+                    double xMin = chart.ChartAreas[0].AxisX.ScaleView.ViewMinimum;
+                    double xMax = chart.ChartAreas[0].AxisX.ScaleView.ViewMaximum;
+                    double yMin = chart.ChartAreas[0].AxisY.ScaleView.ViewMinimum;
+                    double yMax = chart.ChartAreas[0].AxisY.ScaleView.ViewMaximum;
+
+                    double posXStart = chart.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) - (xMax - xMin) / 4;
+                    double posXFinish = chart.ChartAreas[0].AxisX.PixelPositionToValue(e.Location.X) + (xMax - xMin) / 4;
+                    double posYStart = chart.ChartAreas[0].AxisY.PixelPositionToValue(e.Location.Y) - (yMax - yMin) / 4;
+                    double posYFinish = chart.ChartAreas[0].AxisY.PixelPositionToValue(e.Location.Y) + (yMax - yMin) / 4;
+
+                    if (wheelZoomYToolStripMenuItem1.Checked || wheelZoomXYToolStripMenuItem1.Checked)
+                    {
+                        chart1.ChartAreas[0].AxisY.ScaleView.Zoom(posYStart, posYFinish);
+                    }
+
+                    if (wheelZoomXToolStripMenuItem1.Checked || wheelZoomXYToolStripMenuItem1.Checked)
+                    {
+                        graphSettings.ZoomStartTime = DateTime.FromOADate(posXStart).Ticks;
+                        graphSettings.ZoomEndTime =  DateTime.FromOADate(posXFinish).Ticks;
+                        graphSettings.zoomStarts.Add(graphSettings.ZoomStartTime);
+                        graphSettings.zoomEnds.Add(graphSettings.ZoomEndTime);
+                        ShowSelectedRange();
+                        //chart.ChartAreas[0].AxisX.ScaleView.Zoom(posXStart, posXFinish);
+                    }
+                }
+                SetScrollValues();
+            }
+            catch { }
+        }
+
+        private void Chart_MouseDown(object sender, MouseEventArgs e)
         {
             ChartMouseDownLocation = e.Location;
         }
 
-        private void Chart1_MouseUp(object sender, MouseEventArgs e)
+        private void SetScrollValues()
         {
-            ChartArea ChartSelectionArea = chart1.ChartAreas[0];
-            // Check if rectangle has at least 10 pixels with and hright
+            try
+            {
+                if (graphSettings.ZoomStartPoint == 0 && graphSettings.ZoomEndPoint == graphSettings.SampleCount)
+                {
+                    scrollPosition.Maximum = 0;
+                }
+                else
+                {
+                    int diff = graphSettings.ZoomEndPoint - graphSettings.ZoomStartPoint;
+                    scrollPosition.Maximum = (int)(graphSettings.SampleCount - diff / 2) + 1;
+                    scrollPosition.Minimum = diff / 2;
+                    scrollPosition.Value = graphSettings.ZoomStartPoint + diff / 2;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+            }
+        }
+        private void Chart_MouseUp(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (Math.Abs(e.Location.X - ChartMouseDownLocation.X) < 10 && Math.Abs(e.Location.Y - ChartMouseDownLocation.Y) < 10)
+                {                    
+                    return;
+                }
+                Chart chart = (Chart)sender;
+                ChartArea ChartSelectionArea = chart.ChartAreas[0];
+                ChartArea ChartSelectionArea1 = chart1.ChartAreas[0];
+                Debug.WriteLine("Chart selection: " + ChartSelectionArea.CursorY.SelectionStart + " - " + ChartSelectionArea.CursorY.SelectionEnd);
+                long tmpStart = DateTime.FromOADate(ChartSelectionArea.CursorX.SelectionStart).Ticks;
+                long tmpEnd = DateTime.FromOADate(ChartSelectionArea.CursorX.SelectionEnd).Ticks;
+                if (tmpStart < (long)graphSettings.FirstSampleTime || tmpStart > (long)graphSettings.LastSampleTime
+                    || tmpEnd < (long)graphSettings.FirstSampleTime || tmpEnd > (long)graphSettings.LastSampleTime)
+                {
+                    Debug.WriteLine("Chart Zoom Selection out of range");
+                    return;
+                }
 
-            if (zoomXToolStripMenuItem.Checked || zoomXYToolStripMenuItem.Checked)
-            {
-                if (Math.Abs(e.Location.X - ChartMouseDownLocation.X) > 10)
+                if (zoomXToolStripMenuItem.Checked || zoomXYToolStripMenuItem.Checked)
                 {
-                    ChartSelectionArea.AxisX.ScaleView.Zoom(
-                        Math.Min(ChartSelectionArea.CursorX.SelectionStart, ChartSelectionArea.CursorX.SelectionEnd),
-                        Math.Max(ChartSelectionArea.CursorX.SelectionStart, ChartSelectionArea.CursorX.SelectionEnd)
-                    );
+                    if (Math.Abs(e.Location.X - ChartMouseDownLocation.X) > 10)
+                    {
+                        graphSettings.ZoomStartTime = tmpStart;
+                        graphSettings.ZoomEndTime = tmpEnd;
+                        if (graphSettings.ZoomStartTime > graphSettings.ZoomEndTime)
+                        {
+                            long tmp = graphSettings.ZoomStartTime;
+                            graphSettings.ZoomStartTime = graphSettings.ZoomEndTime;
+                            graphSettings.ZoomEndTime = tmp;
+                        }
+                        graphSettings.zoomStarts.Add(graphSettings.ZoomStartTime);
+                        graphSettings.zoomEnds.Add(graphSettings.ZoomEndTime);
+                        btnPlay.Enabled = true;
+                        Debug.WriteLine("Zoom From: " + new DateTime(graphSettings.ZoomStartTime).ToString("mm.ss.ffff") + " to: " + new DateTime(graphSettings.ZoomEndTime).ToString("mm.ss.ffff"));
+                        ShowSelectedRange();
+                        /*
+                            ChartSelectionArea.AxisX.ScaleView.Zoom(
+                                Math.Min(ChartSelectionArea.CursorX.SelectionStart, ChartSelectionArea.CursorX.SelectionEnd),
+                                Math.Max(ChartSelectionArea.CursorX.SelectionStart, ChartSelectionArea.CursorX.SelectionEnd)
+                            );
+                        */
+                    }
                 }
-            }
-            if (zoomYToolStripMenuItem.Checked || zoomXYToolStripMenuItem.Checked)
-            {
-                if (Math.Abs(e.Location.Y - ChartMouseDownLocation.Y) > 10)
+                if (zoomYToolStripMenuItem.Checked || zoomXYToolStripMenuItem.Checked)
                 {
-                    ChartSelectionArea.AxisY.ScaleView.Zoom(
-                        Math.Min(ChartSelectionArea.CursorY.SelectionStart, ChartSelectionArea.CursorY.SelectionEnd),
-                        Math.Max(ChartSelectionArea.CursorY.SelectionStart, ChartSelectionArea.CursorY.SelectionEnd)
-                    );
+                    if (Math.Abs(e.Location.Y - ChartMouseDownLocation.Y) > 10)
+                    {
+                        //Zoom chart1, even when selection in chart2
+                        ChartSelectionArea1.AxisY.ScaleView.Zoom(
+                            Math.Min(ChartSelectionArea.CursorY.SelectionStart, ChartSelectionArea.CursorY.SelectionEnd),
+                            Math.Max(ChartSelectionArea.CursorY.SelectionStart, ChartSelectionArea.CursorY.SelectionEnd)
+                        );
+                    }
                 }
+                // Reset/hide the selection rectangle
+                ChartSelectionArea1.CursorX.SetSelectionPosition(0D, 0D);
+                ChartSelectionArea1.CursorY.SetSelectionPosition(0D, 0D);
+                SetScrollValues();
             }
-            // Reset/hide the selection rectangle
-            ChartSelectionArea.CursorX.SetSelectionPosition(0D, 0D);
-            ChartSelectionArea.CursorY.SetSelectionPosition(0D, 0D);
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+            }
         }
 
 
@@ -290,7 +462,11 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            ScrollPointsPerScreen.Value--;
+                            //ScrollPointsPerScreen.Value--;
+                            if (graphSettings.ZoomStartPoint >0)
+                                graphSettings.ZoomStartPoint--;
+                            if (graphSettings.ZoomEndPoint<graphSettings.SampleCount-1)
+                                graphSettings.ZoomEndPoint++;
                             ShowSelectedRange();
                         }
                         break;
@@ -309,7 +485,8 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            ScrollStartPoint.Value++;
+                            if (scrollPosition.Value < scrollPosition.Maximum)
+                            scrollPosition.Value++;
                             ShowSelectedRange();
                         }
                         break;
@@ -321,7 +498,11 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            ScrollPointsPerScreen.Value++;
+                            //ScrollPointsPerScreen.Value++;
+                            if (graphSettings.ZoomStartPoint < graphSettings.SampleCount -10)
+                                graphSettings.ZoomStartPoint++;
+                            if (graphSettings.ZoomEndPoint > graphSettings.ZoomStartPoint +10 )
+                                graphSettings.ZoomEndPoint--;
                             ShowSelectedRange();
                         }
                         break;
@@ -340,7 +521,8 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            ScrollStartPoint.Value--;
+                            if (scrollPosition.Value > scrollPosition.Minimum +1)
+                                scrollPosition.Value--;
                             ShowSelectedRange();
                         }
                         break;
@@ -367,8 +549,8 @@ namespace UniversalPatcher
             try
             {
                 double xv = chart1.ChartAreas[0].CursorX.Position;
-                ulong xvdt = (ulong)DateTime.FromOADate(chart1.ChartAreas[0].CursorX.Position).Ticks;
-                PointDataGroup pdg = pointDataGroups.Where(x => x.pointDatas[0].TimeStamp >= xvdt).First();
+                long xvdt = DateTime.FromOADate(chart1.ChartAreas[0].CursorX.Position).Ticks;
+                PointDataGroup pdg = graphSettings.pointDataGroups.Where(x => x.pointDatas[0].TimeStamp >= xvdt).FirstOrDefault();
                 if (pdg != null)
                 {
                     DateTime dt = new DateTime((long)pdg.pointDatas[0].TimeStamp);
@@ -402,7 +584,7 @@ namespace UniversalPatcher
         }
 
 
-        private void Chart1_MouseClick(object sender, MouseEventArgs e)
+        private void Chart_MouseClick(object sender, MouseEventArgs e)
         {
             try
             {
@@ -410,11 +592,16 @@ namespace UniversalPatcher
 
                 if (e.Button == MouseButtons.Right)
                 {
-                    chart1.ChartAreas[0].AxisX.ScaleView.ZoomReset(0);
-                    chart1.ChartAreas[0].AxisY.ScaleView.ZoomReset(0);
+                    //chart1.ChartAreas[0].AxisX.ScaleView.ZoomReset(0);
+                    //chart1.ChartAreas[0].AxisY.ScaleView.ZoomReset(0);
+                    ResetZoom(true);
+                    return;
                 }
 
-                HitTestResult[] results = chart1.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint);
+                Chart chart = (Chart)sender;
+                HitTestResult[] results = chart.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint);
+                double xv = chart.ChartAreas[0].AxisX.PixelPositionToValue(e.X);
+                double yv = chart.ChartAreas[0].AxisY.PixelPositionToValue(e.Y);
                 foreach (var result in results)
                 {
                     DataPoint prop;
@@ -425,9 +612,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        double xv = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.X);
-                        double yv = chart1.ChartAreas[0].AxisY.PixelPositionToValue(e.Y);
-                        Series S = chart1.Series[0];            // short reference
+                        Series S = chart.Series[0];            // short reference
                         DataPoint pPrev = S.Points.Select(x => x)
                                                 .Where(x => x.XValue >= xv)
                                                 .DefaultIfEmpty(S.Points.First()).First();
@@ -450,9 +635,9 @@ namespace UniversalPatcher
                         dataGridPointValues.Rows.Add();
                         dataGridPointValues.Rows[0].Cells["Pid"].Value = "Time";
                         dataGridPointValues.Rows[0].Cells["Value"].Value = dt.ToString("HH:mm:ss.ffff");
-                        for (int s = 0; s < chart1.Series.Count; s++)
+                        for (int s = 0; s < chart.Series.Count; s++)
                         {
-                            PointData pData = pointDataGroups[pd.Row].pointDatas[s];
+                            PointData pData = graphSettings.pointDataGroups[pd.Row].pointDatas[s];
                             int r = dataGridPointValues.Rows.Add();
                             if (sb.Length < 2040)
                                 sb.Append(" " + pData.PidName + ": " + pData.Value.ToString("0.00") + ",");
@@ -462,7 +647,10 @@ namespace UniversalPatcher
                         }
                         labelDataValues.Text = sb.ToString().Trim(',');
                     }
-                    
+                    if (chart.Name == "chart2")
+                        chart1.ChartAreas[0].CursorX.SetCursorPosition(xv);
+                    else
+                        chart2.ChartAreas[0].CursorX.SetCursorPosition(xv);
                 }
             }
             catch (Exception ex)
@@ -531,11 +719,11 @@ namespace UniversalPatcher
             UpdateLogGraphics();
         }
 
-        private void SetupGraphProperties()
+        private void SetupGraphProperties(Chart chart)
         {
-            chart1.BackGradientStyle = GradientStyle.None;
+            chart.BackGradientStyle = GradientStyle.None;
             
-            ChartArea CA = chart1.ChartAreas[0];  // quick reference            
+            ChartArea CA = chart.ChartAreas[0];  // quick reference            
             CA.Area3DStyle.Enable3D = false;
             //CA.AxisX.IntervalType = DateTimeIntervalType.Milliseconds;
             CA.CursorX.Interval = 0;
@@ -543,7 +731,7 @@ namespace UniversalPatcher
             CA.AxisX.LabelStyle.Format = "HH:mm:ss";
             CA.CursorX.AutoScroll = true;
             CA.CursorX.IsUserSelectionEnabled = true;
-            CA.AxisX.ScrollBar.ButtonStyle = ScrollBarButtonStyles.All;
+            CA.AxisX.ScrollBar.ButtonStyle = ScrollBarButtonStyles.None;
             CA.AxisX.MajorGrid.Enabled = false;
             CA.AxisX.MinorTickMark.Enabled = false;
             //CA.AxisX.Crossing = 0;
@@ -551,6 +739,7 @@ namespace UniversalPatcher
             CA.CursorY.IsUserSelectionEnabled = true;
             CA.AxisY.MajorGrid.Enabled = false;
             CA.AxisY.MinorTickMark.Enabled = false;
+            CA.AxisY.ScrollBar.ButtonStyle = ScrollBarButtonStyles.All;
             //CA.AxisY.Crossing = 0;
 
             //Use special handling
@@ -609,6 +798,7 @@ namespace UniversalPatcher
             {
                 pidScalars = new List<PidScalar>();
                 chart1.Series.Clear();
+                chart2.Series.Clear();
                 for (int r = 0; r < datalogger.PidProfile.Count; r++)
                 {
                     PidScalar ps = new PidScalar(datalogger.PidProfile[r].PidName, datalogger.PidProfile[r].addr);
@@ -641,17 +831,22 @@ namespace UniversalPatcher
         public void SetupLiveGraphics()
         {
             Title = "Logger Graph";
-            pointDataGroups = new List<PointDataGroup>();
+            graphSettings.pointDataGroups = new List<PointDataGroup>();
             ImportPidProfile();
-            SetupGraphProperties();
-            LiveData = true;
+            
+            SetupGraphProperties(chart1);
             groupLiveSeconds.Enabled = true;
-            if (File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(AppSettings.LoggerGraphicsLiveLastProfileFile))))
+/*            if (!string.IsNullOrEmpty(AppSettings.LoggerGraphicsLiveLastProfileFile) && File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(AppSettings.LoggerGraphicsLiveLastProfileFile))))
             {
                 ProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(AppSettings.LoggerGraphicsLiveLastProfileFile));
                 LoadProfile();
             }
+*/
             chkGetLiveData.Checked = true;
+            loadLogfileToolStripMenuItem.Enabled = false;
+            loadLastLogfileToolStripMenuItem.Enabled = false;
+            chkShowLastSeconds.Enabled = true;
+            chkShowLastSeconds.Checked = true;
         }
 
         private void LogEvents_LogDataAdded(object sender, DataLogger.LogDataEvents.LogDataEvent e)
@@ -662,6 +857,7 @@ namespace UniversalPatcher
         public void UpdateLiveGraphics()
         {
             chart1.Series.Clear();
+            chart2.Series.Clear();
             chart1.BackGradientStyle = GradientStyle.None;
             chart1.ChartAreas[0].Area3DStyle.Enable3D = false;
             for (int p = 0; p < pidScalars.Count; p++)
@@ -697,10 +893,10 @@ namespace UniversalPatcher
                         orgVal = 0;
                     }
                     double scaledVal = orgVal * pidScalars[p].Scalar;
-                    PointData pd = new PointData(pidScalars[p].PidId, pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal, pointDataGroups.Count-1);
+                    PointData pd = new PointData(pidScalars[p].PidId, pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal, graphSettings.SampleCount-1);
                     pdg.pointDatas[p] = pd;
                 }
-                pointDataGroups.Add(pdg);
+                graphSettings.pointDataGroups.Add(pdg);
             }
             catch (Exception ex)
             {
@@ -720,10 +916,10 @@ namespace UniversalPatcher
             this.Text = "Logger Graph - " + FileName;
             Title = this.Text;
             chart1.Series.Clear();
-            SetupGraphProperties();
+            chart2.Series.Clear();
+            SetupGraphProperties(chart1);
             //TStamps = 0;
             SeriesChartType ct = (SeriesChartType)Enum.Parse(typeof(SeriesChartType), comboBox1.Text);
-            LiveData = false;
             timerDisplayData.Enabled = false;
             //groupLiveSeconds.Enabled = false;
             if (File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", AppSettings.LoggerGraphicsLogLastProfileFile)))
@@ -735,9 +931,9 @@ namespace UniversalPatcher
 
             chkGetLiveData.Checked = false;
             LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
-            ScrollStartPoint.Visible = true;
-            ScrollPointsPerScreen.Enabled = true;
-            ScrollStartPoint.Value = 0;
+            //ScrollPointsPerScreen.Enabled = true;
+            scrollPosition.Maximum = 0;
+            scrollPosition.Value = 0;
         }
 
         private void UpdateVbarValue(int pidId, double value)
@@ -863,12 +1059,12 @@ namespace UniversalPatcher
                     }
 
                 }
-                for (int pd = 0; pd < pointDataGroups.Count; pd++)
+                for (int pd = 0; pd < graphSettings.SampleCount; pd++)
                 {
                     for (int p = 0; p < pidScalars.Count; p++)
                     {
-                        if (pointDataGroups[pd].pointDatas[p].Value > double.MinValue)
-                            pointDataGroups[pd].pointDatas[p].ScaledValue = pidScalars[p].Scalar * pointDataGroups[pd].pointDatas[p].Value;
+                        if (graphSettings.pointDataGroups[pd].pointDatas[p].Value > double.MinValue)
+                            graphSettings.pointDataGroups[pd].pointDatas[p].ScaledValue = pidScalars[p].Scalar * graphSettings.pointDataGroups[pd].pointDatas[p].Value;
                     }
                 }
                 dataGridSettings.DataSource = pidScalars;
@@ -922,8 +1118,7 @@ namespace UniversalPatcher
                 {
                     return;
                 }
-                LiveData = false;
-                PlayBack = false;
+                //PlayBack = false;
                 datalogger.LoadLogFile(logFile);
                 ImportPidProfile();
                 DetectMinMax();
@@ -949,87 +1144,41 @@ namespace UniversalPatcher
             }
         }
 
-        private void ShowSelectedRange()
+        private void ShowSelectedRange(bool setScrollValue = true)
         {
             try
             {
                 int startP=0;
-                int endP = pointDataGroups.Count;
-                List<PointDataGroup> pValues = pointDataGroups;
+                int endP = graphSettings.SampleCount;
+                List<PointDataGroup> pValues = graphSettings.pointDataGroups;
 
-                ScrollStartPoint.Maximum = pointDataGroups.Count;
-                ScrollPointsPerScreen.Maximum = pointDataGroups.Count;
-                ScrollPointsPerScreen.Minimum = 10;
-
-                if (pointDataGroups.Count == 0)
+                if (graphSettings.ZoomStartTime > 0)
+                {
+                    txtShowTo.Text = new DateTime(graphSettings.ZoomEndTime).ToString("HH:mm:ss.ffff");
+                    txtShowFrom.Text = new DateTime(graphSettings.ZoomStartTime).ToString("HH:mm:ss.ffff");
+                }
+                if (graphSettings.SampleCount == 0)
                 {
                     return;
                 }
-                for (int s = 0; s < chart1.Series.Count; s++)
+                if (graphSettings.ZoomAreaLength > chart1.Width*2)
                 {
-                    chart1.Series[s].Points.Clear();
-                }
-
-                if (PlayBack && timerDisplayData.Enabled)
-                {
-                    startP = ScrollStartPoint.Value;
-                    DateTime startTd = new DateTime((long)pointDataGroups[startP].pointDatas[0].TimeStamp);
-                    ulong endTstamp = (ulong)startTd.AddSeconds((double)numShowMax.Value).Ticks;
-                    for (int p=startP; p<pointDataGroups.Count;p++)
-                    {
-                        if (pointDataGroups[p].pointDatas[0].TimeStamp >= endTstamp)
-                        {
-                            endP = p;
-                            break;
-                        }
-                    }
-                }
-                else if (timerDisplayData.Enabled)
-                {
-                    endP = pointDataGroups.Count;
+                    pValues = ResampleData(graphSettings.ZoomStartPoint, graphSettings.ZoomEndPoint, chart1);
                     startP = 0;
-                    DateTime endTd = new DateTime((long)pointDataGroups.Last().pointDatas[0].TimeStamp);
-                    ulong startTstamp = (ulong)endTd.AddSeconds((double)numShowMax.Value * -1).Ticks;
-                    for (int p=pointDataGroups.Count -1; p >= 0; p--)
-                    {
-                        if (pointDataGroups[p].pointDatas[0].TimeStamp <= startTstamp)
-                        {
-                            startP = p;
-                            break;
-                        }
-                    }
+                    endP = pValues.Count;
                 }
                 else
                 {
-                    startP = ScrollStartPoint.Value;
-                    endP = ScrollStartPoint.Value + ScrollPointsPerScreen.Value;
-                    if (endP > pointDataGroups.Count)
-                    {
-                        startP = pointDataGroups.Count - ScrollPointsPerScreen.Value;
-                        endP = pointDataGroups.Count;
-                    }
-                    if (startP < 0)
-                    {
-                        startP = 0;
-                    }
-
-                    if (ScrollPointsPerScreen.Value > 2000 && disableResampleToolStripMenuItem.Checked == false)
-                    {
-                        pValues = ResampleData();
-                        startP = 0;
-                        endP = pValues.Count;
-                    }
-                    else
-                    {
-                        labelZoom.ForeColor = Color.Black;
-                        labelZoom.Text = "Zoom";
-                    }
+                    pValues = graphSettings.pointDataGroups;
+                    startP = graphSettings.ZoomStartPoint;
+                    endP = graphSettings.ZoomEndPoint;
                 }
                 Stopwatch timer = new Stopwatch();
                 timer.Start();
                 for (int r=0;r< chart1.Series.Count; r++)
                 {
                     chart1.Series[r].Points.SuspendUpdates();
+                    chart1.Series[r].Points.Clear();
                 }
                 for (int x = startP; x < endP; x++)
                 {
@@ -1053,17 +1202,29 @@ namespace UniversalPatcher
                         }
                     }
                 }
+                for (int r = 0; r < chart1.Series.Count; r++)
+                {
+                    chart1.Series[r].Points.ResumeUpdates();
+                }
                 //Show vbars for last value:
+                if (endP <= 0)
+                {
+                    Debug.WriteLine("Range end: " + endP.ToString());
+                    return;
+                }
                 PointDataGroup pdg2 = pValues[endP-1];
                 for (int r = 0; r < pdg2.pointDatas.Length; r++)
                 {
                     UpdateVbarValue(r ,pdg2.pointDatas[r].ScaledValue);
                 }
-                for (int r = 0; r < chart1.Series.Count; r++)
+                if (tabControl1.SelectedTab == tabAdvanced)
                 {
-                    chart1.Series[r].Points.ResumeUpdates();
+                    ShowAdvSettings();
                 }
-
+                if (setScrollValue)
+                {
+                    SetScrollValues();
+                }
                 Debug.WriteLine("Graph data set Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
             }
             catch (Exception ex)
@@ -1074,6 +1235,102 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+                for (int r = 0; r < chart1.Series.Count; r++)
+                {
+                    chart1.Series[r].Points.ResumeUpdates();
+                }
+            }
+        }
+
+        private void UpdateChart2()
+        {
+            try
+            {
+                if (tabControl1.SelectedTab != tabZoom)
+                {
+                    return;
+                }
+
+                if (chart2.Series.Count != chart1.Series.Count)
+                {
+                    chart2.Series.Clear();
+                    for (int r = 0; r < chart1.Series.Count; r++)
+                    {
+                        chart2.Series.Add(new Series());
+                        chart2.Series[r].ChartType = ChartType;
+                        chart2.Series[r].XValueType = ChartValueType.DateTime;
+                        chart2.Series[r].Name = chart1.Series[r].Name;
+                        chart2.Series[r].Color = chart1.Series[r].Color;
+                        chart2.Series[r].IsVisibleInLegend = false;
+                    }
+                }
+                if (prevDataCount != graphSettings.SampleCount)
+                {
+                    prevDataCount = graphSettings.SampleCount;
+                    List<PointDataGroup> pValues = graphSettings.pointDataGroups;
+                    if (pValues.Count > (chart2.Width * 2))
+                    {
+                        pValues = ResampleData(0, graphSettings.SampleCount, chart2);
+                    }
+
+                    for (int r = 0; r < chart2.Series.Count; r++)
+                    {
+                        chart2.Series[r].Points.SuspendUpdates();
+                        chart2.Series[r].Points.Clear();
+                    }
+                    for (int x = 0; x < pValues.Count; x++)
+                    {
+                        PointDataGroup pdg = pValues[x];
+                        for (int r = 0; r < pdg.pointDatas.Length; r++)
+                        {
+                            PointData pd = pdg.pointDatas[r];
+                            if (pd != null && pd.Value > double.MinValue)
+                            {
+                                DataPoint point = new DataPoint();
+                                point.Tag = pd;
+                                DateTime tStamp = new DateTime((long)pd.TimeStamp);
+                                string tStampStr = tStamp.ToString("HH:mm:ss.ffff");
+                                point.SetValueXY(tStamp, pd.ScaledValue);
+                                //point.ToolTip = string.Format("[{0}] {1}: {2}", tStampStr, pd.PidName, pd.Value);
+                                if (showPointsToolStripMenuItem.Checked)
+                                    point.MarkerStyle = MarkerStyle.Circle;
+                                else
+                                    point.MarkerStyle = MarkerStyle.None;
+                                chart2.Series[r].Points.Add(point);
+                            }
+                        }
+                    }
+                }
+                ChartArea ChartSelectionArea2 = chart2.ChartAreas[0];
+                //ChartSelectionArea2.CursorX.SetSelectionPosition(chart1.ChartAreas[0].AxisX.Minimum,chart1.ChartAreas[0].AxisX.Maximum);
+                //ChartSelectionArea2.CursorY.SetSelectionPosition(chart1.ChartAreas[0].AxisY.Minimum, chart1.ChartAreas[0].AxisY.Maximum);
+                ChartSelectionArea2.CursorX.SetSelectionPosition(chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum, chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum);
+                ChartSelectionArea2.CursorY.SetSelectionPosition(chart1.ChartAreas[0].AxisY.ScaleView.ViewMinimum, chart1.ChartAreas[0].AxisY.ScaleView.ViewMaximum);
+                if (cursorXToolStripMenuItem.Checked || cursorXYToolStripMenuItem.Checked)
+                {
+                    chart2.ChartAreas[0].CursorX.SetCursorPosition(chart1.ChartAreas[0].CursorX.Position);
+                }
+                if (cursorYToolStripMenuItem.Checked || cursorXYToolStripMenuItem.Checked)
+                {
+                    chart2.ChartAreas[0].CursorY.SetCursorPosition(chart1.ChartAreas[0].CursorY.Position);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+            }
+            finally
+            {
+                for (int r = 0; r < chart2.Series.Count; r++)
+                {
+                    chart2.Series[r].Points.ResumeUpdates();
+                }
             }
         }
 
@@ -1084,6 +1341,7 @@ namespace UniversalPatcher
                 this.Text = Title + " [" + Path.GetFileName(ProfileFile) + "]";
                 labelDataValues.Text = "Click data point to show values";
                 chart1.Series.Clear();
+                chart2.Series.Clear();
                 chkSelectAll.Checked = false;
                 StreamReader sr = new StreamReader(logFile);
                 string hdrLine = sr.ReadLine();
@@ -1094,7 +1352,8 @@ namespace UniversalPatcher
                 SetupLogGraphics(hdrArray, Path.GetFileName(logFile));
                 groupPlayback.Enabled = true;
                 ReadDataFromFile();
-                LoadProfile();
+                ResetZoom(true);
+                //LoadProfile();
             }
             catch (Exception ex)
             {
@@ -1154,7 +1413,42 @@ namespace UniversalPatcher
         {
             try
             {
+                //double loc = (chart1.ChartAreas[0].AxisX.Maximum - chart1.ChartAreas[0].AxisX.Minimum) / 2;
+                //double loc = (chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum - chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum) / 2;
+                
+                if (PlayBack)
+                {
+                    //Move forward:
+                    graphSettings.Forward((long)(numDisplayInterval.Value * numPlaybackSpeed.Value * 1000));
+                    if (graphSettings.ZoomEndPoint >= graphSettings.SampleCount - 1)
+                    {
+                        timerDisplayData.Enabled = false;
+                        chkPlaying.Checked = false;
+                    }
+
+                }
+                else if (LiveData)
+                {
+                    if (chkShowLastSeconds.Checked)
+                    {
+                        if (graphSettings.LastSampleTime > 0)
+                        {
+                            long startT = new DateTime(graphSettings.LastSampleTime).AddMilliseconds((double)(-1 * numShowMax.Value * 1000)).Ticks;
+                            graphSettings.ZoomStartTime = startT;
+                            graphSettings.ZoomEndPoint = graphSettings.SampleCount - 1;
+                        }
+                    }
+                    else
+                    {
+                        graphSettings.ZoomEndPoint = graphSettings.SampleCount - 1;
+                    }
+                }
+
                 ShowSelectedRange();
+                //chart1.ChartAreas[0].CursorX.SetCursorPosition(chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum + loc);
+                //chart1.ChartAreas[0].CursorX.SetCursorPosition(chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum + 
+                  //  (chart1.ChartAreas[0].AxisX.ScaleView.ViewMaximum - chart1.ChartAreas[0].AxisX.ScaleView.ViewMinimum) / 2);
+                ShowCurrentValues();
             }
             catch (Exception ex)
             {
@@ -1304,70 +1598,32 @@ namespace UniversalPatcher
         public void StopLiveUpdate()
         {
             timerDisplayData.Enabled = false;
-            ScrollStartPoint.Visible = true;
-            ScrollPointsPerScreen.Enabled = true;
             groupPlayback.Enabled = true;
             LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
         }
 
-        public void StartLiveUpdate(bool PlayBack)
+        public void StartLiveUpdate()
         {
-            this.PlayBack = PlayBack;
-            this.LiveData = true;
+            ResetZoom(true);
+            this.PlayBack = false;
+            chkPlaying.Checked = true;
             timerDisplayData.Enabled = true;
-            ScrollPointsPerScreen.Enabled = false;
-            if (!PlayBack)
-            {
-                groupPlayback.Enabled = false;
-                ScrollStartPoint.Visible = false;
-                LoggerDataEvents.LogDataAdded += LogEvents_LogDataAdded;
-            }
+            groupPlayback.Enabled = false;
+            LoggerDataEvents.LogDataAdded += LogEvents_LogDataAdded;
         }
 
         private void chkGetLiveData_CheckedChanged(object sender, EventArgs e)
         {
             if (chkGetLiveData.Checked )
             {
-                if (!LiveData)
-                    SetupLiveGraphics();
-                StartLiveUpdate(PlayBack);
+                SetupLiveGraphics();
+                //ImportLogDataBuffer();
+                StartLiveUpdate();
             }
             if (!chkGetLiveData.Checked && LiveData)
             {
-                StopLiveUpdate();                
-            }
-        }
-
-        private void ScrollPointsPerScreen_Scroll(object sender, ScrollEventArgs e)
-        {
-            //ShowSelectedRange();
-            if (zoomTimer.IsEnabled) 
-                zoomTimer.Stop();
-            zoomTimer.Start();
-            Debug.WriteLine("ScrollPointsPerScreen_Scroll");
-            ShowToolTip(ScrollPointsPerScreen.Value.ToString() + " pt/screen");
-        }
-
-        private void ScrollStartPoint_Scroll(object sender, ScrollEventArgs e)
-        {
-            try
-            {
-                //ShowSelectedRange();
-                if (startTimer.IsEnabled)
-                    startTimer.Stop();
-                startTimer.Start();
-                Debug.WriteLine("ScrollStartPoint_Scroll");
-                DateTime dt = new DateTime((long)pointDataGroups[ScrollStartPoint.Value].pointDatas[0].TimeStamp);
-                ShowToolTip(dt.ToString("HH:mm:ss.ffff"));
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+                StopLiveUpdate();
+                ShowSelectedRange();
             }
         }
 
@@ -1450,7 +1706,7 @@ namespace UniversalPatcher
             }
         }
 
-        private List<PointDataGroup> ResampleData()
+        private List<PointDataGroup> ResampleData(int StartPoint, int EndPoint, Chart chart)
         {
             List<PointDataGroup> retVal = new List<PointDataGroup>();
             try
@@ -1458,35 +1714,19 @@ namespace UniversalPatcher
                 Stopwatch timer = new Stopwatch();
                 timer.Start();
 
-                int samplesize = ScrollPointsPerScreen.Value / 500;
-                int pointsLeft = pointDataGroups.Count - ScrollStartPoint.Value;
-                if (pointsLeft < ScrollPointsPerScreen.Value)
+                int samplesize = (int)Math.Ceiling((decimal)(EndPoint - StartPoint)/chart.Width);
+                if (samplesize < 2)
                 {
-                    if (pointsLeft < 2000)
+                    Debug.WriteLine("No resampling, too small range");
+                    for (int p=StartPoint; p < EndPoint; p++)
                     {
-                        for (int p=ScrollStartPoint.Value; p < pointDataGroups.Count; p++)
-                        {
-                            retVal.Add(pointDataGroups[p]);
-                            labelZoom.ForeColor = Color.Black;
-                            labelZoom.Text = "Zoom";
-                        }
-                        return retVal;
+                        retVal.Add(graphSettings.pointDataGroups[p]);
                     }
-                    else
-                    {
-                        samplesize = pointsLeft / 500;
-                    }
+                    return retVal;
                 }
-                labelZoom.ForeColor = Color.Red;
-                labelZoom.Text = "Zoom (resampled)";
-                int pidcount = pointDataGroups[0].pointDatas.Length;
-                int endP = ScrollPointsPerScreen.Value + ScrollStartPoint.Value;
-                if (endP > pointDataGroups.Count)
-                {
-                    endP = pointDataGroups.Count;
-                }
-                Debug.WriteLine("Resampling, samplesize: " + samplesize.ToString());
-                for (int pos = ScrollStartPoint.Value; (pos + samplesize) < endP; pos += samplesize)
+                int pidcount = graphSettings.pointDataGroups[0].pointDatas.Length;
+                Debug.WriteLine("Resampling, samplesize: " + samplesize.ToString()+", Original range: " + (EndPoint-StartPoint).ToString()+ ", Chart width: " + chart.Width.ToString());
+                for (int pos = StartPoint; (pos + samplesize) < EndPoint; pos += samplesize)
                 {
                     PointDataGroup pdgmin = new PointDataGroup(pidcount);
                     PointDataGroup pdgmax = new PointDataGroup(pidcount);
@@ -1498,7 +1738,7 @@ namespace UniversalPatcher
                         int maxrow = -1;
                         for (int x = 0; x < samplesize; x++)
                         {
-                            PointData pd = pointDataGroups[pos + x].pointDatas[pid];
+                            PointData pd = graphSettings.pointDataGroups[pos + x].pointDatas[pid];
                             if (pd.Value < min)
                             {
                                 min = pd.Value;
@@ -1522,19 +1762,19 @@ namespace UniversalPatcher
                         if (minrow > maxrow)
                         {
                             //Don't mix pointorder
-                            pdgmin.pointDatas[pid] = pointDataGroups[maxrow].pointDatas[pid];
-                            pdgmax.pointDatas[pid] = pointDataGroups[minrow].pointDatas[pid];
+                            pdgmin.pointDatas[pid] = graphSettings.pointDataGroups[maxrow].pointDatas[pid];
+                            pdgmax.pointDatas[pid] = graphSettings.pointDataGroups[minrow].pointDatas[pid];
                         }
                         else
                         {
-                            pdgmin.pointDatas[pid] = pointDataGroups[minrow].pointDatas[pid];
-                            pdgmax.pointDatas[pid] = pointDataGroups[maxrow].pointDatas[pid];
+                            pdgmin.pointDatas[pid] = graphSettings.pointDataGroups[minrow].pointDatas[pid];
+                            pdgmax.pointDatas[pid] = graphSettings.pointDataGroups[maxrow].pointDatas[pid];
                         }
                     }
                     retVal.Add(pdgmin);
                     retVal.Add(pdgmax);
                 }
-                Debug.WriteLine("Resampled size: " + retVal.Count.ToString());
+                Debug.WriteLine("Resampled size: " + (retVal.Count / 2).ToString());
                 timer.Stop();
                 Debug.WriteLine("Resample Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
             }
@@ -1559,11 +1799,11 @@ namespace UniversalPatcher
             for (int pid = 0; pid < pidScalars.Count; pid++)
             {
                 double max = 0;
-                for (int p = 0; p < pointDataGroups.Count; p++)
+                for (int p = 0; p < graphSettings.SampleCount; p++)
                 {
-                    if (Math.Abs(pointDataGroups[p].pointDatas[pid].Value) > max)
+                    if (Math.Abs(graphSettings.pointDataGroups[p].pointDatas[pid].Value) > max)
                     {
-                        max = Math.Abs(pointDataGroups[p].pointDatas[pid].Value);
+                        max = Math.Abs(graphSettings.pointDataGroups[p].pointDatas[pid].Value);
                     }
                 }
                 if (max > 0)
@@ -1587,7 +1827,7 @@ namespace UniversalPatcher
             zoomYToolStripMenuItem.Checked = false;
             zoomXYToolStripMenuItem.Checked = false;
             noZoomToolStripMenuItem.Checked = false;
-            SetupGraphProperties();
+            SetupGraphProperties(chart1);
         }
 
         private void zoomYToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1596,7 +1836,7 @@ namespace UniversalPatcher
             zoomYToolStripMenuItem.Checked = true;
             zoomXYToolStripMenuItem.Checked = false;
             noZoomToolStripMenuItem.Checked = false;
-            SetupGraphProperties();
+            SetupGraphProperties(chart1);
 
         }
 
@@ -1606,7 +1846,7 @@ namespace UniversalPatcher
             zoomYToolStripMenuItem.Checked = false;
             zoomXYToolStripMenuItem.Checked = true;
             noZoomToolStripMenuItem.Checked = false;
-            SetupGraphProperties();
+            SetupGraphProperties(chart1);
 
         }
 
@@ -1616,7 +1856,7 @@ namespace UniversalPatcher
             cursorYToolStripMenuItem.Checked = false;
             cursorXYToolStripMenuItem.Checked = false;
             noCursorToolStripMenuItem.Checked = false;
-            SetupGraphProperties();
+            SetupGraphProperties(chart1);
 
         }
 
@@ -1626,7 +1866,7 @@ namespace UniversalPatcher
             cursorYToolStripMenuItem.Checked = true;
             cursorXYToolStripMenuItem.Checked = false;
             noCursorToolStripMenuItem.Checked = false;
-            SetupGraphProperties();
+            SetupGraphProperties(chart1);
 
         }
 
@@ -1636,13 +1876,12 @@ namespace UniversalPatcher
             cursorYToolStripMenuItem.Checked = false;
             cursorXYToolStripMenuItem.Checked = true;
             noCursorToolStripMenuItem.Checked = false;
-            SetupGraphProperties();
+            SetupGraphProperties(chart1);
         }
 
         private void resetZoomToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            chart1.ChartAreas[0].AxisX.ScaleView.ZoomReset(0);
-            chart1.ChartAreas[0].AxisY.ScaleView.ZoomReset(0);
+            ResetZoom(true);
         }
 
         private void noZoomToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1651,7 +1890,7 @@ namespace UniversalPatcher
             zoomYToolStripMenuItem.Checked = false;
             zoomXYToolStripMenuItem.Checked = false;
             noZoomToolStripMenuItem.Checked = true;
-            SetupGraphProperties();
+            SetupGraphProperties(chart1);
         }
 
         private void noCursorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1660,14 +1899,32 @@ namespace UniversalPatcher
             cursorYToolStripMenuItem.Checked = false;
             cursorXYToolStripMenuItem.Checked = false;
             noCursorToolStripMenuItem.Checked = true;
-            SetupGraphProperties();
+            SetupGraphProperties(chart1);
         }
 
+        private void ResetZoom(bool ResetY)
+        {
+            if (ResetY)
+            {
+                chart1.ChartAreas[0].AxisY.ScaleView.ZoomReset(0);
+            }
+            //timerDisplayData.Enabled = false;
+            btnPlay.Enabled = false;
+            chart1.ChartAreas[0].AxisX.ScaleView.ZoomReset(0);
+            graphSettings.ZoomStartPoint = 0;
+            graphSettings.ZoomEndTime = graphSettings.LastSampleTime;
+            graphSettings.zoomStarts.Clear();
+            graphSettings.zoomEnds.Clear();
+            scrollPosition.Maximum = 0;
+            scrollPosition.Value = 0;
+            ShowSelectedRange();
+
+        }
         private void ImportLogDataBuffer()
         {
             try
             {
-                pointDataGroups = new List<PointDataGroup>();
+                graphSettings.pointDataGroups = new List<PointDataGroup>();
                 for (int i = 0; i < datalogger.LogDataBuffer.Count; i++)
                 {
                     LogData ld = datalogger.LogDataBuffer[i];
@@ -1675,19 +1932,12 @@ namespace UniversalPatcher
                     for (int p = 0; p < ld.Values.Length; p++)
                     {
                         double orgVal = ld.CalculatedValues[p];
-/*                        if (orgVal == double.MinValue || orgVal == double.MaxValue)
-                        {
-                            orgVal = 0;
-                        }
-*/                       
                         double scaledVal = orgVal;
-                        PointData pd = new PointData(pidScalars[p].PidId, pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal, pointDataGroups.Count - 1);
+                        PointData pd = new PointData(pidScalars[p].PidId, pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal, graphSettings.SampleCount - 1);
                         pdg.pointDatas[p] = pd;
                     }
-                    pointDataGroups.Add(pdg);
+                    graphSettings.pointDataGroups.Add(pdg);
                 }
-                ScrollPointsPerScreen.Maximum = pointDataGroups.Count;
-                ScrollPointsPerScreen.Value = ScrollPointsPerScreen.Maximum;
             }
             catch (Exception ex)
             {
@@ -1700,6 +1950,7 @@ namespace UniversalPatcher
             }
         }
 
+        /*
         public void SetupPlayBack()
         {
             SetupLiveGraphics();
@@ -1707,76 +1958,31 @@ namespace UniversalPatcher
             ImportPidProfile();
             ImportLogDataBuffer();
         }
-
+        
         public void PlayBackStep(int Position)
         {
             ScrollStartPoint.Value = Position;
+            ShowSelectedRange();
         }
-
+        */
         private void numPlaybackSpeed_ValueChanged(object sender, EventArgs e)
         {
-            SetPlaybackSpeed();
+            
         }
-        private void SetPlaybackSpeed()
-        {
-            if (pointDataGroups.Count > 2)
-            {
-                DateTime t1 = new DateTime((long)pointDataGroups[1].pointDatas[0].TimeStamp);
-                DateTime t2 = new DateTime((long)pointDataGroups[2].pointDatas[0].TimeStamp);
-                TimeSpan step = t2.Subtract(t1);
-                int ival = (int)((decimal)step.TotalMilliseconds / numPlaybackSpeed.Value);
-                if (ival == 0)
-                {
-                    ival = 1;
-                }
-                timerPlayback.Interval = ival;
-            }
-        }
-       
-        private void timerPlayback_Tick(object sender, EventArgs e)
-        {
-            try
-            {
-                double loc = (chart1.ChartAreas[0].AxisX.Maximum - chart1.ChartAreas[0].AxisX.Minimum) / 2;
-                //if (chart1.ChartAreas[0].CursorX.Position > chart1.ChartAreas[0].AxisX.Minimum && chart1.ChartAreas[0].CursorX.Position < chart1.ChartAreas[0].AxisX.Maximum)
-                  //  loc = chart1.ChartAreas[0].CursorX.Position - chart1.ChartAreas[0].AxisX.Minimum;
-                ScrollStartPoint.Value++;
-                if (ScrollStartPoint.Value == ScrollStartPoint.Maximum)
-                {
-                    timerPlayback.Enabled = false;
-                    StopLiveUpdate();
-                    return;
-                }
-                chart1.ChartAreas[0].CursorX.SetCursorPosition(chart1.ChartAreas[0].AxisX.Minimum + loc);               
-                ShowCurrentValues();
-                //ShowSelectedRange();
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
-            }
-        }
-
-
         private void btnPlay_Click(object sender, EventArgs e)
         {
+            PlayBack = true;
             groupLiveSeconds.Enabled = true;
-            ScrollStartPoint.Enabled = true;
-            StartLiveUpdate(true);
-            timerPlayback.Enabled = true;
+            //StartLiveUpdate(true);
             timerDisplayData.Enabled = true;
+            chkPlaying.Checked = true;
         }
 
         private void btnPause_Click(object sender, EventArgs e)
         {
             StopLiveUpdate();
-            timerPlayback.Enabled = false;
             timerDisplayData.Enabled = false;
+            chkPlaying.Checked = false;
         }
 
         private void zoomXToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -1830,6 +2036,53 @@ namespace UniversalPatcher
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void scrollPosition_Scroll(object sender, ScrollEventArgs e)
+        {
+            try
+            {
+                //if (posTimer.IsEnabled)
+                //posTimer.Stop();
+                //posTimer.Start();
+                int diff = graphSettings.ZoomEndPoint - graphSettings.ZoomStartPoint;
+                graphSettings.ZoomStartPoint = scrollPosition.Value - diff / 2;
+                graphSettings.ZoomEndPoint = graphSettings.ZoomStartPoint + diff;
+                SetScrollValues();
+                ShowSelectedRange(false);
+
+                DateTime dt = new DateTime((long)graphSettings.pointDataGroups[scrollPosition.Value].pointDatas[0].TimeStamp);
+                ShowToolTip(dt.ToString("HH:mm:ss.ffff"));
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void chkPlaying_CheckedChanged(object sender, EventArgs e)
+        {
+            timerDisplayData.Enabled = chkPlaying.Checked;
+            if (chkPlaying.Enabled)
+            {
+                PlayBack = true;
+                groupLiveSeconds.Enabled = true;
+            }
+        }
+
+        private void chkShowLastSeconds_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkShowLastSeconds.Checked)
+            {
+                graphSettings.ZoomStartPoint = 0;
+                graphSettings.ZoomEndPoint = graphSettings.SampleCount - 1;
+            }
+            ShowSelectedRange();
         }
     }
 }

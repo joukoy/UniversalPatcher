@@ -25,7 +25,7 @@ namespace UniversalPatcher
         /// <summary>
         /// When the message was created (Tool timestamp if available).
         /// </summary>
-        private ulong timestamp;
+        private long timestamp;
 
         /// <summary>
         /// Error code, if applicable.
@@ -61,7 +61,7 @@ namespace UniversalPatcher
         /// </summary>
         public OBDMessage()
         {
-            this.timestamp = (ulong)DateTime.Now.Ticks;
+            this.timestamp = DateTime.Now.Ticks;
             SecondaryProtocol = false;
         }
 
@@ -71,14 +71,14 @@ namespace UniversalPatcher
         public OBDMessage(byte[] message)
         {
             this.message = message;
-            this.timestamp = (ulong)DateTime.Now.Ticks;
+            this.timestamp = DateTime.Now.Ticks;
             SecondaryProtocol = false;
         }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public OBDMessage(byte[] message, ulong timestamp, ulong error)
+        public OBDMessage(byte[] message, long timestamp, ulong error)
         {
             this.message = message;
             this.timestamp = timestamp;
@@ -89,7 +89,7 @@ namespace UniversalPatcher
         /// <summary>
         /// When the message was created or recevied (System time).
         /// </summary>
-        public ulong TimeStamp
+        public long TimeStamp
         {
             get { return this.timestamp; }
             set { this.timestamp = value; }
@@ -159,7 +159,7 @@ namespace UniversalPatcher
         /// <summary>
         /// J2534 device original timestamp, no conversions
         /// </summary>
-        public ulong DeviceTimestamp { get; set; }
+        public long DeviceTimestamp { get; set; }
 
     }
 }

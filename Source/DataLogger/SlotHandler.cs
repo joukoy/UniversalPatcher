@@ -162,7 +162,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, CalculatePidDoubleValues line " + line + ": " + ex.Message);
+                LoggerBold("Error, Slothandler line " + line + ": " + ex.Message);
             }
             return calculatedvalues;
         }
@@ -397,7 +397,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, CreatePidSetupMessages line " + line + ": " + ex.Message);
+                LoggerBold("Error, Slothandler line " + line + ": " + ex.Message);
                 return false;
             }
             return true;
@@ -575,7 +575,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, CreateNextSlotRequestMessage line " + line + ": " + ex.Message);
+                LoggerBold("Error, Slothandler line " + line + ": " + ex.Message);
             }
 
             Debug.WriteLine("Slot Request msg:" + BitConverter.ToString(msg.ToArray()) + " HighPriority: " + datalogger.HighPriority.ToString());
@@ -698,107 +698,117 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, ParseMessage line " + line + ": " + ex.Message);
+                LoggerBold("Error, Slothandler line " + line + ": " + ex.Message);
             }
             return retVal;
         }
 
         public void HandleSlotMessage(OBDMessage oMsg)
         {
-            List<ReadValue> newReadValues = ParseMessage(oMsg);
-            if (datalogger.HighPriority && !LastPidValues.Contains(double.MinValue))
+            try
             {
-                //All pids received at least once
-                for (int r = 0; r < newReadValues.Count; r++)
+                List<ReadValue> newReadValues = ParseMessage(oMsg);
+                if (datalogger.HighPriority && !LastPidValues.Contains(double.MinValue))
                 {
-                    ReadValue rv = newReadValues[r];
-                    int ind = ReceivingPids.IndexOf(rv.PidNr);
-                    if (ind > -1)
-                        LastPidValues[ind] = rv.PidValue;   //Update directly lastpidvalues, lowpriority pids already there from previous round
-                    int hpInd = HighPriorityPids.IndexOf(rv.PidNr);
-                    if (hpInd > -1)
+                    //All pids received at least once
+                    for (int r = 0; r < newReadValues.Count; r++)
                     {
-                        //Debug.WriteLine("Received HP pid: " + rv.PidNr.ToString("X2"));
-                        newHighPriorityPidValues[hpInd] = rv.PidValue;
-                    }
-                    else
-                    {
-                        int lpInd = LowPriorityPids.IndexOf(rv.PidNr);
-                        if (lpInd > -1)
+                        ReadValue rv = newReadValues[r];
+                        int ind = ReceivingPids.IndexOf(rv.PidNr);
+                        if (ind > -1)
+                            LastPidValues[ind] = rv.PidValue;   //Update directly lastpidvalues, lowpriority pids already there from previous round
+                        int hpInd = HighPriorityPids.IndexOf(rv.PidNr);
+                        if (hpInd > -1)
                         {
-                            //Debug.WriteLine("Received LP pid: " + rv.PidNr.ToString("X2"));
-                            lowPriorityPidValues[lpInd] = rv.PidValue;
+                            //Debug.WriteLine("Received HP pid: " + rv.PidNr.ToString("X2"));
+                            newHighPriorityPidValues[hpInd] = rv.PidValue;
                         }
+                        else
+                        {
+                            int lpInd = LowPriorityPids.IndexOf(rv.PidNr);
+                            if (lpInd > -1)
+                            {
+                                //Debug.WriteLine("Received LP pid: " + rv.PidNr.ToString("X2"));
+                                lowPriorityPidValues[lpInd] = rv.PidValue;
+                            }
+                        }
+                    }
+
+                    if (!newHighPriorityPidValues.Contains(double.MinValue))
+                    {
+                        //Debug.WriteLine("All HP pids received");
+                        //All High priority pids received
+                        //if (datalogger.writelog) //Always add data to logging queue, for graph & histogram
+                        {
+                            LogData ld = new LogData(LastPidValues.Length);
+                            //ld.TimeStamp = newReadValues[0].TimeStamp;
+                            ld.TimeStamp = oMsg.TimeStamp;
+                            Array.Copy(LastPidValues, ld.Values, ld.Values.Length);
+                            lock (datalogger.LogFileQueue)
+                            {
+                                datalogger.LogFileQueue.Enqueue(ld);
+                            }
+                        }
+                        //"Clear" array, so we know when all values are received
+                        for (int b = 0; b < newHighPriorityPidValues.Length; b++)
+                        {
+                            newHighPriorityPidValues[b] = double.MinValue;
+                        }
+                        ReceivedHPRows++;
+                    }
+
+                    if (!lowPriorityPidValues.Contains(double.MinValue))
+                    {
+                        for (int b = 0; b < lowPriorityPidValues.Length; b++)
+                        {
+                            lowPriorityPidValues[b] = double.MinValue;
+                        }
+                        ReceivedLPRows++;
+                    }
+                }
+                else //Not priority, or not all pids received yet.
+                {
+                    for (int r = 0; r < newReadValues.Count; r++)
+                    {
+                        ReadValue rv = newReadValues[r];
+                        int ind = ReceivingPids.IndexOf(rv.PidNr);
+                        if (ind > -1)
+                            newPidValues[ind] = rv.PidValue;
+                    }
+                    if (!newPidValues.Contains(double.MinValue))
+                    {
+                        //All pids received
+                        //if (datalogger.writelog) //Always add data to logging queue, for graph & histogram
+                        {
+                            LogData ld = new LogData(newPidValues.Length);
+                            ld.TimeStamp = newReadValues[0].TimeStamp;
+                            ld.DevTimeStamp = newReadValues[0].DevTimeStamp;
+                            Array.Copy(newPidValues, ld.Values, ld.Values.Length);
+                            lock (datalogger.LogFileQueue)
+                            {
+                                datalogger.LogFileQueue.Enqueue(ld);
+                            }
+                        }
+                        Array.Copy(newPidValues, LastPidValues, LastPidValues.Length);
+                        //"Clear" array, so we know when all values are received
+                        for (int b = 0; b < newPidValues.Length; b++)
+                        {
+                            newPidValues[b] = double.MinValue;
+                        }
+                        ReceivedHPRows++;
                     }
                 }
 
-                if (!newHighPriorityPidValues.Contains(double.MinValue))
-                {
-                    //Debug.WriteLine("All HP pids received");
-                    //All High priority pids received
-                    //if (datalogger.writelog) //Always add data to logging queue, for graph & histogram
-                    {
-                        LogData ld = new LogData(LastPidValues.Length);
-                        //ld.TimeStamp = newReadValues[0].TimeStamp;
-                        ld.TimeStamp = oMsg.TimeStamp;
-                        Array.Copy(LastPidValues, ld.Values, ld.Values.Length);
-                        lock (datalogger.LogFileQueue)
-                        {
-                            datalogger.LogFileQueue.Enqueue(ld);
-                        }
-                    }
-                    //"Clear" array, so we know when all values are received
-                    for (int b = 0; b < newHighPriorityPidValues.Length; b++)
-                    {
-                        newHighPriorityPidValues[b] = double.MinValue;
-                    }
-                    ReceivedHPRows++;
-                }
-
-                if (!lowPriorityPidValues.Contains(double.MinValue))
-                {
-                    for (int b = 0; b < lowPriorityPidValues.Length; b++)
-                    {
-                        lowPriorityPidValues[b] = double.MinValue;
-                    }
-                    ReceivedLPRows++;
-                }
             }
-            else //Not priority, or not all pids received yet.
+            catch (Exception ex)
             {
-                for (int r = 0; r < newReadValues.Count; r++)
-                {
-                    ReadValue rv = newReadValues[r];
-                    int ind = ReceivingPids.IndexOf(rv.PidNr);
-                    if (ind > -1)
-                        newPidValues[ind] = rv.PidValue;
-                }
-                if (!newPidValues.Contains(double.MinValue))
-                {
-                    //All pids received
-                    //if (datalogger.writelog) //Always add data to logging queue, for graph & histogram
-                    {
-                        LogData ld = new LogData(newPidValues.Length);
-                        ld.TimeStamp = newReadValues[0].TimeStamp;
-                        ld.DevTimeStamp = newReadValues[0].DevTimeStamp;
-                        Array.Copy(newPidValues, ld.Values, ld.Values.Length);
-                        lock (datalogger.LogFileQueue)
-                        {
-                            datalogger.LogFileQueue.Enqueue(ld);
-                        }
-                    }
-                    Array.Copy(newPidValues, LastPidValues, LastPidValues.Length);
-                    //"Clear" array, so we know when all values are received
-                    for (int b = 0; b < newPidValues.Length; b++)
-                    {
-                        newPidValues[b] = double.MinValue;
-                    }
-                    ReceivedHPRows++;
-                }
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Slothandler line " + line + ": " + ex.Message);
             }
-
         }
-
-
     }
 }

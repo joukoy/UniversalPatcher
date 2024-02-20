@@ -22,6 +22,12 @@ namespace UniversalPatcher
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
+                {
+                    MessageBox.Show("Incomplete installation, Universalpatcher files missing" + Environment.NewLine + 
+                        "Please extract all files from ZIP package", "Incomplete installation",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 Upatcher.Startup(args);
             }
             catch (Exception ex)

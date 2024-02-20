@@ -77,7 +77,8 @@ namespace UniversalPatcher
             TableEditorHexShowDecimal = false;
             ConfirmProgramExit = true;
             TunerUseSessionTabs = false;
-
+            HistogramLastLiveProfiles = new List<string>();
+            HistogramLastLogfileProfiles = new List<string>();
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
             TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
             TimeoutLoggingPassive = TimeoutScenario.DataLogging4;
@@ -273,6 +274,9 @@ namespace UniversalPatcher
         //public string MapSessionSessionName { get; set; }
         public bool MapSessionUseAutoLoadTableList { get; set; }
         public bool ConfirmProgramExit { get; set; }
+        public List<string> HistogramLastLogfileProfiles { get; set; }
+        public List<string> HistogramLastLiveProfiles { get; set; }
+
         public TimeoutScenario TimeoutLoggingActive { get; set; }
         public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }
         public TimeoutScenario TimeoutLoggingPassive { get; set; }

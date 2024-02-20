@@ -298,7 +298,7 @@ namespace UniversalPatcher
             SerialString response = ReadELMLine(false);
             byte[] message = response.Data.ToBytes();
             OBDMessage rMsg = new OBDMessage(message);
-            rMsg.TimeStamp = (ulong)response.TimeStamp;
+            rMsg.TimeStamp = response.TimeStamp;
             rMsg.ElmPrompt = response.Prompt;
             return Response.Create(ResponseStatus.Success, rMsg);
 
@@ -318,7 +318,7 @@ namespace UniversalPatcher
                 //response.ElmLine = rawResponse.Data;
                 //if (rawResponse.Data.StartsWith("6C") || rawResponse.Data.StartsWith("8C"))
                   //  response = new OBDMessage(rawResponse.Data.ToBytes());
-                response.TimeStamp = (ulong)rawResponse.TimeStamp;
+                response.TimeStamp = rawResponse.TimeStamp;
                 response.ElmPrompt = true;
                 this.enqueue(response, true);
                 return false;
@@ -366,7 +366,7 @@ namespace UniversalPatcher
                         Debug.WriteLine("RX: " + deviceResponseBytes.ToHex());
                         //Debug.WriteLine("Timestamp " + s.ToString() +": "+ rawResponse.TimeStamps[s].ToString());
                         OBDMessage response = new OBDMessage(deviceResponseBytes);
-                        response.TimeStamp = (ulong)rawResponse.TimeStamps[s];
+                        response.TimeStamp = rawResponse.TimeStamps[s];
                         response.ElmPrompt = rawResponse.Prompt;
                         this.enqueue(response, true);
                         s++;

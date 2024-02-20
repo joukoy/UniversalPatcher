@@ -46,8 +46,8 @@ namespace UniversalPatcher
         //private int periodigMsgId = -1;
         //private int periodigMsgId2 = -1;
         public const string DeviceType = "J2534";
-        ulong timeDiff = long.MaxValue;
-        readonly ulong ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
+        long timeDiff = long.MaxValue;
+        readonly long ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
         private Dictionary<string, int> protocol_channel;
         private Dictionary<string, int> periodicMsgIds1;
         private Dictionary<string, int> periodicMsgIds2;
@@ -138,7 +138,7 @@ namespace UniversalPatcher
         {
             try
             {
-                ulong timeDiffTmp = (ulong)DateTime.Now.Ticks - ((ulong)rxMsg.Timestamp * ticksPerMicrosecond);
+                long timeDiffTmp = DateTime.Now.Ticks - (rxMsg.Timestamp * ticksPerMicrosecond);
                 if (timeDiffTmp < timeDiff)
                 {
                     timeDiff = timeDiffTmp;
@@ -725,9 +725,9 @@ namespace UniversalPatcher
                             {
                                 skip = false;
                                 //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
-                                OBDMessage oMsg = new OBDMessage(rxMsgs[m].Data, (ulong)DateTime.Now.Ticks, (ulong)OBDError);
-                                oMsg.DeviceTimestamp = (ulong)rxMsgs[m].Timestamp;
-                                oMsg.TimeStamp = (ulong)rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
+                                OBDMessage oMsg = new OBDMessage(rxMsgs[m].Data, DateTime.Now.Ticks, (ulong)OBDError);
+                                oMsg.DeviceTimestamp = rxMsgs[m].Timestamp;
+                                oMsg.TimeStamp = rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
                                 if (SeparateProtocolByChannel == false && rxMsgs[m].ProtocolID != Protocol && rxMsgs[m].ProtocolID == Protocol2)
                                 {
                                     oMsg.SecondaryProtocol = true;
@@ -837,8 +837,8 @@ namespace UniversalPatcher
                                     skip = false;
                                     //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
                                     //this.Enqueue(new OBDMessage(rxMsgs[m].Data, (ulong)rxMsgs[m].Timestamp, (ulong)OBDError));
-                                    OBDMessage msg = new OBDMessage(rxMsgs[m].Data, (ulong)DateTime.Now.Ticks, (ulong)OBDError);
-                                    msg.TimeStamp = (ulong)rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
+                                    OBDMessage msg = new OBDMessage(rxMsgs[m].Data, DateTime.Now.Ticks, (ulong)OBDError);
+                                    msg.TimeStamp = rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
                                     //msg.TimeStamp = (ulong)(msg.DevTimeStamp + timeDiff);
                                     if (rxMsgs[m].ProtocolID != Protocol2 && rxMsgs[m].ProtocolID == Protocol)
                                     {
@@ -909,7 +909,7 @@ namespace UniversalPatcher
                 for (int retry = 0; retry < AppSettings.RetryWriteTimes; retry++)
                 {                    
                     OBDError = J2534Port.Functions.WriteMsgs((int)chid,TempMsg, ref NumMsgs, WriteTimeout);
-                    message.TimeStamp = (ulong)DateTime.Now.Ticks;
+                    message.TimeStamp = DateTime.Now.Ticks;
                     message.Error = (ulong)OBDError;
                     this.MessageSent(message);
                     if (OBDError == J2534Err.STATUS_NOERROR)

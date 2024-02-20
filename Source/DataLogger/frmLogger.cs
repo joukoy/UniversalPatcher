@@ -119,7 +119,7 @@ namespace UniversalPatcher
         public class LogText
         {
             public LogText() { }
-            public LogText(Color Color, string LogTxt, ulong TimeStamp) 
+            public LogText(Color Color, string LogTxt, long TimeStamp) 
             {
                 this.color = Color;
                 this.Txt = LogTxt;
@@ -127,7 +127,7 @@ namespace UniversalPatcher
             }
             public Color color { get; set; }
             public string Txt { get; set; }
-            public ulong TimeStamp { get; set; }
+            public long TimeStamp { get; set; }
         }
         public List<LogText> logTexts;
         int lastLogRowCount = 0;
@@ -410,7 +410,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void AppendLogText(Color Color, string LogTxt, ulong TimeStamp)
+        private void AppendLogText(Color Color, string LogTxt, long TimeStamp)
         {
             LogText lt = new LogText(Color, LogTxt, TimeStamp);
             logTexts.Add(lt);
@@ -421,7 +421,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void AppendJconsoleLogText(Color Color, string LogTxt, ulong TimeStamp)
+        private void AppendJconsoleLogText(Color Color, string LogTxt, long TimeStamp)
         {
             LogText lt = new LogText(Color, LogTxt, TimeStamp);
             jconsolelogTexts.Add(lt);
@@ -540,7 +540,7 @@ namespace UniversalPatcher
                     StringBuilder sMsg = new StringBuilder();
                     if (chkConsoleTimestamps.Checked)
                     {
-                        sMsg.Append("[" + new DateTime((long)e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
+                        sMsg.Append("[" + new DateTime(e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
                     }
                     if (chkVpwDevTimestamps.Checked)
                     {
@@ -857,7 +857,7 @@ namespace UniversalPatcher
 
         private void ListProfiles_MouseClick(object sender, MouseEventArgs e)
         {
-            if (datalogger.LogRunning)
+            if (datalogger.LogRunning || timerPlayback.Enabled)
                 return;
             if (ProfileDirty)
             {
@@ -1865,6 +1865,7 @@ namespace UniversalPatcher
             SetupLogDataGrid();
             ProfileDirty = false;
             CheckMaxPids();
+            UpdateProfile();
         }
 
         private void SelectSaveProfile(string fname = "")
@@ -1931,7 +1932,9 @@ namespace UniversalPatcher
                 //bsLogProfile.DataSource = null;
                 //bsLogProfile.DataSource = datalogger.PidProfile;
                 bsLogProfile.ResetBindings(false);
+                dataGridLogProfile.Update();
                 this.Refresh();
+                UpdateProfile();
             }
             catch (Exception ex)
             {
@@ -1944,6 +1947,18 @@ namespace UniversalPatcher
             }
         }
 
+        private void UpdateProfile()
+        {
+            if (HstForm != null && HstForm.Visible)
+            {
+                //HstForm.SetupLiveParameters();
+            }
+            if (GraphicsForm != null && GraphicsForm.Visible)
+            {
+                GraphicsForm.SetupLiveGraphics();
+            }
+
+        }
         private void AddSelectedPidsToProfile()
         {
             if (!datalogger.Connected)
@@ -1974,8 +1989,8 @@ namespace UniversalPatcher
 
         private void SetupLogDataGrid()
         {
-            if (datalogger.LogRunning)
-                return; //Dont change settings while logging
+            if (datalogger.LogRunning || timerPlayback.Enabled)
+                return; //Dont change settings while logging or playback
             dataGridLogData.Columns.Clear();
             dataGridLogData.Columns.Add("Value", "Value");
             if (!chkRawValues.Checked)
@@ -2457,7 +2472,7 @@ namespace UniversalPatcher
                 }
                 if (GraphicsForm != null && GraphicsForm.Visible)
                 {
-                    GraphicsForm.StartLiveUpdate(false);
+                    GraphicsForm.StartLiveUpdate();
                 }
                 SetupLogDataGrid();
                 datalogger.Responsetype = Convert.ToByte(Enum.Parse(typeof(ResponseTypes), comboResponseMode.Text));
@@ -2569,6 +2584,15 @@ namespace UniversalPatcher
                 {
                     ResetProfile();
                 }
+                if (HstForm != null && HstForm.Visible)
+                {
+                    HstForm.SetupLiveParameters();
+                }
+                if (GraphicsForm != null && GraphicsForm.Visible)
+                {
+                    GraphicsForm.SetupLiveGraphics();
+                }
+
             }
             catch (Exception ex)
             {
@@ -4165,32 +4189,21 @@ namespace UniversalPatcher
             }
         }
 
-        private void SetupLiveGraphics()
+        private void ShowGraphics(bool Live)
         {
             try
             {
-                GraphicsForm = new frmLoggerGraphics();
+                GraphicsForm = new frmLoggerGraphics(Live);
                 GraphicsForm.Text = "Logger Graph";
                 GraphicsForm.Show();
-                GraphicsForm.SetupLiveGraphics();
-                if (datalogger.LogRunning || timerPlayback.Enabled)
+                if (Live)
                 {
-                    GraphicsForm.StartLiveUpdate(timerPlayback.Enabled);
+                    GraphicsForm.SetupLiveGraphics();
+                    if (datalogger.LogRunning || timerPlayback.Enabled)
+                    {
+                        GraphicsForm.StartLiveUpdate();
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
-
-        private void showSavedLogGraphicsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                frmLoggerGraphics frmLG = new frmLoggerGraphics();
-                frmLG.Text = "Logger Graphics";
-                frmLG.Show();
             }
             catch (Exception ex)
             {
@@ -4202,20 +4215,6 @@ namespace UniversalPatcher
         {
 
         }
-
-        private void btnShowGraphics_Click(object sender, EventArgs e)
-        {
-            SetupLiveGraphics();
-        }
-
-        private void btnShowHistogram_Click(object sender, EventArgs e)
-        {
-            HstForm = new frmHistogram();
-            HstForm.Show();
-            HstForm.AddTunerToTab();
-            HstForm.SetupLiveParameters();
-        }
-
 
         private void playbackLogfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -4235,6 +4234,7 @@ namespace UniversalPatcher
                     datalogger.LoadLogFile(fName);
                     SetupLogDataGrid();
                     hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
+                    UpdateProfile();
                 }
                 fil.Dispose();
 
@@ -4276,12 +4276,13 @@ namespace UniversalPatcher
             hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
             SetPlaybackSpeed();
             timerPlayback.Enabled = true;
+            /*
             if (GraphicsForm != null && GraphicsForm.Visible)
             {
                 GraphicsForm.SetupPlayBack();
-                //GraphicsForm.SetupLiveGraphics();
                 GraphicsForm.StartLiveUpdate(true);
             }
+            */
         }
 
         private void btnPause_Click(object sender, EventArgs e)
@@ -4335,10 +4336,12 @@ namespace UniversalPatcher
             }
             DateTime dt = new DateTime((long)ld.TimeStamp);
             labelTimeStamp.Text = dt.ToString("HH.mm.ss.ffff");
+/*
             if (GraphicsForm != null && GraphicsForm.Visible)
             {
                 GraphicsForm.PlayBackStep(hScrollPlayback.Value);
             }
+*/
         }
 
         private void hScrollPlayback_Scroll(object sender, ScrollEventArgs e)
@@ -5486,10 +5489,51 @@ namespace UniversalPatcher
 
         private void btnSendControlCommand_Click(object sender, EventArgs e)
         {
-            //rtcMenu.Show(btnSendControlCommand, new Point(0, btnSendControlCommand.Height));
             frmControlCommands fcc = new frmControlCommands();
             fcc.datalogger = datalogger;
             fcc.Show();
+        }
+
+        private void graphicsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowGraphics(true);
+        }
+
+        private void histogramLiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (PCM == null)
+            {
+                PCM = new PcmFile();
+            }
+            HstForm = new frmHistogram(true, PCM);
+            HstForm.Show();
+            HstForm.SetupLiveParameters();
+
+        }
+
+        private void histogramLogfileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (PCM == null)
+            {
+                PCM = new PcmFile();
+            }
+            HstForm = new frmHistogram(false, PCM);
+            HstForm.Show();
+
+        }
+
+        private void sendControlCommandsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmControlCommands fcc = new frmControlCommands();
+            fcc.datalogger = datalogger;
+            fcc.Show();
+
+        }
+
+        private void graphicsLogfileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowGraphics(false);
+
         }
     }
 }

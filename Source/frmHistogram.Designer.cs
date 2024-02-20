@@ -35,12 +35,28 @@ namespace UniversalPatcher
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabHistogram = new System.Windows.Forms.TabPage();
-            this.labelSelectTable = new System.Windows.Forms.Label();
-            this.labelCellinfo = new System.Windows.Forms.Label();
-            this.tabSelectTable = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.groupParams = new System.Windows.Forms.GroupBox();
+            this.btnRefreshParams = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.comboXparam = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.comboYparam = new System.Windows.Forms.ComboBox();
+            this.btnReadCsv = new System.Windows.Forms.Button();
+            this.numSkipValue = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.comboValueparam = new System.Windows.Forms.ComboBox();
+            this.comboSkipParam = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.groupLogfile = new System.Windows.Forms.GroupBox();
+            this.txtColumnSeparator = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtLogFile = new System.Windows.Forms.TextBox();
+            this.btnBrowseCsv = new System.Windows.Forms.Button();
             this.groupTemplate = new System.Windows.Forms.GroupBox();
+            this.btnLoadTable = new System.Windows.Forms.Button();
             this.btnGenRowHeaders = new System.Windows.Forms.Button();
             this.btnGenColHeaders = new System.Windows.Forms.Button();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
@@ -50,8 +66,6 @@ namespace UniversalPatcher
             this.txtColHeaders = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.radioTemplateManual = new System.Windows.Forms.RadioButton();
-            this.radioTemplateUseTable = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnColorLow = new System.Windows.Forms.Button();
             this.btnColorHigh = new System.Windows.Forms.Button();
@@ -61,40 +75,40 @@ namespace UniversalPatcher
             this.numRangeMax = new System.Windows.Forms.NumericUpDown();
             this.numRangeMin = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
-            this.numSkipValue = new System.Windows.Forms.NumericUpDown();
-            this.label7 = new System.Windows.Forms.Label();
-            this.comboSkipParam = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.comboValueparam = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.comboYparam = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.comboXparam = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btnReadCsv = new System.Windows.Forms.Button();
-            this.txtColumnSeparator = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.btnBrowseCsv = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtLogFile = new System.Windows.Forms.TextBox();
+            this.tabTemplateBin = new System.Windows.Forms.TabPage();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadRecentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
             this.timerLiveData = new System.Windows.Forms.Timer(this.components);
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.labelCellinfo = new System.Windows.Forms.Label();
+            this.chkShowSettings = new System.Windows.Forms.CheckBox();
+            this.tabSavedSettings = new System.Windows.Forms.TabPage();
+            this.dataGridViewSavedSettings = new System.Windows.Forms.DataGridView();
+            this.btnSaveCurrent = new System.Windows.Forms.Button();
+            this.btnLoad = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabHistogram.SuspendLayout();
             this.tabSettings.SuspendLayout();
+            this.groupParams.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).BeginInit();
+            this.groupLogfile.SuspendLayout();
             this.groupTemplate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMin)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.tabSavedSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewSavedSettings)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -104,9 +118,9 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.Location = new System.Drawing.Point(4, 3);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(786, 377);
+            this.dataGridView1.Size = new System.Drawing.Size(901, 257);
             this.dataGridView1.TabIndex = 0;
             // 
             // contextMenuStrip1
@@ -125,91 +139,239 @@ namespace UniversalPatcher
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabHistogram);
-            this.tabControl1.Controls.Add(this.tabSelectTable);
             this.tabControl1.Controls.Add(this.tabSettings);
+            this.tabControl1.Controls.Add(this.tabTemplateBin);
+            this.tabControl1.Controls.Add(this.tabSavedSettings);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 24);
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(800, 426);
+            this.tabControl1.Size = new System.Drawing.Size(909, 357);
             this.tabControl1.TabIndex = 1;
-            // 
-            // tabHistogram
-            // 
-            this.tabHistogram.Controls.Add(this.labelSelectTable);
-            this.tabHistogram.Controls.Add(this.labelCellinfo);
-            this.tabHistogram.Controls.Add(this.dataGridView1);
-            this.tabHistogram.Location = new System.Drawing.Point(4, 22);
-            this.tabHistogram.Name = "tabHistogram";
-            this.tabHistogram.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHistogram.Size = new System.Drawing.Size(792, 400);
-            this.tabHistogram.TabIndex = 0;
-            this.tabHistogram.Text = "Histogram";
-            this.tabHistogram.UseVisualStyleBackColor = true;
-            // 
-            // labelSelectTable
-            // 
-            this.labelSelectTable.AutoSize = true;
-            this.labelSelectTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSelectTable.Location = new System.Drawing.Point(99, 156);
-            this.labelSelectTable.Name = "labelSelectTable";
-            this.labelSelectTable.Size = new System.Drawing.Size(524, 24);
-            this.labelSelectTable.TabIndex = 2;
-            this.labelSelectTable.Text = "Select table as template, or setup columns and rows manually";
-            // 
-            // labelCellinfo
-            // 
-            this.labelCellinfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelCellinfo.AutoSize = true;
-            this.labelCellinfo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labelCellinfo.Location = new System.Drawing.Point(0, 383);
-            this.labelCellinfo.Name = "labelCellinfo";
-            this.labelCellinfo.Size = new System.Drawing.Size(43, 15);
-            this.labelCellinfo.TabIndex = 1;
-            this.labelCellinfo.Text = "Cellinfo";
-            // 
-            // tabSelectTable
-            // 
-            this.tabSelectTable.Location = new System.Drawing.Point(4, 22);
-            this.tabSelectTable.Name = "tabSelectTable";
-            this.tabSelectTable.Size = new System.Drawing.Size(792, 400);
-            this.tabSelectTable.TabIndex = 2;
-            this.tabSelectTable.Text = "Table selection";
-            this.tabSelectTable.UseVisualStyleBackColor = true;
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupParams);
+            this.tabSettings.Controls.Add(this.groupLogfile);
             this.tabSettings.Controls.Add(this.groupTemplate);
             this.tabSettings.Controls.Add(this.groupBox1);
-            this.tabSettings.Controls.Add(this.numSkipValue);
-            this.tabSettings.Controls.Add(this.label7);
-            this.tabSettings.Controls.Add(this.comboSkipParam);
-            this.tabSettings.Controls.Add(this.label6);
-            this.tabSettings.Controls.Add(this.comboValueparam);
-            this.tabSettings.Controls.Add(this.label5);
-            this.tabSettings.Controls.Add(this.comboYparam);
-            this.tabSettings.Controls.Add(this.label4);
-            this.tabSettings.Controls.Add(this.comboXparam);
-            this.tabSettings.Controls.Add(this.label3);
-            this.tabSettings.Controls.Add(this.btnReadCsv);
-            this.tabSettings.Controls.Add(this.txtColumnSeparator);
-            this.tabSettings.Controls.Add(this.label2);
-            this.tabSettings.Controls.Add(this.btnBrowseCsv);
-            this.tabSettings.Controls.Add(this.label1);
-            this.tabSettings.Controls.Add(this.txtLogFile);
             this.tabSettings.Location = new System.Drawing.Point(4, 22);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSettings.Size = new System.Drawing.Size(792, 400);
+            this.tabSettings.Size = new System.Drawing.Size(901, 331);
             this.tabSettings.TabIndex = 1;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // groupParams
+            // 
+            this.groupParams.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupParams.Controls.Add(this.btnRefreshParams);
+            this.groupParams.Controls.Add(this.label3);
+            this.groupParams.Controls.Add(this.comboXparam);
+            this.groupParams.Controls.Add(this.label4);
+            this.groupParams.Controls.Add(this.comboYparam);
+            this.groupParams.Controls.Add(this.btnReadCsv);
+            this.groupParams.Controls.Add(this.numSkipValue);
+            this.groupParams.Controls.Add(this.label5);
+            this.groupParams.Controls.Add(this.label7);
+            this.groupParams.Controls.Add(this.comboValueparam);
+            this.groupParams.Controls.Add(this.comboSkipParam);
+            this.groupParams.Controls.Add(this.label6);
+            this.groupParams.Location = new System.Drawing.Point(8, 91);
+            this.groupParams.Name = "groupParams";
+            this.groupParams.Size = new System.Drawing.Size(885, 95);
+            this.groupParams.TabIndex = 19;
+            this.groupParams.TabStop = false;
+            this.groupParams.Text = "Parameters";
+            // 
+            // btnRefreshParams
+            // 
+            this.btnRefreshParams.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshParams.Location = new System.Drawing.Point(690, 59);
+            this.btnRefreshParams.Name = "btnRefreshParams";
+            this.btnRefreshParams.Size = new System.Drawing.Size(93, 23);
+            this.btnRefreshParams.TabIndex = 16;
+            this.btnRefreshParams.Text = "Refresh";
+            this.btnRefreshParams.UseVisualStyleBackColor = true;
+            this.btnRefreshParams.Click += new System.EventHandler(this.btnRefreshParams_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 28);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(64, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "X parameter";
+            // 
+            // comboXparam
+            // 
+            this.comboXparam.FormattingEnabled = true;
+            this.comboXparam.Location = new System.Drawing.Point(85, 25);
+            this.comboXparam.Name = "comboXparam";
+            this.comboXparam.Size = new System.Drawing.Size(121, 21);
+            this.comboXparam.TabIndex = 7;
+            this.comboXparam.SelectedIndexChanged += new System.EventHandler(this.comboXparam_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 58);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(64, 13);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Y parameter";
+            // 
+            // comboYparam
+            // 
+            this.comboYparam.FormattingEnabled = true;
+            this.comboYparam.Location = new System.Drawing.Point(85, 55);
+            this.comboYparam.Name = "comboYparam";
+            this.comboYparam.Size = new System.Drawing.Size(121, 21);
+            this.comboYparam.TabIndex = 9;
+            // 
+            // btnReadCsv
+            // 
+            this.btnReadCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReadCsv.Location = new System.Drawing.Point(789, 59);
+            this.btnReadCsv.Name = "btnReadCsv";
+            this.btnReadCsv.Size = new System.Drawing.Size(88, 23);
+            this.btnReadCsv.TabIndex = 5;
+            this.btnReadCsv.Text = "Apply";
+            this.btnReadCsv.UseVisualStyleBackColor = true;
+            this.btnReadCsv.Click += new System.EventHandler(this.btnReadCsv_Click);
+            // 
+            // numSkipValue
+            // 
+            this.numSkipValue.Location = new System.Drawing.Point(476, 56);
+            this.numSkipValue.Maximum = new decimal(new int[] {
+            10000000,
+            0,
+            0,
+            0});
+            this.numSkipValue.Name = "numSkipValue";
+            this.numSkipValue.Size = new System.Drawing.Size(51, 20);
+            this.numSkipValue.TabIndex = 15;
+            this.numSkipValue.Value = new decimal(new int[] {
+            70,
+            0,
+            0,
+            0});
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(228, 28);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(84, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Value parameter";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(457, 58);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(13, 13);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "<";
+            // 
+            // comboValueparam
+            // 
+            this.comboValueparam.FormattingEnabled = true;
+            this.comboValueparam.Location = new System.Drawing.Point(330, 25);
+            this.comboValueparam.Name = "comboValueparam";
+            this.comboValueparam.Size = new System.Drawing.Size(121, 21);
+            this.comboValueparam.TabIndex = 11;
+            // 
+            // comboSkipParam
+            // 
+            this.comboSkipParam.FormattingEnabled = true;
+            this.comboSkipParam.Location = new System.Drawing.Point(330, 55);
+            this.comboSkipParam.Name = "comboSkipParam";
+            this.comboSkipParam.Size = new System.Drawing.Size(121, 21);
+            this.comboSkipParam.TabIndex = 13;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(228, 58);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(86, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Skip if parameter";
+            // 
+            // groupLogfile
+            // 
+            this.groupLogfile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupLogfile.Controls.Add(this.txtColumnSeparator);
+            this.groupLogfile.Controls.Add(this.label2);
+            this.groupLogfile.Controls.Add(this.label1);
+            this.groupLogfile.Controls.Add(this.txtLogFile);
+            this.groupLogfile.Controls.Add(this.btnBrowseCsv);
+            this.groupLogfile.Location = new System.Drawing.Point(8, 6);
+            this.groupLogfile.Name = "groupLogfile";
+            this.groupLogfile.Size = new System.Drawing.Size(884, 83);
+            this.groupLogfile.TabIndex = 18;
+            this.groupLogfile.TabStop = false;
+            this.groupLogfile.Text = "Logfile";
+            // 
+            // txtColumnSeparator
+            // 
+            this.txtColumnSeparator.Location = new System.Drawing.Point(121, 19);
+            this.txtColumnSeparator.Name = "txtColumnSeparator";
+            this.txtColumnSeparator.Size = new System.Drawing.Size(41, 20);
+            this.txtColumnSeparator.TabIndex = 4;
+            this.txtColumnSeparator.Text = ",";
+            this.txtColumnSeparator.TextChanged += new System.EventHandler(this.txtColumnSeparator_TextChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(15, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(92, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Column separator:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(15, 45);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Log file:";
+            // 
+            // txtLogFile
+            // 
+            this.txtLogFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLogFile.Location = new System.Drawing.Point(59, 42);
+            this.txtLogFile.Name = "txtLogFile";
+            this.txtLogFile.Size = new System.Drawing.Size(772, 20);
+            this.txtLogFile.TabIndex = 0;
+            this.txtLogFile.TextChanged += new System.EventHandler(this.txtCsvFile_TextChanged);
+            // 
+            // btnBrowseCsv
+            // 
+            this.btnBrowseCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseCsv.Location = new System.Drawing.Point(837, 40);
+            this.btnBrowseCsv.Name = "btnBrowseCsv";
+            this.btnBrowseCsv.Size = new System.Drawing.Size(41, 22);
+            this.btnBrowseCsv.TabIndex = 2;
+            this.btnBrowseCsv.Text = "...";
+            this.btnBrowseCsv.UseVisualStyleBackColor = true;
+            this.btnBrowseCsv.Click += new System.EventHandler(this.btnBrowseCsv_Click);
             // 
             // groupTemplate
             // 
             this.groupTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupTemplate.Controls.Add(this.btnLoadTable);
             this.groupTemplate.Controls.Add(this.btnGenRowHeaders);
             this.groupTemplate.Controls.Add(this.btnGenColHeaders);
             this.groupTemplate.Controls.Add(this.numDecimals);
@@ -219,40 +381,49 @@ namespace UniversalPatcher
             this.groupTemplate.Controls.Add(this.txtColHeaders);
             this.groupTemplate.Controls.Add(this.label12);
             this.groupTemplate.Controls.Add(this.label11);
-            this.groupTemplate.Controls.Add(this.radioTemplateManual);
-            this.groupTemplate.Controls.Add(this.radioTemplateUseTable);
-            this.groupTemplate.Location = new System.Drawing.Point(260, 135);
+            this.groupTemplate.Location = new System.Drawing.Point(235, 192);
             this.groupTemplate.Name = "groupTemplate";
-            this.groupTemplate.Size = new System.Drawing.Size(524, 128);
+            this.groupTemplate.Size = new System.Drawing.Size(658, 137);
             this.groupTemplate.TabIndex = 17;
             this.groupTemplate.TabStop = false;
             this.groupTemplate.Text = "Template";
             // 
+            // btnLoadTable
+            // 
+            this.btnLoadTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoadTable.Location = new System.Drawing.Point(459, 108);
+            this.btnLoadTable.Name = "btnLoadTable";
+            this.btnLoadTable.Size = new System.Drawing.Size(97, 23);
+            this.btnLoadTable.TabIndex = 11;
+            this.btnLoadTable.Text = "Load from bin";
+            this.btnLoadTable.UseVisualStyleBackColor = true;
+            this.btnLoadTable.Click += new System.EventHandler(this.btnLoadTable_Click);
+            // 
             // btnGenRowHeaders
             // 
             this.btnGenRowHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGenRowHeaders.Location = new System.Drawing.Point(497, 68);
+            this.btnGenRowHeaders.Location = new System.Drawing.Point(581, 50);
             this.btnGenRowHeaders.Name = "btnGenRowHeaders";
-            this.btnGenRowHeaders.Size = new System.Drawing.Size(20, 24);
+            this.btnGenRowHeaders.Size = new System.Drawing.Size(67, 24);
             this.btnGenRowHeaders.TabIndex = 10;
-            this.btnGenRowHeaders.Text = ">";
+            this.btnGenRowHeaders.Text = "Generate";
             this.btnGenRowHeaders.UseVisualStyleBackColor = true;
             this.btnGenRowHeaders.Click += new System.EventHandler(this.btnGenRowHeaders_Click);
             // 
             // btnGenColHeaders
             // 
             this.btnGenColHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGenColHeaders.Location = new System.Drawing.Point(497, 38);
+            this.btnGenColHeaders.Location = new System.Drawing.Point(581, 20);
             this.btnGenColHeaders.Name = "btnGenColHeaders";
-            this.btnGenColHeaders.Size = new System.Drawing.Size(20, 24);
+            this.btnGenColHeaders.Size = new System.Drawing.Size(67, 24);
             this.btnGenColHeaders.TabIndex = 9;
-            this.btnGenColHeaders.Text = ">";
+            this.btnGenColHeaders.Text = "Generate";
             this.btnGenColHeaders.UseVisualStyleBackColor = true;
             this.btnGenColHeaders.Click += new System.EventHandler(this.btnGenColHeaders_Click);
             // 
             // numDecimals
             // 
-            this.numDecimals.Location = new System.Drawing.Point(124, 95);
+            this.numDecimals.Location = new System.Drawing.Point(121, 77);
             this.numDecimals.Maximum = new decimal(new int[] {
             10,
             0,
@@ -270,7 +441,7 @@ namespace UniversalPatcher
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(16, 97);
+            this.label13.Location = new System.Drawing.Point(13, 79);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(50, 13);
             this.label13.TabIndex = 7;
@@ -279,8 +450,7 @@ namespace UniversalPatcher
             // btnApplyTemplate
             // 
             this.btnApplyTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplyTemplate.Enabled = false;
-            this.btnApplyTemplate.Location = new System.Drawing.Point(432, 97);
+            this.btnApplyTemplate.Location = new System.Drawing.Point(562, 108);
             this.btnApplyTemplate.Name = "btnApplyTemplate";
             this.btnApplyTemplate.Size = new System.Drawing.Size(86, 23);
             this.btnApplyTemplate.TabIndex = 6;
@@ -292,24 +462,24 @@ namespace UniversalPatcher
             // 
             this.txtRowHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtRowHeaders.Location = new System.Drawing.Point(124, 71);
+            this.txtRowHeaders.Location = new System.Drawing.Point(121, 53);
             this.txtRowHeaders.Name = "txtRowHeaders";
-            this.txtRowHeaders.Size = new System.Drawing.Size(369, 20);
+            this.txtRowHeaders.Size = new System.Drawing.Size(454, 20);
             this.txtRowHeaders.TabIndex = 5;
             // 
             // txtColHeaders
             // 
             this.txtColHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtColHeaders.Location = new System.Drawing.Point(124, 40);
+            this.txtColHeaders.Location = new System.Drawing.Point(121, 22);
             this.txtColHeaders.Name = "txtColHeaders";
-            this.txtColHeaders.Size = new System.Drawing.Size(369, 20);
+            this.txtColHeaders.Size = new System.Drawing.Size(454, 20);
             this.txtColHeaders.TabIndex = 4;
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(16, 72);
+            this.label12.Location = new System.Drawing.Point(13, 54);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(73, 13);
             this.label12.TabIndex = 3;
@@ -318,35 +488,11 @@ namespace UniversalPatcher
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(16, 43);
+            this.label11.Location = new System.Drawing.Point(13, 25);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(86, 13);
             this.label11.TabIndex = 2;
             this.label11.Text = "Column headers:";
-            // 
-            // radioTemplateManual
-            // 
-            this.radioTemplateManual.AutoSize = true;
-            this.radioTemplateManual.Location = new System.Drawing.Point(111, 19);
-            this.radioTemplateManual.Name = "radioTemplateManual";
-            this.radioTemplateManual.Size = new System.Drawing.Size(122, 17);
-            this.radioTemplateManual.TabIndex = 1;
-            this.radioTemplateManual.TabStop = true;
-            this.radioTemplateManual.Text = "Use manual headers";
-            this.radioTemplateManual.UseVisualStyleBackColor = true;
-            this.radioTemplateManual.CheckedChanged += new System.EventHandler(this.radioTemplateManual_CheckedChanged);
-            // 
-            // radioTemplateUseTable
-            // 
-            this.radioTemplateUseTable.AutoSize = true;
-            this.radioTemplateUseTable.Checked = true;
-            this.radioTemplateUseTable.Location = new System.Drawing.Point(19, 18);
-            this.radioTemplateUseTable.Name = "radioTemplateUseTable";
-            this.radioTemplateUseTable.Size = new System.Drawing.Size(74, 17);
-            this.radioTemplateUseTable.TabIndex = 0;
-            this.radioTemplateUseTable.TabStop = true;
-            this.radioTemplateUseTable.Text = "Use Table";
-            this.radioTemplateUseTable.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -358,7 +504,7 @@ namespace UniversalPatcher
             this.groupBox1.Controls.Add(this.numRangeMax);
             this.groupBox1.Controls.Add(this.numRangeMin);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Location = new System.Drawing.Point(12, 126);
+            this.groupBox1.Location = new System.Drawing.Point(8, 192);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(221, 137);
             this.groupBox1.TabIndex = 16;
@@ -461,158 +607,14 @@ namespace UniversalPatcher
             this.label8.TabIndex = 0;
             this.label8.Text = "High value";
             // 
-            // numSkipValue
+            // tabTemplateBin
             // 
-            this.numSkipValue.Location = new System.Drawing.Point(484, 95);
-            this.numSkipValue.Maximum = new decimal(new int[] {
-            10000000,
-            0,
-            0,
-            0});
-            this.numSkipValue.Name = "numSkipValue";
-            this.numSkipValue.Size = new System.Drawing.Size(51, 20);
-            this.numSkipValue.TabIndex = 15;
-            this.numSkipValue.Value = new decimal(new int[] {
-            70,
-            0,
-            0,
-            0});
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(456, 98);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(13, 13);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "<";
-            // 
-            // comboSkipParam
-            // 
-            this.comboSkipParam.FormattingEnabled = true;
-            this.comboSkipParam.Location = new System.Drawing.Point(323, 94);
-            this.comboSkipParam.Name = "comboSkipParam";
-            this.comboSkipParam.Size = new System.Drawing.Size(121, 21);
-            this.comboSkipParam.TabIndex = 13;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(221, 97);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(86, 13);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "Skip if parameter";
-            // 
-            // comboValueparam
-            // 
-            this.comboValueparam.FormattingEnabled = true;
-            this.comboValueparam.Location = new System.Drawing.Point(323, 64);
-            this.comboValueparam.Name = "comboValueparam";
-            this.comboValueparam.Size = new System.Drawing.Size(121, 21);
-            this.comboValueparam.TabIndex = 11;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(221, 67);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(84, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Value parameter";
-            // 
-            // comboYparam
-            // 
-            this.comboYparam.FormattingEnabled = true;
-            this.comboYparam.Location = new System.Drawing.Point(78, 94);
-            this.comboYparam.Name = "comboYparam";
-            this.comboYparam.Size = new System.Drawing.Size(121, 21);
-            this.comboYparam.TabIndex = 9;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 97);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(64, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Y parameter";
-            // 
-            // comboXparam
-            // 
-            this.comboXparam.FormattingEnabled = true;
-            this.comboXparam.Location = new System.Drawing.Point(78, 64);
-            this.comboXparam.Name = "comboXparam";
-            this.comboXparam.Size = new System.Drawing.Size(121, 21);
-            this.comboXparam.TabIndex = 7;
-            this.comboXparam.SelectedIndexChanged += new System.EventHandler(this.comboXparam_SelectedIndexChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 67);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "X parameter";
-            // 
-            // btnReadCsv
-            // 
-            this.btnReadCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReadCsv.Location = new System.Drawing.Point(714, 58);
-            this.btnReadCsv.Name = "btnReadCsv";
-            this.btnReadCsv.Size = new System.Drawing.Size(72, 27);
-            this.btnReadCsv.TabIndex = 5;
-            this.btnReadCsv.Text = "Go";
-            this.btnReadCsv.UseVisualStyleBackColor = true;
-            this.btnReadCsv.Click += new System.EventHandler(this.btnReadCsv_Click);
-            // 
-            // txtColumnSeparator
-            // 
-            this.txtColumnSeparator.Location = new System.Drawing.Point(111, 6);
-            this.txtColumnSeparator.Name = "txtColumnSeparator";
-            this.txtColumnSeparator.Size = new System.Drawing.Size(41, 20);
-            this.txtColumnSeparator.TabIndex = 4;
-            this.txtColumnSeparator.Text = ",";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(92, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Column separator:";
-            // 
-            // btnBrowseCsv
-            // 
-            this.btnBrowseCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseCsv.Location = new System.Drawing.Point(744, 30);
-            this.btnBrowseCsv.Name = "btnBrowseCsv";
-            this.btnBrowseCsv.Size = new System.Drawing.Size(41, 22);
-            this.btnBrowseCsv.TabIndex = 2;
-            this.btnBrowseCsv.Text = "...";
-            this.btnBrowseCsv.UseVisualStyleBackColor = true;
-            this.btnBrowseCsv.Click += new System.EventHandler(this.btnBrowseCsv_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 35);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(44, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Log file:";
-            // 
-            // txtLogFile
-            // 
-            this.txtLogFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLogFile.Location = new System.Drawing.Point(78, 32);
-            this.txtLogFile.Name = "txtLogFile";
-            this.txtLogFile.Size = new System.Drawing.Size(660, 20);
-            this.txtLogFile.TabIndex = 0;
-            this.txtLogFile.TextChanged += new System.EventHandler(this.txtCsvFile_TextChanged);
+            this.tabTemplateBin.Location = new System.Drawing.Point(4, 22);
+            this.tabTemplateBin.Name = "tabTemplateBin";
+            this.tabTemplateBin.Size = new System.Drawing.Size(901, 331);
+            this.tabTemplateBin.TabIndex = 2;
+            this.tabTemplateBin.Text = "Template bin";
+            this.tabTemplateBin.UseVisualStyleBackColor = true;
             // 
             // menuStrip1
             // 
@@ -620,7 +622,7 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(909, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -628,6 +630,7 @@ namespace UniversalPatcher
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadSettingsToolStripMenuItem,
+            this.loadRecentToolStripMenuItem,
             this.saveSettingsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -636,20 +639,28 @@ namespace UniversalPatcher
             // loadSettingsToolStripMenuItem
             // 
             this.loadSettingsToolStripMenuItem.Name = "loadSettingsToolStripMenuItem";
-            this.loadSettingsToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.loadSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadSettingsToolStripMenuItem.Text = "Load settings";
             this.loadSettingsToolStripMenuItem.Click += new System.EventHandler(this.loadSettingsToolStripMenuItem_Click);
+            // 
+            // loadRecentToolStripMenuItem
+            // 
+            this.loadRecentToolStripMenuItem.Name = "loadRecentToolStripMenuItem";
+            this.loadRecentToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadRecentToolStripMenuItem.Text = "Load Recent";
+            this.loadRecentToolStripMenuItem.Click += new System.EventHandler(this.loadRecentToolStripMenuItem_Click);
             // 
             // saveSettingsToolStripMenuItem
             // 
             this.saveSettingsToolStripMenuItem.Name = "saveSettingsToolStripMenuItem";
-            this.saveSettingsToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.saveSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveSettingsToolStripMenuItem.Text = "Save Settings";
             this.saveSettingsToolStripMenuItem.Click += new System.EventHandler(this.saveSettingsToolStripMenuItem_Click);
             // 
             // chkGetLiveData
             // 
             this.chkGetLiveData.AutoSize = true;
+            this.chkGetLiveData.Enabled = false;
             this.chkGetLiveData.Location = new System.Drawing.Point(144, 5);
             this.chkGetLiveData.Name = "chkGetLiveData";
             this.chkGetLiveData.Size = new System.Drawing.Size(149, 17);
@@ -664,13 +675,101 @@ namespace UniversalPatcher
             this.timerLiveData.Interval = 250;
             this.timerLiveData.Tick += new System.EventHandler(this.timerLiveData_Tick);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
+            this.splitContainer1.Panel1.Controls.Add(this.labelCellinfo);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Size = new System.Drawing.Size(909, 641);
+            this.splitContainer1.SplitterDistance = 280;
+            this.splitContainer1.TabIndex = 18;
+            // 
+            // labelCellinfo
+            // 
+            this.labelCellinfo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelCellinfo.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelCellinfo.Location = new System.Drawing.Point(0, 263);
+            this.labelCellinfo.Name = "labelCellinfo";
+            this.labelCellinfo.Size = new System.Drawing.Size(909, 17);
+            this.labelCellinfo.TabIndex = 19;
+            this.labelCellinfo.Text = "Cell info";
+            // 
+            // chkShowSettings
+            // 
+            this.chkShowSettings.AutoSize = true;
+            this.chkShowSettings.Checked = true;
+            this.chkShowSettings.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowSettings.Location = new System.Drawing.Point(448, 6);
+            this.chkShowSettings.Name = "chkShowSettings";
+            this.chkShowSettings.Size = new System.Drawing.Size(92, 17);
+            this.chkShowSettings.TabIndex = 20;
+            this.chkShowSettings.Text = "Show settings";
+            this.chkShowSettings.UseVisualStyleBackColor = true;
+            this.chkShowSettings.CheckedChanged += new System.EventHandler(this.chkShowSettings_CheckedChanged);
+            // 
+            // tabSavedSettings
+            // 
+            this.tabSavedSettings.Controls.Add(this.btnLoad);
+            this.tabSavedSettings.Controls.Add(this.btnSaveCurrent);
+            this.tabSavedSettings.Controls.Add(this.dataGridViewSavedSettings);
+            this.tabSavedSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabSavedSettings.Name = "tabSavedSettings";
+            this.tabSavedSettings.Size = new System.Drawing.Size(901, 331);
+            this.tabSavedSettings.TabIndex = 3;
+            this.tabSavedSettings.Text = "Saved settings";
+            this.tabSavedSettings.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewSavedSettings
+            // 
+            this.dataGridViewSavedSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewSavedSettings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewSavedSettings.Location = new System.Drawing.Point(3, 33);
+            this.dataGridViewSavedSettings.Name = "dataGridViewSavedSettings";
+            this.dataGridViewSavedSettings.Size = new System.Drawing.Size(895, 298);
+            this.dataGridViewSavedSettings.TabIndex = 0;
+            // 
+            // btnSaveCurrent
+            // 
+            this.btnSaveCurrent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveCurrent.Location = new System.Drawing.Point(721, 4);
+            this.btnSaveCurrent.Name = "btnSaveCurrent";
+            this.btnSaveCurrent.Size = new System.Drawing.Size(79, 28);
+            this.btnSaveCurrent.TabIndex = 1;
+            this.btnSaveCurrent.Text = "Add current";
+            this.btnSaveCurrent.UseVisualStyleBackColor = true;
+            this.btnSaveCurrent.Click += new System.EventHandler(this.btnSaveCurrent_Click);
+            // 
+            // btnLoad
+            // 
+            this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoad.Location = new System.Drawing.Point(806, 4);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(87, 27);
+            this.btnLoad.TabIndex = 2;
+            this.btnLoad.Text = "Load";
+            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            // 
             // frmHistogram
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(909, 665);
+            this.Controls.Add(this.chkShowSettings);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.chkGetLiveData);
-            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmHistogram";
@@ -679,10 +778,12 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
-            this.tabHistogram.ResumeLayout(false);
-            this.tabHistogram.PerformLayout();
             this.tabSettings.ResumeLayout(false);
-            this.tabSettings.PerformLayout();
+            this.groupParams.ResumeLayout(false);
+            this.groupParams.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).EndInit();
+            this.groupLogfile.ResumeLayout(false);
+            this.groupLogfile.PerformLayout();
             this.groupTemplate.ResumeLayout(false);
             this.groupTemplate.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).EndInit();
@@ -690,9 +791,14 @@ namespace UniversalPatcher
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMin)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.tabSavedSettings.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewSavedSettings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -702,7 +808,6 @@ namespace UniversalPatcher
 
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabHistogram;
         private System.Windows.Forms.TabPage tabSettings;
         private System.Windows.Forms.Button btnBrowseCsv;
         private System.Windows.Forms.Label label1;
@@ -735,22 +840,30 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-        private System.Windows.Forms.Label labelCellinfo;
-        private System.Windows.Forms.TabPage tabSelectTable;
-        private System.Windows.Forms.Label labelSelectTable;
         private System.Windows.Forms.CheckBox chkGetLiveData;
         private System.Windows.Forms.GroupBox groupTemplate;
         private System.Windows.Forms.TextBox txtRowHeaders;
         private System.Windows.Forms.TextBox txtColHeaders;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.RadioButton radioTemplateManual;
-        private System.Windows.Forms.RadioButton radioTemplateUseTable;
         private System.Windows.Forms.Button btnApplyTemplate;
         private System.Windows.Forms.NumericUpDown numDecimals;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button btnGenRowHeaders;
         private System.Windows.Forms.Button btnGenColHeaders;
         private System.Windows.Forms.Timer timerLiveData;
+        private System.Windows.Forms.GroupBox groupParams;
+        private System.Windows.Forms.GroupBox groupLogfile;
+        private System.Windows.Forms.Button btnLoadTable;
+        private System.Windows.Forms.Button btnRefreshParams;
+        private System.Windows.Forms.ToolStripMenuItem loadRecentToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabTemplateBin;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Label labelCellinfo;
+        private System.Windows.Forms.CheckBox chkShowSettings;
+        private System.Windows.Forms.TabPage tabSavedSettings;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnSaveCurrent;
+        private System.Windows.Forms.DataGridView dataGridViewSavedSettings;
     }
 }

@@ -167,6 +167,7 @@
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLogger\GmKeys.cs" />
+    <Compile Include="DataLogger\GraphSettings.cs" />
     <Compile Include="DataLogger\JConsole.cs" />
     <Compile Include="DataLogger\KeyAlgorithm.cs" />
     <Compile Include="DataLogger\LogToBinConverter.cs" />
@@ -446,6 +447,12 @@
     </Compile>
     <Compile Include="frmTableHeaders.Designer.cs">
       <DependentUpon>frmTableHeaders.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmTableSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTableSelector.Designer.cs">
+      <DependentUpon>frmTableSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="frmTableVis.cs">
       <SubType>Form</SubType>
@@ -775,6 +782,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmTableHeaders.resx">
       <DependentUpon>frmTableHeaders.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTableSelector.resx">
+      <DependentUpon>frmTableSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmTableVis.resx">
       <DependentUpon>frmTableVis.cs</DependentUpon>

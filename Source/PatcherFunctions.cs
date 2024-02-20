@@ -628,10 +628,15 @@ public class Upatcher
             LogReceivers = new List<RichTextBox>();
             tableSeeks = new List<TableSeek>();
             segmentSeeks = new List<SegmentSeek>();
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
+            {
+                MessageBox.Show("Incomplete installation, Universalpatcher files missing" + Environment.NewLine +
+                    "Please extract all files from ZIP package", "Incomplete installation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
@@ -2914,8 +2919,22 @@ public class Upatcher
     {
         public void RunLoggerForm()
         {
-            frmLogger fl = new frmLogger();
-            Application.Run(fl);
+            try
+            {
+                frmLogger fl = new frmLogger();
+                Application.Run(fl);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Patcherfunctions line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, Patcherfunctions line " + line + ": " + ex.Message);
+            }
+
         }
     }
 

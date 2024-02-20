@@ -108,7 +108,7 @@ namespace UniversalPatcher
             }
             public double[] Values { get; set; }
             public double[] CalculatedValues { get; set; }
-            public ulong TimeStamp { get; set; }
+            public long TimeStamp { get; set; }
             public ulong DevTimeStamp { get; set; }
         }
 
@@ -130,7 +130,7 @@ namespace UniversalPatcher
             }
             public double PidValue { get; set; }
             public int PidNr { get; set; }
-            public ulong TimeStamp { get; set; }
+            public long TimeStamp { get; set; }
             public ulong DevTimeStamp { get; set; }
             public byte FailureCode { get; set; }
         }
@@ -2130,7 +2130,7 @@ namespace UniversalPatcher
                         faketimestamps++;
                     }
                     prevTStamp = tStamp;
-                    ld.TimeStamp = (ulong)tStamp.Ticks;
+                    ld.TimeStamp = tStamp.Ticks;
                     if (startTime == DateTime.MinValue)
                     {
                         startTime = tStamp;
@@ -2248,7 +2248,7 @@ namespace UniversalPatcher
         {
             Thread.CurrentThread.IsBackground = true;
             int totalSlots = 0;
-            ulong prevSlotTime = 0;
+            long prevSlotTime = 0;
 
             AllSlotsRequested = false;
 
@@ -2310,8 +2310,8 @@ namespace UniversalPatcher
                         }
                         if (totalSlots == 110)
                         {
-                            ulong tLast = oMsg.TimeStamp;
-                            ulong SlotDelay = tLast - prevSlotTime;
+                            long tLast = oMsg.TimeStamp;
+                            long SlotDelay = tLast - prevSlotTime;
                             Debug.WriteLine("Time for 100 Slots: " + (SlotDelay / 10000).ToString() + " ms");
                         }
                         Debug.WriteLine("Decoding message");

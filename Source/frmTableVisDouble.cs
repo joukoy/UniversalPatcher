@@ -418,7 +418,7 @@ namespace UniversalPatcher
                         hexAddr = (int)(tmpTd.EndAddress());
                         if (hexAddr > -1 && hexAddr < hexDatas.Length)
                             hexDatas[hexAddr].Suffix = ")";
-                        for (int a = (int)tmpTd.StartAddress(); a <= tmpTd.EndAddress(); a++)
+                        for (int a = (int)tmpTd.StartAddress(); a <= tmpTd.EndAddress() && a<hexDatas.Length; a++)
                         {
                             hexDatas[a].Color = colorStr[c];
                             hexDatas[a].TdIndex = t;

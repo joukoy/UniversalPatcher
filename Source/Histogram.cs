@@ -58,9 +58,9 @@ namespace UniversalPatcher
             {
                 Values.Add(val);
                 CurrentAverage += (val - this.CurrentAverage) / Values.Count;
-                LastUpdated = DateTime.Now;
+                //LastUpdated = DateTime.Now;
             }
-            public DateTime LastUpdated { get; internal set; }
+            //public DateTime LastUpdated { get; internal set; }
 /*
             public double Average
             {
@@ -90,8 +90,41 @@ namespace UniversalPatcher
             public double LowValue { get; set; }
             public string ColumnHeaders { get; set; }
             public string RowHeaders { get; set; }
-            public bool ManualHeaders { get; set; }
             public ushort Decimals { get; set; }
+        }
+
+        public class HistSettings
+        {
+            public HistSettings(string sName, HistogramSetup hset) 
+            {
+                try
+                {
+                    Name = sName;
+                    Rows = hset.RowHeaders.Split(',').Length;
+                    Columns = hset.ColumnHeaders.Split(',').Length;
+                    XParameter = hset.XParameter;
+                    YParameter = hset.YParameter;
+                    ValueParameter = hset.ValueParameter;
+                }
+                catch (Exception ex)
+                {
+                    var st = new StackTrace(ex, true);
+                    // Get the top stack frame
+                    var frame = st.GetFrame(st.FrameCount - 1);
+                    // Get the line number from the stack frame
+                    var line = frame.GetFileLineNumber();
+                    LoggerBold("Error, Histogram, line " + line + ": " + ex.Message);
+                }
+
+            }
+            public HistSettings() { }
+            public string Name { get; set; }
+            public int Rows { get; set; }
+            public int Columns { get; set; }
+            public string XParameter { get; set; }
+            public string YParameter { get; set; }
+            public string ValueParameter { get; set; }
+
         }
 
         public List<CsvData> LogDatas { get; set; }
@@ -155,34 +188,6 @@ namespace UniversalPatcher
 
         }
 
-        public CsvData AddData(double[] data)
-        {
-            try 
-            { 
-                CsvData hd = new CsvData(data.Length);
-                for (int p = 0; p < data.Length; p++)
-                {
-                    if (data[p] > double.MinValue && data[p] < double.MaxValue)
-                        hd.Values[p] = data[p];
-                    else
-                        hd.Values[p] = 0;
-                    //hd.Values[p] = Convert.ToDouble(rParts[p].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                }
-                LogDatas.Add(hd);
-                return hd;
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, Histogram line " + line + ": " + ex.Message);
-                return null;
-            }
-        }
-
         public void CountHits(string ColParam, string RowParam, string ValueParam, string SkipParam, double SkipValue, ushort Decimals)
         {
             try
@@ -240,8 +245,9 @@ namespace UniversalPatcher
                 LoggerBold("Error, Histogram line " + line + ": " + ex.Message);
             }
         }
-        public void CountHitsIncrement(double[] newData, string ColParam, string RowParam, string ValueParam, string SkipParam, double SkipValue, ushort Decimals)
+        public int CountHitsIncrement(double[] newData, string ColParam, string RowParam, string ValueParam, string SkipParam, double SkipValue, ushort Decimals)
         {
+            int retVal = -1;
             try
             {
                 if (HitDatas == null)
@@ -250,19 +256,19 @@ namespace UniversalPatcher
                     if (col < 0)
                     {
                         LoggerBold("Unknown X parameter: " + ColParam);
-                        return;
+                        return retVal;
                     }
                     row = Array.IndexOf(Parameters, RowParam);
                     if (row < 0)
                     {
                         LoggerBold("Unknown Y parameter: " + ColParam);
-                        return;
+                        return retVal;
                     }
                     val = Array.IndexOf(Parameters, ValueParam);
                     if (val < 0)
                     {
                         LoggerBold("Unknown Value parameter: " + ColParam);
-                        return;
+                        return retVal;
                     }
                     skip = Array.IndexOf(Parameters, SkipParam);
                     HitDatas = new List<HitData>();
@@ -286,11 +292,20 @@ namespace UniversalPatcher
                     var nearestRowValue = rowHeader.OrderBy(x => Math.Abs(rowData - x)).First();
                     int c = Array.IndexOf(columnHeader, nearestColumnValue);
                     int r = Array.IndexOf(rowHeader, nearestRowValue);
-                    HitData hd = HitDatas.Where(x => x.Column == c).Where(y => y.Row == r).FirstOrDefault();
-                    if (newData[val] == double.MinValue || newData[val] == double.MaxValue)
-                        hd.AddValue(0);
-                    else
-                        hd.AddValue(newData[val]);
+                    for (int h=0; h< HitDatas.Count;h++)
+                    {
+                        HitData hd = HitDatas[h];
+                        if (hd.Column == c && hd.Row == r)
+                        {
+                            if (newData[val] == double.MinValue || newData[val] == double.MaxValue)
+                                hd.AddValue(0);
+                            else
+                                hd.AddValue(newData[val]);
+                            retVal = h;
+                            break;
+                        }
+                    }
+                    //HitData hd = HitDatas.Where(x => x.Column == c).Where(y => y.Row == r).FirstOrDefault();
                 }
             }
             catch (Exception ex)
@@ -302,6 +317,7 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, Histogram line " + line + ": " + ex.Message);
             }
+            return retVal;
         }
 
     }

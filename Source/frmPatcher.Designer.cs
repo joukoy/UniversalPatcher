@@ -143,6 +143,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnHistogram = new System.Windows.Forms.Button();
             this.btnCsutilSelectSettings = new System.Windows.Forms.Button();
             this.btnByteSwap = new System.Windows.Forms.Button();
             this.btnStartFlashApp = new System.Windows.Forms.Button();
@@ -1625,6 +1626,7 @@
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnHistogram);
             this.tabApply.Controls.Add(this.btnCsutilSelectSettings);
             this.tabApply.Controls.Add(this.btnByteSwap);
             this.tabApply.Controls.Add(this.btnStartFlashApp);
@@ -1644,9 +1646,19 @@
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
             // 
+            // btnHistogram
+            // 
+            this.btnHistogram.Location = new System.Drawing.Point(574, 6);
+            this.btnHistogram.Name = "btnHistogram";
+            this.btnHistogram.Size = new System.Drawing.Size(85, 24);
+            this.btnHistogram.TabIndex = 193;
+            this.btnHistogram.Text = "Histogram";
+            this.btnHistogram.UseVisualStyleBackColor = true;
+            this.btnHistogram.Click += new System.EventHandler(this.btnHistogram_Click);
+            // 
             // btnCsutilSelectSettings
             // 
-            this.btnCsutilSelectSettings.Location = new System.Drawing.Point(574, 6);
+            this.btnCsutilSelectSettings.Location = new System.Drawing.Point(665, 6);
             this.btnCsutilSelectSettings.Name = "btnCsutilSelectSettings";
             this.btnCsutilSelectSettings.Size = new System.Drawing.Size(89, 56);
             this.btnCsutilSelectSettings.TabIndex = 167;
@@ -3349,5 +3361,6 @@
         private System.Windows.Forms.ToolStripMenuItem realtimeControlCommandsToolStripMenuItem;
         private System.Windows.Forms.Button btnCsutilSelectSettings;
         private System.Windows.Forms.Button btnCustomFindStop;
+        private System.Windows.Forms.Button btnHistogram;
     }
 }

@@ -53,9 +53,6 @@ namespace UniversalPatcher
             this.comboSerialPort = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabLog = new System.Windows.Forms.TabPage();
-            this.btnSendControlCommand = new System.Windows.Forms.Button();
-            this.btnShowHistogram = new System.Windows.Forms.Button();
-            this.btnShowGraphics = new System.Windows.Forms.Button();
             this.groupLogSettings = new System.Windows.Forms.GroupBox();
             this.groupPlayback = new System.Windows.Forms.GroupBox();
             this.labelTimeStamp = new System.Windows.Forms.Label();
@@ -318,7 +315,6 @@ namespace UniversalPatcher
             this.connectDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseBinfileToScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queryCANDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showSavedLogGraphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearVPWConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearJConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseLogfileToBinToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -326,6 +322,11 @@ namespace UniversalPatcher
             this.parseCANLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCANMode36LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCAN23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.graphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.histogramLiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.histogramLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sendControlCommandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -340,6 +341,7 @@ namespace UniversalPatcher
             this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
+            this.graphicsLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -432,9 +434,6 @@ namespace UniversalPatcher
             // 
             // tabLog
             // 
-            this.tabLog.Controls.Add(this.btnSendControlCommand);
-            this.tabLog.Controls.Add(this.btnShowHistogram);
-            this.tabLog.Controls.Add(this.btnShowGraphics);
             this.tabLog.Controls.Add(this.groupLogSettings);
             this.tabLog.Controls.Add(this.dataGridLogData);
             this.tabLog.Location = new System.Drawing.Point(4, 22);
@@ -445,36 +444,6 @@ namespace UniversalPatcher
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
             // 
-            // btnSendControlCommand
-            // 
-            this.btnSendControlCommand.Location = new System.Drawing.Point(241, 6);
-            this.btnSendControlCommand.Name = "btnSendControlCommand";
-            this.btnSendControlCommand.Size = new System.Drawing.Size(157, 22);
-            this.btnSendControlCommand.TabIndex = 34;
-            this.btnSendControlCommand.Text = "Send Control Command";
-            this.btnSendControlCommand.UseVisualStyleBackColor = true;
-            this.btnSendControlCommand.Click += new System.EventHandler(this.btnSendControlCommand_Click);
-            // 
-            // btnShowHistogram
-            // 
-            this.btnShowHistogram.Location = new System.Drawing.Point(123, 6);
-            this.btnShowHistogram.Name = "btnShowHistogram";
-            this.btnShowHistogram.Size = new System.Drawing.Size(112, 22);
-            this.btnShowHistogram.TabIndex = 33;
-            this.btnShowHistogram.Text = "Show histogram";
-            this.btnShowHistogram.UseVisualStyleBackColor = true;
-            this.btnShowHistogram.Click += new System.EventHandler(this.btnShowHistogram_Click);
-            // 
-            // btnShowGraphics
-            // 
-            this.btnShowGraphics.Location = new System.Drawing.Point(5, 6);
-            this.btnShowGraphics.Name = "btnShowGraphics";
-            this.btnShowGraphics.Size = new System.Drawing.Size(112, 22);
-            this.btnShowGraphics.TabIndex = 32;
-            this.btnShowGraphics.Text = "Show Graph";
-            this.btnShowGraphics.UseVisualStyleBackColor = true;
-            this.btnShowGraphics.Click += new System.EventHandler(this.btnShowGraphics_Click);
-            // 
             // groupLogSettings
             // 
             this.groupLogSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -483,9 +452,9 @@ namespace UniversalPatcher
             this.groupLogSettings.Controls.Add(this.groupBox1);
             this.groupLogSettings.Controls.Add(this.listProfiles);
             this.groupLogSettings.Controls.Add(this.label3);
-            this.groupLogSettings.Location = new System.Drawing.Point(-1, 26);
+            this.groupLogSettings.Location = new System.Drawing.Point(0, 6);
             this.groupLogSettings.Name = "groupLogSettings";
-            this.groupLogSettings.Size = new System.Drawing.Size(438, 459);
+            this.groupLogSettings.Size = new System.Drawing.Size(438, 469);
             this.groupLogSettings.TabIndex = 31;
             this.groupLogSettings.TabStop = false;
             // 
@@ -499,7 +468,7 @@ namespace UniversalPatcher
             this.groupPlayback.Controls.Add(this.hScrollPlayback);
             this.groupPlayback.Controls.Add(this.btnPlay);
             this.groupPlayback.Controls.Add(this.btnPause);
-            this.groupPlayback.Location = new System.Drawing.Point(10, 366);
+            this.groupPlayback.Location = new System.Drawing.Point(10, 376);
             this.groupPlayback.Name = "groupPlayback";
             this.groupPlayback.Size = new System.Drawing.Size(417, 83);
             this.groupPlayback.TabIndex = 31;
@@ -3300,6 +3269,7 @@ namespace UniversalPatcher
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.actionToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -3384,7 +3354,6 @@ namespace UniversalPatcher
             this.connectDisconnectToolStripMenuItem,
             this.parseBinfileToScriptToolStripMenuItem,
             this.queryCANDevicesToolStripMenuItem,
-            this.showSavedLogGraphicsToolStripMenuItem,
             this.clearVPWConsoleDataToolStripMenuItem,
             this.clearJConsoleDataToolStripMenuItem,
             this.parseLogfileToBinToolStripMenuItem1});
@@ -3395,49 +3364,42 @@ namespace UniversalPatcher
             // filterSupportedPidsToolStripMenuItem
             // 
             this.filterSupportedPidsToolStripMenuItem.Name = "filterSupportedPidsToolStripMenuItem";
-            this.filterSupportedPidsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.filterSupportedPidsToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.filterSupportedPidsToolStripMenuItem.Text = "Filter pids by BIN file";
             this.filterSupportedPidsToolStripMenuItem.Click += new System.EventHandler(this.filterSupportedPidsToolStripMenuItem_Click);
             // 
             // connectDisconnectToolStripMenuItem
             // 
             this.connectDisconnectToolStripMenuItem.Name = "connectDisconnectToolStripMenuItem";
-            this.connectDisconnectToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.connectDisconnectToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.connectDisconnectToolStripMenuItem.Text = "Connect/Disconnect";
             this.connectDisconnectToolStripMenuItem.Click += new System.EventHandler(this.connectDisconnectToolStripMenuItem_Click);
             // 
             // parseBinfileToScriptToolStripMenuItem
             // 
             this.parseBinfileToScriptToolStripMenuItem.Name = "parseBinfileToScriptToolStripMenuItem";
-            this.parseBinfileToScriptToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.parseBinfileToScriptToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.parseBinfileToScriptToolStripMenuItem.Text = "Parse binfile to script";
             this.parseBinfileToScriptToolStripMenuItem.Click += new System.EventHandler(this.parseBinfileToScriptToolStripMenuItem_Click);
             // 
             // queryCANDevicesToolStripMenuItem
             // 
             this.queryCANDevicesToolStripMenuItem.Name = "queryCANDevicesToolStripMenuItem";
-            this.queryCANDevicesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.queryCANDevicesToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.queryCANDevicesToolStripMenuItem.Text = "Query CAN Devices";
             this.queryCANDevicesToolStripMenuItem.Click += new System.EventHandler(this.queryCANDevicesToolStripMenuItem_Click);
-            // 
-            // showSavedLogGraphicsToolStripMenuItem
-            // 
-            this.showSavedLogGraphicsToolStripMenuItem.Name = "showSavedLogGraphicsToolStripMenuItem";
-            this.showSavedLogGraphicsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.showSavedLogGraphicsToolStripMenuItem.Text = "Show saved log graphics";
-            this.showSavedLogGraphicsToolStripMenuItem.Click += new System.EventHandler(this.showSavedLogGraphicsToolStripMenuItem_Click);
             // 
             // clearVPWConsoleDataToolStripMenuItem
             // 
             this.clearVPWConsoleDataToolStripMenuItem.Name = "clearVPWConsoleDataToolStripMenuItem";
-            this.clearVPWConsoleDataToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.clearVPWConsoleDataToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.clearVPWConsoleDataToolStripMenuItem.Text = "Clear VPW-Console data";
             this.clearVPWConsoleDataToolStripMenuItem.Click += new System.EventHandler(this.clearVPWConsoleDataToolStripMenuItem_Click);
             // 
             // clearJConsoleDataToolStripMenuItem
             // 
             this.clearJConsoleDataToolStripMenuItem.Name = "clearJConsoleDataToolStripMenuItem";
-            this.clearJConsoleDataToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.clearJConsoleDataToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.clearJConsoleDataToolStripMenuItem.Text = "Clear J-Console data";
             this.clearJConsoleDataToolStripMenuItem.Click += new System.EventHandler(this.clearJConsoleDataToolStripMenuItem_Click);
             // 
@@ -3449,7 +3411,7 @@ namespace UniversalPatcher
             this.parseCANMode36LogfileToBinToolStripMenuItem,
             this.parseCAN23LogfileToBinToolStripMenuItem});
             this.parseLogfileToBinToolStripMenuItem1.Name = "parseLogfileToBinToolStripMenuItem1";
-            this.parseLogfileToBinToolStripMenuItem1.Size = new System.Drawing.Size(204, 22);
+            this.parseLogfileToBinToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
             this.parseLogfileToBinToolStripMenuItem1.Text = "Parse logfile to bin";
             // 
             // parseLogfileToBinToolStripMenuItem
@@ -3479,6 +3441,46 @@ namespace UniversalPatcher
             this.parseCAN23LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.parseCAN23LogfileToBinToolStripMenuItem.Text = "Parse CAN23 logfile to bin";
             this.parseCAN23LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN23LogfileToBinToolStripMenuItem_Click);
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.graphicsToolStripMenuItem,
+            this.graphicsLogfileToolStripMenuItem,
+            this.histogramLiveToolStripMenuItem,
+            this.histogramLogfileToolStripMenuItem,
+            this.sendControlCommandsToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // graphicsToolStripMenuItem
+            // 
+            this.graphicsToolStripMenuItem.Name = "graphicsToolStripMenuItem";
+            this.graphicsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.graphicsToolStripMenuItem.Text = "Graphics Live";
+            this.graphicsToolStripMenuItem.Click += new System.EventHandler(this.graphicsToolStripMenuItem_Click);
+            // 
+            // histogramLiveToolStripMenuItem
+            // 
+            this.histogramLiveToolStripMenuItem.Name = "histogramLiveToolStripMenuItem";
+            this.histogramLiveToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.histogramLiveToolStripMenuItem.Text = "Histogram Live";
+            this.histogramLiveToolStripMenuItem.Click += new System.EventHandler(this.histogramLiveToolStripMenuItem_Click);
+            // 
+            // histogramLogfileToolStripMenuItem
+            // 
+            this.histogramLogfileToolStripMenuItem.Name = "histogramLogfileToolStripMenuItem";
+            this.histogramLogfileToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.histogramLogfileToolStripMenuItem.Text = "Histogram Logfile";
+            this.histogramLogfileToolStripMenuItem.Click += new System.EventHandler(this.histogramLogfileToolStripMenuItem_Click);
+            // 
+            // sendControlCommandsToolStripMenuItem
+            // 
+            this.sendControlCommandsToolStripMenuItem.Name = "sendControlCommandsToolStripMenuItem";
+            this.sendControlCommandsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.sendControlCommandsToolStripMenuItem.Text = "Send Control Commands";
+            this.sendControlCommandsToolStripMenuItem.Click += new System.EventHandler(this.sendControlCommandsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -3535,7 +3537,7 @@ namespace UniversalPatcher
             // 
             this.labelConnected.AutoSize = true;
             this.labelConnected.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labelConnected.Location = new System.Drawing.Point(229, 6);
+            this.labelConnected.Location = new System.Drawing.Point(424, 3);
             this.labelConnected.Name = "labelConnected";
             this.labelConnected.Size = new System.Drawing.Size(75, 15);
             this.labelConnected.TabIndex = 24;
@@ -3579,11 +3581,18 @@ namespace UniversalPatcher
             // 
             this.labelProtocol.AutoSize = true;
             this.labelProtocol.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labelProtocol.Location = new System.Drawing.Point(161, 6);
+            this.labelProtocol.Location = new System.Drawing.Point(358, 3);
             this.labelProtocol.Name = "labelProtocol";
             this.labelProtocol.Size = new System.Drawing.Size(34, 15);
             this.labelProtocol.TabIndex = 25;
             this.labelProtocol.Text = "VPW";
+            // 
+            // graphicsLogfileToolStripMenuItem
+            // 
+            this.graphicsLogfileToolStripMenuItem.Name = "graphicsLogfileToolStripMenuItem";
+            this.graphicsLogfileToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.graphicsLogfileToolStripMenuItem.Text = "Graphics Logfile";
+            this.graphicsLogfileToolStripMenuItem.Click += new System.EventHandler(this.graphicsLogfileToolStripMenuItem_Click);
             // 
             // frmLogger
             // 
@@ -3895,9 +3904,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.Timer timerWaitCANQuery;
         private System.Windows.Forms.TabPage tabCANdevices;
         private System.Windows.Forms.DataGridView dataGridCANDevices;
-        private System.Windows.Forms.ToolStripMenuItem showSavedLogGraphicsToolStripMenuItem;
-        private System.Windows.Forms.Button btnShowGraphics;
-        private System.Windows.Forms.Button btnShowHistogram;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem playbackLogfileToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupPlayback;
@@ -3976,9 +3982,14 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem parseCANMode36LogfileToBinToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem parseCAN23LogfileToBinToolStripMenuItem;
         private System.Windows.Forms.Label labelTimeStamp;
-        private System.Windows.Forms.Button btnSendControlCommand;
         private System.Windows.Forms.RadioButton radioFindNgc4;
         private System.Windows.Forms.RadioButton radioFindSbec;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem graphicsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem histogramLiveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem histogramLogfileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sendControlCommandsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem graphicsLogfileToolStripMenuItem;
     }
 }
 

@@ -3197,7 +3197,7 @@ namespace UniversalPatcher
 
         private void showHistogramToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmHistogram fh = new frmHistogram();
+            frmHistogram fh = new frmHistogram(false);
             fh.Show();
             CompareFile selectedFile = compareFiles[currentFile];
             PcmFile PCM = selectedFile.pcm;

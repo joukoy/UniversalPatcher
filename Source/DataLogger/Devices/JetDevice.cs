@@ -441,7 +441,7 @@ namespace UniversalPatcher
             //Debug.WriteLine("Sendrequest called");
             Debug.WriteLine("TX: " + message.GetBytes().ToHex());
             SendJETPacket(message);
-            message.TimeStamp = (ulong)DateTime.Now.Ticks;
+            message.TimeStamp = DateTime.Now.Ticks;
             this.MessageSent(message);
             return true;
         }

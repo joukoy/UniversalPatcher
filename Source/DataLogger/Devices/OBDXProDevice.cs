@@ -354,7 +354,7 @@ namespace UniversalPatcher
                     //Debug.WriteLine("RX: " + StrippedFrame.ToHex());
                     //if (!TimeStampsEnabled)
 
-                    OBDMessage rMsg = new OBDMessage(StrippedFrame, (ulong)rx.TimeStamp, 0);
+                    OBDMessage rMsg = new OBDMessage(StrippedFrame, rx.TimeStamp, 0);
                     this.Enqueue(rMsg, true);
                     /*                if (!TimeStampsEnabled)
                                         timestampmicro = (ulong)rx.TimeStamp;
@@ -367,7 +367,7 @@ namespace UniversalPatcher
                     // Valid message from the device
                     //Debug.WriteLine("XPro: " + receive.ToHex());
                     OBDMessage rMsg = new OBDMessage(receive.Data);
-                    rMsg.TimeStamp = (ulong)rx.TimeStamp;
+                    rMsg.TimeStamp = rx.TimeStamp;
                     return Response.Create(ResponseStatus.Success, rMsg);
                 }
             }
@@ -569,7 +569,7 @@ namespace UniversalPatcher
                 //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());                  
                 //this.ClearMessageQueue();
                 Response<OBDMessage> m = SendDVIPacket(message, responses);
-                message.TimeStamp = (ulong)DateTime.Now.Ticks;
+                message.TimeStamp = DateTime.Now.Ticks;
                 this.MessageSent(message);
                 if (m.Status != ResponseStatus.Success)
                 {

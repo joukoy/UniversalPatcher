@@ -39,14 +39,22 @@ namespace UniversalPatcher
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLoggerGraphics));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupPlayback = new System.Windows.Forms.GroupBox();
+            this.chkPlaying = new System.Windows.Forms.CheckBox();
             this.label39 = new System.Windows.Forms.Label();
             this.numPlaybackSpeed = new System.Windows.Forms.NumericUpDown();
             this.btnPlay = new System.Windows.Forms.Button();
             this.btnPause = new System.Windows.Forms.Button();
+            this.txtShowTo = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.chkSelectAll = new System.Windows.Forms.CheckBox();
@@ -57,14 +65,19 @@ namespace UniversalPatcher
             this.btnApply = new System.Windows.Forms.Button();
             this.tabPointValues = new System.Windows.Forms.TabPage();
             this.dataGridPointValues = new System.Windows.Forms.DataGridView();
-            this.labelZoom = new System.Windows.Forms.Label();
-            this.ScrollPointsPerScreen = new System.Windows.Forms.HScrollBar();
+            this.tabAdvanced = new System.Windows.Forms.TabPage();
+            this.dataGridViewAdv = new System.Windows.Forms.DataGridView();
+            this.tabZoom = new System.Windows.Forms.TabPage();
+            this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupLiveSeconds = new System.Windows.Forms.GroupBox();
+            this.chkShowLastSeconds = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.numShowMax = new System.Windows.Forms.NumericUpDown();
             this.numDisplayInterval = new System.Windows.Forms.NumericUpDown();
-            this.labelShowMax = new System.Windows.Forms.Label();
-            this.ScrollStartPoint = new System.Windows.Forms.HScrollBar();
+            this.txtShowFrom = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.scrollPosition = new System.Windows.Forms.HScrollBar();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,15 +105,13 @@ namespace UniversalPatcher
             this.wheelZoomXYToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.noWheelZoomToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.resetZoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disableResampleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timerDisplayData = new System.Windows.Forms.Timer(this.components);
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.labelDataValues = new System.Windows.Forms.Label();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
-            this.timerPlayback = new System.Windows.Forms.Timer(this.components);
-            this.disableResampleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.verticalProgressBar1 = new UniversalPatcher.VerticalProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -113,6 +124,10 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSettings)).BeginInit();
             this.tabPointValues.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPointValues)).BeginInit();
+            this.tabAdvanced.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdv)).BeginInit();
+            this.tabZoom.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
             this.groupLiveSeconds.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numShowMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDisplayInterval)).BeginInit();
@@ -159,15 +174,17 @@ namespace UniversalPatcher
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.groupPlayback);
+            this.splitContainer1.Panel1.Controls.Add(this.txtShowTo);
             this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
-            this.splitContainer1.Panel1.Controls.Add(this.labelZoom);
-            this.splitContainer1.Panel1.Controls.Add(this.ScrollPointsPerScreen);
+            this.splitContainer1.Panel1.Controls.Add(this.label4);
             this.splitContainer1.Panel1.Controls.Add(this.groupLiveSeconds);
+            this.splitContainer1.Panel1.Controls.Add(this.txtShowFrom);
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.ScrollStartPoint);
+            this.splitContainer1.Panel2.Controls.Add(this.scrollPosition);
             this.splitContainer1.Panel2.Controls.Add(this.chart1);
             this.splitContainer1.Size = new System.Drawing.Size(1199, 551);
             this.splitContainer1.SplitterDistance = 396;
@@ -177,6 +194,7 @@ namespace UniversalPatcher
             // 
             this.groupPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupPlayback.Controls.Add(this.chkPlaying);
             this.groupPlayback.Controls.Add(this.label39);
             this.groupPlayback.Controls.Add(this.numPlaybackSpeed);
             this.groupPlayback.Controls.Add(this.btnPlay);
@@ -187,6 +205,17 @@ namespace UniversalPatcher
             this.groupPlayback.TabIndex = 32;
             this.groupPlayback.TabStop = false;
             this.groupPlayback.Text = "Playback";
+            // 
+            // chkPlaying
+            // 
+            this.chkPlaying.AutoSize = true;
+            this.chkPlaying.Location = new System.Drawing.Point(248, 25);
+            this.chkPlaying.Name = "chkPlaying";
+            this.chkPlaying.Size = new System.Drawing.Size(46, 17);
+            this.chkPlaying.TabIndex = 5;
+            this.chkPlaying.Text = "Play";
+            this.chkPlaying.UseVisualStyleBackColor = true;
+            this.chkPlaying.CheckedChanged += new System.EventHandler(this.chkPlaying_CheckedChanged);
             // 
             // label39
             // 
@@ -223,6 +252,7 @@ namespace UniversalPatcher
             // 
             // btnPlay
             // 
+            this.btnPlay.Enabled = false;
             this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPlay.Location = new System.Drawing.Point(54, 21);
             this.btnPlay.Name = "btnPlay";
@@ -243,6 +273,15 @@ namespace UniversalPatcher
             this.btnPause.UseVisualStyleBackColor = true;
             this.btnPause.Click += new System.EventHandler(this.btnPause_Click);
             // 
+            // txtShowTo
+            // 
+            this.txtShowTo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtShowTo.Location = new System.Drawing.Point(175, 512);
+            this.txtShowTo.Name = "txtShowTo";
+            this.txtShowTo.Size = new System.Drawing.Size(95, 20);
+            this.txtShowTo.TabIndex = 7;
+            this.txtShowTo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -250,6 +289,8 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabSettings);
             this.tabControl1.Controls.Add(this.tabPointValues);
+            this.tabControl1.Controls.Add(this.tabAdvanced);
+            this.tabControl1.Controls.Add(this.tabZoom);
             this.tabControl1.Location = new System.Drawing.Point(3, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -403,43 +444,115 @@ namespace UniversalPatcher
             this.dataGridPointValues.Size = new System.Drawing.Size(376, 353);
             this.dataGridPointValues.TabIndex = 0;
             // 
-            // labelZoom
+            // tabAdvanced
             // 
-            this.labelZoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelZoom.AutoSize = true;
-            this.labelZoom.Location = new System.Drawing.Point(13, 511);
-            this.labelZoom.Name = "labelZoom";
-            this.labelZoom.Size = new System.Drawing.Size(34, 13);
-            this.labelZoom.TabIndex = 12;
-            this.labelZoom.Text = "Zoom";
+            this.tabAdvanced.Controls.Add(this.dataGridViewAdv);
+            this.tabAdvanced.Location = new System.Drawing.Point(4, 22);
+            this.tabAdvanced.Name = "tabAdvanced";
+            this.tabAdvanced.Size = new System.Drawing.Size(382, 359);
+            this.tabAdvanced.TabIndex = 2;
+            this.tabAdvanced.Text = "Advanced";
+            this.tabAdvanced.UseVisualStyleBackColor = true;
             // 
-            // ScrollPointsPerScreen
+            // dataGridViewAdv
             // 
-            this.ScrollPointsPerScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScrollPointsPerScreen.Location = new System.Drawing.Point(3, 528);
-            this.ScrollPointsPerScreen.Maximum = 1000;
-            this.ScrollPointsPerScreen.Minimum = 10;
-            this.ScrollPointsPerScreen.Name = "ScrollPointsPerScreen";
-            this.ScrollPointsPerScreen.Size = new System.Drawing.Size(390, 20);
-            this.ScrollPointsPerScreen.TabIndex = 0;
-            this.ScrollPointsPerScreen.Value = 100;
-            this.ScrollPointsPerScreen.Scroll += new System.Windows.Forms.ScrollEventHandler(this.ScrollPointsPerScreen_Scroll);
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewAdv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            this.dataGridViewAdv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewAdv.DefaultCellStyle = dataGridViewCellStyle8;
+            this.dataGridViewAdv.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewAdv.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewAdv.Name = "dataGridViewAdv";
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewAdv.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            this.dataGridViewAdv.Size = new System.Drawing.Size(382, 359);
+            this.dataGridViewAdv.TabIndex = 0;
+            // 
+            // tabZoom
+            // 
+            this.tabZoom.Controls.Add(this.chart2);
+            this.tabZoom.Location = new System.Drawing.Point(4, 22);
+            this.tabZoom.Name = "tabZoom";
+            this.tabZoom.Size = new System.Drawing.Size(382, 359);
+            this.tabZoom.TabIndex = 3;
+            this.tabZoom.Text = "Zoom";
+            this.tabZoom.UseVisualStyleBackColor = true;
+            // 
+            // chart2
+            // 
+            chartArea2.Area3DStyle.Enable3D = true;
+            chartArea2.AxisX.IsLabelAutoFit = false;
+            chartArea2.Name = "ChartArea1";
+            chartArea2.ShadowColor = System.Drawing.Color.White;
+            this.chart2.ChartAreas.Add(chartArea2);
+            this.chart2.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend2.Name = "Legend1";
+            this.chart2.Legends.Add(legend2);
+            this.chart2.Location = new System.Drawing.Point(0, 0);
+            this.chart2.Name = "chart2";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            series2.YValuesPerPoint = 2;
+            this.chart2.Series.Add(series2);
+            this.chart2.Size = new System.Drawing.Size(382, 359);
+            this.chart2.TabIndex = 15;
+            this.chart2.Text = "chart2";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(159, 515);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(10, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "-";
             // 
             // groupLiveSeconds
             // 
             this.groupLiveSeconds.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupLiveSeconds.Controls.Add(this.verticalProgressBar1);
+            this.groupLiveSeconds.Controls.Add(this.chkShowLastSeconds);
             this.groupLiveSeconds.Controls.Add(this.label2);
             this.groupLiveSeconds.Controls.Add(this.numShowMax);
             this.groupLiveSeconds.Controls.Add(this.numDisplayInterval);
-            this.groupLiveSeconds.Controls.Add(this.labelShowMax);
             this.groupLiveSeconds.Location = new System.Drawing.Point(3, 387);
             this.groupLiveSeconds.Name = "groupLiveSeconds";
             this.groupLiveSeconds.Size = new System.Drawing.Size(389, 66);
             this.groupLiveSeconds.TabIndex = 8;
             this.groupLiveSeconds.TabStop = false;
+            // 
+            // chkShowLastSeconds
+            // 
+            this.chkShowLastSeconds.AutoSize = true;
+            this.chkShowLastSeconds.Location = new System.Drawing.Point(9, 14);
+            this.chkShowLastSeconds.Name = "chkShowLastSeconds";
+            this.chkShowLastSeconds.Size = new System.Drawing.Size(118, 17);
+            this.chkShowLastSeconds.TabIndex = 9;
+            this.chkShowLastSeconds.Text = "Show last seconds:";
+            this.chkShowLastSeconds.UseVisualStyleBackColor = true;
+            this.chkShowLastSeconds.CheckedChanged += new System.EventHandler(this.chkShowLastSeconds_CheckedChanged);
             // 
             // label2
             // 
@@ -494,26 +607,35 @@ namespace UniversalPatcher
             0});
             this.numDisplayInterval.ValueChanged += new System.EventHandler(this.numDisplayInterval_ValueChanged);
             // 
-            // labelShowMax
+            // txtShowFrom
             // 
-            this.labelShowMax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelShowMax.AutoSize = true;
-            this.labelShowMax.Location = new System.Drawing.Point(6, 15);
-            this.labelShowMax.Name = "labelShowMax";
-            this.labelShowMax.Size = new System.Drawing.Size(99, 13);
-            this.labelShowMax.TabIndex = 4;
-            this.labelShowMax.Text = "Show last seconds:";
+            this.txtShowFrom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtShowFrom.Location = new System.Drawing.Point(58, 512);
+            this.txtShowFrom.Name = "txtShowFrom";
+            this.txtShowFrom.Size = new System.Drawing.Size(95, 20);
+            this.txtShowFrom.TabIndex = 5;
+            this.txtShowFrom.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // ScrollStartPoint
+            // label3
             // 
-            this.ScrollStartPoint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 515);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(37, 13);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Show:";
+            // 
+            // scrollPosition
+            // 
+            this.scrollPosition.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScrollStartPoint.Location = new System.Drawing.Point(0, 529);
-            this.ScrollStartPoint.Maximum = 1000;
-            this.ScrollStartPoint.Name = "ScrollStartPoint";
-            this.ScrollStartPoint.Size = new System.Drawing.Size(790, 20);
-            this.ScrollStartPoint.TabIndex = 3;
-            this.ScrollStartPoint.Scroll += new System.Windows.Forms.ScrollEventHandler(this.ScrollStartPoint_Scroll);
+            this.scrollPosition.Location = new System.Drawing.Point(3, 531);
+            this.scrollPosition.Maximum = 1000;
+            this.scrollPosition.Name = "scrollPosition";
+            this.scrollPosition.Size = new System.Drawing.Size(793, 20);
+            this.scrollPosition.TabIndex = 9;
+            this.scrollPosition.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrollPosition_Scroll);
             // 
             // menuStrip1
             // 
@@ -596,14 +718,14 @@ namespace UniversalPatcher
             // showPointsToolStripMenuItem
             // 
             this.showPointsToolStripMenuItem.Name = "showPointsToolStripMenuItem";
-            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.showPointsToolStripMenuItem.Text = "Show points";
             this.showPointsToolStripMenuItem.Click += new System.EventHandler(this.showPointsToolStripMenuItem_Click);
             // 
             // autoscaleToolStripMenuItem
             // 
             this.autoscaleToolStripMenuItem.Name = "autoscaleToolStripMenuItem";
-            this.autoscaleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.autoscaleToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.autoscaleToolStripMenuItem.Text = "Autoscale";
             this.autoscaleToolStripMenuItem.Click += new System.EventHandler(this.autoscaleToolStripMenuItem_Click);
             // 
@@ -620,7 +742,7 @@ namespace UniversalPatcher
             this.cursorXYToolStripMenuItem,
             this.noCursorToolStripMenuItem});
             this.mouseFunctionToolStripMenuItem.Name = "mouseFunctionToolStripMenuItem";
-            this.mouseFunctionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mouseFunctionToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.mouseFunctionToolStripMenuItem.Text = "Mouse function";
             // 
             // zoomXToolStripMenuItem
@@ -692,7 +814,7 @@ namespace UniversalPatcher
             this.wheelZoomXYToolStripMenuItem1,
             this.noWheelZoomToolStripMenuItem1});
             this.mouseWheelToolStripMenuItem.Name = "mouseWheelToolStripMenuItem";
-            this.mouseWheelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mouseWheelToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.mouseWheelToolStripMenuItem.Text = "Mouse wheel";
             // 
             // wheelZoomXToolStripMenuItem1
@@ -726,9 +848,16 @@ namespace UniversalPatcher
             // resetZoomToolStripMenuItem
             // 
             this.resetZoomToolStripMenuItem.Name = "resetZoomToolStripMenuItem";
-            this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.resetZoomToolStripMenuItem.Text = "Reset zoom";
             this.resetZoomToolStripMenuItem.Click += new System.EventHandler(this.resetZoomToolStripMenuItem_Click);
+            // 
+            // disableResampleToolStripMenuItem
+            // 
+            this.disableResampleToolStripMenuItem.Name = "disableResampleToolStripMenuItem";
+            this.disableResampleToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.disableResampleToolStripMenuItem.Text = "Disable resample";
+            this.disableResampleToolStripMenuItem.Click += new System.EventHandler(this.disableResampleToolStripMenuItem_Click);
             // 
             // timerDisplayData
             // 
@@ -801,24 +930,6 @@ namespace UniversalPatcher
             this.chkGetLiveData.UseVisualStyleBackColor = true;
             this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
             // 
-            // timerPlayback
-            // 
-            this.timerPlayback.Tick += new System.EventHandler(this.timerPlayback_Tick);
-            // 
-            // disableResampleToolStripMenuItem
-            // 
-            this.disableResampleToolStripMenuItem.Name = "disableResampleToolStripMenuItem";
-            this.disableResampleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.disableResampleToolStripMenuItem.Text = "Disable resample";
-            this.disableResampleToolStripMenuItem.Click += new System.EventHandler(this.disableResampleToolStripMenuItem_Click);
-            // 
-            // verticalProgressBar1
-            // 
-            this.verticalProgressBar1.Location = new System.Drawing.Point(290, 25);
-            this.verticalProgressBar1.Name = "verticalProgressBar1";
-            this.verticalProgressBar1.Size = new System.Drawing.Size(100, 23);
-            this.verticalProgressBar1.TabIndex = 8;
-            // 
             // frmLoggerGraphics
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -832,7 +943,7 @@ namespace UniversalPatcher
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "frmLoggerGraphics";
-            this.Text = "frmLoggerGraphics";
+            this.Text = "Logger Graphics";
             this.Load += new System.EventHandler(this.frmLoggerGraphics_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -849,6 +960,10 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSettings)).EndInit();
             this.tabPointValues.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPointValues)).EndInit();
+            this.tabAdvanced.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdv)).EndInit();
+            this.tabZoom.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
             this.groupLiveSeconds.ResumeLayout(false);
             this.groupLiveSeconds.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numShowMax)).EndInit();
@@ -879,7 +994,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.DataGridView dataGridSettings;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.NumericUpDown numShowMax;
-        private System.Windows.Forms.Label labelShowMax;
         private System.Windows.Forms.Timer timerDisplayData;
         private System.Windows.Forms.NumericUpDown numDisplayInterval;
         private System.Windows.Forms.Label label2;
@@ -893,8 +1007,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.RichTextBox txtResult;
         private System.Windows.Forms.Label labelDataValues;
         private System.Windows.Forms.CheckBox chkGetLiveData;
-        private System.Windows.Forms.HScrollBar ScrollPointsPerScreen;
-        private System.Windows.Forms.Label labelZoom;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabSettings;
@@ -914,8 +1026,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem noZoomToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem noCursorToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.HScrollBar ScrollStartPoint;
-        private System.Windows.Forms.Timer timerPlayback;
         private System.Windows.Forms.GroupBox groupPlayback;
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.NumericUpDown numPlaybackSpeed;
@@ -927,8 +1037,18 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem wheelZoomXYToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem noWheelZoomToolStripMenuItem1;
         private System.Windows.Forms.SplitContainer splitContainer3;
-        private VerticalProgressBar verticalProgressBar1;
         private System.Windows.Forms.CheckBox chkSelectAll;
         private System.Windows.Forms.ToolStripMenuItem disableResampleToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkShowLastSeconds;
+        private System.Windows.Forms.TabPage tabAdvanced;
+        private System.Windows.Forms.DataGridView dataGridViewAdv;
+        private System.Windows.Forms.TextBox txtShowTo;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txtShowFrom;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.HScrollBar scrollPosition;
+        private System.Windows.Forms.CheckBox chkPlaying;
+        private System.Windows.Forms.TabPage tabZoom;
+        public System.Windows.Forms.DataVisualization.Charting.Chart chart2;
     }
 }

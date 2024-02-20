@@ -154,7 +154,6 @@ namespace UniversalPatcher
             this.AllowDrop = true;
             this.DragEnter += FrmPatcher_DragEnter;
             this.DragDrop += FrmPatcher_DragDrop;
-
         }
 
 
@@ -4508,6 +4507,12 @@ namespace UniversalPatcher
         {
             frmTunerMain ftm = new frmTunerMain();
             ftm.Show();
+        }
+
+        private void btnHistogram_Click(object sender, EventArgs e)
+        {
+            frmHistogram HstForm = new frmHistogram(false, basefile);
+            HstForm.Show();
         }
     }
 }

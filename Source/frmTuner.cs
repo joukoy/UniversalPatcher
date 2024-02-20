@@ -15,7 +15,6 @@ using static Upatcher;
 using static Helpers;
 using static UniversalPatcher.TreeParts;
 using System.Threading.Tasks;
-//using PcmHacking;
 
 namespace UniversalPatcher
 {
@@ -33,6 +32,21 @@ namespace UniversalPatcher
             AddtoCurrentFileMenu(PCM);
             if (loadTableList)
                 LoadConfigforPCM(ref PCM);
+            SelectPCM();
+        }
+
+        public FrmTuner(PcmFile PCM1, frmHistogram frmH)
+        {
+            hstForm = frmH;
+            InitializeComponent();
+            DrawingControl.SetDoubleBuffered(dataGridView1);
+            contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(Cms_Opening);
+
+            PCM = PCM1;
+            //tableDataList = PCM.tableDatas;
+            if (PCM == null || PCM1.fsize == 0) return; //No file selected
+            AddtoCurrentFileMenu(PCM);
+            LoadConfigforPCM(ref PCM);
             SelectPCM();
         }
 
@@ -111,13 +125,11 @@ namespace UniversalPatcher
         private TreeViewMS treeCategory;
         private TreeViewMS treeSegments;
         private string[] GalleryArray;
-        //string currentTab;
         TabPage currentTab;
         int iconSize;
         public string currentBin = "A";
         bool ExtraOffsetFirstTry = true;
         private frmTableVisDouble ftvd;
-        public frmHistogram Histogram;
         public int CompareSelection = 0;
         public int CompareType = 0;
         public bool ShowAsHex = false;
@@ -126,6 +138,8 @@ namespace UniversalPatcher
         bool Navigating = false;
         ToolTip NaviTip = new ToolTip();
         private string sessionname;
+        private frmHistogram hstForm;
+        public bool histogramTableSelectionEnabled;
         public String SessionName
         {
             get { return sessionname; }
@@ -159,7 +173,7 @@ namespace UniversalPatcher
 
             //LogReceivers.Add(txtResult);
 
-            if (AppSettings.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence && hstForm != null)
             {
                 if (AppSettings.TunerWindowSize.Width > 0 || AppSettings.TunerWindowSize.Height > 0)
                 {
@@ -222,7 +236,7 @@ namespace UniversalPatcher
             bindingsource.DataSource = filteredTableDatas;
             dataGridView1.DataSource = bindingsource;
             dataGridView1.AllowUserToAddRows = false;
-            FilterTables(false);
+            //FilterTables(false);
 
             this.AllowDrop = true;
             this.DragEnter += FrmTuner_DragEnter;
@@ -236,6 +250,12 @@ namespace UniversalPatcher
             revToolStripMenuItem.MouseDown += NaviMenuItem_MouseDown; 
             fwdToolStripMenuItem.MouseDown += NaviMenuItem_MouseDown;
             txtFilter.TextChanged += txFilter_TextChanged;
+            if (hstForm != null)
+            {
+                splitContainerListMode.SplitterDistance = 200;
+                this.splitContainer1.SplitterDistance = (int)(0.7 * splitContainer1.Width);
+                histogramTableSelectionEnabled = true;
+            }
         }
 
         private bool IsSessionModified()
@@ -333,7 +353,7 @@ namespace UniversalPatcher
                     }
                 }
             }
-            if (AppSettings.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence && hstForm != null)
             {
                 AppSettings.TunerWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
@@ -398,8 +418,7 @@ namespace UniversalPatcher
         {
             uPLogger.DisplayText(e.LogText, e.Bold, txtResult);
         }
-
-
+        
         private void SortItem_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem sortItem = (ToolStripMenuItem)sender;
@@ -2162,6 +2181,7 @@ namespace UniversalPatcher
         {
             try
             {
+                Debug.WriteLine("Datagridviev selection changed");
                 TreeViewMS tv = treeView1;
                 if (DisplayMode == DispMode.Tree)
                 {
@@ -2175,15 +2195,12 @@ namespace UniversalPatcher
                         return;
                 }
                 TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
-                if (Histogram != null)
+                ShowTableDescription(PCM, selTd);
+                numExtraOffset.Value = selTd.ExtraOffset;
+                ExtraOffsetFirstTry = true;
+                if (histogramTableSelectionEnabled)
                 {
-                    Histogram.SetupTable(PCM, selTd);
-                }
-                else
-                {
-                    ShowTableDescription(PCM, selTd);
-                    numExtraOffset.Value = selTd.ExtraOffset;
-                    ExtraOffsetFirstTry = true;
+                    hstForm.SetupTable(PCM, selTd);
                 }
             }
             catch (Exception ex)
@@ -4005,8 +4022,15 @@ namespace UniversalPatcher
             if (splitTree != null)
                 splitTree.Visible = false;
             splitContainerListMode.Visible = true;
-            if (AppSettings.TunerListModeTreeWidth > 0)
+            if (hstForm != null || AppSettings.TunerListModeTreeWidth == 0)
+            {
+                splitContainerListMode.SplitterDistance = 200;
+            }
+            else if (AppSettings.TunerListModeTreeWidth > 0)
+            {
                 splitContainerListMode.SplitterDistance = AppSettings.TunerListModeTreeWidth;
+            }
+                
             dataGridView1.Visible = true;
             dataGridView1.DataSource = filteredTableDatas;
             treeView1.Visible = true;
@@ -4348,6 +4372,7 @@ namespace UniversalPatcher
             try
             {
                 //Logger(DateTime.Now.ToString() + " After Select");
+                Debug.WriteLine("Tree_AfterSelect");
                 Tnode tnode1 = (Tnode)e.Node.Tag;
                 if (e.Node.Name == "Patches")
                 {
@@ -4390,9 +4415,9 @@ namespace UniversalPatcher
                         tableTds.Add(((TreeParts.Tnode)tn.Tag).Td);
                 }
                 // showTableDescription(PCM, tableIds[0]);
-                if (Histogram != null)
+                if (histogramTableSelectionEnabled)
                 {
-                    Histogram.SetupTable(PCM, tableTds[0]);
+                    hstForm.SetupTable(PCM, tableTds[0]);
                 }
                 if (tableTds == null || tableTds.Count == 0)
                 {
@@ -5384,7 +5409,7 @@ namespace UniversalPatcher
                 Logger("Select table as template for histogram");
                 return;
             }
-            frmHistogram fh = new frmHistogram();
+            frmHistogram fh = new frmHistogram(false);
             fh.Show();
             fh.SetupTable(PCM, tds[0]);
         }

@@ -690,5 +690,11 @@
 0.22.16
 - Histogram: Fixed a bug that prevented the table from being used as a template
 
+0.22.17
+- Logger Graphics: Don't use chart internal zooming for X-zoom => Allow deeper zooming
+- Logger Graphics: Big rewrite, lot of changes
+- Histogram: Update parameter lists when pids are added/removed to pid profile in Logger
+- Histogram: Fixed bug, Settings -> parameter selection not updated in live logging with Go-button
+- If started without XML folder in place, show warning and exit (Incomplete installation, running directly from ZIP etc.)
 
 

@@ -328,7 +328,7 @@ namespace UniversalPatcher
 
             //Debug.WriteLine("Total Length=" + length + " RX: " + packet.ToHex());
             OBDMessage rMsg = new OBDMessage(packet);
-            rMsg.TimeStamp = (ulong)rx.TimeStamp;
+            rMsg.TimeStamp = rx.TimeStamp;
             return Response.Create(ResponseStatus.Success, rMsg);
 
             //return Response.Create(ResponseStatus.Success, new OBDMessage(packet));
@@ -405,7 +405,7 @@ namespace UniversalPatcher
             //Debug.WriteLine("Sendrequest called");
             Debug.WriteLine("TX: " + message.GetBytes().ToHex());
             SendAVTPacket(message, responses);
-            message.TimeStamp = (ulong)DateTime.Now.Ticks;
+            message.TimeStamp = DateTime.Now.Ticks;
             this.MessageSent(message);
             return true;
         }
