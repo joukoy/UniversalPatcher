@@ -6,8 +6,10 @@ Tuning tool
 - Generate XDF files for Tunerpro
 - Modify calibrations (Tuner)
 - Log data from PCM
-* And using PCM Hammer:
-- Read/write calibrations
+
+ZIP Package includes PCM Hammer for reading and writing calibrations. Please see:
+https://github.com/LegacyNsfw/PcmHacks
+for support and credits.
 
 Configurable for different engine controller binary files
  * Mostly for GM PCM 1997 ->
