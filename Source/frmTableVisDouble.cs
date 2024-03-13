@@ -10,119 +10,105 @@ using System.Windows.Forms;
 using static Upatcher;
 using static Helpers;
 using System.Runtime.InteropServices;
+using static UniversalPatcher.ExtensionMethods;
 
 namespace UniversalPatcher
 {
     public partial class frmTableVisDouble : Form
     {
-        public frmTableVisDouble()
+        public frmTableVisDouble(PcmFile PCM1, PcmFile PCM2, TableData td1, TableData td2)
         {
             InitializeComponent();
-            richTableData1.MouseWheel += RichTableData_MouseWheel;
-            richTableData2.SelectionChanged += RichTableData2_SelectionChanged;
-            richTableData1.SelectionChanged += RichTableData1_SelectionChanged;
-            richTableData1.SelectionChanged += RichTableData1_SelectionChangedMirror;
-            richTableData2.SelectionChanged += RichTableData2_SelectionChangedMirror;
-            if (td2 != null)
-            {
-                richTableData1.VScroll += RichTableData_VScroll;
-                richTableData2.VScroll += RichTableData2_VScroll;
-                richTableData2.EnableContextMenu();
-            }
-            colorStr = new string[colors.Length];
-            int c = 7;
-            for (int i=0;i<colors.Length;i++)
-            {
-                colorStr[i] = "\\cf" + c.ToString() + " ";
-                c++;
-            }
-            richTableData1.EnableContextMenu();
-            //ShowTables(PCM1, td1, PCM2, td2, selectedByte);
+            SetupDatagrids();
+            vis1 = new VisSettings(PCM1, td1, true);
+            vis2 = new VisSettings(PCM2, td2, false);
         }
 
+        public class VisSettings
+        {
+            public VisSettings() { }
+            public VisSettings(PcmFile PCM, TableData td, bool Primary) 
+            {
+                this.Primary = Primary;
+                ChangeTd(PCM, td);
+            }
+            public void ChangeTd(PcmFile PCM, TableData td)
+            {
+                this.PCM = PCM;
+                if (td != null)
+                {
+                    this.td = td.ShallowCopy(false);
+                    this.tdOrg = td;
+                    int seg = PCM.GetSegmentNumber(td.addrInt);
+                    if (seg > -1)
+                    {
+                        segmentNumber = seg;
+                        segmentName = PCM.Segments[seg].Name;
+                        segmentstart = PCM.segmentinfos[seg].GetStartAddr();
+                        segmentend = PCM.segmentinfos[seg].GetEndAddr();
+                    }
+                }
+            }
+            public PcmFile PCM;
+            public TableData td { get; internal set; }
+            public TableData tdOrg;
+            public HexData[] hexDatas;
+            public int ExtraOffset;
+            public List<TableData> SortedTds;
+            public int SelStart = int.MaxValue;
+            public int SelEnd = -1;
+            public int TdRow = -1;
+            public uint segmentstart = 0;
+            public uint segmentend = 0;
+            public int segmentNumber = 0;
+            public string segmentName = "";
+            public List<int> searchedRows = new List<int>();
+            public List<uint> foundLocations = new List<uint>();
+            public List<uint> foundBytes = new List<uint>();
+            public int currentSearched = 0;
+            public List<DGROW> dgrows = new List<DGROW>();
+            public bool Primary { get; internal set; }
+            public void ClearSelection()
+            {
+                SelStart = int.MaxValue;
+                SelEnd = -1;
+            }
+            public void ClearSearch()
+            {
+                currentSearched = 0;
+                searchedRows.Clear();
+                foundLocations.Clear();
+                foundBytes.Clear();
+            }
+        }
 
-        private struct HexData
+        public struct HexData
         {
             public string TableText;
+            public string TableName;
             public string Prefix;
             public string Suffix;
-            public string Color;
+            public Color Color;
             public int TdIndex;
+            public bool SelectedTD;
         }
 
-
-        private PcmFile PCM1;
-        private TableData td1;
-        private TableData td1Org;
-        private PcmFile PCM2;
-        private TableData td2;
-        private TableData td2Org;
-        private uint selectedByte;
-        private HexData[] hexDatas1;
-        private HexData[] hexDatas2;
-        private int pos1;
-        private int pos2;
-        public FrmTuner tuner;
-        private List<TableData> SortedTds1;
-        private List<TableData> SortedTds2;
-        private Dictionary<int, int> SelectionToAddress1;
-        private Dictionary<int, int> SelectionToAddress2;
-        private int StartPoint1;
-        private int EndPoint1;
-        private int StartPoint2;
-        private int EndPoint2;
-        private int offset = 0;
-        private int ScrollPos1 = -1;
-        private int ScrollPos2 = -1;
-
-        [DllImport("user32.dll")]
-        static extern int SetScrollPos(IntPtr hWnd, int nBar, int nPos, bool bRedraw);
-
-        [DllImport("user32.dll")]
-        public static extern int GetScrollPos(IntPtr hwnd, int nBar);
-
-        [DllImport("User32.Dll", EntryPoint = "PostMessageA")]
-        static extern bool PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
-
-        [DllImport("user32.dll")]
-        static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref Point lParam);
-
-        [DllImport("user32")]
-        static extern int GetScrollInfo(IntPtr hwnd, int nBar, ref SCROLLINFO scrollInfo);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-        public struct SCROLLINFO
+        public class DGROW
         {
-            public int cbSize;
-            public int fMask;
-            public int min;
-            public int max;
-            public int nPage;
-            public int nPos;
-            public int nTrackPos;
+            public DGROW() 
+            {
+                Cols = new List<string>();
+                Addresses = new List<uint>();
+            }
+            public List<string> Cols { get; set; }
+            public List<uint> Addresses { get; set; }
+            public string HeaderTxt { get; set; }
         }
-
-        const int WM_USER = 0x400;
-        const int EM_GETSCROLLPOS = WM_USER + 221;
-        const int EM_SETSCROLLPOS = WM_USER + 222;
-        const int EM_SCROLL = 0xB5;
-        const int SB_LINEDOWN = 1;
-        const int SB_LINEUP = 0;
-        private uint WM_VSCROLL = 0x115;
-        private const uint SB_PAGEUP = 2;
-        private const uint SB_PAGEDOWN = 3;
-        private const uint SB_TOP = 6;
-        private const uint SB_BOTTOM = 7;
-
-        private const string Red = "\\cf1 ";
-        private const string Blue = "\\cf2 ";
-        private const string Green = "\\cf3 ";
-        private const string Black = "\\cf4 ";
-        private const string Purple = "\\cf5 ";
-        private const string LightGray = "\\cf6 ";
-
+        private uint selectedByte;
+        public FrmTuner tuner;
+        private int offset = 0;
+        public VisSettings vis1;
+        public VisSettings vis2;
 
         private Color[] colors =
         {
@@ -175,295 +161,90 @@ namespace UniversalPatcher
                         //Color.FromArgb(255, 64, 0, 64),
                     };
 
-        private string[] colorStr;
-
-        private void RichTableData_MouseWheel(object sender, MouseEventArgs e)
+        private void frmTableVis_Load(object sender, EventArgs e)
         {
-            if (radioSegmentTBNames.Checked)
+            DrawingControl.SetDoubleBuffered(dataGridView1);
+            DrawingControl.SetDoubleBuffered(dataGridView2);
+            dataGridView1.Scroll += DataGridView1_Scroll;
+            dataGridView2.Scroll += DataGridView2_Scroll;
+            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
+            dataGridView2.SelectionChanged += DataGridView2_SelectionChanged;
+            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
+            dataGridView2.ColumnHeaderMouseClick += DataGridView2_ColumnHeaderMouseClick;
+            dataGridView1.CellPainting += DataGridView1_CellPainting;
+            dataGridView2.CellPainting += DataGridView2_CellPainting;
+            dataGridView1.CellValueNeeded += DataGridView1_CellValueNeeded;
+            dataGridView2.CellValueNeeded += DataGridView2_CellValueNeeded;
+            this.KeyPreview = true;
+            this.KeyDown += FrmTableVisDouble_KeyDown;
+            radioShowSegment.Text = "Segment [" + vis1.segmentName + "]";
+            labelFileName1.Text = vis1.PCM.FileName;
+            if (vis2.td != null)
             {
-                return;
-            }
-            if (e.Delta < 0)
-            {
-                SendMessage(richTableData2.Handle, WM_VSCROLL, (IntPtr)SB_LINEDOWN, IntPtr.Zero);
+                labelFileName2.Text = vis2.PCM.FileName;
             }
             else
             {
-                SendMessage(richTableData2.Handle, WM_VSCROLL, (IntPtr)SB_LINEUP, IntPtr.Zero);
+                chkSyncScroll.Checked = false;
+                chkSyncScroll.Enabled = false;
             }
         }
 
-        private void VScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        private void FrmTableVisDouble_KeyDown(object sender, KeyEventArgs e)
         {
-            Point pt = new Point();
-            pt.Y = e.NewValue;
-            SendMessage(richTableData1.Handle, EM_SETSCROLLPOS, 0, ref pt);
-            SendMessage(richTableData2.Handle, EM_SETSCROLLPOS, 0, ref pt);
-        }
-
-        public void ShowTables(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
-        {
-            this.Text = "Table data visualizer [" + td1.TableName + "]";
-            this.PCM1 = PCM1;
-            this.td1 = td1.ShallowCopy(false);
-            this.td1Org = td1;
-            this.PCM2 = PCM2;
-            this.td2Org = td2;
-            numExtraOffset1.Value = td1.ExtraOffset;
-            this.selectedByte = SelectedByte;
-            SortedTds1  = PCM1.tableDatas.OrderBy(x => x.StartAddress()).ToList();
-
-            CreateHexData(PCM1, ref hexDatas1, this.td1, SortedTds1);
-            if (td2 != null)
+            Debug.WriteLine("Keycode: " + e.KeyCode.ToString());
+            DataGridView dgv;
+            NumericUpDown numUD;
+            if (dataGridView1.Focused)
             {
-                SortedTds2 = PCM2.tableDatas.OrderBy(x => x.StartAddress()).ToList();
-                this.td2 = td2.ShallowCopy(false);
-                numExtraOffset2.Value = td2.ExtraOffset;
-                CreateHexData(PCM2, ref hexDatas2, td2, SortedTds2);
-                numExtraOffset2.ValueChanged += numExtraOffset2_ValueChanged;
+                dgv = dataGridView1;
+                numUD = numExtraOffset1;
             }
-            numExtraOffset1.ValueChanged += numExtraOffset1_ValueChanged;
-            UpdateDisplay();
-        }
-
-        private List<TableData> GetSelectedTables(bool Secondary)
-        {
-            int Start = -1;
-            int End = -1;
-            RichTextBox richBox = richTableData1;
-            Dictionary<int, int> SelectionToAddr = SelectionToAddress1;
-            TextBox txtInfo = txtInfo1;
-            List<TableData> SortedTds = SortedTds1;
-            List<TableData> selTables = new List<TableData>();
-            if (Secondary)
+            else
             {
-                richBox = richTableData2;
-                SelectionToAddr = SelectionToAddress2;
-                txtInfo = txtInfo2;
-                SortedTds = SortedTds2;
+                dgv = dataGridView2;
+                numUD = numExtraOffset2;
             }
 
-            for (int s = richBox.SelectionStart; s < (richBox.SelectionStart + richBox.SelectionLength); s++)
+            if (e.KeyCode == Keys.Add)
             {
-                if (SelectionToAddr.ContainsKey(s))
+                if (dgv.SelectedCells.Count > 0)
                 {
-                    Start = SelectionToAddr[s];
-                    break;
+                    numUD.Value += dgv.SelectedCells.Count;
+                    e.Handled = true;
                 }
             }
-            for (int s = richBox.SelectionStart + richBox.SelectionLength; s >= richBox.SelectionStart; s--)
+            if (e.KeyCode == Keys.Subtract)
             {
-                if (SelectionToAddr.ContainsKey(s))
+                if (dgv.SelectedCells.Count > 0 && numUD.Value >= dgv.SelectedCells.Count)
                 {
-                    End = SelectionToAddr[s];
-                    break;
+                    numUD.Value -= dgv.SelectedCells.Count;
+                    e.Handled = true;
                 }
             }
-
-            if (Start < 0 || End < 0)
-            {
-                txtInfo.Text = "";
-                return selTables;
-            }
-            txtInfo.Text = "Selection range: " + Start.ToString("X") + " - " + End.ToString("X") + Environment.NewLine;
-            txtInfo.AppendText("Tables: ");
-
-            int TStart = 0;
-            int TEnd = 0;
-            for (int t = 0; t < SortedTds.Count; t++)
-            {
-                if (SortedTds[t].StartAddress() >= Start)
-                {
-                    TStart = t;
-                    break;
-                }
-            }
-            for (int t = TStart; t < SortedTds.Count; t++)
-            {
-                if (SortedTds[t].EndAddress() > End)
-                {
-                    break;
-                }
-                else
-                {
-                    TEnd = t;
-                }
-            }
-            txtInfo.AppendText(Environment.NewLine);
-            for (int t = TStart; t <= TEnd; t++)
-            {
-                txtInfo.AppendText(SortedTds[t].TableName + " [" + SortedTds[t].StartAddress().ToString("X") + "] ("
-                    + SortedTds[t].addrInt.ToString("X") + " + " + SortedTds[t].Offset.ToString()
-                    + " + " + SortedTds[t].ExtraOffset.ToString() + ")" + Environment.NewLine);
-                selTables.Add(SortedTds[t]);
-            }
-            return selTables;
         }
-
-        private void RichTableData2_SelectionChangedMirror(object sender, EventArgs e)
-        {
-            if (!radioSegmentTBNames.Checked)
-            {
-                richTableData1.SelectionChanged -= RichTableData1_SelectionChangedMirror;
-                richTableData1.Select(richTableData2.SelectionStart, richTableData2.SelectionLength);
-                richTableData1.SelectionChanged += RichTableData1_SelectionChangedMirror;
-            }
-        }
-
-        private void RichTableData1_SelectionChangedMirror(object sender, EventArgs e)
-        {
-            if (td2 != null && !radioSegmentTBNames.Checked)
-            {
-                richTableData2.SelectionChanged -= RichTableData2_SelectionChangedMirror;
-                richTableData2.Select(richTableData1.SelectionStart, richTableData1.SelectionLength);
-                richTableData2.SelectionChanged += RichTableData2_SelectionChangedMirror;
-            }
-        }
-
-        private void RichTableData2_SelectionChanged(object sender, EventArgs e)
-        {
-            if (SelectionToAddress2 == null)
-                return;
-
-            if (richTableData2.SelectionStart == 0 && richTableData2.SelectionLength == richTableData2.TextLength)
-                return;
-            if (richTableData1.SelectionStart == 0 && richTableData1.SelectionLength == richTableData1.TextLength)
-                return;
-
-            GetSelectedTables(true);
-        }
-
-        private void RichTableData1_SelectionChanged(object sender, EventArgs e)
-        {
-
-            if (SelectionToAddress1 == null)
-                return;
-
-            if (richTableData1.SelectionStart == 0 && richTableData1.SelectionLength == richTableData1.TextLength)
-                return;
-            if (richTableData2.SelectionStart == 0 && richTableData2.SelectionLength == richTableData2.TextLength)
-                return;
-            GetSelectedTables(false);
-        }
-
-        public void ScrollTo(IntPtr hWnd, int Position)
-        {
-            SetScrollPos(hWnd, 0x1, Position, true);
-            PostMessage(hWnd, 0x115, 4 + 0x10000 * Position, 0);
-        }
-
-        public int GetRtbPos(RichTextBox rtb)
-        {
-            SCROLLINFO scrollInfo = new SCROLLINFO();
-            scrollInfo.cbSize = Marshal.SizeOf(scrollInfo);
-            //SIF_RANGE = 0x1, SIF_TRACKPOS = 0x10,  SIF_PAGE= 0x2
-            scrollInfo.fMask = 0x10 | 0x1 | 0x2;
-            GetScrollInfo(rtb.Handle, 1, ref scrollInfo);//nBar = 1 -> VScrollbar
-            return scrollInfo.nTrackPos + scrollInfo.nPage;
-        }
-
-        private void CreateHexData(PcmFile pcm, ref HexData[] hexDatas, TableData tData, List<TableData> TableDatas)
+        private void DataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             try
             {
-                hexDatas = new HexData[pcm.fsize];
-
-
-                int c = 0;
-                int segNr = pcm.GetSegmentNumber(tData.addrInt);
-
-                for (int t = 0; t < TableDatas.Count; t++)
+                int r = e.RowIndex;
+                int c = e.ColumnIndex;
+                if (vis1.dgrows.Count > r)
                 {
-                    TableData tmpTd = TableDatas[t];
-                    if (tmpTd.guid == tData.guid)
+                    DGROW dgrow = vis1.dgrows[r];
+                    if (c < dgrow.Cols.Count)
                     {
-                        tmpTd.ExtraOffset = tData.ExtraOffset;
-                    }
-                    if (segNr == pcm.GetSegmentNumber(tmpTd.addrInt))
-                    {
-                        int hexAddr = (int)tmpTd.StartAddress();
-                        if (hexAddr > (hexDatas.Length - 1) || hexAddr < 0)
+                        uint addr = dgrow.Addresses[c];
                         {
-                            Debug.WriteLine("Bad table address: " + hexAddr.ToString("X"));
-                            continue;
-                        }
-/*                        if (tmpTd.Offset < 0)
-                            hexAddr += tmpTd.Offset;
-                        if (tmpTd.ExtraOffset < 0)
-                            hexAddr += tmpTd.ExtraOffset;
-*/                        //hexDatas[hexAddr].Prefix = "[";
-                        hexDatas[hexAddr].TableText = tmpTd.TableName + ": " + tmpTd.Address;
-                        if (tmpTd.Offset >= 0)
-                        {
-                            hexDatas[hexAddr].TableText += "+" + tmpTd.Offset.ToString();
-                        }
-                        else
-                        {
-                            hexDatas[hexAddr].TableText += "-" + (-1 * tmpTd.Offset).ToString();
-                        }
-                        if (tmpTd.ExtraOffset >= 0)
-                        {
-                            hexDatas[hexAddr].TableText += "+" + tmpTd.ExtraOffset.ToString() ;
-                        }
-                        else
-                        {
-                            hexDatas[hexAddr].TableText += "-" + (-1 * tmpTd.ExtraOffset).ToString();
-                        }
-                        hexDatas[hexAddr].TableText += " - " + tmpTd.EndAddress().ToString("X8");
-                        //hexDatas[hexAddr].TableText = hexDatas[hexAddr].TableText.PadRight((int)(numBytesPerRow.Value*4));
+                            if (c == 0)
+                            {
+                                dataGridView1.Rows[r].HeaderCell.Value = dgrow.HeaderTxt;
+                            }
+                            e.Value = vis1.hexDatas[addr].Prefix + vis1.PCM.buf[addr].ToString("X2") + vis1.hexDatas[addr].Suffix;
+                            dataGridView1.Rows[r].Cells[c].Style.ForeColor = vis1.hexDatas[addr].Color;
+                            dataGridView1.Rows[r].Cells[c].ToolTipText = vis1.hexDatas[addr].TableName;
 
-                        hexAddr = (int)(tmpTd.StartAddress());
-                        if (hexAddr > -1 && hexAddr < hexDatas.Length)
-                            hexDatas[hexAddr].Prefix = "(";
-                        hexAddr = (int)(tmpTd.EndAddress());
-                        if (hexAddr > -1 && hexAddr < hexDatas.Length)
-                            hexDatas[hexAddr].Suffix = ")";
-                        for (int a = (int)tmpTd.StartAddress(); a <= tmpTd.EndAddress() && a<hexDatas.Length; a++)
-                        {
-                            hexDatas[a].Color = colorStr[c];
-                            hexDatas[a].TdIndex = t;
                         }
-                        c++;
-                        if (c >= (colors.Length - 1))
-                            c = 0;
-                    }
-                }
-                hexDatas[(int)tData.StartAddress()].Prefix = "[";
-                hexDatas[(int)tData.EndAddress()].Suffix = "]";
-                int start = (int)tData.addrInt;
-                if (tData.Offset < 0)
-                    start += tData.Offset;
-                if (tData.ExtraOffset < 0)
-                    start += tData.ExtraOffset;
-                for (int addr = start; addr <= tData.EndAddress(); addr++)
-                {                    
-                    int OffsetEnd = (int)(tData.addrInt + tData.Offset);
-                    int ExtraOffsetEnd = (int)(tData.addrInt + tData.Offset + tData.ExtraOffset);
-
-                    if (addr >= tData.StartAddress() && addr <= tData.EndAddress())
-                    {
-                        hexDatas[addr].Color = Black;
-                    }
-                    else if (tData.Offset > 0 && addr >= tData.addrInt && addr < OffsetEnd)
-                    {
-                        hexDatas[addr].Color = Purple;
-                    }
-                    else if (tData.Offset < 0 && addr <= tData.addrInt && addr >= OffsetEnd)
-                    {
-                        hexDatas[addr].Color = Purple;
-                    }
-                    else if (tData.ExtraOffset > 0 && addr >= OffsetEnd && addr < ExtraOffsetEnd)
-                    {
-                        hexDatas[addr].Color = Green;
-                    }
-                    else if (tData.ExtraOffset < 0 && addr <= OffsetEnd && addr >= ExtraOffsetEnd)
-                    {
-                        hexDatas[addr].Color = Green;
-                    }
-
-                    if (addr == selectedByte)
-                    {
-                        hexDatas[addr].Color = Red;
                     }
                 }
             }
@@ -474,159 +255,690 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, CreateHexData, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
             }
-        }
 
-        private void RichTableData_VScroll(object sender, EventArgs e)
+        }
+        private void DataGridView2_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             try
             {
-                
-                //richTableData2.VScroll -= RichTableData2_VScroll;
-/*                Point pt = new Point();
-                SendMessage(richTableData.Handle, EM_GETSCROLLPOS, 0, ref pt);
-                SendMessage(richTableData2.Handle, EM_SETSCROLLPOS, 0, ref pt);
-                ScrollTo(richTableData2.Handle, pt.Y);
-*/            
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
-
-        private void RichTableData2_VScroll(object sender, EventArgs e)
-        {
-            try
-            {
-                if (radioSegmentTBNames.Checked)
-                {
-                    return;
+                int r = e.RowIndex;
+                int c = e.ColumnIndex;
+                if (vis2.dgrows.Count > r)
+                { 
+                    DGROW dgrow = vis2.dgrows[r];
+                    if (c < dgrow.Addresses.Count)
+                    {
+                        uint addr = dgrow.Addresses[c];
+                        if (c == 0)
+                        {
+                            dataGridView2.Rows[r].HeaderCell.Value = dgrow.HeaderTxt;
+                        }
+                        e.Value = vis2.hexDatas[addr].Prefix + vis2.PCM.buf[addr].ToString("X2") + vis2.hexDatas[addr].Suffix;
+                        dataGridView2.Rows[r].Cells[c].ToolTipText = vis2.hexDatas[addr].TableName;
+                    }
                 }
-                Point pt = new Point();
-                SendMessage(richTableData2.Handle, EM_GETSCROLLPOS, 0, ref pt);
-                //Debug.WriteLine("Rich2 pos: " + pt.Y.ToString());
-                SendMessage(richTableData1.Handle, EM_SETSCROLLPOS, 0, ref pt);
-                ScrollTo(richTableData1.Handle, pt.Y);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
+            }
+        }
+        private void DataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            int r = e.RowIndex;
+            int c = e.ColumnIndex;
+            if (r>=0 && c>= 0)
+            {
+                e.CellStyle.BackColor = Color.White;
+                if  (c<vis1.dgrows[r].Cols.Count)
+                {
+                    DGROW dgrow = vis1.dgrows[r];
+                    uint addr = dgrow.Addresses[c];
+                    dataGridView1.Rows[r].Cells[c].Style.ForeColor = vis1.hexDatas[addr].Color;
+                    if (vis1.foundBytes.Contains(addr))
+                    {
+                        e.CellStyle.BackColor = Color.Yellow;
+                    }
+                    if (vis1.hexDatas[addr].SelectedTD)
+                    {
+                        e.CellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                        dataGridView1.Rows[r].HeaderCell.Style.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                    }
+                    if (c == 0 && radioSegmentTBNames.Checked)
+                    {
+                        dataGridView1.Rows[r].HeaderCell.Style.ForeColor = vis1.hexDatas[addr].Color;
+                    }
+                }
+
+            }
+        }
+        private void DataGridView2_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            int r = e.RowIndex;
+            int c = e.ColumnIndex;
+            if (r >= 0 && c >= 0)
+            {
+                e.CellStyle.BackColor = Color.White;
+                if (c < vis2.dgrows[r].Cols.Count)
+                {
+                    DGROW dgrow = vis2.dgrows[r];
+                    uint addr = dgrow.Addresses[c];
+                    dataGridView2.Rows[r].Cells[c].Style.ForeColor = vis2.hexDatas[addr].Color;
+                    if (vis2.foundBytes.Contains(addr))
+                    {
+                        e.CellStyle.BackColor = Color.Yellow;
+                    }
+                    if (vis2.hexDatas[addr].SelectedTD)
+                    {
+                        e.CellStyle.Font = new Font(dataGridView2.Font, FontStyle.Bold);
+                        dataGridView2.Rows[r].HeaderCell.Style.Font = new Font(dataGridView2.Font, FontStyle.Bold);
+                    }
+                    if (c == 0 && radioSegmentTBNames.Checked)
+                    {
+                        dataGridView2.Rows[r].HeaderCell.Style.ForeColor = vis2.hexDatas[addr].Color;
+                    }
+
+                }
+
             }
         }
 
-
-        private void frmTableVis_Load(object sender, EventArgs e)
+        private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+        }
+        private void DataGridView2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+        }
+        private void SetupDatagrids()
+        {
+            try
+            {
+                dataGridView1.Columns.Clear();
+                dataGridView2.Columns.Clear();
+                for (int c = 0; c < numBytesPerRow.Value; c++)
+                {
+                    dataGridView1.Columns.Add(c.ToString("X"), c.ToString("X"));
+                    dataGridView2.Columns.Add(c.ToString("X"), c.ToString("X"));
+                    dataGridView1.Columns[c.ToString("X")].Width = 35;
+                    dataGridView2.Columns[c.ToString("X")].Width = 35;
+                }
+                dataGridView1.GridColor = Color.White;
+                dataGridView2.GridColor = Color.White;
+                dataGridView1.VirtualMode = true;
+                dataGridView2.VirtualMode = true;
+                dataGridView1.RowHeadersWidth = 80;
+                dataGridView2.RowHeadersWidth = 80;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
+            }
+        }
+        private void ModifySelection(DataGridView dgv)
+        {
+            int r1 = dgv.CurrentCell.RowIndex;
+            int r2 = dgv.SelectedCells[dgv.SelectedCells.Count - 1].RowIndex;
+            int c1 = dgv.CurrentCell.ColumnIndex;
+            int c2 = dgv.SelectedCells[dgv.SelectedCells.Count - 1].ColumnIndex;
+            if (r2 != r1)
+            {
+                Debug.WriteLine("Selection row1: " + r1 + ", Selection row2: " + r2);
+                dgv.ClearSelection();
+                if (r1 > r2)
+                {
+                    int tmp = r1;
+                    r1 = r2;
+                    r2 = tmp;
+                    tmp = c1;
+                    c1 = c2;
+                    c2 = tmp;
+                }
+                for (int c = c1; c < dgv.ColumnCount; c++)
+                {
+                    dgv.Rows[r1].Cells[c].Selected = true;
+                }
+                for (int r = r1 + 1; r < r2; r++)
+                {
+                    for (int c = 0; c < dgv.ColumnCount; c++)
+                    {
+                        dgv.Rows[r].Cells[c].Selected = true;
+                    }
+                }
+                for (int c = 0; c < c2; c++)
+                {
+                    dgv.Rows[r2].Cells[c].Selected = true;
+                }
+
+            }
+
+        }
+        private void SyncSelection1(bool MouseSelection)
+        {
+            try
+            {
+                dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
+                dataGridView2.SelectionChanged -= DataGridView2_SelectionChanged;
+                dataGridView2.ClearSelection();
+                if (dataGridView1.SelectedCells.Count == 0)
+                {
+                    vis1.ClearSelection();
+                    vis2.ClearSelection();
+                }
+                else
+                {
+                    if (MouseSelection)
+                    {
+                        ModifySelection(dataGridView1);
+                    }
+                    List<uint> selectedAddresses = new List<uint>();
+                    for (int x = 0; x < dataGridView1.SelectedCells.Count; x++)
+                    {
+                        DGROW dgrow = vis1.dgrows[dataGridView1.SelectedCells[x].RowIndex];
+                        if (dataGridView1.SelectedCells[x].ColumnIndex < dgrow.Addresses.Count)
+                        {
+                            selectedAddresses.Add((uint)(dgrow.Addresses[dataGridView1.SelectedCells[x].ColumnIndex] + numExtraOffset2.Value - numExtraOffset1.Value));
+                            if (dataGridView1.SelectedCells[x].RowIndex < vis1.SelStart)
+                                vis1.SelStart = dataGridView1.SelectedCells[x].RowIndex;
+                            if (dataGridView1.SelectedCells[x].RowIndex > vis1.SelEnd)
+                                vis1.SelEnd = dataGridView1.SelectedCells[x].RowIndex;
+                        }
+                    }
+                    selectedAddresses.Sort();
+                    int scrollRow = -2;
+                    uint scrollAddr = vis1.dgrows[dataGridView1.FirstDisplayedScrollingRowIndex].Addresses[0];
+                    for (int r = 0; r < vis2.dgrows.Count; r++)
+                    {
+                        DGROW dgrow = vis2.dgrows[r];
+                        for (int c = 0; c < dgrow.Addresses.Count; c++)
+                        {
+                            uint addr = dgrow.Addresses[c];
+                            if (selectedAddresses.Contains(addr))
+                            {
+                                dataGridView2.Rows[r].Cells[c].Selected = true;
+                                if (r < vis2.SelStart)
+                                    vis2.SelStart = r;
+                                if (r > vis2.SelEnd)
+                                    vis2.SelEnd = r;
+                            }
+                            if (addr == (uint)(scrollAddr + (numExtraOffset2.Value - numExtraOffset1.Value)))
+                            {
+                                scrollRow = r;
+                            }
+                        }
+                    }
+                    if (scrollRow >= 0)
+                    {
+                        dataGridView2.Scroll -= DataGridView2_Scroll;
+                        dataGridView2.FirstDisplayedScrollingRowIndex = scrollRow;
+                    }
+                }
+                GetSelectedTables(false);
+                GetSelectedTables(true);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
+            }
+            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
+            dataGridView2.SelectionChanged += DataGridView2_SelectionChanged;
+            dataGridView2.Scroll += DataGridView2_Scroll;
+
+        }
+        private void SyncSelection2(bool MouseSelection)
+        {
+            try
+            {
+                dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
+                dataGridView2.SelectionChanged -= DataGridView2_SelectionChanged;
+                dataGridView1.ClearSelection();
+                if (dataGridView2.SelectedCells.Count == 0)
+                {
+                    vis1.ClearSelection();
+                    vis2.ClearSelection();
+                }
+                else
+                {
+                    if (MouseSelection)
+                    {
+                        ModifySelection(dataGridView2);
+                    }
+                    List<uint> selectedAddresses = new List<uint>();
+                    for (int x = 0; x < dataGridView2.SelectedCells.Count; x++)
+                    {
+                        DGROW dgrow = vis2.dgrows[dataGridView2.SelectedCells[x].RowIndex];
+                        if (dataGridView2.SelectedCells[x].ColumnIndex < dgrow.Addresses.Count)
+                        {
+                            selectedAddresses.Add((uint)(dgrow.Addresses[dataGridView2.SelectedCells[x].ColumnIndex] + numExtraOffset1.Value - numExtraOffset2.Value));
+                            if (dataGridView2.SelectedCells[x].RowIndex < vis2.SelStart)
+                                vis2.SelStart = dataGridView2.SelectedCells[x].RowIndex;
+                            if (dataGridView2.SelectedCells[x].RowIndex > vis2.SelEnd)
+                                vis2.SelEnd = dataGridView2.SelectedCells[x].RowIndex;
+                        }
+                    }
+                    int scrollRow = -2;
+                    uint scrollAddr = vis2.dgrows[dataGridView2.FirstDisplayedScrollingRowIndex].Addresses[0];
+                    for (int r = 0; r < vis1.dgrows.Count; r++)
+                    {
+                        DGROW dgrow = vis1.dgrows[r];
+                        for (int c = 0; c < dgrow.Addresses.Count; c++)
+                        {
+                            uint addr = dgrow.Addresses[c];
+                            if (selectedAddresses.Contains(addr))
+                            {
+                                dataGridView1.Rows[r].Cells[c].Selected = true;
+                                if (r < vis1.SelStart)
+                                    vis1.SelStart = r;
+                                if (r > vis1.SelEnd)
+                                    vis1.SelEnd = r;
+                            }
+                            if (addr == (uint)(scrollAddr + (numExtraOffset1.Value - numExtraOffset2.Value)))
+                            {
+                                scrollRow = r;
+                            }
+
+                        }
+                    }
+                    if (scrollRow >= 0)
+                    {
+                        dataGridView1.Scroll -= DataGridView1_Scroll;
+                        dataGridView1.FirstDisplayedScrollingRowIndex = scrollRow;
+                    }
+
+                }
+                GetSelectedTables(false);
+                GetSelectedTables(true);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
+            }
+            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
+            dataGridView2.SelectionChanged += DataGridView2_SelectionChanged;
+            dataGridView1.Scroll += DataGridView1_Scroll;
+
+        }
+        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            SyncSelection1(true);
+        }
+        private void DataGridView2_SelectionChanged(object sender, EventArgs e)
+        {
+            SyncSelection2(true);
+        }
+
+        private void SyncScroll1()
+        {
+            dataGridView2.Scroll -= DataGridView2_Scroll;
+            try
+            {
+                if (chkSyncScroll.Checked)
+                {
+                    int scrollRow = -2;
+                    uint scrollAddr = vis1.dgrows[dataGridView1.FirstDisplayedScrollingRowIndex].Addresses[0];
+                    for (int r = 0; r < vis2.dgrows.Count; r++)
+                    {
+                        DGROW dgrow = vis2.dgrows[r];
+                        for (int c = 0; c < dgrow.Addresses.Count; c++)
+                        {
+                            uint addr = dgrow.Addresses[c];
+                            if (addr == (uint)(scrollAddr + (numExtraOffset2.Value - numExtraOffset1.Value)))
+                            {
+                                scrollRow = r;
+                                break;
+                            }
+                        }
+                    }
+                    if (scrollRow >= 0)
+                    {
+                        dataGridView2.FirstDisplayedScrollingRowIndex = scrollRow;
+                    }
+                }
+            }
+            catch { }
+            dataGridView2.Scroll += DataGridView2_Scroll;
+        }
+        private void SyncScroll2()
+        {
+            dataGridView1.Scroll -= DataGridView1_Scroll;
+            try
+            {
+                if (chkSyncScroll.Checked)
+                {
+                    int scrollRow = -2;
+                    uint scrollAddr = vis2.dgrows[dataGridView2.FirstDisplayedScrollingRowIndex].Addresses[0];
+                    for (int r = 0; r < vis1.dgrows.Count; r++)
+                    {
+                        DGROW dgrow = vis1.dgrows[r];
+                        for (int c = 0; c < dgrow.Addresses.Count; c++)
+                        {
+                            uint addr = dgrow.Addresses[c];
+                            if (addr == (uint)(scrollAddr + (numExtraOffset1.Value - numExtraOffset2.Value)))
+                            {
+                                scrollRow = r;
+                                break;
+                            }
+
+                        }
+                    }
+                    if (scrollRow >= 0)
+                    {
+                        dataGridView1.FirstDisplayedScrollingRowIndex = scrollRow;
+                    }
+                }
+            }
+            catch { }
+            dataGridView1.Scroll += DataGridView1_Scroll;
+
+        }
+        private void DataGridView1_Scroll(object sender, ScrollEventArgs e)
+        {
+            SyncScroll1();
+        }
+
+        private void DataGridView2_Scroll(object sender, ScrollEventArgs e)
+        {
+            SyncScroll2();
+        }
+
+        public void ShowTables(uint SelectedByte)
+        {
+            this.Text = "Table data visualizer [" + vis1.td.TableName + "]";
+            numExtraOffset1.Value = vis1.td.ExtraOffset;
+            this.selectedByte = SelectedByte;
+            vis1.SortedTds  = vis1.PCM.tableDatas.OrderBy(x => x.StartAddress()).ToList();
+            CreateHexData(ref vis1);
+            if (vis2.td != null)
+            {
+                vis2.SortedTds = vis2.PCM.tableDatas.OrderBy(x => x.StartAddress()).ToList();
+                numExtraOffset2.Value = vis2.td.ExtraOffset;
+                if (chkCopyColors1.Checked)
+                {
+                    CopyColors1();
+                }
+                else
+                {
+                    CreateHexData(ref vis2);
+                }
+                numExtraOffset2.ValueChanged += numExtraOffset2_ValueChanged;
+            }
+            numExtraOffset1.ValueChanged += numExtraOffset1_ValueChanged;
+            UpdateDisplay(true);
+        }
+
+        private List<TableData> GetSelectedTables(bool Secondary)
+        {
+            List<TableData> selTables = new List<TableData>();
+            try
+            {
+                int Start = -1;
+                int End = -1;
+                DataGridView dgv = dataGridView1;
+                TextBox txtInfo = txtInfo1;
+                VisSettings vis = vis1;
+                if (Secondary)
+                {
+                    vis = vis2;
+                    dgv = dataGridView2;
+                    txtInfo = txtInfo2;
+                }
+
+                if (dgv.SelectedCells.Count > 0)
+                {
+                    Start = (int)vis.dgrows[dgv.SelectedCells[0].RowIndex].Addresses[dgv.SelectedCells[0].ColumnIndex];
+                    End = (int)vis.dgrows[dgv.SelectedCells[dgv.SelectedCells.Count - 1].RowIndex].Addresses[dgv.SelectedCells[dgv.SelectedCells.Count - 1].ColumnIndex];
+                }
+                if (End < Start)
+                {
+                    int tmp = Start;
+                    Start = End;
+                    End = tmp;
+                }
+
+
+                if (Start < 0 || End < 0)
+                {
+                    txtInfo.Text = "";
+                    return selTables;
+                }
+                txtInfo.Text = "Selection range: " + Start.ToString("X") + " - " + End.ToString("X") + Environment.NewLine;
+                txtInfo.AppendText("Tables: ");
+
+                int TStart = 0;
+                int TEnd = 0;
+                for (int t = 0; t < vis.SortedTds.Count; t++)
+                {
+                    if (vis.SortedTds[t].StartAddress() + vis.ExtraOffset >= Start)
+                    {
+                        TStart = t;
+                        break;
+                    }
+                }
+                for (int t = TStart; t < vis.SortedTds.Count; t++)
+                {
+                    if (vis.SortedTds[t].EndAddress() + vis.ExtraOffset > End)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        TEnd = t;
+                    }
+                }
+                txtInfo.AppendText(Environment.NewLine);
+                for (int t = TStart; t <= TEnd; t++)
+                {
+                    txtInfo.AppendText(vis.SortedTds[t].TableName + " [" + vis.SortedTds[t].StartAddress().ToString("X") + "] ("
+                        + vis.SortedTds[t].addrInt.ToString("X") + " + " + vis.SortedTds[t].Offset.ToString()
+                        + " + " + vis.SortedTds[t].ExtraOffset.ToString() + ")" + Environment.NewLine);
+                    selTables.Add(vis.SortedTds[t]);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
+            }
+
+            return selTables;
+        }
+
+        private void CreateHexData(ref VisSettings vis)
+        {
+            try
+            {
+                vis.hexDatas = new HexData[vis.PCM.fsize];
+                int c = 0;
+                
+                for (int t = 0; t < vis.SortedTds.Count; t++)
+                {
+                    TableData tmpTd = vis.SortedTds[t];
+                    if (tmpTd.guid == vis.td.guid)
+                    {
+                        //tmpTd.ExtraOffset = vis.td.ExtraOffset;
+                    }
+                    if (vis.segmentNumber == vis.PCM.GetSegmentNumber(tmpTd.addrInt))
+                    {
+                        int hexAddr = (int)tmpTd.StartAddress() + vis.ExtraOffset;
+                        if (hexAddr > (vis.hexDatas.Length - 1) || hexAddr < 0)
+                        {
+                            Debug.WriteLine("Bad table address: " + hexAddr.ToString("X"));
+                            continue;
+                        }
+                        vis.hexDatas[hexAddr].TableText = tmpTd.TableName + ": " + tmpTd.Address;
+                        if (tmpTd.Offset >= 0)
+                        {
+                            vis.hexDatas[hexAddr].TableText += "+" + tmpTd.Offset.ToString();
+                        }
+                        else
+                        {
+                            vis.hexDatas[hexAddr].TableText += "-" + (-1 * tmpTd.Offset).ToString();
+                        }
+                        if (tmpTd.ExtraOffset >= 0)
+                        {
+                            vis.hexDatas[hexAddr].TableText += "+" + tmpTd.ExtraOffset.ToString() ;
+                        }
+                        else
+                        {
+                            vis.hexDatas[hexAddr].TableText += "-" + (-1 * tmpTd.ExtraOffset).ToString();
+                        }
+                        vis.hexDatas[hexAddr].TableText += " - " + tmpTd.EndAddress().ToString("X8");
+                        //hexDatas[hexAddr].TableText = hexDatas[hexAddr].TableText.PadRight((int)(numBytesPerRow.Value*4));
+                        //hexAddr = (int)(tmpTd.StartAddress());
+                        if (hexAddr > -1 && hexAddr < vis.hexDatas.Length)
+                            vis.hexDatas[hexAddr].Prefix = "(";
+                        int endAddr = (int)(tmpTd.EndAddress() + vis.ExtraOffset);
+                        if (endAddr > -1 && endAddr < vis.hexDatas.Length)
+                            vis.hexDatas[endAddr].Suffix = ")";
+
+                        for (int a = hexAddr; a <= endAddr && a < vis.hexDatas.Length; a++)
+                        {
+                            vis.hexDatas[a].Color = colors[c];
+                            vis.hexDatas[a].TdIndex = t;
+                            vis.hexDatas[a].TableName = tmpTd.TableName;
+                        }
+                        c++;
+                        if (c >= (colors.Length - 1))
+                            c = 0;
+                    }
+                }
+                vis.hexDatas[(int)vis.td.StartAddress() + vis.ExtraOffset].Prefix = "[";
+                vis.hexDatas[(int)vis.td.EndAddress() + vis.ExtraOffset].Suffix = "]";
+                int start = (int)vis.td.addrInt;
+                int end = (int)vis.td.EndAddress() + vis.ExtraOffset;
+                if (vis.td.Offset < 0)
+                    start += vis.td.Offset;
+                if (vis.td.ExtraOffset < 0)
+                    start += vis.td.ExtraOffset;
+                int OffsetEnd = (int)(vis.td.StartAddress());
+                int ExtraOffsetEnd = (int)(vis.td.StartAddress() + vis.ExtraOffset);
+                for (int addr = start; addr <= end && addr < vis.hexDatas.Length; addr++)
+                {
+                    //hexDatas[addr].Data = pcm.buf[addr];
+                    vis.hexDatas[addr].SelectedTD = true;
+                    if (addr >= vis.td.StartAddress() + vis.ExtraOffset && addr <= vis.td.EndAddress() + vis.ExtraOffset)
+                    {
+                        vis.hexDatas[addr].Color = Color.LightCoral;
+                        vis.hexDatas[addr].SelectedTD = true;
+                    }
+                    else if (vis.td.Offset > 0 && addr >= vis.td.addrInt && addr < OffsetEnd)
+                    {
+                        vis.hexDatas[addr].Color = Color.Purple;
+                    }
+                    else if (vis.td.Offset < 0 && addr <= vis.td.addrInt && addr >= OffsetEnd)
+                    {
+                        vis.hexDatas[addr].Color = Color.Purple;
+                    }
+                    else if (vis.td.ExtraOffset > 0 && addr >= OffsetEnd && addr < ExtraOffsetEnd)
+                    {
+                        vis.hexDatas[addr].Color = Color.Green;
+                    }
+                    else if (vis.td.ExtraOffset < 0 && addr <= OffsetEnd && addr >= ExtraOffsetEnd)
+                    {
+                        vis.hexDatas[addr].Color = Color.Green;
+                    }
+
+                    if (addr == selectedByte)
+                    {
+                        vis.hexDatas[addr].Color = Color.Red;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
+            }
         }
 
         public void ChangeSelection(uint selectedByte)
         {
             this.selectedByte = selectedByte;
-            UpdateDisplay();
+            for (int r = 0; r < vis1.dgrows.Count; r++)
+            {
+                DGROW dgrow = vis1.dgrows[r];
+                for (int c = 0; c < dgrow.Addresses.Count; c++)
+                {
+                    uint addr = dgrow.Addresses[c];
+                    if (addr == selectedByte)
+                    {
+                        dataGridView1.ClearSelection();
+                        dataGridView1.Rows[r].Cells[c].Selected = true;
+                        break;
+                    }
+
+                }
+            }
+
         }
 
-        private int DetermineVMax(RichTextBox RTB)
+        public void UpdateDisplay(bool ScrollToSelected)
         {
-            // Y position of the first character
-            int y1 = RTB.GetPositionFromCharIndex(0).Y;
-
-            // Y position of the last character
-            int y2 = RTB.GetPositionFromCharIndex(RTB.TextLength).Y;
-
-            // First option: The height of the line - returns 43
-            double heightLine = Math.Ceiling(RTB.Font.GetHeight());
-
-            // Second option: The height of the line - returns 45
-            // NOTE: GetFirstCharIndexFromLine( NUMBER )
-            // 0 is the first line, 1 is the second line, etc.
-            //int index = targetCtrl.GetFirstCharIndexFromLine(1);
-            //int heightLine = targetCtrl.GetPositionFromCharIndex(index).Y;
-
-            // Absolute difference between the position of the 1st and the last characters
-            int absoluteDifference = Math.Abs(y1 - y2);
-
-            // RichTextBox height
-            int heightRtb = RTB.ClientSize.Height;
-
-            // Maximum vertical scroll value
-            // NOTE: if you don't add a line height, the RTB content will not be displayed in full
-            int max = absoluteDifference - heightRtb + (int)heightLine;
-            return max;
-        }
-
-        public void UpdateDisplay()
-        {
-            int sStart1 = richTableData1.SelectionStart;
-            int sLen1 = richTableData1.SelectionLength;
-            int sStart2 = richTableData2.SelectionStart;
-            int sLen2 = richTableData2.SelectionLength;
-            Point pt1 = new Point();
-            Point pt2 = new Point();
-            SendMessage(richTableData2.Handle, EM_GETSCROLLPOS, 0, ref pt2);
-            SendMessage(richTableData1.Handle, EM_GETSCROLLPOS, 0, ref pt1);
-            if (td2 != null)
+            if (vis2.td != null)
             {                
                 DisplayData(selectedByte, true);
-                if (sLen2 > 0)
-                {
-                    richTableData2.Select(sStart2, sLen2);
-                    SendMessage(richTableData2.Handle, EM_SETSCROLLPOS, 0, ref pt2);
-                    ScrollTo(richTableData2.Handle, pt2.Y);
-                }
-                else
-                {
-                    richTableData2.Select(richTableData2.TextLength, 0);
-                    richTableData2.Select(pos2, 0);
-                }
-                if (radioSegmentTBNames.Checked)
-                {
-                    richTableData1.ScrollBars = RichTextBoxScrollBars.Vertical;
-                }
-                else
-                {
-                    richTableData1.ScrollBars = RichTextBoxScrollBars.None;
-                }
             }
             else
             {
                 splitContainer1.Panel2.Hide();
                 splitContainer1.SplitterDistance = splitContainer1.Width - 5;
-                richTableData1.ScrollBars = RichTextBoxScrollBars.Both;
             }
             DisplayData(selectedByte,  false);
-            if (sLen1 > 0)
+            if (ScrollToSelected && vis1.TdRow >= 0 && vis1.TdRow < dataGridView1.RowCount)
             {
-                richTableData1.Select(sStart1, sLen1);
-                SendMessage(richTableData1.Handle, EM_SETSCROLLPOS, 0, ref pt1);
-                ScrollTo(richTableData1.Handle, pt1.Y);
-            }
-            else
-            {
-                richTableData1.Select(richTableData1.TextLength, 0);
-                richTableData1.Select(pos1, 0);
+                dataGridView1.FirstDisplayedScrollingRowIndex = vis1.TdRow;
             }
             Application.DoEvents();
-            SendMessage(richTableData1.Handle, EM_GETSCROLLPOS, 0, ref pt1);
-            ScrollPos1 = pt1.Y;
-            SendMessage(richTableData2.Handle, EM_GETSCROLLPOS, 0, ref pt2);
-            ScrollPos2 = pt2.Y;
         }
 
         public void DisplayData(uint selectedByte, bool Secondary)
         {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+            DataGridView dgv = dataGridView1;
             try
             {
-                PcmFile pcm = PCM1;
-                RichTextBox rBox = richTableData1;
-                TableData tData = this.td1;
-                HexData[] hexDatas = this.hexDatas1;
+                VisSettings vis;
+                if (Secondary)
+                {
+                    vis = vis2;
+                    dgv = dataGridView2;
+                }
+                else
+                {
+                    vis = vis1;
+                    dgv = dataGridView1;
+                }
                 this.selectedByte = selectedByte;
-                StartPoint1 = -1;
-                EndPoint1 = -1;
-                StartPoint2 = -1;
-                EndPoint2 = -1;
 
                 int start = 0;
                 int start1 = 0;
@@ -634,228 +946,117 @@ namespace UniversalPatcher
                 int end = 0;
                 int end1 = 0;
                 int end2 = 0;
-                int segmentstart = 0;
-                int segmentend = (int)pcm.fsize;
-
-                if (td2 != null)
+                int bytesPerRow = (int)numBytesPerRow.Value;
+                if (vis2.td != null)
                 {
-                    offset = (int)(td2.StartAddress() - td1.StartAddress());
-                }
-                if (Secondary)
-                {
-                    rBox = richTableData2;
-                    pcm = PCM2;
-                    tData = this.td2;
-                    labelFileName2.Text = pcm.FileName;
-                    hexDatas = this.hexDatas2;
-                    SelectionToAddress2 = new Dictionary<int, int>();
+                    offset = (int)((vis2.td.StartAddress() + vis1.ExtraOffset) - (vis1.td.StartAddress() + vis2.ExtraOffset));
                 }
                 else
                 {
-                    labelFileName1.Text = pcm.FileName;
-                    SelectionToAddress1 = new Dictionary<int, int>();
+                    start2 = (int)vis1.td.addrInt;
+                    end2 = (int)vis1.td.addrInt + vis1.td.Size();
                 }
-                int seg = pcm.GetSegmentNumber(tData.addrInt);
-                if (seg > -1)
-                {
-                    radioShowSegment.Text = "Segment [" + pcm.Segments[seg].Name + "]";
-                    segmentstart = (int)pcm.segmentinfos[seg].GetStartAddr();
-                    segmentend = (int)pcm.segmentinfos[seg].GetEndAddr();
-                }
-
 
                 if (radioShowTable.Checked)
                 {
-                    start1 = (int)td1.addrInt;
-                    if (td1.Offset < 0)
-                        start1 += td1.Offset;
-                    if (td1.ExtraOffset < 0)
-                        start1 += td1.ExtraOffset;
-                    end1 = (int)td1.EndAddress();
-
-                    if (td2 != null)
-                    {
-                        start2 = (int)td2.addrInt;
-                        if (td2.Offset < 0)
-                            start2 += td2.Offset;
-                        if (td2.ExtraOffset < 0)
-                            start2 += td2.ExtraOffset;
-                        end2 = (int)td2.EndAddress();
-                    }
-
-                    if (start1 < start2 || td2 == null)
-                        start = start1;
-                    else
-                        start = start2;
-
-                    if (end1 > end2 || td2 == null)
-                        end = end1;
-                    else
-                        end = end2;
-
-                    if (Secondary && offset > 0)
-                        start += offset;
-                    if (!Secondary && offset < 0)
-                        start -= offset;
+                    start = (int)vis.td.addrInt;
+                    if (vis.td.Offset < 0)
+                        start += vis.td.Offset;
+                    if (vis.td.ExtraOffset < 0)
+                        start += vis.td.ExtraOffset;
+                    end = (int)vis.td.EndAddress();
 
                     start = (int)(start - numExtraBytes.Value);
                     end = (int)(end + numExtraBytes.Value);
-
                 }
                 else
                 {
-                    start1 = (int)PCM1.segmentinfos[seg].GetStartAddr();
-                    end1 = (int)PCM1.segmentinfos[seg].GetEndAddr();
-                    if (td2 != null)
+                    start1 = (int)vis1.PCM.segmentinfos[vis1.segmentNumber].GetStartAddr();
+                    end1 = (int)vis1.PCM.segmentinfos[vis1.segmentNumber].GetEndAddr();
+                    if (vis2.td != null)
                     {
-                        start2 = (int)(PCM2.segmentinfos[seg].GetStartAddr());
-                        end2 = (int)PCM2.segmentinfos[seg].GetEndAddr();
+                        start2 = (int)(vis2.PCM.segmentinfos[vis2.segmentNumber].GetStartAddr());
+                        end2 = (int)vis2.PCM.segmentinfos[vis2.segmentNumber].GetEndAddr();
                     }
-
-                    if (radioSegmentTBNames.Checked)
-                    {
-                        if (Secondary)
-                        {
-                            start = start2;
-                            end = end2;
-                        }
-                        else
-                        {
-                            start = start1;
-                            end = end1;
-                        }
-                    }
-                    else
-                    {
-                        if (start1 < start2 || td2 == null)
-                            start = start1;
-                        else
-                            start = start2;
-
-                        if (Secondary && offset > 0)
-                            start += offset;
-                        if (!Secondary && offset < 0)
-                            start -= offset;
-
-                        if (end1 > end2 || td2 == null)
-                            end = end1;
-                        else
-                            end = end2;
-                    }
+                    start = Math.Min(start1, start2);
+                    end = Math.Max(end1,end2);
                 }
-                if (Secondary && offset < 0)
-                    end += offset;
-                if (!Secondary && offset > 0)
-                    end -= offset;
-                int tblStartAddress = (int)tData.StartAddress();
+                if (start< 0)
+                {
+                    start = 0;
+                }
+                if (end > vis.PCM.fsize)
+                {
+                    end =(int)vis.PCM.fsize;
+                }
 
                 if (Secondary)
                 {
+                    start += (int)numExtraOffset2.Value;
+                    if (numExtraOffset2.Value > 0)
+                    {
+                        end += (int)numExtraOffset2.Value;
+                    }
                     Debug.WriteLine("Secondary: Start: " + start.ToString() +", end: " + end.ToString() +", Offset: " + offset.ToString());
                 }
                 else
                 {
+                    start += (int)numExtraOffset1.Value;
+                    if (numExtraOffset1.Value > 0)
+                    {
+                        end += (int)numExtraOffset1.Value;
+                    }
                     Debug.WriteLine("Primary: Start: " + start.ToString() + ", end: " + end.ToString());
                 }
-                Debug.WriteLine("Segment start: " + segmentstart + ", Segment End: " + segmentend);
-                Debug.WriteLine("Addrint: " + tData.addrInt.ToString() + ", Table start: " + tblStartAddress.ToString());
+                Debug.WriteLine("Segment start: " + vis.segmentstart + ", Segment End: " + vis.segmentend);
+                Debug.WriteLine("Addrint: " + vis.td.addrInt.ToString() + ", Table start: " + vis.td.StartAddress().ToString());
 
-                rBox.Clear();
+                DrawingControl.SuspendDrawing(dgv);
 
-                rBox.SelectionColor = Color.Red;
-                rBox.AppendText("REMOVETHIS" ); //cf1 = red
-                rBox.SelectionColor = Color.Blue;
-                rBox.AppendText("REMOVETHIS"); //cf2 = blue
-                rBox.SelectionColor = Color.Green;
-                rBox.AppendText("REMOVETHIS"); //cf3 = green
-                rBox.SelectionColor = Color.Black;
-                rBox.AppendText("REMOVETHIS" ); //cf4 = black
-                rBox.SelectionColor = Color.Purple;
-                rBox.AppendText("REMOVETHIS"); //cf5 = purple
-                rBox.SelectionColor = Color.LightGray;
-                rBox.AppendText("REMOVETHIS"); //cf6 = LightGray
-                for (int i=0;i<colors.Length;i++)
+                int col = 0;
+                int row = 0;
+                vis.dgrows.Clear();
+                DGROW dgrow = new DGROW();
+                vis.dgrows.Add(dgrow);
+                for (uint addr = (uint)start; addr <= end && addr < vis.PCM.fsize; addr++)
                 {
-                    rBox.SelectionColor = colors[i];
-                    rBox.AppendText("REMOVETHIS"); 
+                    if (string.IsNullOrEmpty(vis.hexDatas[addr].Prefix))
+                        vis.hexDatas[addr].Prefix = " ";
+                    if (string.IsNullOrEmpty(vis.hexDatas[addr].Suffix))
+                        vis.hexDatas[addr].Suffix = " ";
+
+                    if (radioSegmentTBNames.Checked && !string.IsNullOrEmpty(vis.hexDatas[addr].TableText))
+                    {
+                        dgrow = new DGROW();
+                        dgrow.HeaderTxt = vis.hexDatas[addr].TableText;
+                        col = 0;
+                        row++;
+                        vis.dgrows.Add(dgrow);
+                    }
+                    if (addr == vis.td.addrInt)
+                    {
+                        vis.TdRow = row;
+                    }
+                    if (col >= bytesPerRow)
+                    {
+
+                        row++;
+                        col = 0;
+                        dgrow = new DGROW();
+                        vis.dgrows.Add(dgrow);
+                    }
+                    if (string.IsNullOrEmpty(dgrow.HeaderTxt))
+                    {
+                        dgrow.HeaderTxt = addr.ToString("X6");
+                    }
+                    dgrow.Cols.Add(vis.PCM.buf[addr].ToString("X2"));
+                    dgrow.Addresses.Add(addr);
+                    col++;
                 }
-
-                int txtLen = 2;
-                StringBuilder sb = new StringBuilder(rBox.Rtf.Replace("REMOVETHIS", ""));
-                sb.Length -= 3;
-                sb.Append(Environment.NewLine);
-                string lastColor = "";
-                //sb.Append(Blue);
-
-                int r = 1;
-                for (int addr = start; addr <= end && addr < pcm.fsize; addr++)
-                {
-                    if (addr < 0)
-                    {
-                        sb.Append("    ");
-                        txtLen += 4;
-                        if (r > numBytesPerRow.Value)
-                        {
-                            sb.Append("\\par" + Environment.NewLine);
-                            txtLen++;
-                            r = 1;
-                        }
-                        r++;
-                        continue;
-                    }
-                    if (string.IsNullOrEmpty(hexDatas[addr].Prefix))
-                        hexDatas[addr].Prefix = " ";
-                    if (string.IsNullOrEmpty(hexDatas[addr].Suffix))
-                        hexDatas[addr].Suffix = " ";
-                    if (string.IsNullOrEmpty(hexDatas[addr].Color))
-                    {
-                        if (addr < segmentstart || addr > segmentend)
-                            hexDatas[addr].Color = LightGray;
-                        else
-                            hexDatas[addr].Color = Blue;
-                    }
-
-                    if (addr == tblStartAddress)
-                    {
-                        if (Secondary)
-                            pos2 = txtLen;
-                        else
-                            pos1 = txtLen;
-                    }
-
-                    if (lastColor != hexDatas[addr].Color)
-                    {
-                        sb.Append(hexDatas[addr].Color);
-                        lastColor = hexDatas[addr].Color;
-                    }
-                    if (radioSegmentTBNames.Checked)
-                    {
-                        //if (hexDatas[addr].Prefix == "(" || addr == TblStartAddress)
-                        if (!string.IsNullOrEmpty(hexDatas[addr].TableText))
-                        {
-                            sb.Append("\\par" + Environment.NewLine + hexDatas[addr].TableText + "\\par" + Environment.NewLine);
-                            txtLen += hexDatas[addr].TableText.Length + 2;
-                            r = 1;
-                        }
-                    }
-                    if (r > numBytesPerRow.Value)
-                    {
-                        sb.Append("\\par" + Environment.NewLine);
-                        txtLen++;
-                        r = 1;
-                    }
-
-                    if (Secondary)
-                        SelectionToAddress2.Add(txtLen, addr);
-                    else
-                        SelectionToAddress1.Add(txtLen, addr);
-                    sb.Append(hexDatas[addr].Prefix + pcm.buf[addr].ToString("X2") + hexDatas[addr].Suffix);
-                    txtLen += 4;
-                    r++;
-                }
-
-                sb.Append("\\par" + Environment.NewLine + "}");
-                rBox.Rtf = sb.ToString();
+                Debug.WriteLine("Generate DG data time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+                Application.DoEvents();
+                dgv.RowCount = vis.dgrows.Count;
+                dgv.Refresh();
             }
             catch(Exception ex)
             {
@@ -866,65 +1067,80 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, DisplayData, line " + line + ": " + ex.Message);
             }
+            DrawingControl.ResumeDrawing(dgv);
+            timer.Stop();
+            Debug.WriteLine("Displaydata time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+
         }
 
         private void radioShowSegment_CheckedChanged(object sender, EventArgs e)
         {
-            richTableData1.SelectionLength = 0;
-            richTableData2.SelectionLength = 0;
             if (radioShowSegment.Checked)
             {
-                UpdateDisplay();
+                dataGridView1.RowHeadersWidth = 80;
+                dataGridView2.RowHeadersWidth = 80;
+                UpdateDisplay(true);
             }
-        }
-
-        private void radioShowBin_CheckedChanged(object sender, EventArgs e)
-        {
-            UpdateDisplay();
         }
 
         private void numExtraBytes_ValueChanged(object sender, EventArgs e)
         {
-            UpdateDisplay();
+            UpdateDisplay(false);
         }
 
         private void numBytesPerRow_ValueChanged(object sender, EventArgs e)
         {
-            UpdateDisplay();
+            SetupDatagrids();
+            UpdateDisplay(true);
         }
 
         private void radioSegmentTBNames_CheckedChanged(object sender, EventArgs e)
         {
-            richTableData1.SelectionLength = 0;
-            richTableData2.SelectionLength = 0;
             if (radioSegmentTBNames.Checked)
             {
-                UpdateDisplay();
+                dataGridView1.RowHeadersWidth = 350;
+                dataGridView2.RowHeadersWidth = 350;
+                UpdateDisplay(true);
             }
         }
 
         private void radioShowTable_CheckedChanged(object sender, EventArgs e)
         {
-            richTableData1.SelectionLength = 0;
-            richTableData2.SelectionLength = 0;
             if (radioShowTable.Checked)
             {
-                UpdateDisplay();
+                dataGridView1.RowHeadersWidth = 80;
+                dataGridView2.RowHeadersWidth = 80;
+                UpdateDisplay(true);
             }
         }
 
         private void numExtraOffset1_ValueChanged(object sender, EventArgs e)
         {
-            td1.ExtraOffset = (int)numExtraOffset1.Value;
-            CreateHexData(PCM1, ref hexDatas1, td1, SortedTds1);
-            UpdateDisplay();
+            //vis1.td.ExtraOffset = (int)numExtraOffset1.Value;
+            vis1.ExtraOffset = (int)numExtraOffset1.Value;
+            CreateHexData(ref vis1);
+            if (chkCopyColors1.Checked)
+            {
+                CopyColors1();
+            }
+            DisplayData(selectedByte, false);
+            SyncSelection1(false);
         }
 
         private void numExtraOffset2_ValueChanged(object sender, EventArgs e)
         {
-            td2.ExtraOffset = (int)numExtraOffset2.Value;
-            CreateHexData(PCM2, ref hexDatas2, td2, SortedTds2);
-            UpdateDisplay();
+            //vis2.td.ExtraOffset = (int)numExtraOffset2.Value;
+            vis2.ExtraOffset = (int)numExtraOffset2.Value;
+            if (chkCopyColors1.Checked)
+            {
+                CopyColors1();
+            }
+            else
+            {
+                CreateHexData(ref vis2);
+            }
+            DisplayData(selectedByte, true);
+            SyncSelection1(false);
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
@@ -932,19 +1148,10 @@ namespace UniversalPatcher
 
         }
 
-        private void btnColorTest_Click(object sender, EventArgs e)
-        {
-            richTableData1.Text = "";
-            for (int c=0; c<colors.Length;c++)
-            {
-                richTableData1.SelectionColor = colors[c];
-                richTableData1.AppendText("Color: " + c.ToString() + "; " + colors[c].ToString() + Environment.NewLine);
-            }
-        }
 
         private void btnApplyPrimary_Click(object sender, EventArgs e)
         {
-            td1Org.ExtraOffset = (int)numExtraOffset1.Value;
+            vis1.tdOrg.ExtraOffset = (int)numExtraOffset1.Value;
             if (tuner != null)
             {
                 //tuner.RefreshTablelist();
@@ -954,7 +1161,7 @@ namespace UniversalPatcher
 
         private void btnApplySecondary_Click(object sender, EventArgs e)
         {
-            td2Org.ExtraOffset = (int)numExtraOffset2.Value;
+            vis2.tdOrg.ExtraOffset = (int)numExtraOffset2.Value;
             if (tuner != null)
             {
                 //tuner.RefreshTablelist();
@@ -965,33 +1172,35 @@ namespace UniversalPatcher
 
         private void btnPrevTable_Click(object sender, EventArgs e)
         {
-            int x = FindTableDataId(td1, PCM1.tableDatas);
+            int x = FindTableDataId(vis1.td, vis1.PCM.tableDatas);
             x--;
             if (x >-1)
             {
-                TableData tdTmp = PCM1.tableDatas[x];
-                TableData compTd = null;
-                if (td2 != null)
+                TableData td1 = vis1.PCM.tableDatas[x];
+                vis1.ChangeTd(vis1.PCM, td1);
+                if (vis2.td != null)
                 {
-                    compTd = FindTableData(tdTmp, PCM2.tableDatas);
+                    TableData td2 = FindTableData(vis1.td, vis2.PCM.tableDatas);
+                    vis2.ChangeTd(vis2.PCM, td2);
                 }
-                ShowTables(PCM1, tdTmp, PCM2, compTd, selectedByte);
+                ShowTables(selectedByte);
             }
         }
 
         private void btnNextTable_Click(object sender, EventArgs e)
         {
-            int x = FindTableDataId(td1, PCM1.tableDatas);
+            int x = FindTableDataId(vis1.td, vis1.PCM.tableDatas);
             x++;
             if (x > -1)
             {
-                TableData tdTmp = PCM1.tableDatas[x];
-                TableData compTd = null;
-                if (td2 != null)
+                TableData td1 = vis1.PCM.tableDatas[x];
+                vis1.ChangeTd(vis1.PCM, td1);
+                if (vis2.td != null)
                 {
-                    compTd = FindTableData(tdTmp, PCM2.tableDatas);
+                    TableData td2 = FindTableData(vis1.td, vis2.PCM.tableDatas);
+                    vis2.ChangeTd(vis2.PCM, td2);
                 }
-                ShowTables(PCM1, tdTmp, PCM2, compTd, selectedByte);
+                ShowTables(selectedByte);
             }
 
         }
@@ -1012,7 +1221,7 @@ namespace UniversalPatcher
                 {
                     tuner.RefreshFast();
                 }
-                ShowTables(PCM1,td1Org,PCM2,td2Org,selectedByte);
+                ShowTables(selectedByte);
             }
             catch (Exception ex)
             {
@@ -1036,7 +1245,7 @@ namespace UniversalPatcher
                 {
                     tuner.RefreshFast();
                 }
-                ShowTables(PCM1, td1Org, PCM2, td2Org, selectedByte);
+                ShowTables(selectedByte);
             }
             catch (Exception ex)
             {
@@ -1047,37 +1256,33 @@ namespace UniversalPatcher
 
         private void btnSelStart1_Click(object sender, EventArgs e)
         {
-            StartPoint1 = richTableData1.SelectionStart;
-            if (EndPoint1 > -1)
+            if (vis1.SelStart > -1 && vis1.SelStart < dataGridView1.Rows.Count)
             {
-                richTableData1.Select(StartPoint1, EndPoint1 - StartPoint1);
+                dataGridView1.FirstDisplayedScrollingRowIndex = vis1.SelStart;
             }
         }
 
         private void btnSelEnd1_Click(object sender, EventArgs e)
         {
-            EndPoint1 = richTableData1.SelectionStart;
-            if (StartPoint1 > -1)
+            if (vis1.SelEnd < dataGridView1.Rows.Count)
             {
-                richTableData1.Select(StartPoint1, EndPoint1 - StartPoint1);
+                dataGridView1.FirstDisplayedScrollingRowIndex = vis1.SelEnd;
             }
         }
 
         private void btnSelStart2_Click(object sender, EventArgs e)
         {
-            StartPoint2 = richTableData2.SelectionStart;
-            if (EndPoint2 > -1 )
+            if (vis2.SelStart > -1 && vis2.SelStart < dataGridView2.Rows.Count)
             {
-                richTableData2.Select(StartPoint2, EndPoint2 - StartPoint2);
+                dataGridView2.FirstDisplayedScrollingRowIndex = vis2.SelStart;
             }
         }
 
         private void btnSelEnd2_Click(object sender, EventArgs e)
         {
-            EndPoint2 = richTableData2.SelectionStart;
-            if (StartPoint2 > -1 )
+            if (vis2.SelEnd < dataGridView2.Rows.Count)
             {
-                richTableData1.Select(StartPoint2, EndPoint2 - StartPoint2);
+                dataGridView2.FirstDisplayedScrollingRowIndex = vis2.SelEnd;
             }
         }
 
@@ -1088,7 +1293,7 @@ namespace UniversalPatcher
                 List<TableData> selTables = GetSelectedTables(false);
                 for (int t = 0; t < selTables.Count; t++)
                 {
-                    TableData tdR = FindTableData(selTables[t], SortedTds2);
+                    TableData tdR = FindTableData(selTables[t], vis2.SortedTds);
                     if (tdR != null)
                     {
                         Logger("Applying offset: " + offset.ToString() + " to table: " + tdR.TableName);
@@ -1099,7 +1304,7 @@ namespace UniversalPatcher
                 {
                     tuner.RefreshFast();
                 }
-                ShowTables(PCM1, td1Org, PCM2, td2Org, selectedByte);
+                ShowTables(selectedByte);
             }
             catch (Exception ex)
             {
@@ -1120,7 +1325,7 @@ namespace UniversalPatcher
                 List<TableData> selTables = GetSelectedTables(true);
                 for (int t = 0; t < selTables.Count; t++)
                 {
-                    TableData tdL = FindTableData(selTables[t], SortedTds1);
+                    TableData tdL = FindTableData(selTables[t], vis1.SortedTds);
                     if (tdL != null)
                     {
                         Logger("Applying offset: " + (-1 * offset).ToString() + " to table: " + tdL.TableName);
@@ -1131,7 +1336,7 @@ namespace UniversalPatcher
                 {
                     tuner.RefreshFast();
                 }
-                ShowTables(PCM1, td1Org, PCM2, td2Org, selectedByte);
+                ShowTables(selectedByte);
             }
             catch (Exception ex)
             {
@@ -1146,135 +1351,417 @@ namespace UniversalPatcher
 
         }
 
-        private void btnCloneColors_Click(object sender, EventArgs e)
+        private void CopyColors1()
         {
-            for (int i=0;i<hexDatas1.Length;i++)
+            /*
+            for (int i=0;i< vis1.hexDatas.Length;i++)
             {
-                if ((i+offset) > 0 && (i+offset)< PCM2.fsize)
-                    hexDatas2[i+offset] = hexDatas1[i];
+                if ((i+offset) > 0 && (i+offset)< vis2.PCM.fsize)
+                    vis2.hexDatas[i+offset] = vis1.hexDatas[i];
             }
-            UpdateDisplay();
+            */
+            vis2.hexDatas = (HexData[])vis1.hexDatas.Clone();
+            UpdateDisplay(false);
         }
 
-        private void btnCloneColors2_Click(object sender, EventArgs e)
+        private void CopyColors2()
         {
-            for (int i = 0; i < hexDatas2.Length; i++)
+            for (int i = 0; i < vis2.hexDatas.Length; i++)
             {
-                if ((i - offset) > 0 && (i - offset) < PCM1.fsize)
-                    hexDatas1[i - offset] = hexDatas2[i];
+                if ((i - offset) > 0 && (i - offset) < vis1.PCM.fsize)
+                    vis1.hexDatas[i - offset] = vis2.hexDatas[i];
             }
-            UpdateDisplay();
-
+            //UpdateDisplay(false);
         }
 
         private void btnScrollToSelected_Click(object sender, EventArgs e)
         {
-            if (radioSegmentTBNames.Checked)
+            if (vis1.TdRow >= 0 && vis1.TdRow < dataGridView1.RowCount)
             {
-                Point pt1 = new Point(0, ScrollPos1);
-                SendMessage(richTableData1.Handle, EM_SETSCROLLPOS, 0, ref pt1);
-                ScrollTo(richTableData1.Handle, ScrollPos1);
-            }
-            else
-            {
-                Point pt2 = new Point(0, ScrollPos2);
-                SendMessage(richTableData2.Handle, EM_SETSCROLLPOS, 0, ref pt2);
-                ScrollTo(richTableData2.Handle, ScrollPos2);
+                dataGridView1.FirstDisplayedScrollingRowIndex = vis1.TdRow;
             }
         }
 
         private void btnScrollToSelected2_Click(object sender, EventArgs e)
         {
-            Point pt2 = new Point(0, ScrollPos2);
-            SendMessage(richTableData2.Handle, EM_SETSCROLLPOS, 0, ref pt2);
-            ScrollTo(richTableData2.Handle, ScrollPos2);
+            if (vis2.TdRow >= 0 && vis2.TdRow < dataGridView2.RowCount)
+            {
+                dataGridView2.FirstDisplayedScrollingRowIndex = vis2.TdRow;
+            }
         }
 
         private void btnCreateTable1_Click(object sender, EventArgs e)
         {
-            int Start = -1;
-            int End = -1;
-            for (int s = richTableData1.SelectionStart; s < (richTableData1.SelectionStart + richTableData1.SelectionLength); s++)
+            try
             {
-                if (SelectionToAddress1.ContainsKey(s))
-                {
-                    Start = SelectionToAddress1[s];
-                    break;
-                }
-            }
-            if (Start < 0)
-            {
-                return;
-            }
-            for (int s = richTableData1.SelectionStart + richTableData1.SelectionLength; s >= richTableData1.SelectionStart; s--)
-            {
-                if (SelectionToAddress1.ContainsKey(s))
-                {
-                    End = SelectionToAddress1[s];
-                    break;
-                }
-            }
+                int Start = -1;
+                int End = -1;
 
-            TableData newTd = new TableData();
-            newTd.addrInt = (uint)Start;
-            if (End - Start > 0)
-                newTd.Rows = (ushort)(End - Start);
-            else
-                newTd.Rows = 1;
-            newTd.Columns = 1;
-            frmTdEditor fte = new frmTdEditor();
-            fte.td = newTd;
-            fte.LoadTd();
-            if (fte.ShowDialog() == DialogResult.OK)
-            {
-                PCM1.tableDatas.Add(newTd);
-                ShowTables(PCM1, td1, PCM2, td2, selectedByte);
+                if (dataGridView1.SelectedCells.Count > 0)
+                {
+                    int r = dataGridView1.SelectedCells[0].RowIndex;
+                    int c = dataGridView1.SelectedCells[0].ColumnIndex;
+                    if (c < vis1.dgrows[r].Addresses.Count)
+                    {
+                        Start = (int)vis1.dgrows[r].Addresses[c];
+                    }
+                    r = dataGridView1.SelectedCells[dataGridView1.SelectedCells.Count - 1].RowIndex;
+                    c = dataGridView1.SelectedCells[dataGridView1.SelectedCells.Count - 1].ColumnIndex;
+                    if (c < vis1.dgrows[r].Addresses.Count)
+                    {
+                        End = (int)vis1.dgrows[r].Addresses[c];
+                    }
+                }
+                if (End < Start)
+                {
+                    int tmp = Start;
+                    Start = End;
+                    End = tmp;
+                }
+                TableData newTd = new TableData();
+                newTd.addrInt = (uint)Start;
+                if (End - Start > 0)
+                    newTd.Rows = (ushort)(End - Start);
+                else
+                    newTd.Rows = 1;
+                newTd.Columns = 1;
+                frmTdEditor fte = new frmTdEditor();
+                fte.td = newTd;
+                fte.LoadTd();
+                if (fte.ShowDialog() == DialogResult.OK)
+                {
+                    vis1.PCM.tableDatas.Add(newTd);
+                    ShowTables(selectedByte);
+                }
+                fte.Dispose();
             }
-            fte.Dispose();
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
+            }
         }
 
         private void btnCreateTable2_Click(object sender, EventArgs e)
         {
-            int Start = -1;
-            int End = -1;
-            for (int s = richTableData2.SelectionStart; s < (richTableData2.SelectionStart + richTableData2.SelectionLength); s++)
-            {
-                if (SelectionToAddress2.ContainsKey(s))
+            try
+            { 
+                int Start = -1;
+                int End = -1;
+
+                if (dataGridView2.SelectedCells.Count > 0)
                 {
-                    Start = SelectionToAddress2[s];
-                    break;
+                    int r = dataGridView2.SelectedCells[0].RowIndex;
+                    int c = dataGridView2.SelectedCells[0].ColumnIndex;
+                    if (c < vis2.dgrows[r].Addresses.Count)
+                    {
+                        Start = (int)vis2.dgrows[r].Addresses[c];
+                    }
+                    r = dataGridView2.SelectedCells[dataGridView2.SelectedCells.Count - 1].RowIndex;
+                    c = dataGridView2.SelectedCells[dataGridView2.SelectedCells.Count - 1].ColumnIndex;
+                    if (c < vis2.dgrows[r].Addresses.Count)
+                    {
+                        End = (int)vis2.dgrows[r].Addresses[c];
+                    }
+                }
+                if (End < Start)
+                {
+                    int tmp = Start;
+                    Start = End;
+                    End = tmp;
+                }
+                TableData newTd = new TableData();
+                newTd.addrInt = (uint)Start;
+                if (End - Start > 0)
+                    newTd.Rows = (ushort)(End - Start);
+                else
+                    newTd.Rows = 1;
+                newTd.Columns = 1;
+                frmTdEditor fte = new frmTdEditor();
+                fte.td = newTd;
+                fte.LoadTd();
+                if (fte.ShowDialog() == DialogResult.OK)
+                {
+                    vis2.PCM.tableDatas.Add(newTd);
+                    ShowTables(selectedByte);
+                }
+                fte.Dispose();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void SearchCells(List<byte> searchBytes)
+        {
+            ClearSearch();
+            Debug.Write("Searching: ");
+            for (int i=0;i<searchBytes.Count;i++)
+            {
+                Debug.Write(searchBytes[i].ToString("X2") + " ");
+            }
+            Debug.WriteLine("");
+            for (uint a = vis1.segmentstart; a < vis1.segmentend; a++)
+            {
+                bool found = true;
+                for (int a2 = 0; a2 < searchBytes.Count; a2++)
+                {
+                    if (vis1.PCM.buf[a + a2] != searchBytes[a2])
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    vis1.foundLocations.Add((uint)a);
+                    listBox1.Items.Add(a.ToString("X10"));
+                    for (uint b = a; b < a + searchBytes.Count; b++)
+                    {
+                        vis1.foundBytes.Add(b);
+                    }
                 }
             }
-            if (Start < 0)
+            for (int r = 0; r < vis1.dgrows.Count; r++)
+            {
+                DGROW dgrow = vis1.dgrows[r];
+                for (int c = 0; c < dgrow.Addresses.Count; c++)
+                {
+                    uint addr = dgrow.Addresses[c];
+                    if (vis1.foundBytes.Contains(addr))
+                    {
+                        if (!vis1.searchedRows.Contains(r))
+                        {
+                            vis1.searchedRows.Add(r);
+                        }
+                    }
+                }
+            }
+            //dataGridView1.Invalidate(true);
+            //dataGridView1.Refresh();
+            
+            for (uint a = vis2.segmentstart; a < vis2.segmentend; a++)
+            {
+                bool found = true;
+                for (int a2 = 0; a2 < searchBytes.Count; a2++)
+                {
+                    if (vis2.PCM.buf[a + a2] != searchBytes[a2])
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    vis2.foundLocations.Add((uint)a);
+                    listBox2.Items.Add(a.ToString("X10"));
+                    for (uint b = a; b < a + searchBytes.Count; b++)
+                    {
+                        vis2.foundBytes.Add(b);
+                    }
+                }
+            }
+            for (int r = 0; r < vis2.dgrows.Count; r++)
+            {
+                DGROW dgrow = vis2.dgrows[r];
+                for (int c = 0; c < dgrow.Addresses.Count; c++)
+                {
+                    uint addr = dgrow.Addresses[c];
+                    if (vis2.foundBytes.Contains(addr))
+                    {
+                        if (!vis2.searchedRows.Contains(r))
+                        {
+                            vis2.searchedRows.Add(r);
+                        }
+                    }
+                }
+            }
+            //dataGridView2.Invalidate(true);
+            //dataGridView2.Refresh();
+            txtInfo1.AppendText("Found in: " + vis1.foundLocations.Count.ToString() + " locations" + Environment.NewLine);
+            txtInfo2.AppendText("Found in: " + vis2.foundLocations.Count.ToString() + " locations" + Environment.NewLine);
+
+        }
+        private void searchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<uint> sdc = new List<uint>();
+            foreach (DataGridViewCell dgc in dataGridView1.SelectedCells)
+            {
+                DGROW dgrow = vis1.dgrows[dgc.RowIndex];                
+                sdc.Add(dgrow.Addresses[dgc.ColumnIndex]);
+            }
+            sdc.Sort();
+            List<byte> searchBytes = new List<byte>();
+            foreach (uint a in sdc)
+            {
+                searchBytes.Add(vis1.PCM.buf[a]);
+            }
+            SearchCells(searchBytes);
+        }
+
+        private void searchToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            List<uint> sdc = new List<uint>();
+            foreach (DataGridViewCell dgc in dataGridView2.SelectedCells)
+            {
+                DGROW dgrow = vis2.dgrows[dgc.RowIndex];
+                sdc.Add(dgrow.Addresses[dgc.ColumnIndex]);
+            }
+            sdc.Sort();
+            List<byte> searchBytes = new List<byte>();
+            foreach (uint a in sdc)
+            {
+                searchBytes.Add(vis2.PCM.buf[a]);
+            }
+            SearchCells(searchBytes);
+        }
+        private void ClearSearch()
+        {
+            vis1.ClearSearch();
+            vis2.ClearSearch();
+            listBox1.Items.Clear();
+            listBox2.Items.Clear();
+            dataGridView1.Refresh();
+            dataGridView2.Refresh();
+        }
+        private void clearSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ClearSearch();
+        }
+
+        private void clearSearchToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ClearSearch();
+        }
+
+        private void showFirstToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (vis1.searchedRows.Count > 0)
+            {
+                dataGridView1.FirstDisplayedScrollingRowIndex = vis1.searchedRows[0];
+            }
+        }
+
+        private void showPreviousToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (vis1.currentSearched > 0)
+            {
+                vis1.currentSearched--;
+                dataGridView1.FirstDisplayedScrollingRowIndex = vis1.searchedRows[vis1.currentSearched];
+            }
+        }
+
+        private void showNextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (vis1.currentSearched < vis1.searchedRows.Count -1)
+            {
+                vis1.currentSearched++;
+                dataGridView1.FirstDisplayedScrollingRowIndex = vis1.searchedRows[vis1.currentSearched];
+            }
+
+        }
+
+        private void showLastToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            vis1.currentSearched = vis1.searchedRows.Count - 1;
+            dataGridView1.FirstDisplayedScrollingRowIndex = vis1.searchedRows[vis1.currentSearched];
+        }
+
+        private void showFirstToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (vis2.searchedRows.Count > 0)
+            {
+                dataGridView2.FirstDisplayedScrollingRowIndex = vis2.searchedRows[0];
+            }
+
+        }
+
+        private void showPreviousToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (vis2.currentSearched > 0)
+            {
+                vis2.currentSearched--;
+                dataGridView2.FirstDisplayedScrollingRowIndex = vis2.searchedRows[vis2.currentSearched];
+            }
+
+        }
+
+        private void showNextToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (vis2.currentSearched < vis2.searchedRows.Count - 1)
+            {
+                vis2.currentSearched++;
+                dataGridView2.FirstDisplayedScrollingRowIndex = vis2.searchedRows[vis2.currentSearched];
+            }
+
+        }
+
+        private void showLastToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            vis2.currentSearched = vis2.searchedRows.Count - 1;
+            dataGridView2.FirstDisplayedScrollingRowIndex = vis2.searchedRows[vis2.currentSearched];
+
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int addr;
+            if (!HexToInt(listBox1.SelectedItem.ToString(), out addr))
             {
                 return;
             }
-            for (int s = richTableData2.SelectionStart + richTableData2.SelectionLength; s >= richTableData2.SelectionStart; s--)
+            for (int r = 0; r <vis1.dgrows.Count; r++)
             {
-                if (SelectionToAddress2.ContainsKey(s))
+                DGROW dgrow = vis1.dgrows[r];
+                if (dgrow.Addresses[0] >= addr)
                 {
-                    End = SelectionToAddress2[s];
+                    if (r == 0) r = 1;
+                    dataGridView1.FirstDisplayedScrollingRowIndex = r - 1;
                     break;
                 }
             }
+        }
 
-            TableData newTd = new TableData();
-            newTd.addrInt = (uint)Start;
-            if (End - Start > 0)
-                newTd.Rows = (ushort)(End - Start);
-            else
-                newTd.Rows = 1;
-            newTd.Columns = 1;
-            frmTdEditor fte = new frmTdEditor();
-            fte.td = newTd;
-            fte.LoadTd();
-            if (fte.ShowDialog() == DialogResult.OK)
+        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int addr;
+            if (!HexToInt(listBox2.SelectedItem.ToString(), out addr))
             {
-                PCM2.tableDatas.Add(newTd);
-                ShowTables(PCM1, td1, PCM2, td2, selectedByte);
+                return;
             }
-            fte.Dispose();
+            for (int r = 0; r < vis2.dgrows.Count; r++)
+            {
+                DGROW dgrow = vis2.dgrows[r];
+                if (dgrow.Addresses[0] >= addr)
+                {
+                    if (r == 0) r = 1;
+                    dataGridView2.FirstDisplayedScrollingRowIndex = r - 1;
+                    break;
+                }
+            }
+        }
 
+        private void chkCopyColors1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkCopyColors1.Checked)
+            {
+                CopyColors1();
+            }
+            else
+            {
+                CreateHexData(ref vis2);
+            }
         }
     }
 }

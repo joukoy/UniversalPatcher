@@ -92,7 +92,7 @@ namespace J2534DotNet
                 {
                     deviceId = Marshal.ReadInt32(DeviceIDPtr);
                 }
-                Marshal.FreeHGlobal(DeviceIDPtr);
+                Marshal.FreeHGlobal(DeviceNamePtr);
                 return returnValue;
             }
             catch (Exception ex)

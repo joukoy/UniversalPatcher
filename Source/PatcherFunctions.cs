@@ -3000,6 +3000,12 @@ public class Upatcher
                     }
                 }
             }
+            if (psi.FileName.ToLower().Contains("pcmhammer"))
+            {
+                Logger("If you need help with PCM Hammer or want to thank the developers, see:");
+                Logger("https://github.com/LegacyNsfw/PcmHacks/wiki");
+
+            }
             Logger("Executing command: \"" + psi.FileName + " " + psi.Arguments + "\"");
             Process.Start(psi);
         }
@@ -3075,4 +3081,43 @@ public class Upatcher
         }
         return retVal;
     }
+
+    // Function to perform smoothing operation on a 2D table
+    public static double[,] Smooth2DTable(double[,] table)
+    {
+        int rows = table.GetLength(0);
+        int cols = table.GetLength(1);
+
+        double[,] smoothedTable = new double[rows, cols];
+
+        // Perform averaging operation
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                double sum = 0;
+                int count = 0;
+
+                for (int di = -1; di <= 1; di++)
+                {
+                    for (int dj = -1; dj <= 1; dj++)
+                    {
+                        int ni = i + di;
+                        int nj = j + dj;
+
+                        if (ni >= 0 && ni < rows && nj >= 0 && nj < cols)
+                        {
+                            sum += table[ni, nj];
+                            count++;
+                        }
+                    }
+                }
+
+                smoothedTable[i, j] = sum / count;
+            }
+        }
+
+        return smoothedTable;
+    }
+
 }

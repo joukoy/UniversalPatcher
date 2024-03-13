@@ -1853,7 +1853,7 @@ namespace UniversalPatcher
                 {
                     this.Invoke((MethodInvoker)delegate ()
                     {
-                        ftvd.UpdateDisplay();
+                        ftvd.UpdateDisplay(true);
                     });
                 }
 
@@ -2116,7 +2116,7 @@ namespace UniversalPatcher
                 {
                     this.Invoke((MethodInvoker)delegate ()
                     {
-                        ftvd.UpdateDisplay();
+                        ftvd.UpdateDisplay(true);
                     });
                 }
             }
@@ -2252,12 +2252,14 @@ namespace UniversalPatcher
 
                 foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
                 {
-                    string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
-                    double newvalue = parser.Parse(mathStr);
-                    cell.Value = newvalue;
-                    TableCell tc = (TableCell)dataGridView1.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Tag;
-                    SaveValue(cell.RowIndex, cell.ColumnIndex,tc);
-
+                    if (dataGridView1.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Tag != null && cell.Value != null)
+                    {
+                        string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
+                        double newvalue = parser.Parse(mathStr);
+                        cell.Value = newvalue;
+                        TableCell tc = (TableCell)dataGridView1.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Tag;
+                        SaveValue(cell.RowIndex, cell.ColumnIndex, tc);
+                    }
                 }
             }
             catch (Exception ex)
@@ -3190,8 +3192,8 @@ namespace UniversalPatcher
         [STAThread]
         private void StartVisualizer(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
         {
-            ftvd = new frmTableVisDouble();
-            ftvd.ShowTables(PCM1, td1, PCM2, td2, SelectedByte);
+            ftvd = new frmTableVisDouble(PCM1, PCM2,td1,td2);
+            ftvd.ShowTables(SelectedByte);
             Application.Run(ftvd);
         }
 
@@ -3431,6 +3433,52 @@ namespace UniversalPatcher
             decimalToolStripMenuItem.Checked = !decimalToolStripMenuItem.Checked;
             AppSettings.TableEditorHexShowDecimal = decimalToolStripMenuItem.Checked; 
             LoadTable();
+        }
+
+        private void smoothToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<double> CurrentValues = new List<double>();
+                int minR = int.MaxValue;
+                int maxR = 0;
+                int minC = int.MaxValue;
+                int maxC = 0;
+                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                {
+                    int r = dataGridView1.SelectedCells[i].RowIndex;
+                    int c = dataGridView1.SelectedCells[i].ColumnIndex;
+                    if (r > maxR) maxR = r;
+                    if (r < minR) minR = r;
+                    if (c > maxC) maxC = c;
+                    if (c < minC) minC = c;
+                }
+                int rows = maxR - minR + 1;
+                int cols = maxC - minC + 1;
+                double[,] table = new double[rows, cols];
+                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                {
+                    int r = dataGridView1.SelectedCells[i].RowIndex;
+                    int c = dataGridView1.SelectedCells[i].ColumnIndex;
+                    table[r - minR, c - minC] = Convert.ToDouble(dataGridView1.SelectedCells[i].Value);
+                }
+                double[,] smoothed = Smooth2DTable(table);
+                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                {
+                    int r = dataGridView1.SelectedCells[i].RowIndex;
+                    int c = dataGridView1.SelectedCells[i].ColumnIndex;
+                    dataGridView1.SelectedCells[i].Value = smoothed[r - minR, c - minC];
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
     }
 }

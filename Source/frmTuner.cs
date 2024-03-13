@@ -758,8 +758,11 @@ namespace UniversalPatcher
         public void RefreshFast()
         {
             //bindingsource = filteredTableDatas;
-            dataGridView1.Update();
-            dataGridView1.Refresh();
+            this.Invoke((MethodInvoker)delegate ()
+            {
+                dataGridView1.Update();
+                dataGridView1.Refresh();
+            });
         }
 
         private void RefreshCategories()
@@ -1951,7 +1954,9 @@ namespace UniversalPatcher
                         {
                             this.Invoke((MethodInvoker)delegate ()
                             {
-                                ftvd.ShowTables(PCM, shTd, peekPCM, compTd, 0);
+                                ftvd.vis1.ChangeTd(PCM, shTd);
+                                ftvd.vis2.ChangeTd(peekPCM, compTd);
+                                ftvd.ShowTables(0);
                             });
                             break;
                         }
@@ -2622,6 +2627,7 @@ namespace UniversalPatcher
             Debug.WriteLine("Open new file time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
             if (tabControl1.SelectedTab == tabCategory && treeCategory != null && treeCategory.Nodes != null && treeCategory.Nodes.Count > 0)
             {
+                tabCategory.Focus();
                 treeCategory.Nodes[0].Expand();
             }
         }
@@ -4022,7 +4028,7 @@ namespace UniversalPatcher
             if (splitTree != null)
                 splitTree.Visible = false;
             splitContainerListMode.Visible = true;
-            if (hstForm != null || AppSettings.TunerListModeTreeWidth == 0)
+            if (hstForm != null || AppSettings.TunerListModeTreeWidth == 0 || AppSettings.TunerListModeTreeWidth > this.Width/2)
             {
                 splitContainerListMode.SplitterDistance = 200;
             }
@@ -5931,6 +5937,11 @@ namespace UniversalPatcher
                 TableData compTd = null;
                 PcmFile peekPCM = null;
                 List<TableData> tds = GetSelectedTableTds();
+                if (tds.Count == 0)
+                {
+                    Logger("No table selected");
+                    return;
+                }
                 TableData selTd = tds[0];
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 {
@@ -5972,9 +5983,9 @@ namespace UniversalPatcher
         [STAThread]
         private void StartVisualizer(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
         {
-            ftvd = new frmTableVisDouble();
+            ftvd = new frmTableVisDouble(PCM1, PCM2,td1,td2);
             ftvd.tuner = this;
-            ftvd.ShowTables(PCM1, td1, PCM2, td2, SelectedByte);
+            ftvd.ShowTables(SelectedByte);
             Application.Run(ftvd);
         }
         private void mirrorSegmentsFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6062,7 +6073,8 @@ namespace UniversalPatcher
             {
                 return;
             }
-            AddSegments(treeView1.Nodes, cmpPcm, filteredTableDatas.ToList(), true, true);
+            //AddSegments(treeView1.Nodes, cmpPcm, filteredTableDatas.ToList(), true, true);
+            AddSegments(treeView1.Nodes, cmpPcm, cmpPcm.tableDatas, true, true);
 
         }
 

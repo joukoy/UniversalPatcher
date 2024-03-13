@@ -630,15 +630,28 @@ public static class LoggerUtils
 
     public static List<RealTimeControl> LoadRealTimeControls()
     {
-        List<RealTimeControl> rtcs = new List<RealTimeControl>();
-        if (File.Exists(AppSettings.ControlCommandsFile))
+        try
         {
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<RealTimeControl>));
-            System.IO.StreamReader file = new System.IO.StreamReader(AppSettings.ControlCommandsFile);
-            rtcs = (List<RealTimeControl>) reader.Deserialize(file);
-            file.Close();
+            List<RealTimeControl> rtcs = new List<RealTimeControl>();
+            if (File.Exists(AppSettings.ControlCommandsFile))
+            {
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<RealTimeControl>));
+                System.IO.StreamReader file = new System.IO.StreamReader(AppSettings.ControlCommandsFile);
+                rtcs = (List<RealTimeControl>)reader.Deserialize(file);
+                file.Close();
+            }
+            return rtcs;
         }
-        return rtcs;
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, LoggerUtils line " + line + ": " + ex.Message + ", " + ex.InnerException);
+        }
+        return new List<RealTimeControl>();
     }
     public static void initPcmResponses()
     {
