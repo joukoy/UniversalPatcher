@@ -605,6 +605,10 @@ namespace UniversalPatcher
         {
             return false;
         }
+        public virtual Response<int> Ioctl(int ioctlID, int input)
+        {
+            return new Response<int>(ResponseStatus.Refused,0);
+        }
         public virtual int[] SetupFilters(string Filters, bool Secondary, bool ClearOld)
         {
             return null;

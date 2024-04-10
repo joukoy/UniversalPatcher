@@ -22,6 +22,9 @@ public static class LoggerUtils
     public static Dictionary<byte, string> PcmResponses;
     public static List<RealTimeControl> RealTimeControls { get; set; }
 
+    public static readonly string savedFiltersFile = Path.Combine(Application.StartupPath, "Logger", "savedfilters.xml");
+
+
     public enum ControlType
     {
         Slider,

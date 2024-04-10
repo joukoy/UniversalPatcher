@@ -29,6 +29,7 @@ namespace UniversalPatcher
             {
                 filteredTds = new List<TableData>();
                 Node = new TreeNode(NodeText);
+                Node.Text = NodeText;
                 Node.Tag = this;
                 Node.Name = NodeName;
                 Node.ImageKey = ico;
@@ -674,7 +675,7 @@ namespace UniversalPatcher
                         subTn = (Tnode)subTn.Node.Nodes[sb.ToString()].Tag;
                         subTn.filteredTds.Add(filteredTableDatas[i]);
                         if (AppSettings.TunerShowTableCount)
-                            subTn.Node.Text = cat + " [" + subTn.filteredTds.Count.ToString() + "]";
+                            subTn.Node.Text = mainCats[c] + " [" + subTn.filteredTds.Count.ToString() + "]";
                     }
                 }
 

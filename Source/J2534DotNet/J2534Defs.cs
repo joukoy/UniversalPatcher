@@ -48,8 +48,8 @@ namespace J2534DotNet
         public ProtocolID ProtocolID {get; set;}
         public RxStatus RxStatus { get; set; }
         public TxFlag TxFlags { get; set; }
-        public int Timestamp { get; set; }
-        public int ExtraDataIndex { get; set; }
+        public uint Timestamp { get; set; }
+        public uint ExtraDataIndex { get; set; }
         public byte[] Data { get; set; }
     }
 
@@ -239,7 +239,23 @@ namespace J2534DotNet
         CLEAR_FUNCT_MSG_LOOKUP_TABLE = 0x0B,
         ADD_TO_FUNCT_MSG_LOOKUP_TABLE = 0x0C,
         DELETE_FROM_FUNCT_MSG_LOOKUP_TABLE = 0x0D,
-        READ_PROG_VOLTAGE = 0x0E
+        READ_PROG_VOLTAGE = 0x0E,
+        SW_CAN_HS = 0x8000,
+        SW_CAN_NS = 0x8001,
+        SET_POLL_RESPONSE = 0x8002,
+        BECOME_MASTER = 0x8003,
+        START_REPEAT_MESSAGE = 0x8004,
+        QUERY_REPEAT_MESSAGE = 0x8005,
+        STOP_REPEAT_MESSAGE = 0x8006,
+        GET_DEVICE_CONFIG = 0x8007,
+        SET_DEVICE_CONFIG = 0x8008,
+        PROTECT_J1939_ADDR = 0x8009,
+        CLEAR_LAST_USED_DEVICE = 0x10001,
+        GET_DEVICE_SERIAL_NUMBER = 0x10002,
+        READ_CABLE_ID = 0x10003,
+        J1850PWM_TERMINATION = 0x10004,
+        DISABLE_POP_UPS = 0x10005
+
     }
 
     public enum ConfigParameter

@@ -84,7 +84,7 @@ namespace UniversalPatcher
             {
                 this.useValue = false;
             }
-            public CkSearchResult(uint start,uint end,uint csaddress,UInt64 csum, bool useVal, CSMethod method, byte complement, bool byteswap, UInt64 Poly, UInt64 Xor) 
+            public CkSearchResult(uint start,uint end,uint csaddress,UInt64 csum, bool useVal, CSMethod method, byte complement, bool byteswap, UInt64 Poly, UInt64 Xor, UInt64 InitialValue) 
             {
                 this.Start = start;
                 this.End = end;
@@ -96,6 +96,7 @@ namespace UniversalPatcher
                 this.ByteSwap = byteswap;
                 this.poly = Poly;
                 this.Xor = Xor;
+                this.InitialValue = InitialValue;
             }
             public CkSearchResult(CkResult result,bool useVal)
             {
@@ -156,7 +157,7 @@ namespace UniversalPatcher
             public CSMethod Method { get; set; }
             public byte Complement { get; set; }
             public bool ByteSwap { get; set; }
-
+            public UInt64 InitialValue { get; set; }
             private bool useValue;
             private UInt32 csAddr;
             private UInt64 poly;
@@ -168,6 +169,7 @@ namespace UniversalPatcher
             SearchRange,
             AfterRange,
             UseValue,
+            Read,
             All
         }
 
@@ -240,6 +242,7 @@ namespace UniversalPatcher
             public List<CsUtilMethod> Methods { get; set; }
             public List<byte> Complements { get; set; }
             public string CSAddress { get; set; }
+            public string Offset { get; set; }
             public RangeType CSAddressType { get; set; }
             public bool ShowResults { get; set; }
             public uint Threads { get; set; }

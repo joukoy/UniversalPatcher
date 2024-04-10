@@ -33,7 +33,6 @@ namespace UniversalPatcher
         private List<JFilter> savedFilters;
         //private JFilter currentFilter;
         private readonly string savedPresetsFile = Path.Combine(Application.StartupPath, "Logger", "savedpresets.xml");
-        private readonly string savedFiltersFile = Path.Combine(Application.StartupPath, "Logger", "savedfilters.xml");
         private int currentFilter = 0;
         //private readonly string emptytext = "Type here or select...";
 

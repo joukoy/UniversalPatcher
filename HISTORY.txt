@@ -701,3 +701,10 @@
 - Tuner: Table/Offset visualizer updated
 - Tuner: Added Smooth-function
 
+0.22.19
+- Checksum research: Support for reading range and Checksum address from bin
+- Added NGC3 checksum method
+- Logger: use always HEX for pin_config
+- Logger: Don't use Device timestamps for timestamps with J2534 devices
+- J-Console: added IOCTL:function[:argument]
+- Added file script_commands.txt, short description of available commands in console

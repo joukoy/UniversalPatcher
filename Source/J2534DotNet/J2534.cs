@@ -191,6 +191,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg))*numMsgs + 4 );
                 IntPtr pNextMsg = IntPtr.Zero;
                 //IntPtr[] pMsgs = new IntPtr[50];
@@ -229,6 +230,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
                 // TODO: change function to accept a list? of PassThruMsg
                 IntPtr MsgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uMsg));
@@ -257,6 +259,7 @@ namespace J2534DotNet
 
         public J2534Err StartPeriodicMsg(int channelId, PassThruMsg msg, ref int msgId, int timeInterval)
         {
+            if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
             UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
             IntPtr MsgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uMsg));
             Marshal.StructureToPtr(uMsg, MsgPtr, false);
@@ -388,6 +391,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 lock (devLock)
                 {
                     return (J2534Err)m_wrapper.StopMsgFilter(channelId, filterId);
@@ -402,6 +406,7 @@ namespace J2534DotNet
 
         public J2534Err SetProgrammingVoltage(int deviceId, PinNumber pinNumber, uint voltage)
         {
+            if (deviceId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
             lock (devLock)
             {
                 return (J2534Err)m_wrapper.SetProgrammingVoltage(deviceId, (int)pinNumber, voltage);
@@ -412,6 +417,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (deviceId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr pFirmwareVersion = Marshal.AllocHGlobal(120);
                 IntPtr pDllVersion = Marshal.AllocHGlobal(120);
                 IntPtr pApiVersion = Marshal.AllocHGlobal(120);
@@ -471,6 +477,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr Ptr = SconfigToPtr(config.ToArray()); J2534Err returnValue;
                 lock (devLock)
                 {
@@ -540,6 +547,7 @@ namespace J2534DotNet
 
         public J2534Err SetConfig(int channelId, ref SConfig[] config)
         {
+            if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
             IntPtr Ptr = SconfigToPtr(config);
             J2534Err returnValue;
             lock (devLock)
@@ -554,6 +562,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (DeviceID < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = Marshal.AllocHGlobal(8);
 
@@ -576,10 +585,39 @@ namespace J2534DotNet
             }
         }
 
+        public J2534Err IoctlPassthru(int DeviceID, int ioctlID, int input,ref int output)
+        {
+            try
+            {
+                if (DeviceID < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                IntPtr inputPtr = Marshal.AllocHGlobal(8);
+                IntPtr outputPtr = Marshal.AllocHGlobal(8);
+                Marshal.WriteInt32(inputPtr,input);
+
+                J2534Err returnValue;
+                lock (devLock)
+                {
+                    returnValue = (J2534Err)m_wrapper.Ioctl(DeviceID, (int)ioctlID, inputPtr, outputPtr);
+                }
+                if (returnValue == J2534Err.STATUS_NOERROR)
+                {
+                    output = Marshal.ReadInt32(outputPtr);
+                }
+                Marshal.FreeHGlobal(outputPtr);
+                return returnValue;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return J2534Err.ERR_FAILED;
+            }
+        }
+
         public J2534Err FiveBaudInit(int channelId, byte targetAddress, ref byte keyword1, ref byte keyword2)
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 J2534Err returnValue;
                 IntPtr input = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SByteArray)) + 4);
                 IntPtr output = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SByteArray)) + 4);
@@ -621,6 +659,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg)));
                 IntPtr output = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg)));
                 UnsafePassThruMsg uTxMsg = ConvertPassThruMsg(txMsg);
@@ -654,6 +693,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -673,6 +713,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -692,6 +733,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -711,6 +753,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -730,6 +773,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -749,6 +793,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 J2534Err returnValue;
                 IntPtr input = SbytesToPtr(FuncAddr);
                 IntPtr output = IntPtr.Zero;
@@ -771,6 +816,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 J2534Err returnValue;
                 IntPtr input = SbytesToPtr(FuncAddr);
                 IntPtr output = IntPtr.Zero;
@@ -796,12 +842,12 @@ namespace J2534DotNet
             try
             {
 
-                uMsg.ProtocolID = (int)msg.ProtocolID;
-                uMsg.RxStatus = (int)msg.RxStatus;
+                uMsg.ProtocolID = (uint)msg.ProtocolID;
+                uMsg.RxStatus = (uint)msg.RxStatus;
                 uMsg.Timestamp = msg.Timestamp;
-                uMsg.TxFlags = (int)msg.TxFlags;
+                uMsg.TxFlags = (uint)msg.TxFlags;
                 uMsg.ExtraDataIndex = msg.ExtraDataIndex;
-                uMsg.DataSize = msg.Data.Length;
+                uMsg.DataSize = (uint)msg.Data.Length;
                 unsafe
                 {
                     for (int i = 0; i < msg.Data.Length; i++)

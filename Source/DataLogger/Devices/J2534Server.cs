@@ -371,6 +371,20 @@ namespace UniversalPatcher
                                             retVal = failMessage;
                                         }
                                         break;
+                                    case j2534Command.Ioctl:
+                                        int ioctlFunc = BitConverter.ToInt32(data, 0);
+                                        int input = BitConverter.ToInt32(data, 4);
+                                        Response<int> resp = LogDevice.Ioctl(ioctlFunc, input);
+                                        if (resp.Status == ResponseStatus.Success)
+                                        {
+                                            retVal = BitConverter.GetBytes(resp.Value);
+                                        }
+                                        else
+                                        {
+                                            Logger("Ioctl fail");
+                                            retVal = failMessage;
+                                        }
+                                        break;
                                     default:
                                         LoggerBold("Unknown command!" + msg[0].ToString("X2"));
                                         retVal = failMessage;

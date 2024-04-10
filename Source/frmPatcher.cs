@@ -4514,6 +4514,16 @@ namespace UniversalPatcher
             frmHistogram HstForm = new frmHistogram(false, basefile);
             HstForm.Show();
         }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            string defname = Path.Combine(Application.StartupPath, "XML", "ngc3tables.txt");
+            string fName = SelectSaveFile(TxtFilter, defname);
+            if (string.IsNullOrEmpty(fName))
+                return;
+            Ngc3Checksum ngc3 = new Ngc3Checksum();
+            ngc3.savetables(fName);
+        }
     }
 }
 

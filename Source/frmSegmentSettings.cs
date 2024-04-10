@@ -55,6 +55,8 @@ namespace UniversalPatcher
                 S.Checksum1Method = CSMethod.Dwordsum;
             if (radioCs1Bosch.Checked)
                 S.Checksum1Method = CSMethod.BoschInv;
+            if (radioCs1Ngc3.Checked)
+                S.Checksum1Method = CSMethod.Ngc3;
 
             if (radioCS2None.Checked)
                 S.Checksum2Method = CSMethod.None;
@@ -70,6 +72,8 @@ namespace UniversalPatcher
                 S.Checksum2Method = CSMethod.Dwordsum;
             if (radioCs2Bosch.Checked)
                 S.Checksum2Method = CSMethod.BoschInv;
+            if (radioCs2Ngc3.Checked)
+                S.Checksum2Method = CSMethod.Ngc3;
 
             S.CS1SwapBytes = checkSwapBytes1.Checked;
 
@@ -138,6 +142,9 @@ namespace UniversalPatcher
                 radioCS1DwordSum.Checked = true;
             if (S.Checksum1Method == CSMethod.BoschInv)
                 radioCs1Bosch.Checked = true;
+            if (S.Checksum1Method == CSMethod.Ngc3)
+                radioCs2Ngc3.Checked = true;
+
             if (S.Checksum2Method == CSMethod.None)
                 radioCS2None.Checked = true;
             if (S.Checksum2Method == CSMethod.crc16)
@@ -152,12 +159,16 @@ namespace UniversalPatcher
                 radioCS2DwordSum.Checked = true;
             if (S.Checksum2Method == CSMethod.BoschInv)
                 radioCs2Bosch.Checked = true;
+            if (S.Checksum2Method == CSMethod.Ngc3)
+                radioCs2Ngc3.Checked = true;
+
             if (S.CS1Complement == 0)
                 radioCS1Complement0.Checked = true;
             if (S.CS1Complement == 1)
                 radioCS1Complement1.Checked = true;
             if (S.CS1Complement == 2)
                 radioCS1Complement2.Checked = true;
+
             if (S.CS2Complement == 0)
                 radioCS2Complement0.Checked = true;
             if (S.CS2Complement == 1)

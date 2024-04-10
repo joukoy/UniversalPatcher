@@ -97,7 +97,7 @@ public class Upatcher
         }
     }
     public struct Block
-    {
+    {       
         public uint Start;
         public uint End;
     }
@@ -430,6 +430,7 @@ public class Upatcher
         Wordsum = 4,
         Dwordsum = 5,
         BoschInv = 6,
+        Ngc3 = 7,
         Unknown = 99
     }
 
@@ -466,6 +467,7 @@ public class Upatcher
         StartPeriodicMsg,
         StopPeriodicMsg,
         ClearPeriodicMsg,
+        Ioctl,
         quit
     }
     //
@@ -2260,6 +2262,10 @@ public class Upatcher
                         sum = ((0xFFFFFFFF - sum) << 32) + sum;
                         Debug.WriteLine(sum.ToString("X"));
                     }
+                    break;
+                case CSMethod.Ngc3:
+                    Ngc3Checksum ngc3 = new Ngc3Checksum();
+                    sum = ngc3.CalculateChecksum(tmp, 0, (uint)tmp.Length);
                     break;
             }
 

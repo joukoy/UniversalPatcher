@@ -1,11 +1,17 @@
 #include "pch.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <thread>
 #include "windows.h"
 #include <queue>
 #include "SafeQueue.h"
 #include "SafeQueue.cpp"
+#include <tchar.h>
+#include <atlstr.h>
+using namespace std;
+
 #define EXPORT comment(linker, "/EXPORT:" __FUNCTION__ "=" __FUNCDNAME__)
 
 #define crc16  1
@@ -14,6 +20,7 @@
 #define Wordsum  4
 #define Dwordsum  5
 #define BoschInv  6
+#define Ngc3    7
 /*
 unsigned int rangestart = 0;
 unsigned int rangeend = 0;
@@ -32,8 +39,12 @@ unsigned char* buffer;
 HANDLE* handles;
 BOOL StopMe;
 
-UINT16 table[256];
-UINT32 table32[256];
+UINT16 CrcTable16[256];
+UINT32 CrcTable32[256];
+UINT16 Ngc3Table1[16];
+UINT16 Ngc3Table2[16];
+UINT16 Ngc3Table3[16];
+UINT16 Ngc3Table4[16];
 
 struct StartEnd
 {
@@ -153,7 +164,7 @@ void InitCrc16()
             }
             temp >>= 1;
         }
-        table[i] = value;
+        CrcTable16[i] = value;
     }
 }
 
@@ -180,10 +191,91 @@ void  InitCrc32()
                 temp >>= 1;
             }
         }
-        table32[i] = temp;
+        CrcTable32[i] = temp;
     }
 }
 
+vector<string> split(string str, string token) {
+    vector<string>result;
+    while (str.size()) {
+        int index = str.find(token);
+        if (index != string::npos) {
+            result.push_back(str.substr(0, index));
+            str = str.substr(index + token.size());
+            if (str.size() == 0)result.push_back(str);
+        }
+        else {
+            result.push_back(str);
+            str = "";
+        }
+    }
+    return result;
+}
+string thisDllDirPath()
+{
+    CStringW thisPath = L"";
+    WCHAR path[MAX_PATH];
+    HMODULE hm;
+    if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+        GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        (LPWSTR)&thisDllDirPath, &hm))
+    {
+        GetModuleFileNameW(hm, path, MAX_PATH);
+        PathRemoveFileSpecW(path);
+        thisPath = CStringW(path);
+        if (!thisPath.IsEmpty() &&
+            thisPath.GetAt(thisPath.GetLength() - 1) != '\\')
+            thisPath += L"\\";
+    }
+    //	else if (_DEBUG) std::wcout << L"GetModuleHandle Error: " << GetLastError() << std::endl;
+
+    //	if (_DEBUG) std::wcout << L"thisDllDirPath: [" << CStringW::PCXSTR(thisPath) << L"]" << std::endl;
+    return { thisPath.GetString(), thisPath.GetString() + thisPath.GetLength() };
+}
+void InitNgc3()
+{
+    ifstream myfile(thisDllDirPath() + "XML\\ngc3tables.txt");
+    int row = 0;
+    string line;
+    std::vector<std::string> fileLines;
+    const char* hex = "0123456789ABCDEF";
+    if (myfile && myfile.is_open())
+    {
+        if (getline(myfile, line))
+        {
+            vector<string> valstrs = split(line, ",");
+            for (int x = 0;x < 16;x++)
+            {
+                Ngc3Table1[x] = stoi(valstrs[x], 0, 16);
+            }
+        }
+        if (getline(myfile, line))
+        {
+            vector<string> valstrs = split(line, ",");
+            for (int x = 0;x < 16;x++)
+            {
+                Ngc3Table2[x] = stoi(valstrs[x], 0, 16);
+            }
+        }
+        if (getline(myfile, line))
+        {
+            vector<string> valstrs = split(line, ",");
+            for (int x = 0;x < 16;x++)
+            {
+                Ngc3Table3[x] = stoi(valstrs[x], 0, 16);
+            }
+        }
+        if (getline(myfile, line))
+        {
+            vector<string> valstrs = split(line, ",");
+            for (int x = 0;x < 16;x++)
+            {
+                Ngc3Table4[x] = stoi(valstrs[x], 0, 16);
+            }
+        }
+    }
+    myfile.close();
+}
 
 DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
 {
@@ -193,15 +285,11 @@ DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
     BYTE index;
     StartEnd range;
     int step = 1;
-    if (searchsettings->Method == Wordsum || searchsettings->Method == BoschInv)
+    if (searchsettings->Method == Wordsum || searchsettings->Method == BoschInv || searchsettings->Method == Ngc3)
         step = 2;
     else if (searchsettings->Method == Dwordsum)
         step = 4;
 
-    if (searchsettings->Method == crc16)
-        InitCrc16();
-    if (searchsettings->Method == crc32)
-        InitCrc32();
 
     if (searchsettings->CsValueCount > 0)
     {
@@ -315,13 +403,26 @@ DWORD WINAPI CalcCheckSum(_In_  LPVOID lpParameter)
                         break;
                     case crc16:
                         index = (BYTE)(sum ^ buffer[a]);
-                        sum = (UINT16)((sum >> 8) ^ table[index]);
+                        sum = (UINT16)((sum >> 8) ^ CrcTable16[index]);
                         csCalc = sum;
                         break;
                     case crc32:
                         index = (BYTE)(((sum) & 0xff) ^ buffer[a]);
-                        sum = (UINT32)((sum >> 8) ^ table32[index]);
+                        sum = (UINT32)((sum >> 8) ^ CrcTable32[index]);
                         csCalc = ~sum;
+                        break;
+                    case Ngc3:
+                        UINT16 v3;
+                        if (searchsettings->MSB)
+                            v3 = (UINT16)(buffer[a] << 8 | buffer[a + 1]);
+                        else
+                            v3 = (UINT16)(buffer[a + 1] << 8 | buffer[a]);
+                        v3 = sum ^ v3;
+                        sum = (UINT16)(Ngc3Table1[(v3 >> 12)] ^
+                            Ngc3Table2[(v3 & 0xF00) >> 8] ^
+                            Ngc3Table3[(v3 & 0xF0) >> 4] ^
+                            Ngc3Table4[(v3 & 0x0F)]);
+                        csCalc = sum;
                         break;
                     default:
                         break;
@@ -487,6 +588,12 @@ int WINAPI CheckSumSearch(unsigned char* Buffer, SearchSettings *Settings, UINT6
     
     int qSize = 0;
     StopMe = false;
+    if (searchsettings->Method == crc16)
+        InitCrc16();
+    if (searchsettings->Method == crc32)
+        InitCrc32();
+    if (searchsettings->Method == Ngc3)
+        InitNgc3();
 
     std::cout << "Range: " << std::hex << searchsettings->Start;
     std::cout << " - " << std::hex << searchsettings->End << "\n";

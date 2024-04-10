@@ -795,6 +795,38 @@ namespace UniversalPatcher
                 LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
             }
         }
+        public override Response<int> Ioctl(int ioctlID, int input)
+        {
+            try
+            {
+                Debug.WriteLine("Ioctl " + ioctlID.ToString("X") + ": " + input.ToString("X"));
+                byte[] param = new byte[8];
+                byte[] tmp = BitConverter.GetBytes(ioctlID);
+                Array.Copy(tmp, param, 4);
+                tmp = BitConverter.GetBytes(input);
+                Array.Copy(tmp, 0, param, 4, 4);
+                byte[] readBuf = PipeSendAndReceive(j2534Command.Ioctl, param);
+                if (readBuf.Length == 1 && Convert.ToBoolean(readBuf[0]) == false)
+                {
+                    return new Response<int>(ResponseStatus.Error, 0);
+                }
+                else
+                {
+                    int res = BitConverter.ToInt32(readBuf,0);
+                    return new Response<int>(ResponseStatus.Success,res);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+            }
+            return new Response<int>(ResponseStatus.Error, 0);
+        }
 
         public override bool DisConnectSecondaryProtocol()
         {

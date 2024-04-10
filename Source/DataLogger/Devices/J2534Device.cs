@@ -46,8 +46,6 @@ namespace UniversalPatcher
         //private int periodigMsgId = -1;
         //private int periodigMsgId2 = -1;
         public const string DeviceType = "J2534";
-        long timeDiff = long.MaxValue;
-        readonly long ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
         private Dictionary<string, int> protocol_channel;
         private Dictionary<string, int> periodicMsgIds1;
         private Dictionary<string, int> periodicMsgIds2;
@@ -132,28 +130,6 @@ namespace UniversalPatcher
         public override bool Initialize(int BaudRate, J2534InitParameters j2534Init) //Baudrate not really used
         {
             return this.InitializeInternal(j2534Init);
-        }
-
-        private void SetTimeDiff(PassThruMsg rxMsg)
-        {
-            try
-            {
-                long timeDiffTmp = DateTime.Now.Ticks - (rxMsg.Timestamp * ticksPerMicrosecond);
-                if (timeDiffTmp < timeDiff)
-                {
-                    timeDiff = timeDiffTmp;
-                    Debug.WriteLine("Time diff (function): " + timeDiff.ToString());
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
-            }
         }
 
         // This returns 'bool' for the sake of readability. That bool needs to be
@@ -264,7 +240,6 @@ namespace UniversalPatcher
                 Debug.WriteLine("Protocol Set");
                 J2534FunctionsIsLoaded = true;
                 //receiveTask = Task.Factory.StartNew(() => DataReceiver());
-                //SetTimeDiff();
                 this.Connected = true;
                 Logger("Device initialization complete.");
                 return true;
@@ -517,8 +492,8 @@ namespace UniversalPatcher
                 else
                 {
                     int val = 0;
-                    if (parts[1].StartsWith("$") | !Int32.TryParse(parts[1], out val))
-                        HexToInt(parts[1].Replace("$", ""), out val);
+                    //if (parts[1].StartsWith("$") | !Int32.TryParse(parts[1], out val))
+                    HexToInt(parts[1].Replace("$", ""), out val);
                     if (cp != ConfigParameter.NONE)
                     {
                         SConfig sconfig = new SConfig(cp, val);
@@ -705,7 +680,6 @@ namespace UniversalPatcher
                     {
                         for (int m = 0; m < rxMsgs.Count; m++)
                         {
-                            SetTimeDiff(rxMsgs.Last());
                             if (AppSettings.LoggerFilterStartOfMessage && (rxMsgs[m].RxStatus & RxStatus.START_OF_MESSAGE) == RxStatus.START_OF_MESSAGE)
                             {
                                 skip = true;
@@ -727,7 +701,6 @@ namespace UniversalPatcher
                                 //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
                                 OBDMessage oMsg = new OBDMessage(rxMsgs[m].Data, DateTime.Now.Ticks, (ulong)OBDError);
                                 oMsg.DeviceTimestamp = rxMsgs[m].Timestamp;
-                                oMsg.TimeStamp = rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
                                 if (SeparateProtocolByChannel == false && rxMsgs[m].ProtocolID != Protocol && rxMsgs[m].ProtocolID == Protocol2)
                                 {
                                     oMsg.SecondaryProtocol = true;
@@ -812,7 +785,6 @@ namespace UniversalPatcher
                         {
                             for (int m = 0; m < rxMsgs.Count; m++)
                             {
-                                SetTimeDiff(rxMsgs.Last());
                                 if (AppSettings.LoggerFilterStartOfMessage && (rxMsgs[m].RxStatus & RxStatus.START_OF_MESSAGE) == RxStatus.START_OF_MESSAGE)
                                 {
                                     skip = true;
@@ -838,8 +810,7 @@ namespace UniversalPatcher
                                     //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
                                     //this.Enqueue(new OBDMessage(rxMsgs[m].Data, (ulong)rxMsgs[m].Timestamp, (ulong)OBDError));
                                     OBDMessage msg = new OBDMessage(rxMsgs[m].Data, DateTime.Now.Ticks, (ulong)OBDError);
-                                    msg.TimeStamp = rxMsgs[m].Timestamp * ticksPerMicrosecond + timeDiff;
-                                    //msg.TimeStamp = (ulong)(msg.DevTimeStamp + timeDiff);
+                                    msg.DeviceTimestamp = rxMsgs[m].Timestamp;
                                     if (rxMsgs[m].ProtocolID != Protocol2 && rxMsgs[m].ProtocolID == Protocol)
                                     {
                                         this.Enqueue(msg, true);
@@ -903,6 +874,7 @@ namespace UniversalPatcher
                     proto = Protocol2;
                 }
                 PassThruMsg TempMsg = new PassThruMsg(proto, message.Txflag,message.Rxstatus, message.GetBytes());
+                TempMsg.Timestamp = (uint)DateTime.Now.Ticks;
                 int NumMsgs = 1;
 
                 //this.MessageSent(message);
@@ -910,6 +882,7 @@ namespace UniversalPatcher
                 {                    
                     OBDError = J2534Port.Functions.WriteMsgs((int)chid,TempMsg, ref NumMsgs, WriteTimeout);
                     message.TimeStamp = DateTime.Now.Ticks;
+                    message.DeviceTimestamp = DateTime.Now.Ticks;
                     message.Error = (ulong)OBDError;
                     this.MessageSent(message);
                     if (OBDError == J2534Err.STATUS_NOERROR)
@@ -1566,7 +1539,29 @@ namespace UniversalPatcher
                 LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
         }
-
+        public override Response<int> Ioctl(int ioctlID, int input)
+        {
+            int result = 0;
+            try
+            {
+                J2534Err jErr = J2534Port.Functions.IoctlPassthru(DeviceID, ioctlID, input, ref result);
+                Debug.WriteLine("Ioctl " + ioctlID.ToString("X") + ": 0x" + input.ToString("X") + ", result: 0x" + result.ToString("X"));
+                if (jErr == J2534Err.STATUS_NOERROR)
+                    return new Response<int>(ResponseStatus.Success, result);
+                else
+                    return new Response<int>(ResponseStatus.Error, result);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
+            }
+            return new Response<int>(ResponseStatus.Error, 0);
+        }
         public override bool ConnectSecondaryProtocol(J2534InitParameters j2534Init)
         {
             try

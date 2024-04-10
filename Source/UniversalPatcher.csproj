@@ -566,6 +566,7 @@
     <Compile Include="MyCheckBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Ngc3Checksum.cs" />
     <Compile Include="PcmPlatform.cs" />
     <Compile Include="RootFinding.cs" />
     <Compile Include="SavingMath.cs" />

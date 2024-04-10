@@ -267,12 +267,14 @@ namespace UniversalPatcher
                     Line = Line.Substring(pos + 1).Trim();
                 }
                 byte[] lineData = Line.Replace(" ", "").ToBytes();
-                if ((lineData.Length == 11 && lineData[0] == 0x00 && lineData[1] == 0x00 && lineData[2] == 0x07 && lineData[4] == reqByte))
+                //if ((lineData.Length == 11 && lineData[0] == 0x00 && lineData[1] == 0x00 && lineData[2] == 0x07 && lineData[4] == reqByte))
+                if ((lineData.Length == 11 && lineData[0] == 0x00 && lineData[1] == 0x00 &&  lineData[4] == reqByte))
                 {
                     //Request for data
                     reqRow = row;
                 }
-                else if (lineData[0] == 0x00 && lineData[1] == 0x00 && lineData[2] == 0x07 && lineData[4] == ansByte && row == (reqRow + ansRows))
+                //else if (lineData[0] == 0x00 && lineData[1] == 0x00 && lineData[2] == 0x07 && lineData[4] == ansByte && row == (reqRow + ansRows))
+                else if (lineData[0] == 0x00 && lineData[1] == 0x00  && lineData[4] == ansByte && row == (reqRow + ansRows))
                 {
                     addr = (uint)(lineData[addrOffset + 1] << 16 | lineData[addrOffset + 2] << 8 | lineData[addrOffset + 3]);
                     //uint fullAddr = (uint)(lineData[6] << 24 | lineData[7] << 16 | lineData[8] << 8 | lineData[9]);

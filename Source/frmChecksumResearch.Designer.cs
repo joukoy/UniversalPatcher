@@ -45,6 +45,9 @@ namespace UniversalPatcher
             this.txtChecksumRange = new System.Windows.Forms.TextBox();
             this.btnTestChecksum = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtCsUtilOffset = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.radioCsUtilReadRange = new System.Windows.Forms.RadioButton();
             this.labelMinRange = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.radioCsUtilRangeUnknown = new System.Windows.Forms.RadioButton();
@@ -52,6 +55,7 @@ namespace UniversalPatcher
             this.radioCsUtilRangeLimit = new System.Windows.Forms.RadioButton();
             this.radioCsUtilRangeExact = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioCsAfterPair = new System.Windows.Forms.RadioButton();
             this.radioCsUtilCSValue = new System.Windows.Forms.RadioButton();
             this.radioCsUtilCsAfterRange = new System.Windows.Forms.RadioButton();
             this.radioCsUtilCsExact = new System.Windows.Forms.RadioButton();
@@ -62,8 +66,8 @@ namespace UniversalPatcher
             this.saveSettingsAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadCalculationRangeFromResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadCalculationRangeFromResultsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadCalculationRangeFromResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnStop = new System.Windows.Forms.Button();
             this.chkCsUtilLogResults = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -87,7 +91,7 @@ namespace UniversalPatcher
             this.dataGridCsUtilMethods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridCsUtilMethods.Location = new System.Drawing.Point(12, 27);
             this.dataGridCsUtilMethods.Name = "dataGridCsUtilMethods";
-            this.dataGridCsUtilMethods.Size = new System.Drawing.Size(540, 169);
+            this.dataGridCsUtilMethods.Size = new System.Drawing.Size(627, 169);
             this.dataGridCsUtilMethods.TabIndex = 168;
             // 
             // chkCSUtilMatchOnly
@@ -128,7 +132,7 @@ namespace UniversalPatcher
             // 
             this.groupBox6.Controls.Add(this.chkCsUtilFilter);
             this.groupBox6.Controls.Add(this.btnCsutilSearchBosch);
-            this.groupBox6.Location = new System.Drawing.Point(9, 105);
+            this.groupBox6.Location = new System.Drawing.Point(6, 148);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(117, 65);
             this.groupBox6.TabIndex = 188;
@@ -159,7 +163,8 @@ namespace UniversalPatcher
             // 
             // btnCsUtilFix
             // 
-            this.btnCsUtilFix.Location = new System.Drawing.Point(532, 478);
+            this.btnCsUtilFix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCsUtilFix.Location = new System.Drawing.Point(619, 518);
             this.btnCsUtilFix.Name = "btnCsUtilFix";
             this.btnCsUtilFix.Size = new System.Drawing.Size(109, 23);
             this.btnCsUtilFix.TabIndex = 187;
@@ -170,7 +175,7 @@ namespace UniversalPatcher
             // txtExclude
             // 
             this.txtExclude.Enabled = false;
-            this.txtExclude.Location = new System.Drawing.Point(64, 147);
+            this.txtExclude.Location = new System.Drawing.Point(64, 164);
             this.txtExclude.Name = "txtExclude";
             this.txtExclude.Size = new System.Drawing.Size(137, 20);
             this.txtExclude.TabIndex = 184;
@@ -178,7 +183,7 @@ namespace UniversalPatcher
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(10, 150);
+            this.label19.Location = new System.Drawing.Point(10, 167);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(48, 13);
             this.label19.TabIndex = 183;
@@ -221,7 +226,8 @@ namespace UniversalPatcher
             // 
             // btnTestChecksum
             // 
-            this.btnTestChecksum.Location = new System.Drawing.Point(532, 424);
+            this.btnTestChecksum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTestChecksum.Location = new System.Drawing.Point(619, 464);
             this.btnTestChecksum.Name = "btnTestChecksum";
             this.btnTestChecksum.Size = new System.Drawing.Size(109, 23);
             this.btnTestChecksum.TabIndex = 178;
@@ -231,6 +237,9 @@ namespace UniversalPatcher
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtCsUtilOffset);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.radioCsUtilReadRange);
             this.groupBox1.Controls.Add(this.labelMinRange);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.radioCsUtilRangeUnknown);
@@ -243,10 +252,39 @@ namespace UniversalPatcher
             this.groupBox1.Controls.Add(this.label19);
             this.groupBox1.Location = new System.Drawing.Point(12, 202);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(215, 180);
+            this.groupBox1.Size = new System.Drawing.Size(215, 231);
             this.groupBox1.TabIndex = 193;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Calculation range";
+            // 
+            // txtCsUtilOffset
+            // 
+            this.txtCsUtilOffset.Enabled = false;
+            this.txtCsUtilOffset.Location = new System.Drawing.Point(64, 193);
+            this.txtCsUtilOffset.Name = "txtCsUtilOffset";
+            this.txtCsUtilOffset.Size = new System.Drawing.Size(136, 20);
+            this.txtCsUtilOffset.TabIndex = 191;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 194);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(38, 13);
+            this.label3.TabIndex = 190;
+            this.label3.Text = "Offset:";
+            // 
+            // radioCsUtilReadRange
+            // 
+            this.radioCsUtilReadRange.AutoSize = true;
+            this.radioCsUtilReadRange.Location = new System.Drawing.Point(13, 136);
+            this.radioCsUtilReadRange.Name = "radioCsUtilReadRange";
+            this.radioCsUtilReadRange.Size = new System.Drawing.Size(116, 17);
+            this.radioCsUtilReadRange.TabIndex = 189;
+            this.radioCsUtilReadRange.TabStop = true;
+            this.radioCsUtilReadRange.Text = "Read address pairs";
+            this.radioCsUtilReadRange.UseVisualStyleBackColor = true;
+            this.radioCsUtilReadRange.CheckedChanged += new System.EventHandler(this.radioCsUtilReadRange_CheckedChanged);
             // 
             // labelMinRange
             // 
@@ -313,6 +351,7 @@ namespace UniversalPatcher
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.radioCsAfterPair);
             this.groupBox2.Controls.Add(this.radioCsUtilCSValue);
             this.groupBox2.Controls.Add(this.radioCsUtilCsAfterRange);
             this.groupBox2.Controls.Add(this.radioCsUtilCsExact);
@@ -321,10 +360,21 @@ namespace UniversalPatcher
             this.groupBox2.Controls.Add(this.groupBox6);
             this.groupBox2.Location = new System.Drawing.Point(235, 202);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(222, 180);
+            this.groupBox2.Size = new System.Drawing.Size(222, 231);
             this.groupBox2.TabIndex = 194;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Checksum Address";
+            // 
+            // radioCsAfterPair
+            // 
+            this.radioCsAfterPair.AutoSize = true;
+            this.radioCsAfterPair.Location = new System.Drawing.Point(6, 98);
+            this.radioCsAfterPair.Name = "radioCsAfterPair";
+            this.radioCsAfterPair.Size = new System.Drawing.Size(135, 17);
+            this.radioCsAfterPair.TabIndex = 190;
+            this.radioCsAfterPair.TabStop = true;
+            this.radioCsAfterPair.Text = "Read after address pair";
+            this.radioCsAfterPair.UseVisualStyleBackColor = true;
             // 
             // radioCsUtilCSValue
             // 
@@ -364,11 +414,14 @@ namespace UniversalPatcher
             // 
             // richChkData
             // 
+            this.richChkData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.richChkData.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richChkData.HideSelection = false;
-            this.richChkData.Location = new System.Drawing.Point(12, 388);
+            this.richChkData.Location = new System.Drawing.Point(12, 439);
             this.richChkData.Name = "richChkData";
-            this.richChkData.Size = new System.Drawing.Size(445, 123);
+            this.richChkData.Size = new System.Drawing.Size(589, 112);
             this.richChkData.TabIndex = 195;
             this.richChkData.Text = "";
             // 
@@ -379,7 +432,7 @@ namespace UniversalPatcher
             this.resultsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(655, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(742, 24);
             this.menuStrip1.TabIndex = 196;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -395,14 +448,14 @@ namespace UniversalPatcher
             // openSettingsToolStripMenuItem
             // 
             this.openSettingsToolStripMenuItem.Name = "openSettingsToolStripMenuItem";
-            this.openSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openSettingsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.openSettingsToolStripMenuItem.Text = "Load settings";
             this.openSettingsToolStripMenuItem.Click += new System.EventHandler(this.openSettingsToolStripMenuItem_Click);
             // 
             // saveSettingsAsToolStripMenuItem
             // 
             this.saveSettingsAsToolStripMenuItem.Name = "saveSettingsAsToolStripMenuItem";
-            this.saveSettingsAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveSettingsAsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.saveSettingsAsToolStripMenuItem.Text = "Save Settings as...";
             this.saveSettingsAsToolStripMenuItem.Click += new System.EventHandler(this.saveSettingsAsToolStripMenuItem_Click);
             // 
@@ -423,13 +476,6 @@ namespace UniversalPatcher
             this.saveResultsToolStripMenuItem.Text = "Show Results";
             this.saveResultsToolStripMenuItem.Click += new System.EventHandler(this.saveResultsToolStripMenuItem_Click);
             // 
-            // loadCalculationRangeFromResultsToolStripMenuItem
-            // 
-            this.loadCalculationRangeFromResultsToolStripMenuItem.Name = "loadCalculationRangeFromResultsToolStripMenuItem";
-            this.loadCalculationRangeFromResultsToolStripMenuItem.Size = new System.Drawing.Size(285, 22);
-            this.loadCalculationRangeFromResultsToolStripMenuItem.Text = "Load Calculation range from result file...";
-            this.loadCalculationRangeFromResultsToolStripMenuItem.Click += new System.EventHandler(this.loadCalculationRangeFromResultsToolStripMenuItem_Click);
-            // 
             // loadCalculationRangeFromResultsToolStripMenuItem1
             // 
             this.loadCalculationRangeFromResultsToolStripMenuItem1.Name = "loadCalculationRangeFromResultsToolStripMenuItem1";
@@ -437,10 +483,18 @@ namespace UniversalPatcher
             this.loadCalculationRangeFromResultsToolStripMenuItem1.Text = "Load Calculation range from results....";
             this.loadCalculationRangeFromResultsToolStripMenuItem1.Click += new System.EventHandler(this.loadCalculationRangeFromResultsToolStripMenuItem1_Click);
             // 
+            // loadCalculationRangeFromResultsToolStripMenuItem
+            // 
+            this.loadCalculationRangeFromResultsToolStripMenuItem.Name = "loadCalculationRangeFromResultsToolStripMenuItem";
+            this.loadCalculationRangeFromResultsToolStripMenuItem.Size = new System.Drawing.Size(285, 22);
+            this.loadCalculationRangeFromResultsToolStripMenuItem.Text = "Load Calculation range from result file...";
+            this.loadCalculationRangeFromResultsToolStripMenuItem.Click += new System.EventHandler(this.loadCalculationRangeFromResultsToolStripMenuItem_Click);
+            // 
             // btnStop
             // 
+            this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnStop.Enabled = false;
-            this.btnStop.Location = new System.Drawing.Point(532, 451);
+            this.btnStop.Location = new System.Drawing.Point(619, 491);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(109, 23);
             this.btnStop.TabIndex = 197;
@@ -480,7 +534,8 @@ namespace UniversalPatcher
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(566, 27);
+            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAdd.Location = new System.Drawing.Point(653, 27);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(75, 23);
             this.btnAdd.TabIndex = 201;
@@ -490,7 +545,8 @@ namespace UniversalPatcher
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(566, 56);
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.Location = new System.Drawing.Point(653, 56);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(75, 23);
             this.btnEdit.TabIndex = 202;
@@ -500,7 +556,8 @@ namespace UniversalPatcher
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(566, 85);
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDelete.Location = new System.Drawing.Point(653, 85);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 203;
@@ -512,7 +569,7 @@ namespace UniversalPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(655, 520);
+            this.ClientSize = new System.Drawing.Size(742, 560);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnAdd);
@@ -594,5 +651,9 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem saveResultsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadCalculationRangeFromResultsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadCalculationRangeFromResultsToolStripMenuItem1;
+        private System.Windows.Forms.RadioButton radioCsUtilReadRange;
+        private System.Windows.Forms.TextBox txtCsUtilOffset;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.RadioButton radioCsAfterPair;
     }
 }

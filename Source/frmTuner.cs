@@ -604,7 +604,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                if (!td.OS.Contains(PCM.OS) && !td.CompatibleOS.Contains("," + PCM.OS + ","))
+                if (!string.IsNullOrEmpty(td.OS) && !td.OS.Contains(PCM.OS) && !td.CompatibleOS.Contains("," + PCM.OS + ","))
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);                
                 }
@@ -635,7 +635,15 @@ namespace UniversalPatcher
                 else
                 {
                     TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-                    Tnode tnode = (Tnode)tv.SelectedNode.Parent.Tag;
+                    Tnode tnode;
+                    if (tv.SelectedNode.Parent == null)
+                    {
+                        tnode = (Tnode)tv.SelectedNode.Tag;
+                    }
+                    else
+                    {
+                        tnode = (Tnode)tv.SelectedNode.Parent.Tag;
+                    }
                     frmT.tunerSelectedTables = tnode.filteredTds;
                 }
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;

@@ -148,6 +148,7 @@ namespace UniversalPatcher
             {
                 labelConnected.Text = "Disconnected - OS: " + datalogger.OS;
             }
+
             //LogReceivers.Add(txtResult);
             Application.DoEvents();
             comboBaudRate.DataSource = SupportedBaudRates;
@@ -691,7 +692,6 @@ namespace UniversalPatcher
             {
                 if (e.Msg == null || e.Msg.Length == 0)
                     return;
-
                 this.Invoke((MethodInvoker)delegate () {
                     StringBuilder logTxt = new StringBuilder();
                     if (chkConsoleTimestamps.Checked)
@@ -1302,7 +1302,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -2374,6 +2379,7 @@ namespace UniversalPatcher
             txtJ2534PeriodicMsg2.Text = initParameters.PerodicMsg;
             numJ2534PeriodicMsgInterval2.Value = initParameters.PeriodicInterval;
             jConsoleFilters2 = initParameters.PassFilters;
+            chkUsePrimaryChannel.Checked = initParameters.UsePrimaryChannel;
         }
         public bool ConnectJConsole(OBDScript oscript, J2534InitParameters InitParms)
         {
@@ -2434,6 +2440,10 @@ namespace UniversalPatcher
                 btnJConsoleConnectSecondProtocol.Enabled = true;
                 timerDeviceStatus.Enabled = true;
                 timerJconsoleShowLogText.Interval = AppSettings.LoggerConsoleDisplayInterval;
+                if (chkUsePrimaryChannel.Checked)
+                {
+                    ConnectJConsole2();
+                }
                 return true;
             }
             catch (Exception ex)
@@ -2934,18 +2944,18 @@ namespace UniversalPatcher
             if (radioCAN.Checked)
             {
                 LoggerBold("Not implemented for CAN");
-                return;
+                //return;
             }
             Connect(radioVPW.Checked, true, true, null);
 
-            byte module = (byte)comboModule.SelectedValue;
+            ushort module = (ushort)comboModule.SelectedValue;
             if (chkDtcAllModules.Checked)
             {
                 module = DeviceId.Broadcast;
             }
-            if (datalogger.LogRunning && datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm)
+            if (datalogger.LogRunning && datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm && radioVPW.Checked)
             {
-                OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x20, 0x00 });
+                OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, (byte)module, DeviceId.Tool, 0x20, 0x00 });
                 datalogger.QueueCustomCmd(msg, "Clear DTC codes");
             }
             else
@@ -3929,24 +3939,36 @@ namespace UniversalPatcher
             ltb.ConvertFile(fName);
         }
 
+        private void ConnectJConsole2()
+        {
+            try
+            {
+                if (jConsole.Connected2)
+                {
+                    //return;
+                }
+                J2534InitParameters JSettings = CreateJ2534InitParameters2();
+                if (jConsole.JDevice.ConnectSecondaryProtocol(JSettings))
+                {
+                    groupJConsoleProto.Enabled = true;
+                    if (!jConsole.Connected2)
+                    {
+                        jConsole.Receiver2 = new MessageReceiver();
+                        jConsole.Receiver2.StartReceiveLoop(jConsole.JDevice, jConsole.port, true, false);
+                    }
+                    jConsole.Connected2 = true;
+                    //btnJConsoleConnectSecondProtocol.Enabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold("Protocol 2 connection failed. Check settings");
+                Debug.WriteLine(ex.Message);
+            }
+        }
         private void btnJConsoleConnectSecondProtocol_Click(object sender, EventArgs e)
         {
-            if (jConsole.Connected2)
-            {
-                //return;
-            }
-            J2534InitParameters JSettings = CreateJ2534InitParameters2();
-            if (jConsole.JDevice.ConnectSecondaryProtocol(JSettings))
-            {
-                groupJConsoleProto.Enabled = true;
-                if (!jConsole.Connected2)
-                {
-                    jConsole.Receiver2 = new MessageReceiver();
-                    jConsole.Receiver2.StartReceiveLoop(jConsole.JDevice, jConsole.port, true, false);
-                }
-                jConsole.Connected2 = true;
-                //btnJConsoleConnectSecondProtocol.Enabled = false;
-            }
+            ConnectJConsole2();
         }
 
         private void btnJConsoleAddConfig_Click(object sender, EventArgs e)
@@ -5533,6 +5555,19 @@ namespace UniversalPatcher
         private void graphicsLogfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowGraphics(false);
+
+        }
+
+        private void chkVpwDevTimestamps_CheckedChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void chkConsoleTimestamps_CheckedChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void parseLogfileToBinToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
 
         }
     }

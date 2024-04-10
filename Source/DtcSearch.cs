@@ -398,12 +398,19 @@ namespace UniversalPatcher
                     dtc.codeInt = PCM.ReadUInt16(addr);
                     string codeTmp = dtc.codeInt.ToString("X");
                     if (dtc.codeInt < 10 && retVal.Count > 10 && linear)
-                            break;
+                    {
+                        break;
+                    }
+                    Debug.WriteLine(codeTmp);
                     if (dCodes && linear)
                     {
                         //There should be only D or E (U) codes after first D or E code
-                        if (!codeTmp.StartsWith("D") && !codeTmp.StartsWith("E"))
+                        //if (!codeTmp.StartsWith("D") && !codeTmp.StartsWith("E"))
+                        if (dtc.codeInt < 0xA000)
+                        {
+                            //Debug.WriteLine("Stop now?");
                             break;
+                        }
                     }
                     codeTmp = dtc.codeInt.ToString("X4");
 /*                    if (codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
@@ -451,7 +458,8 @@ namespace UniversalPatcher
 
 
 
-                    if (codeTmp.StartsWith("D") || codeTmp.StartsWith("E")) 
+                    //if (codeTmp.StartsWith("D") || codeTmp.StartsWith("E")) 
+                    if (dtc.codeInt > 0xD000)
                         dCodes = true;
                     //Find description for code:
                     dtc.Description = GetDtcDescription(dtc.Code);

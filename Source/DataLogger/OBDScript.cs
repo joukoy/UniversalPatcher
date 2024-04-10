@@ -18,6 +18,7 @@ namespace UniversalPatcher
             this.jconsole = Jconsole;
             this.device = device;
             SecondaryProtocol = false;
+            LoadFilters();
         }
 
         public class Variable
@@ -45,7 +46,21 @@ namespace UniversalPatcher
         int readTimeout = AppSettings.TimeoutScriptRead;
         private JConsole jconsole;
         private string ScriptFolder;
-
+        private List<JFilter> savedFilters;
+        private void LoadFilters()
+        {
+            if (File.Exists(savedFiltersFile))
+            {
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<JFilter>));
+                StreamReader file = new StreamReader(savedFiltersFile);
+                savedFilters = (List<JFilter>)reader.Deserialize(file);
+                file.Close();
+            }
+            else
+            {
+                savedFilters = new List<JFilter>();
+            }
+        }
         public bool ReConnect(string ProfileFileName)
         {
             J2534InitParameters initParameters = null;
@@ -303,6 +318,40 @@ namespace UniversalPatcher
                         device.SetJ2534Configs(lParts[1], SecondaryProtocol);
                     }
                 }
+                else if (Line.ToLower().StartsWith("setfilter:"))
+                {
+                    string[] lParts = Line.Split(':');
+                    if (lParts.Length >= 3)
+                    {
+                        bool clearold = false;
+                        bool secondary = SecondaryProtocol;
+                        if (lParts[2].ToUpper().StartsWith("Y"))
+                            clearold = true;
+                        if (lParts.Length > 3 && lParts[3] == "1")
+                            secondary = false;
+                        if (lParts.Length > 3 && lParts[3] == "2")
+                            secondary = true;
+                        if (lParts.Length > 3 && lParts[3].ToLower().StartsWith("p"))   //Same as send msg, use another proto for sending
+                            secondary = !SecondaryProtocol;
+                        for (int f=0;f<savedFilters.Count;f++)
+                        {
+                            JFilter jf = savedFilters[f];
+                            if (jf.FilterName == lParts[1])
+                            {
+                                device.SetupFilters(jf.Filter, secondary, clearold);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        LoggerBold("Usage: setfilter:filtername:<clearold>, example: setfilter:MyFilter01:N[:1/2]");
+                    }
+                }
+                else if (Line.ToLower().StartsWith("clearfilters"))
+                {
+                    device.SetAnalyzerFilter();
+                }
                 else if (Line.ToLower().StartsWith("addtofunctmsg:"))
                 {
                     string[] lParts = Line.Split(':');
@@ -536,7 +585,19 @@ namespace UniversalPatcher
                     if (int.TryParse(parts[1], out delay))
                     {
                         Debug.WriteLine("Delay: {0} ms ", delay);
-                        Thread.Sleep(delay);
+                        if (delay > 100)
+                        {
+                            DateTime startT = DateTime.Now;
+                            while (DateTime.Now.Subtract(startT) < TimeSpan.FromMilliseconds(delay))
+                            {
+                                Application.DoEvents();
+                                Thread.Sleep(10);
+                            }
+                        }
+                        else
+                        {
+                            Thread.Sleep(delay);
+                        }
                     }
                 }
                 else if (Line.ToLower().StartsWith("t:") || Line.ToLower().StartsWith("readtimeout:"))
@@ -548,6 +609,44 @@ namespace UniversalPatcher
                         Debug.WriteLine("Setting timeout to: {0} ms ", tout);
                         device.SetReadTimeout(tout);
                         readTimeout = tout;
+                    }
+                }
+                else if (Line.ToLower().StartsWith("ioctl:"))
+                {
+                    int tout = 0;
+                    string[] parts = Line.Split(':');
+                    if (parts.Length < 2)
+                    {
+                        LoggerBold("Usage: IOCTL:function[:argument]");
+                        return false;
+                    }
+                    else
+                    {
+                        Ioctl ioctlFunc;
+                        int arg = 0;
+                        if (HexToInt(parts[1], out tout))
+                        {
+                            Debug.WriteLine("Ioctl: ", tout);
+                            ioctlFunc = (Ioctl)tout;
+                        }
+                        else if (!Enum.TryParse<Ioctl>(parts[1], out ioctlFunc))
+                        {
+                            LoggerBold("Usage: IOCTL:function[:argument]");
+                            return false;
+                        }
+                        if (parts.Length > 2 && int.TryParse(parts[2], out int tmpArg))
+                        {
+                            arg = tmpArg;
+                        }
+                        Response<int> ioctlResp = device.Ioctl((int)ioctlFunc, arg);
+                        if (ioctlResp.Status == ResponseStatus.Success)
+                        {
+                            Logger("Ioctl " + ioctlFunc.ToString() + " result: " + ioctlResp.Value.ToString() + " (0x" + ioctlResp.Value.ToString("X")+")");
+                        }
+                        else
+                        {
+                            Logger("Ioctl " + ioctlFunc.ToString() + " returned error");
+                        }
                     }
                 }
                 else if (Line.ToLower().StartsWith("w:") || Line.ToLower().StartsWith("writetimeout:"))
@@ -676,7 +775,7 @@ namespace UniversalPatcher
                     }
                     Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
                     OBDMessage oMsg = new OBDMessage(msg);
-                    oMsg.SecondaryProtocol = SecondaryProtocol;
+                    oMsg.SecondaryProtocol = useSecondaryProtocol;
                     oMsg.Txflag = txflag;
                     oMsg.Rxstatus = rxstatus;
                     //device.ClearMessageQueue();
@@ -911,7 +1010,7 @@ namespace UniversalPatcher
             {
                 byte[] seed = new byte[] { rMsg[position + 4], rMsg[position + 3], rMsg[position + 2], rMsg[position + 1], rMsg[position] };
                 GmKeys gk = new GmKeys();
-                key = gk.GetKey(seed, (byte)algo);
+                key = gk.Get5byteKey(seed, (byte)algo);
                 return key;
             }
             else if (parts[0].ToLower().StartsWith("eecv"))
@@ -1019,6 +1118,7 @@ namespace UniversalPatcher
                                 {
                                     break;
                                 }
+                                Application.DoEvents();
                             }
                             if (breakloop)
                             {
@@ -1041,7 +1141,7 @@ namespace UniversalPatcher
                         }
                         timer.Stop();
                         Debug.WriteLine("Handleline time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
-
+                        Application.DoEvents();
                         if (scriptrows[currentrow].ToLower().Contains("getseed") || scriptrows[currentrow].ToLower().Contains("eecvseed") || scriptrows[currentrow].ToLower().Contains("ngcengineseed") || scriptrows[currentrow].ToLower().Contains("setvariable"))
                         {
                             currentrow++;

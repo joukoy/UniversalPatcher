@@ -440,6 +440,7 @@ namespace UniversalPatcher
             }
             for (int i=0; i< tableDatas.Count;i++)
             {
+                tableDatas[i].Category = Regex.Replace(tableDatas[i].Category, " {2,}", " ");
                 tableDatas[i].UpdateAddressByOS(OS);
                 if (i % 300 == 0)
                 {

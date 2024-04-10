@@ -31,12 +31,12 @@ namespace J2534DotNet
 {
     internal unsafe struct UnsafePassThruMsg
     {
-        public int ProtocolID;
-        public int RxStatus;
-        public int TxFlags;
-        public int Timestamp;
-        public int DataSize;
-        public int ExtraDataIndex;
+        public uint ProtocolID;
+        public uint RxStatus;
+        public uint TxFlags;
+        public uint Timestamp;
+        public uint DataSize;
+        public uint ExtraDataIndex;
         public fixed byte Data[4128];
     }
 

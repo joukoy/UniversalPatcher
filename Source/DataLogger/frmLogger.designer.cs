@@ -178,6 +178,7 @@ namespace UniversalPatcher
             this.loadCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabVPWConsole = new System.Windows.Forms.TabPage();
             this.vScrollBarVpwConsole = new System.Windows.Forms.VScrollBar();
+            this.richVPWmessages = new System.Windows.Forms.RichTextBox();
             this.txtSendBus = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkVpwDevTimestamps = new System.Windows.Forms.CheckBox();
@@ -191,7 +192,6 @@ namespace UniversalPatcher
             this.chkConsole4x = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.chkConsoleTimestamps = new System.Windows.Forms.CheckBox();
-            this.richVPWmessages = new System.Windows.Forms.RichTextBox();
             this.tabJConsole = new System.Windows.Forms.TabPage();
             this.vScrollBarJConsole = new System.Windows.Forms.VScrollBar();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -324,6 +324,7 @@ namespace UniversalPatcher
             this.parseCAN23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.graphicsLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramLiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendControlCommandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -341,7 +342,6 @@ namespace UniversalPatcher
             this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
-            this.graphicsLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -1879,9 +1879,9 @@ namespace UniversalPatcher
             // tabVPWConsole
             // 
             this.tabVPWConsole.Controls.Add(this.vScrollBarVpwConsole);
+            this.tabVPWConsole.Controls.Add(this.richVPWmessages);
             this.tabVPWConsole.Controls.Add(this.txtSendBus);
             this.tabVPWConsole.Controls.Add(this.groupBox3);
-            this.tabVPWConsole.Controls.Add(this.richVPWmessages);
             this.tabVPWConsole.Location = new System.Drawing.Point(4, 22);
             this.tabVPWConsole.Name = "tabVPWConsole";
             this.tabVPWConsole.Size = new System.Drawing.Size(966, 481);
@@ -1894,11 +1894,27 @@ namespace UniversalPatcher
             this.vScrollBarVpwConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vScrollBarVpwConsole.LargeChange = 1;
-            this.vScrollBarVpwConsole.Location = new System.Drawing.Point(940, 5);
+            this.vScrollBarVpwConsole.Location = new System.Drawing.Point(940, 3);
             this.vScrollBarVpwConsole.Name = "vScrollBarVpwConsole";
-            this.vScrollBarVpwConsole.Size = new System.Drawing.Size(21, 443);
+            this.vScrollBarVpwConsole.Size = new System.Drawing.Size(21, 449);
             this.vScrollBarVpwConsole.TabIndex = 37;
             this.vScrollBarVpwConsole.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBarVpwConsole_Scroll);
+            // 
+            // richVPWmessages
+            // 
+            this.richVPWmessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richVPWmessages.DetectUrls = false;
+            this.richVPWmessages.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richVPWmessages.HideSelection = false;
+            this.richVPWmessages.Location = new System.Drawing.Point(154, 3);
+            this.richVPWmessages.Name = "richVPWmessages";
+            this.richVPWmessages.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.richVPWmessages.Size = new System.Drawing.Size(783, 449);
+            this.richVPWmessages.TabIndex = 2;
+            this.richVPWmessages.Text = "";
+            this.richVPWmessages.WordWrap = false;
             // 
             // txtSendBus
             // 
@@ -1922,7 +1938,7 @@ namespace UniversalPatcher
             this.groupBox3.Controls.Add(this.chkConsoleTimestamps);
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(145, 280);
+            this.groupBox3.Size = new System.Drawing.Size(145, 296);
             this.groupBox3.TabIndex = 35;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "VPW Console";
@@ -1937,6 +1953,7 @@ namespace UniversalPatcher
             this.chkVpwDevTimestamps.TabIndex = 55;
             this.chkVpwDevTimestamps.Text = "Device timestamps";
             this.chkVpwDevTimestamps.UseVisualStyleBackColor = true;
+            this.chkVpwDevTimestamps.CheckedChanged += new System.EventHandler(this.chkVpwDevTimestamps_CheckedChanged);
             // 
             // groupBox9
             // 
@@ -2048,22 +2065,7 @@ namespace UniversalPatcher
             this.chkConsoleTimestamps.TabIndex = 38;
             this.chkConsoleTimestamps.Text = "Timestamps";
             this.chkConsoleTimestamps.UseVisualStyleBackColor = true;
-            // 
-            // richVPWmessages
-            // 
-            this.richVPWmessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.richVPWmessages.DetectUrls = false;
-            this.richVPWmessages.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richVPWmessages.HideSelection = false;
-            this.richVPWmessages.Location = new System.Drawing.Point(154, 5);
-            this.richVPWmessages.Name = "richVPWmessages";
-            this.richVPWmessages.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richVPWmessages.Size = new System.Drawing.Size(807, 445);
-            this.richVPWmessages.TabIndex = 2;
-            this.richVPWmessages.Text = "";
-            this.richVPWmessages.WordWrap = false;
+            this.chkConsoleTimestamps.CheckedChanged += new System.EventHandler(this.chkConsoleTimestamps_CheckedChanged);
             // 
             // tabJConsole
             // 
@@ -3413,6 +3415,7 @@ namespace UniversalPatcher
             this.parseLogfileToBinToolStripMenuItem1.Name = "parseLogfileToBinToolStripMenuItem1";
             this.parseLogfileToBinToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
             this.parseLogfileToBinToolStripMenuItem1.Text = "Parse logfile to bin";
+            this.parseLogfileToBinToolStripMenuItem1.Click += new System.EventHandler(this.parseLogfileToBinToolStripMenuItem1_Click);
             // 
             // parseLogfileToBinToolStripMenuItem
             // 
@@ -3460,6 +3463,13 @@ namespace UniversalPatcher
             this.graphicsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.graphicsToolStripMenuItem.Text = "Graphics Live";
             this.graphicsToolStripMenuItem.Click += new System.EventHandler(this.graphicsToolStripMenuItem_Click);
+            // 
+            // graphicsLogfileToolStripMenuItem
+            // 
+            this.graphicsLogfileToolStripMenuItem.Name = "graphicsLogfileToolStripMenuItem";
+            this.graphicsLogfileToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.graphicsLogfileToolStripMenuItem.Text = "Graphics Logfile";
+            this.graphicsLogfileToolStripMenuItem.Click += new System.EventHandler(this.graphicsLogfileToolStripMenuItem_Click);
             // 
             // histogramLiveToolStripMenuItem
             // 
@@ -3586,13 +3596,6 @@ namespace UniversalPatcher
             this.labelProtocol.Size = new System.Drawing.Size(34, 15);
             this.labelProtocol.TabIndex = 25;
             this.labelProtocol.Text = "VPW";
-            // 
-            // graphicsLogfileToolStripMenuItem
-            // 
-            this.graphicsLogfileToolStripMenuItem.Name = "graphicsLogfileToolStripMenuItem";
-            this.graphicsLogfileToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.graphicsLogfileToolStripMenuItem.Text = "Graphics Logfile";
-            this.graphicsLogfileToolStripMenuItem.Click += new System.EventHandler(this.graphicsLogfileToolStripMenuItem_Click);
             // 
             // frmLogger
             // 
@@ -3941,7 +3944,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.Button btnLoadProtocols;
         private System.Windows.Forms.Button btnSaveProtocols;
         private System.Windows.Forms.Timer timerShowLogTxt;
-        private System.Windows.Forms.VScrollBar vScrollBarVpwConsole;
         private System.Windows.Forms.Timer timerJconsoleShowLogText;
         private System.Windows.Forms.VScrollBar vScrollBarJConsole;
         private System.Windows.Forms.ToolStripMenuItem saveVPWConsoleToolStripMenuItem;
@@ -3990,6 +3992,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem histogramLogfileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sendControlCommandsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem graphicsLogfileToolStripMenuItem;
+        private System.Windows.Forms.VScrollBar vScrollBarVpwConsole;
     }
 }
 

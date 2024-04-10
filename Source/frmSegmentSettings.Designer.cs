@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSegmentSettings));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioCs1Bosch = new System.Windows.Forms.RadioButton();
             this.radioCS1DwordSum = new System.Windows.Forms.RadioButton();
             this.radioCS1None = new System.Windows.Forms.RadioButton();
             this.radioCS1WordSum = new System.Windows.Forms.RadioButton();
@@ -41,6 +42,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtSegmentAddress = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioCs2Bosch = new System.Windows.Forms.RadioButton();
             this.radioCS2DwordSum = new System.Windows.Forms.RadioButton();
             this.radioCS2None = new System.Windows.Forms.RadioButton();
             this.radioCS2WordSum = new System.Windows.Forms.RadioButton();
@@ -99,8 +101,8 @@
             this.txtSwapAddr = new System.Windows.Forms.TextBox();
             this.btnEditSwapddr = new System.Windows.Forms.Button();
             this.chkHide = new System.Windows.Forms.CheckBox();
-            this.radioCs1Bosch = new System.Windows.Forms.RadioButton();
-            this.radioCs2Bosch = new System.Windows.Forms.RadioButton();
+            this.radioCs1Ngc3 = new System.Windows.Forms.RadioButton();
+            this.radioCs2Ngc3 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -109,6 +111,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioCs1Ngc3);
             this.groupBox1.Controls.Add(this.radioCs1Bosch);
             this.groupBox1.Controls.Add(this.radioCS1DwordSum);
             this.groupBox1.Controls.Add(this.radioCS1None);
@@ -118,10 +121,21 @@
             this.groupBox1.Controls.Add(this.radioCS1Crc16);
             this.groupBox1.Location = new System.Drawing.Point(9, 280);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(122, 154);
+            this.groupBox1.Size = new System.Drawing.Size(122, 178);
             this.groupBox1.TabIndex = 126;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Checksum 1 method";
+            // 
+            // radioCs1Bosch
+            // 
+            this.radioCs1Bosch.AutoSize = true;
+            this.radioCs1Bosch.Location = new System.Drawing.Point(6, 127);
+            this.radioCs1Bosch.Name = "radioCs1Bosch";
+            this.radioCs1Bosch.Size = new System.Drawing.Size(73, 17);
+            this.radioCs1Bosch.TabIndex = 126;
+            this.radioCs1Bosch.TabStop = true;
+            this.radioCs1Bosch.Text = "Bosch Inv";
+            this.radioCs1Bosch.UseVisualStyleBackColor = true;
             // 
             // radioCS1DwordSum
             // 
@@ -220,6 +234,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.radioCs2Ngc3);
             this.groupBox2.Controls.Add(this.radioCs2Bosch);
             this.groupBox2.Controls.Add(this.radioCS2DwordSum);
             this.groupBox2.Controls.Add(this.radioCS2None);
@@ -229,10 +244,21 @@
             this.groupBox2.Controls.Add(this.radioCS2Crc16);
             this.groupBox2.Location = new System.Drawing.Point(262, 280);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(124, 154);
+            this.groupBox2.Size = new System.Drawing.Size(124, 178);
             this.groupBox2.TabIndex = 157;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Checksum 2 method";
+            // 
+            // radioCs2Bosch
+            // 
+            this.radioCs2Bosch.AutoSize = true;
+            this.radioCs2Bosch.Location = new System.Drawing.Point(6, 127);
+            this.radioCs2Bosch.Name = "radioCs2Bosch";
+            this.radioCs2Bosch.Size = new System.Drawing.Size(73, 17);
+            this.radioCs2Bosch.TabIndex = 156;
+            this.radioCs2Bosch.TabStop = true;
+            this.radioCs2Bosch.Text = "Bosch Inv";
+            this.radioCs2Bosch.UseVisualStyleBackColor = true;
             // 
             // radioCS2DwordSum
             // 
@@ -332,7 +358,7 @@
             // 
             // btnApply
             // 
-            this.btnApply.Location = new System.Drawing.Point(410, 466);
+            this.btnApply.Location = new System.Drawing.Point(410, 490);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(54, 27);
             this.btnApply.TabIndex = 210;
@@ -513,7 +539,7 @@
             // 
             // btnHelp
             // 
-            this.btnHelp.Location = new System.Drawing.Point(351, 466);
+            this.btnHelp.Location = new System.Drawing.Point(351, 490);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(53, 27);
             this.btnHelp.TabIndex = 200;
@@ -543,7 +569,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(470, 466);
+            this.btnOK.Location = new System.Drawing.Point(470, 490);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(56, 27);
             this.btnOK.TabIndex = 220;
@@ -571,7 +597,7 @@
             // chkEeprom
             // 
             this.chkEeprom.AutoSize = true;
-            this.chkEeprom.Location = new System.Drawing.Point(8, 472);
+            this.chkEeprom.Location = new System.Drawing.Point(8, 496);
             this.chkEeprom.Name = "chkEeprom";
             this.chkEeprom.Size = new System.Drawing.Size(271, 17);
             this.chkEeprom.TabIndex = 180;
@@ -580,7 +606,7 @@
             // 
             // txtComment
             // 
-            this.txtComment.Location = new System.Drawing.Point(73, 440);
+            this.txtComment.Location = new System.Drawing.Point(73, 464);
             this.txtComment.Name = "txtComment";
             this.txtComment.Size = new System.Drawing.Size(453, 20);
             this.txtComment.TabIndex = 190;
@@ -588,7 +614,7 @@
             // labelComment
             // 
             this.labelComment.AutoSize = true;
-            this.labelComment.Location = new System.Drawing.Point(5, 443);
+            this.labelComment.Location = new System.Drawing.Point(5, 467);
             this.labelComment.Name = "labelComment";
             this.labelComment.Size = new System.Drawing.Size(59, 13);
             this.labelComment.TabIndex = 45;
@@ -788,33 +814,33 @@
             this.chkHide.Text = "Hide from segment list";
             this.chkHide.UseVisualStyleBackColor = true;
             // 
-            // radioCs1Bosch
+            // radioCs1Ngc3
             // 
-            this.radioCs1Bosch.AutoSize = true;
-            this.radioCs1Bosch.Location = new System.Drawing.Point(6, 127);
-            this.radioCs1Bosch.Name = "radioCs1Bosch";
-            this.radioCs1Bosch.Size = new System.Drawing.Size(73, 17);
-            this.radioCs1Bosch.TabIndex = 126;
-            this.radioCs1Bosch.TabStop = true;
-            this.radioCs1Bosch.Text = "Bosch Inv";
-            this.radioCs1Bosch.UseVisualStyleBackColor = true;
+            this.radioCs1Ngc3.AutoSize = true;
+            this.radioCs1Ngc3.Location = new System.Drawing.Point(6, 145);
+            this.radioCs1Ngc3.Name = "radioCs1Ngc3";
+            this.radioCs1Ngc3.Size = new System.Drawing.Size(51, 17);
+            this.radioCs1Ngc3.TabIndex = 127;
+            this.radioCs1Ngc3.TabStop = true;
+            this.radioCs1Ngc3.Text = "Ngc3";
+            this.radioCs1Ngc3.UseVisualStyleBackColor = true;
             // 
-            // radioCs2Bosch
+            // radioCs2Ngc3
             // 
-            this.radioCs2Bosch.AutoSize = true;
-            this.radioCs2Bosch.Location = new System.Drawing.Point(6, 127);
-            this.radioCs2Bosch.Name = "radioCs2Bosch";
-            this.radioCs2Bosch.Size = new System.Drawing.Size(73, 17);
-            this.radioCs2Bosch.TabIndex = 156;
-            this.radioCs2Bosch.TabStop = true;
-            this.radioCs2Bosch.Text = "Bosch Inv";
-            this.radioCs2Bosch.UseVisualStyleBackColor = true;
+            this.radioCs2Ngc3.AutoSize = true;
+            this.radioCs2Ngc3.Location = new System.Drawing.Point(6, 146);
+            this.radioCs2Ngc3.Name = "radioCs2Ngc3";
+            this.radioCs2Ngc3.Size = new System.Drawing.Size(51, 17);
+            this.radioCs2Ngc3.TabIndex = 157;
+            this.radioCs2Ngc3.TabStop = true;
+            this.radioCs2Ngc3.Text = "Ngc3";
+            this.radioCs2Ngc3.UseVisualStyleBackColor = true;
             // 
             // frmSegmentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(533, 499);
+            this.ClientSize = new System.Drawing.Size(533, 540);
             this.Controls.Add(this.chkHide);
             this.Controls.Add(this.btnEditSwapddr);
             this.Controls.Add(this.txtSwapAddr);
@@ -957,5 +983,7 @@
         private System.Windows.Forms.CheckBox chkHide;
         private System.Windows.Forms.RadioButton radioCs1Bosch;
         private System.Windows.Forms.RadioButton radioCs2Bosch;
+        private System.Windows.Forms.RadioButton radioCs1Ngc3;
+        private System.Windows.Forms.RadioButton radioCs2Ngc3;
     }
 }
