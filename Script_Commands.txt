@@ -1,0 +1,122 @@
+Script commands:
+
+#Comment
+If line starts with "#", line is ignored.
+
+$variable=value
+Set variable named "$variable" to value "value"
+
+<HexData> 
+Convert hex data to bytes and send
+
+<HexData blchk> 
+Convert hex data to bytes, calculate and add block checksum and send
+
+
+<HexData key>
+Replace "key" with key value, see: getseed
+
+<HexData>:<respones>
+Send values, expect number of responses
+
+<HexData>:p
+Send values using secondary protocol
+
+<HexData>:<respones>:<timeout>
+Send values using write timeout "timeout" and expect "responses"
+
+logger:<log text>
+Show "log text" in display
+
+logger<$variable>
+Show variable "$variable" value in display
+
+disconnect
+
+connect
+
+savebin:
+Parse console messages to bin file (File name will be asked)
+
+savebin:<filename>
+Parse console messages to bin file "filename"
+
+savebin:<mode>:<filename>
+Parse console messages to bin file "filename", using mode "mode" (VPW, CAN, CAN23, CAN36)
+
+askvariable:variablename:size:hex/int[:comment]
+Ask value for variable "variablename" using "size" bytes and format hex/int, show "comment"
+
+printall
+Receive messages from device until timeout, using both protocols
+
+printall:1/2
+Receive messages from device until timeout, only selected protocol (1 or 2)
+
+popup:<message>
+Show message "message" to user
+
+setfilter:<name>:N/Y[:1/2/P]
+(J2534) Set predefined filter "name", Clear previous filters(Y/N), [Use protocol 1, 2 or other than default]
+
+clearfilters
+Remove filters, revert to default Analyzer filters
+
+deletefromfunctmsg:<msg>
+Usage: deletefromfunctmsg:<FuncAddr>, example: deletefromfunctmsg:0A 12
+
+clearfunctmsg
+Clear functional messages from device
+
+startperiodic:<msg>
+Start periodic message "msg"
+
+clearperiodic
+
+wait:<nsg>[:<timeout>]
+Wait until message "msg" is received or timeout expires. Default timeout = 10000ms
+
+programminvoltage::PIN:Voltage (*1000)
+Examples: programminvoltage:9:12000, programminvoltage:9:OFF programminvoltage:9:GND
+
+set:<txflags/rxstatus>:value
+Set TxFlags or Rxtstatus, See JConsole -> Filters -> Edit
+
+clear:<txflags/rxstatus>
+
+variable:name:size:value
+Set (create) variable "name" with size "size" to value "value"
+
+setvariable:name:size:position
+Set variable using command in next script line. Send command, receive response and set variable "name" to value in response beginning from byte "position" and length "size" bytes
+
+break:position:value
+Set break condition: Stop script if byte in "position" have value "value"
+
+globaldelay:value
+Set global delay, wait "value" milliseconds between script lines
+
+setspeed:1X/4X
+Set VPW speed to 1X/4X. Note, set only tool speed, requires commands to devices on bus.
+
+delay:value
+Wait "value" milliseconds
+
+readtimeout:value
+Set read timeout to "value" milliseconds
+
+writetimeout:value
+Set write timeout to "value" milliseconds
+
+loop:<cycles>
+endloop
+Run lines between loop: and endloop <cyles> times
+
+getseed
+eecvseed
+ngcengineseed
+Send seed request, receive seed response, calculate key and set value to variable "key"
+
+IOCTL:function[:argument]
+J2534 PastthruIoctl 
+
