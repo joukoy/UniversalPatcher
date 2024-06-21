@@ -100,7 +100,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="gmkeylib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="gmkeylib, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\gmkeylib.dll</HintPath>
     </Reference>

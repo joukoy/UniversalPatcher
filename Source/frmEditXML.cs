@@ -1449,16 +1449,16 @@ namespace UniversalPatcher
                 int row = dataGridView1.SelectedCells[0].RowIndex;
                 //currentObj = Activator.CreateInstance(currentObj.GetType());
                 object testObj = ClipBrd[0];
-                bool isTableData = false;
+                bool isTablSeek = false;
                 if (xmlType == XMLTYPE.tableseek && testObj.GetType() == typeof(TableData))
                 {
-                    isTableData = true;
+                    isTablSeek = true;
                 }
                 dataGridView1.CancelEdit();
                 for (int i = 0; i < ClipBrd.Count; i++)
                 {
                     //bindingSource.Insert(row, currentObj);
-                    if (isTableData)
+                    if (isTablSeek)
                     {
                         TableData newTd = (TableData)ClipBrd[i];
                         TableSeek newTs = new TableSeek();
@@ -1467,7 +1467,9 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        bindingSource.Insert(row, ClipBrd[i]);
+                        string objData = SerializeObjectToXML(ClipBrd[i]);
+                        object obj = Helpers.XmlDeserializeFromString(objData, currentType);
+                        bindingSource.Insert(row, obj);
                     }
                     dataGridView1.Rows[row].Cells[0].Selected = true;
                     //PasteClipboardValue();
@@ -1477,7 +1479,8 @@ namespace UniversalPatcher
                                 dataGridView1.EndEdit();
                                 dataGridView1.ClearSelection();
                 */
-                dataGridView1.CancelEdit();
+                //dataGridView1.CancelEdit();
+                dataGridView1.Update();
                 dataGridView1.Refresh();
                 this.Refresh();
             }

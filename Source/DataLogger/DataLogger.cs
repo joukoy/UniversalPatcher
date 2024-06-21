@@ -1146,9 +1146,9 @@ namespace UniversalPatcher
                 //OBDMessage msg = new OBDMessage(new byte[] { Priority.Functional0, 0x6A, DeviceId.Tool, Mode.ClearDiagnosticTroubleCodes });
                 OBDMessage msg;
                 if (VPWProtocol)
-                    msg = new OBDMessage(new byte[] { Priority.Physical0, (byte)module, DeviceId.Tool, 0x10, 0x00 });
+                    msg = new OBDMessage(new byte[] { Priority.Physical0, (byte)module, DeviceId.Tool, 0x14 });
                 else
-                    msg = new OBDMessage(new byte[] { 0x00, 0x00, (byte)(module >> 8), (byte)module, 0x10, 0x00 });
+                    msg = new OBDMessage(new byte[] { 0x00, 0x00, (byte)(module >> 8), (byte)module, 0x04 });
                 LogDevice.SendMessage(msg, 1);
                 OBDMessage resp = LogDevice.ReceiveMessage(true);
                 if (resp != null)

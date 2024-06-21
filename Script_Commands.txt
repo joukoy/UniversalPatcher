@@ -82,6 +82,9 @@ Examples: programminvoltage:9:12000, programminvoltage:9:OFF programminvoltage:9
 set:<txflags/rxstatus>:value
 Set TxFlags or Rxtstatus, See JConsole -> Filters -> Edit
 
+set:responsematch:[on/off][:message timeout][:Total timeout]
+Set if response must match request (request + 0x40 or +x7F)
+
 clear:<txflags/rxstatus>
 
 variable:name:size:value

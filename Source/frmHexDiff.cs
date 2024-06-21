@@ -16,7 +16,7 @@ namespace UniversalPatcher
 {
     public partial class frmHexDiff : Form
     {
-        public frmHexDiff(PcmFile _pcm1, PcmFile _pcm2, List<TableData> _tdList, List<TableData> _tdList2)
+        public frmHexDiff(PcmFile _pcm1, PcmFile _pcm2, List<TableData> _tdList, List<TableData> _tdList2, FrmTuner _tuner)
         {
             InitializeComponent();
             DrawingControl.SetDoubleBuffered(dataGridView1);
@@ -24,6 +24,7 @@ namespace UniversalPatcher
             pcm2 = _pcm2;
             tdList = _tdList;
             tdList2 = _tdList2;
+            tuner = _tuner;
         }
 
         TreeViewMS tree1;
@@ -38,7 +39,7 @@ namespace UniversalPatcher
         private int sortIndex = 0;
         private string sortBy = "id";
         BindingSource bindingSource = new BindingSource();
-
+        FrmTuner tuner;
 
         private void frmHexDiff_Load(object sender, EventArgs e)
         {
@@ -335,8 +336,12 @@ namespace UniversalPatcher
                     frmTableEditor frmT = new frmTableEditor();
                     List<TableData> tableIds = new List<TableData>();
                     tableIds.Add(td);
+                    //tableIds.Add(td2);
                     frmT.PrepareTable(pcm1, td, tableIds, "A");
+                    frmT.tuner = tuner;
                     frmT.AddCompareFiletoMenu(pcm2, null, "B:" + pcm2.FileName,"B");
+                    //frmT.AddCompareFiletoMenu(pcm2, td2, "B:" + pcm2.FileName, "B");
+                    frmT.tunerSelectedTables = tableIds;
                     frmT.Show();
                     frmT.LoadTable();
                     frmT.radioSideBySide.Checked = true;

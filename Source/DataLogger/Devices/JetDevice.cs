@@ -114,7 +114,7 @@ namespace UniversalPatcher
             }
 
             JETSetup();
-
+            this.Connected = true;
             return true;
         }
 

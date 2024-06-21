@@ -174,7 +174,7 @@ namespace J2534DotNet
             {
                 lock (devLock)
                 {
-                    if (channelId < 0)
+                    if (channelId < 0 || !isDllLoaded())
                         return J2534Err.STATUS_NOERROR;
                     else
                         return (J2534Err)m_wrapper.Disconnect(channelId);
@@ -191,7 +191,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg))*numMsgs + 4 );
                 IntPtr pNextMsg = IntPtr.Zero;
                 //IntPtr[] pMsgs = new IntPtr[50];
@@ -230,7 +230,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
                 // TODO: change function to accept a list? of PassThruMsg
                 IntPtr MsgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uMsg));
@@ -259,7 +259,7 @@ namespace J2534DotNet
 
         public J2534Err StartPeriodicMsg(int channelId, PassThruMsg msg, ref int msgId, int timeInterval)
         {
-            if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+            if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
             UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
             IntPtr MsgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uMsg));
             Marshal.StructureToPtr(uMsg, MsgPtr, false);
@@ -289,6 +289,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 UnsafePassThruMsg uMaskMsg = ConvertPassThruMsg(maskMsg);
                 UnsafePassThruMsg uPatternMsg = ConvertPassThruMsg(patternMsg);
                 UnsafePassThruMsg uFlowControlMsg = ConvertPassThruMsg(flowControlMsg);
@@ -344,6 +345,7 @@ namespace J2534DotNet
         {
             try
             {
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr FlowMsg = IntPtr.Zero;
                 UnsafePassThruMsg uMaskMsg = ConvertPassThruMsg(maskMsg);
                 UnsafePassThruMsg uPatternMsg = ConvertPassThruMsg(patternMsg);
@@ -391,7 +393,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 lock (devLock)
                 {
                     return (J2534Err)m_wrapper.StopMsgFilter(channelId, filterId);
@@ -406,7 +408,7 @@ namespace J2534DotNet
 
         public J2534Err SetProgrammingVoltage(int deviceId, PinNumber pinNumber, uint voltage)
         {
-            if (deviceId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+            if (deviceId < 0 || !isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
             lock (devLock)
             {
                 return (J2534Err)m_wrapper.SetProgrammingVoltage(deviceId, (int)pinNumber, voltage);
@@ -417,7 +419,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (deviceId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (deviceId < 0 || !isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr pFirmwareVersion = Marshal.AllocHGlobal(120);
                 IntPtr pDllVersion = Marshal.AllocHGlobal(120);
                 IntPtr pApiVersion = Marshal.AllocHGlobal(120);
@@ -451,6 +453,11 @@ namespace J2534DotNet
         {
             try
             {
+                if (!isDllLoaded())
+                {
+                    errorDescription = "Not connected";
+                    return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                }
                 IntPtr pErrorDescription = Marshal.AllocHGlobal(120);
                 J2534Err returnValue;
                 lock (devLock)
@@ -477,7 +484,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr Ptr = SconfigToPtr(config.ToArray()); J2534Err returnValue;
                 lock (devLock)
                 {
@@ -547,7 +554,7 @@ namespace J2534DotNet
 
         public J2534Err SetConfig(int channelId, ref SConfig[] config)
         {
-            if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+            if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
             IntPtr Ptr = SconfigToPtr(config);
             J2534Err returnValue;
             lock (devLock)
@@ -562,7 +569,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (DeviceID < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = Marshal.AllocHGlobal(8);
 
@@ -589,7 +596,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (DeviceID < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (DeviceID < 0 || !isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr inputPtr = Marshal.AllocHGlobal(8);
                 IntPtr outputPtr = Marshal.AllocHGlobal(8);
                 Marshal.WriteInt32(inputPtr,input);
@@ -617,7 +624,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 J2534Err returnValue;
                 IntPtr input = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SByteArray)) + 4);
                 IntPtr output = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SByteArray)) + 4);
@@ -659,7 +666,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg)));
                 IntPtr output = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg)));
                 UnsafePassThruMsg uTxMsg = ConvertPassThruMsg(txMsg);
@@ -693,7 +700,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -713,7 +720,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -733,7 +740,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -753,7 +760,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -773,7 +780,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr input = IntPtr.Zero;
                 IntPtr output = IntPtr.Zero;
                 lock (devLock)
@@ -793,7 +800,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 J2534Err returnValue;
                 IntPtr input = SbytesToPtr(FuncAddr);
                 IntPtr output = IntPtr.Zero;
@@ -816,7 +823,7 @@ namespace J2534DotNet
         {
             try
             {
-                if (channelId < 0) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+                if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 J2534Err returnValue;
                 IntPtr input = SbytesToPtr(FuncAddr);
                 IntPtr output = IntPtr.Zero;

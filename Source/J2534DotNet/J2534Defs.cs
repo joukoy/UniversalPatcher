@@ -119,7 +119,8 @@ namespace J2534DotNet
         WAIT_P3_MIN_ONLY = 0x00000200,
         CAN_29BIT_ID = 0x00000100,
         ISO15765_ADDR_TYPE = 0x00000080,
-        ISO15765_FRAME_PAD = 0x00000040
+        ISO15765_FRAME_PAD = 0x00000040,
+        SW_CAN_HV_TX = 0x00000400
     }
 
     public enum ProtocolID

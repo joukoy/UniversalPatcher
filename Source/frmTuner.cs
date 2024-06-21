@@ -1285,7 +1285,7 @@ namespace UniversalPatcher
             {
                 Logger("Importing DTC codes...", false);
                 bool haveDTC = false;
-                for (int t = 0; t < _PCM.tableDatas.Count; t++)
+/*              for (int t = 0; t < _PCM.tableDatas.Count; t++)
                 {
                     if (_PCM.tableDatas[t].TableName == "DTC" || _PCM.tableDatas[t].TableName == "DTC.Codes")
                     {
@@ -1294,6 +1294,7 @@ namespace UniversalPatcher
                         break;
                     }
                 }
+*/
                 if (!haveDTC)
                 {
                     TableData tdTmp = new TableData();
@@ -2828,7 +2829,7 @@ namespace UniversalPatcher
                     }
                 }
                 Logger(" [OK]");
-                frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas);
+                frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas, this);
                 fhd.Show();
                 fhd.FindDifferences(false);
             }
@@ -2932,7 +2933,7 @@ namespace UniversalPatcher
                     Logger("All tables are identical");
                     return;
                 }
-                frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas);
+                frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas, this);
                 fhd.Show();
                 fhd.FindDifferences(true);
             }

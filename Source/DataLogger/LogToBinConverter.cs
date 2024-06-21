@@ -31,6 +31,13 @@ namespace UniversalPatcher
                 dataOffset = 10;
                 addrOffset = 6;
             }
+            else if (mode == RMode.CAN78)
+            {
+                reqByte = 0x78;
+                addrOffset = 7;
+                sizeOffset = 4;
+                dataOffset = 5;
+            }
         }
 
         public enum RMode
@@ -38,7 +45,8 @@ namespace UniversalPatcher
             VPW = 0,
             CAN = 1,
             CAN23 = 23,
-            CAN36 = 36
+            CAN36 = 36,
+            CAN78 = 78
         }
         private RMode readMode;
         private byte[] buf;
@@ -47,6 +55,8 @@ namespace UniversalPatcher
         int row;
         int reqRow;
         uint addr = 0;
+        uint size = 0;
+        uint received = 0;
         List<uint> mappedAddresses;
         List<uint> origAddresses;
         byte reqByte = 0x23;
@@ -54,6 +64,7 @@ namespace UniversalPatcher
         int ansRows = 1;
         int dataOffset = 9;
         int addrOffset = 6;
+        int sizeOffset = 4;
 
         //For VPW
         private byte PCMid;
@@ -64,6 +75,7 @@ namespace UniversalPatcher
         private int blockLen;
         private int blockParsed;
         private bool dataRows = false;
+        private bool can3byteAddr = false;
         byte[] waitingBytes = new byte[3];
 
         /// <summary>
@@ -268,17 +280,37 @@ namespace UniversalPatcher
                 }
                 byte[] lineData = Line.Replace(" ", "").ToBytes();
                 //if ((lineData.Length == 11 && lineData[0] == 0x00 && lineData[1] == 0x00 && lineData[2] == 0x07 && lineData[4] == reqByte))
-                if ((lineData.Length == 11 && lineData[0] == 0x00 && lineData[1] == 0x00 &&  lineData[4] == reqByte))
+                if (((lineData.Length == 10 || lineData.Length == 11) && lineData[0] == 0x00 && lineData[1] == 0x00 &&  lineData[4] == reqByte))
                 {
                     //Request for data
                     reqRow = row;
+                    if (lineData.Length == 10)
+                    {
+                        can3byteAddr = true;
+                        if (readMode == RMode.CAN23)
+                        {
+                            dataOffset = 8;
+                        }
+                        else
+                        {
+                            dataOffset = 9;
+                        }
+                    }
                 }
                 //else if (lineData[0] == 0x00 && lineData[1] == 0x00 && lineData[2] == 0x07 && lineData[4] == ansByte && row == (reqRow + ansRows))
-                else if (lineData[0] == 0x00 && lineData[1] == 0x00  && lineData[4] == ansByte && row == (reqRow + ansRows))
+                else if (lineData.Length > dataOffset && lineData[0] == 0x00 && lineData[1] == 0x00  && lineData[4] == ansByte && row == (reqRow + ansRows))
                 {
-                    addr = (uint)(lineData[addrOffset + 1] << 16 | lineData[addrOffset + 2] << 8 | lineData[addrOffset + 3]);
                     //uint fullAddr = (uint)(lineData[6] << 24 | lineData[7] << 16 | lineData[8] << 8 | lineData[9]);
-                    uint origOffset = (uint)(lineData[addrOffset] << 24);
+                    uint origOffset = 0;
+                    if (can3byteAddr)
+                    {
+                        addr = (uint)(lineData[addrOffset] << 16 | lineData[addrOffset + 1] << 8 | lineData[addrOffset + 2]);
+                    }
+                    else
+                    {
+                        addr = (uint)(lineData[addrOffset + 1] << 16 | lineData[addrOffset + 2] << 8 | lineData[addrOffset + 3]);
+                        origOffset = (uint)(lineData[addrOffset] << 24);
+                    }
                     int len = lineData.Length - dataOffset;
                     if (SizeOnly)
                     {
@@ -322,135 +354,227 @@ namespace UniversalPatcher
                 {
                     LoggerBold(ex.Message);
                 }
+                Debug.WriteLine("Error, LogToBinConverter line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void ParseLine_CAN78(string Line, bool SizeOnly)
+        {
+            try
+            {
+                int pos = Line.LastIndexOf("]");
+                if (pos > 0)
+                {
+                    Line = Line.Substring(pos + 1).Trim();
+                }
+                byte[] lineData = Line.Replace(" ", "").ToBytes();
+                if (lineData.Length > 7)
+                {
+                    if (lineData[3] == 0xE8)
+                    {
+                        Debug.WriteLine("PCM answer: " + Line);
+                    }
+                    else if (lineData[4] == 0x10 && lineData[6] == reqByte)
+                    {
+                        //Request for data
+                        addr = (uint)(lineData[addrOffset] << 24 |  lineData[addrOffset + 1] << 16 | lineData[addrOffset + 2] << 8 | lineData[addrOffset + 3]);
+                        size = (uint)((lineData[sizeOffset] << 8 | lineData[sizeOffset+1]) - 0x1000);
+                        received = 1;
+                        if (SizeOnly)
+                        {
+                            if (FileSize < (addr + size))
+                            {
+                                FileSize = (int)(addr + size);
+                            }
+                        }
+                        else
+                        {
+                            buf[addr] = lineData.LastOrDefault();
+                        }
+                        addr++;
+                        reqRow = row;
+                    }
+                    else if (lineData.Length > dataOffset && lineData[0] == 0x00 && lineData[1] == 0x00)
+                    {
+                        int len = (int)Math.Min((lineData.Length - dataOffset), (size - received));
+                        if (!SizeOnly)
+                        {
+                            Array.Copy(lineData, dataOffset, buf, addr, len);
+                            Debug.WriteLine("Address: " + addr.ToString("X8") + ", size: " + len.ToString());
+                            for (uint c = addr; c < addr + len; c++)
+                            {
+                                compareBuf[c] = 0;
+                            }
+                        }
+                        addr += (uint)len;
+                        received += (uint)len;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                if (!ex.Message.StartsWith("Unable to convert"))
+                {
+                    LoggerBold(ex.Message);
+                }
+                Debug.WriteLine("Error, LogToBinConverter line " + line + ": " + ex.Message);
             }
         }
 
         public void ConvertLines(string[] lines, string FileName)
         {
-            //Parse file and check file size:
-            row = 0;
-            mappedAddresses = new List<uint>();
-            origAddresses = new List<uint>();
-            foreach (string Line in lines)
-            {
-                row++;
-                switch(readMode)
+            try
+            { 
+                //Parse file and check file size:
+                row = 0;
+                mappedAddresses = new List<uint>();
+                origAddresses = new List<uint>();
+                foreach (string Line in lines)
                 {
-                    case RMode.VPW:
-                        ParseLine_VPW(Line, true);
-                        break;
-                    case RMode.CAN:
-                        ParseLine_CAN(Line, true);
-                        break;
-                    case RMode.CAN23:
-                        ParseLine_CAN23_36(Line, true);
-                        break;
-                    case RMode.CAN36:
-                        ParseLine_CAN23_36(Line, true);
-                        break;
-                }
-            }
-
-            if (FileSize == 0)
-            {
-                Logger("Data not found");
-                return;
-            }
-
-            if (origAddresses.Count > 0)
-            {
-                int origSize = FileSize;
-                int offset = 0;
-                for (int i = 0; i < origAddresses.Count; i++)
-                {
-                    mappedAddresses.Add((uint)offset);
-                    FileSize = offset + origSize;
-                    offset += origSize;
-                    if (origAddresses[i] > 0 || mappedAddresses[i] > 0)
+                    row++;
+                    switch(readMode)
                     {
-                        Logger("Mapping: " + origAddresses[i].ToString("X8") + " => " + mappedAddresses[i].ToString("X8"));
+                        case RMode.VPW:
+                            ParseLine_VPW(Line, true);
+                            break;
+                        case RMode.CAN:
+                            ParseLine_CAN(Line, true);
+                            break;
+                        case RMode.CAN23:
+                            ParseLine_CAN23_36(Line, true);
+                            break;
+                        case RMode.CAN36:
+                            ParseLine_CAN23_36(Line, true);
+                            break;
+                        case RMode.CAN78:
+                            ParseLine_CAN78(Line, true);
+                            break;
                     }
                 }
-            }
-            buf = new byte[FileSize];
-            compareBuf = new byte[FileSize];
-            for (int a = 0; a < FileSize; a++)
-            {
-                buf[a] = 0xFF;
-                compareBuf[a] = 0xFF;
-            }
 
-            //Parse again but get data this time:
-            row = 0;
-            foreach (string Line in lines)
-            {
-                row++;
-                switch (readMode)
+                if (FileSize == 0)
                 {
-                    case RMode.VPW:
-                        ParseLine_VPW(Line, false);
-                        break;
-                    case RMode.CAN:
-                        ParseLine_CAN(Line, false);
-                        break;
-                    case RMode.CAN23:
-                        ParseLine_CAN23_36(Line, false);
-                        break;
-                    case RMode.CAN36:
-                        ParseLine_CAN23_36(Line, false);
-                        break;
-                }
-            }
-            List<string> skipped = new List<string>();
-            string range = "";
-            for (int a = 0; a < FileSize; a++)
-            {
-                if (compareBuf[a] == 0xFF)
-                {
-                    if (range.Length == 0)
-                    {
-                        range = a.ToString("X4");
-                    }
-                }
-                else if (range.Length > 0)
-                {
-                    range += " - " + a.ToString("X4");
-                    skipped.Add(range);
-                    range = "";
-                }
-            }
-            if (range.Length > 0)
-            {
-                range += " - " + FileSize.ToString("X4");
-                skipped.Add(range);
-            }
-            if (skipped.Count > 0)
-            {
-                Logger("Missed parts in log:");
-                foreach (string r in skipped)
-                {
-                    Logger(r);
-                }
-            }
-            if (corrupted)
-            {
-                DialogResult res = MessageBox.Show("File may be corrupted, save anyway?", "Warning", MessageBoxButtons.YesNo);
-                if (res == DialogResult.No)
-                {
-                    Logger("Cancel saving");
+                    Logger("Data not found");
                     return;
                 }
-            }
-            Logger("Writing to file: " + FileName);
-            WriteBinToFile(FileName, buf);
-            Logger("Done");
 
+                if (origAddresses.Count > 0)
+                {
+                    int origSize = FileSize;
+                    int offset = 0;
+                    for (int i = 0; i < origAddresses.Count; i++)
+                    {
+                        mappedAddresses.Add((uint)offset);
+                        FileSize = offset + origSize;
+                        offset += origSize;
+                        if (origAddresses[i] > 0 || mappedAddresses[i] > 0)
+                        {
+                            Logger("Mapping: " + origAddresses[i].ToString("X8") + " => " + mappedAddresses[i].ToString("X8"));
+                        }
+                    }
+                }
+                buf = new byte[FileSize];
+                compareBuf = new byte[FileSize];
+                for (int a = 0; a < FileSize; a++)
+                {
+                    buf[a] = 0xFF;
+                    compareBuf[a] = 0xFF;
+                }
+
+                //Parse again but get data this time:
+                row = 0;
+                foreach (string Line in lines)
+                {
+                    row++;
+                    switch (readMode)
+                    {
+                        case RMode.VPW:
+                            ParseLine_VPW(Line, false);
+                            break;
+                        case RMode.CAN:
+                            ParseLine_CAN(Line, false);
+                            break;
+                        case RMode.CAN23:
+                            ParseLine_CAN23_36(Line, false);
+                            break;
+                        case RMode.CAN36:
+                            ParseLine_CAN23_36(Line, false);
+                            break;
+                        case RMode.CAN78:
+                            ParseLine_CAN78(Line, false);
+                            break;
+                    }
+                }
+                List<string> skipped = new List<string>();
+                string range = "";
+                for (int a = 0; a < FileSize; a++)
+                {
+                    if (compareBuf[a] == 0xFF)
+                    {
+                        if (range.Length == 0)
+                        {
+                            range = a.ToString("X4");
+                        }
+                    }
+                    else if (range.Length > 0)
+                    {
+                        range += " - " + a.ToString("X4");
+                        skipped.Add(range);
+                        range = "";
+                    }
+                }
+                if (range.Length > 0)
+                {
+                    range += " - " + FileSize.ToString("X4");
+                    skipped.Add(range);
+                }
+                if (skipped.Count > 0)
+                {
+                    Logger("Missed parts in log:");
+                    foreach (string r in skipped)
+                    {
+                        Logger(r);
+                    }
+                }
+                if (corrupted)
+                {
+                    DialogResult res = MessageBox.Show("File may be corrupted, save anyway?", "Warning", MessageBoxButtons.YesNo);
+                    if (res == DialogResult.No)
+                    {
+                        Logger("Cancel saving");
+                        return;
+                    }
+                }
+                Logger("Writing to file: " + FileName);
+                WriteBinToFile(FileName, buf);
+                Logger("Done");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, LogToBinConverter line " + line + ": " + ex.Message);
+            }
         }
         public void ConvertFile(string FileName)
         {
             try
             {
                 string text;
+                string binFile = SelectSaveFile(BinFilter, FileName + ".bin");
+                if (string.IsNullOrEmpty(binFile))
+                {
+                    return;
+                }
                 if (FileName.ToLower().EndsWith(".rtf"))
                 {
                     RichTextBox rtb = new RichTextBox();
@@ -462,11 +586,7 @@ namespace UniversalPatcher
                     text = ReadTextFile(FileName);
                 }
                 string[] lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                string binFile = SelectSaveFile(BinFilter, FileName + ".bin");
-                if (!string.IsNullOrEmpty(binFile))
-                {
-                    ConvertLines(lines, binFile);
-                }
+                ConvertLines(lines, binFile);
             }
             catch (Exception ex)
             {

@@ -689,7 +689,7 @@ namespace UniversalPatcher
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                CleanUp();
+                //CleanUp();
                 TableInfo tInfo = new TableInfo(pcm, td);
                 CompareFile orgFile = new CompareFile(pcm);
                 orgFile.fileLetter = fileLetter;
@@ -1857,9 +1857,8 @@ namespace UniversalPatcher
                     });
                 }
 
-                if (this.Parent == null) //Not docked
-                {
-                    currentTunerTd = -1;
+                if (this.Parent == null && currentTunerTd == -1) //Not docked
+                {                    
                     for (int t = 0; t < tunerSelectedTables.Count; t++)
                     {
                         if (tunerSelectedTables[t].guid == td.guid)
@@ -3308,23 +3307,34 @@ namespace UniversalPatcher
 
         private void SetUpDownToolTips()
         {
-            if (currentTunerTd > 0)
+            try
             {
-                upToolStripMenuItem.ToolTipText = "Previous: " + tunerSelectedTables[currentTunerTd - 1].TableName;
+                if (currentTunerTd > 0)
+                {
+                    upToolStripMenuItem.ToolTipText = "Previous: " + tunerSelectedTables[currentTunerTd - 1].TableName;
+                }
+                else
+                {
+                    upToolStripMenuItem.ToolTipText = null;
+                }
+                if (currentTunerTd < tunerSelectedTables.Count - 1)
+                {
+                    downToolStripMenuItem.ToolTipText = "Next: " + tunerSelectedTables[currentTunerTd + 1].TableName;
+                }
+                else
+                {
+                    downToolStripMenuItem.ToolTipText = null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                upToolStripMenuItem.ToolTipText = null;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
-            if (currentTunerTd < tunerSelectedTables.Count - 1)
-            {
-                downToolStripMenuItem.ToolTipText = "Next: " + tunerSelectedTables[currentTunerTd + 1].TableName;
-            }
-            else
-            {
-                downToolStripMenuItem.ToolTipText = null;
-            }
-
         }
 
         private void UpDownTableList(bool down)
@@ -3358,9 +3368,25 @@ namespace UniversalPatcher
                     else
                         return;
                 }
-                //CleanUp();
-                PrepareTable(pcm, tunerSelectedTables[currentTunerTd], null, tuner.currentBin);
+                td = tunerSelectedTables[currentTunerTd];
+                List<CompareFile> cmpFiles = new List<CompareFile>();
+                cmpFiles.AddRange(compareFiles);
+                CleanUp();
+                PrepareTable(pcm, td, null, tuner.currentBin);
+                for (int c=0;c<cmpFiles.Count;c++)
+                {
+                    if (c != currentFile)
+                    {
+                        CompareFile cmpFile = cmpFiles[c];
+                        TableData cmpTd = FindTableData(td, cmpFile.pcm.tableDatas);
+                        if (cmpTd != null)
+                        {
+                            AddCompareFiletoMenu(cmpFile.pcm, cmpTd, cmpFile.fileLetter +":" + cmpFile.pcm.FileName, cmpFile.fileLetter);
+                        }
+                    }
+                }
                 LoadTable();
+                
                 SetUpDownToolTips();
                 if (down)
                     ShowDownToolTip();

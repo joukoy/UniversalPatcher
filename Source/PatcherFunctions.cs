@@ -18,6 +18,13 @@ using static Helpers;
 
 public class Upatcher
 {
+    public Upatcher()
+    {
+        AppSettings = new UpatcherSettings();
+        BadChkFileList = new List<StaticSegmentInfo>();
+        parser = new MathParser();
+        savingMath = new SavingMath();
+    }
     public class DetectRule
     {
         public DetectRule() { }
@@ -302,6 +309,43 @@ public class Upatcher
                     return "";
             }
         }
+        public byte TypeX;
+        public string TypeXTxt
+        {
+            get
+            {
+                if (Type == 0)
+                    return "Non TypeX";
+                else if (Type == 1)
+                    return "TypeX";
+                else
+                    return "";
+            }
+        }
+        public uint TypeXAddrInt;
+        public string TypeXAddr
+        {
+            get
+            {
+                if (TypeXAddrInt == uint.MaxValue)
+                    return "";
+                else
+                    return TypeXAddrInt.ToString("X8");
+            }
+            set
+            {
+                if (value.Length > 0)
+                {
+                    UInt32 prevVal = TypeXAddrInt;
+                    if (!HexToUint(value, out TypeXAddrInt))
+                        TypeXAddrInt = prevVal;
+                }
+                else
+                {
+                    TypeXAddrInt = uint.MaxValue;
+                }
+            }
+        }
         public byte StatusByte { get; set; }
         public byte StatusMask { get; set; }
     }
@@ -474,7 +518,7 @@ public class Upatcher
     // Universalpatcher Program global variables
     //
 
-    public static UpatcherSettings AppSettings = new UpatcherSettings();
+    public static UpatcherSettings AppSettings;
 
     public static List<Analyzer.IdName> DeviceNames;
     public static List<Analyzer.IdName> FuncNames;
@@ -487,7 +531,7 @@ public class Upatcher
     public static List<CVN> ListCVN;
     public static List<CVN> BadCvnList;
     public static List<StaticSegmentInfo> SegmentList;
-    public static List<StaticSegmentInfo> BadChkFileList = new List<StaticSegmentInfo>();
+    public static List<StaticSegmentInfo> BadChkFileList;
     public static List<SwapSegment> SwapSegments;
     //public static List<TableSearchConfig> tableSearchConfig;
     public static List<TableSearchResult> tableSearchResult;
@@ -508,11 +552,11 @@ public class Upatcher
 
     public static string tableSearchFile;
     //public static string tableSeekFile = "";
-    public static MathParser parser = new MathParser();
-    public static SavingMath savingMath = new SavingMath();
+    public static MathParser parser;
+    public static SavingMath savingMath;
     public static FrmPatcher frmpatcher;
     public static frmLogger frmlogger;
-    private static frmSplashScreen frmSplash = new frmSplashScreen();
+    private static frmSplashScreen frmSplash;
     public static DataLogger datalogger;
     public static Analyzer analyzer;
 
@@ -668,6 +712,7 @@ public class Upatcher
             if (AppSettings.LastPATCHfolder == "")
                 AppSettings.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
 
+            frmSplash = new frmSplashScreen();
             if (AppSettings.SplashShowTime > 0)
                 frmSplash.Show();
             //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
@@ -1423,6 +1468,8 @@ public class Upatcher
                         return PCM.dtcCodes[codeIndex].MilStatus;
                     case "Type":
                         return PCM.dtcCodes[codeIndex].Type;
+                    case "TypeX":
+                        return PCM.dtcCodes[codeIndex].TypeX;
                     default:
                         throw new Exception("Unknown Math: " + mathTd.Math);
                 }

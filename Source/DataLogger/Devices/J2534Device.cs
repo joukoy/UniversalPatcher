@@ -220,6 +220,11 @@ namespace UniversalPatcher
                 }
                 else
                 {
+                    /*
+                    Logger("Protocol: " + j2534Init.Protocol);
+                    Logger("Baudrate: " + j2534Init.Baudrate);
+                    Logger("Connectflag: " + j2534Init.Connectflag.ToString());                    
+                    */
                     m = ConnectToProtocol(j2534Init.Protocol, (BaudRate)Enum.Parse(typeof(BaudRate), j2534Init.Baudrate), j2534Init.Connectflag, ref ChannelID);
                     if (m.Status != ResponseStatus.Success)
                     {
@@ -1167,9 +1172,12 @@ namespace UniversalPatcher
                     ClearFunctMsgLookupTable(false);
                 }
                 Logger("Disconnecting primary protocol");
-                var item = protocol_channel.First(x => x.Value == ChannelID);
+                if (protocol_channel.ContainsValue(ChannelID))
+                {
+                    var item = protocol_channel.First(x => x.Value == ChannelID);
+                    protocol_channel.Remove(item.Key);
+                }
                 OBDError = J2534Port.Functions.Disconnect((int)ChannelID);
-                protocol_channel.Remove(item.Key);
                 ChannelID = -1;
                 if (OBDError != J2534Err.STATUS_NOERROR) return Response.Create(ResponseStatus.Error, OBDError);
                 IsProtocolOpen = false;

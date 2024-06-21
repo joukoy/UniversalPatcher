@@ -11,7 +11,7 @@ namespace UniversalPatcher
 {
     class GmKeys
     {
-        public ulong Get5byteKey(byte[] seed, byte algo)
+        public UInt64 Get5byteKey(byte[] seed, byte algo)
         {
             try
             {
@@ -19,7 +19,7 @@ namespace UniversalPatcher
                 if (result == null)
                 {
                     LoggerBold("Invalid license for GM 5 byte keys");
-                    return ulong.MaxValue;
+                    return UInt64.MaxValue;
                 }
                 if (result.Length < 5)
                 {
@@ -35,16 +35,15 @@ namespace UniversalPatcher
                     {
                         LoggerBold("Error (" + result[0].ToString() + ") in query, or invalid license for GM 5 byte keys");
                     }
-                    return ulong.MaxValue;
-                }
-                byte[] tmpBytes = new byte[8];
-                Array.Copy(result, tmpBytes, 5);
-                for (int i = 0; i < 5; i++) //Swap bytes
-                {
-                    tmpBytes[7 - i] = tmpBytes[i];
+                    return UInt64.MaxValue;
                 }
                 Debug.WriteLine("Seed: " + BitConverter.ToString(seed) + ", Key: " + result.ToHex() + ", Algo: " + algo.ToString("X"));
-                return BitConverter.ToUInt64(tmpBytes, 0);
+                byte[] retVal = new byte[8];
+                for (int i=0;i<5;i++)
+                {
+                    retVal[i + 3] = result[i];
+                }
+                return ReadUint64(retVal, 0,true);
             }
             catch(Exception ex)
             {
@@ -54,7 +53,7 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, GmKeys , line " + line + ": " + ex.Message);
-                return ulong.MaxValue;
+                return UInt64.MaxValue;
             }
         }
     }

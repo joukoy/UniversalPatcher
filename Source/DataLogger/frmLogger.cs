@@ -2442,7 +2442,8 @@ namespace UniversalPatcher
                 timerJconsoleShowLogText.Interval = AppSettings.LoggerConsoleDisplayInterval;
                 if (chkUsePrimaryChannel.Checked)
                 {
-                    ConnectJConsole2();
+                    J2534InitParameters JSettings2 = CreateJ2534InitParameters2();
+                    ConnectJConsole2(JSettings2);
                 }
                 return true;
             }
@@ -3457,13 +3458,15 @@ namespace UniversalPatcher
 
         private void btnConsoleLoadScript_Click(object sender, EventArgs e)
         {
-            string fName = SelectFile("Select script file", TxtFilter);
+            string fName = SelectFile("Select script file", TxtFilter, AppSettings.LastScriptFile);
             if (fName.Length == 0)
                 return;
+            AppSettings.LastScriptFile = fName;
             if (!Connect(radioVPW.Checked,true, true, null))
             {
                 return;
             }
+            
             Logger("Sending file: " + fName);
             oscript = new OBDScript(datalogger.LogDevice, null);
             //datalogger.LogDevice.ClearMessageBuffer();
@@ -3668,13 +3671,64 @@ namespace UniversalPatcher
 
         private void btnJConsoleUploadScript_Click(object sender, EventArgs e)
         {
-            string fName = SelectFile("Select script file", TxtFilter);
+            string fName = SelectFile("Select script file", TxtFilter, AppSettings.LastJScriptFile);
             if (fName.Length == 0)
                 return;
-            if (!ConnectJConsole(null,null))
+            AppSettings.LastJScriptFile = fName;
+            J2534InitParameters initParameters = null;
+            J2534InitParameters initParameters2 = null;
+            StreamReader sr = new StreamReader(fName);
+            string Line;
+            while ((Line = sr.ReadLine()) != null)
+            {
+                if (!Line.StartsWith("#"))
+                {
+                    break;
+                }
+            }
+            sr.Close();
+            if (Line != null && Line.StartsWith("connect"))
+            {
+                string ProfileFileName = null;
+                string[] jParts = Line.Split(':');
+                if (jParts.Length > 1)
+                {
+                    ProfileFileName = jParts[1];
+                }
+                if (ProfileFileName != null)
+                {
+                    string profileFile = Path.Combine(Path.GetDirectoryName(fName), ProfileFileName);
+                    if (!File.Exists(profileFile))
+                    {
+                        profileFile = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", ProfileFileName);
+                    }
+                    if (!File.Exists(profileFile))
+                    {
+                        LoggerBold("File not found: " + ProfileFileName);
+                        return;
+                    }
+                    if (ProfileFileName.EndsWith("xmlx"))
+                    {
+                        List<J2534InitParameters> JSettings = LoadJ2534SettingsList(profileFile);
+                        initParameters = JSettings[0];
+                        initParameters2 = JSettings[1];
+                    }
+                    else
+                    {
+                        initParameters = LoadJ2534Settings(profileFile);
+                    }
+                }
+            }
+
+            if (!ConnectJConsole(null, initParameters))
             {
                 return;
             }
+            if (initParameters2 != null)
+            {
+                ConnectJConsole2(initParameters2);
+            }
+
             Logger("Sending file: " + fName);
             joscript = new OBDScript(jConsole.JDevice, jConsole);
             joscript.SecondaryProtocol = radioJConsoleProto2.Checked;
@@ -3939,7 +3993,7 @@ namespace UniversalPatcher
             ltb.ConvertFile(fName);
         }
 
-        private void ConnectJConsole2()
+        public void ConnectJConsole2(J2534InitParameters JSettings)
         {
             try
             {
@@ -3947,7 +4001,6 @@ namespace UniversalPatcher
                 {
                     //return;
                 }
-                J2534InitParameters JSettings = CreateJ2534InitParameters2();
                 if (jConsole.JDevice.ConnectSecondaryProtocol(JSettings))
                 {
                     groupJConsoleProto.Enabled = true;
@@ -3968,7 +4021,8 @@ namespace UniversalPatcher
         }
         private void btnJConsoleConnectSecondProtocol_Click(object sender, EventArgs e)
         {
-            ConnectJConsole2();
+            J2534InitParameters JSettings2 = CreateJ2534InitParameters2();
+            ConnectJConsole2(JSettings2);
         }
 
         private void btnJConsoleAddConfig_Click(object sender, EventArgs e)
@@ -4919,21 +4973,33 @@ namespace UniversalPatcher
 
         private void btnSaveProtocols_Click(object sender, EventArgs e)
         {
-            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xmlx");
-            string FileName = SelectSaveFile(XmlXFilter, defName);
-            if (FileName.Length == 0)
-                return;
-            Logger("Saving file: " + FileName);
-            J2534InitParameters JSettings = CreateJ2534InitParameters();
-            J2534InitParameters JSettings2 = CreateJ2534InitParameters2();
-            List<J2534InitParameters> jsl = new List<J2534InitParameters>();
-            jsl.Add(JSettings);
-            jsl.Add(JSettings2);
-            LoggerUtils.SaveJ2534SettingsList(FileName, jsl);
-            AppSettings.LoggerJ2534SettingsFile = "";
-            AppSettings.LoggerJ2534SettingsFile2 = "";
-            AppSettings.Save();
-            Logger("[OK]");
+            try
+            {
+                string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xmlx");
+                string FileName = SelectSaveFile(XmlXFilter, defName);
+                if (FileName.Length == 0)
+                    return;
+                Logger("Saving file: " + FileName);
+                J2534InitParameters JSettings = CreateJ2534InitParameters();
+                J2534InitParameters JSettings2 = CreateJ2534InitParameters2();
+                List<J2534InitParameters> jsl = new List<J2534InitParameters>();
+                jsl.Add(JSettings);
+                jsl.Add(JSettings2);
+                LoggerUtils.SaveJ2534SettingsList(FileName, jsl);
+                AppSettings.LoggerJ2534SettingsFile = "";
+                AppSettings.LoggerJ2534SettingsFile2 = "";
+                AppSettings.Save();
+                Logger("[OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void btnLoadProtocols_Click(object sender, EventArgs e)
@@ -5569,6 +5635,15 @@ namespace UniversalPatcher
         private void parseLogfileToBinToolStripMenuItem1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void parseCAN78LogfileToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select log file", RtfFTxtilter);
+            if (fName.Length == 0)
+                return;
+            LogToBinConverter cltb = new LogToBinConverter(LogToBinConverter.RMode.CAN78);
+            cltb.ConvertFile(fName);
         }
     }
 }

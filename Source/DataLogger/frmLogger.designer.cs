@@ -342,6 +342,7 @@ namespace UniversalPatcher
             this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
+            this.parseCAN78LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -3411,7 +3412,8 @@ namespace UniversalPatcher
             this.parseLogfileToBinToolStripMenuItem,
             this.parseCANLogfileToBinToolStripMenuItem,
             this.parseCANMode36LogfileToBinToolStripMenuItem,
-            this.parseCAN23LogfileToBinToolStripMenuItem});
+            this.parseCAN23LogfileToBinToolStripMenuItem,
+            this.parseCAN78LogfileToBinToolStripMenuItem});
             this.parseLogfileToBinToolStripMenuItem1.Name = "parseLogfileToBinToolStripMenuItem1";
             this.parseLogfileToBinToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
             this.parseLogfileToBinToolStripMenuItem1.Text = "Parse logfile to bin";
@@ -3596,6 +3598,13 @@ namespace UniversalPatcher
             this.labelProtocol.Size = new System.Drawing.Size(34, 15);
             this.labelProtocol.TabIndex = 25;
             this.labelProtocol.Text = "VPW";
+            // 
+            // parseCAN78LogfileToBinToolStripMenuItem
+            // 
+            this.parseCAN78LogfileToBinToolStripMenuItem.Name = "parseCAN78LogfileToBinToolStripMenuItem";
+            this.parseCAN78LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.parseCAN78LogfileToBinToolStripMenuItem.Text = "Parse CAN78 logfile to bin";
+            this.parseCAN78LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN78LogfileToBinToolStripMenuItem_Click);
             // 
             // frmLogger
             // 
@@ -3959,7 +3968,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkEecvSecondKey;
         private System.Windows.Forms.GroupBox groupProtocol;
         private System.Windows.Forms.RadioButton radioCAN;
-        private System.Windows.Forms.RadioButton radioVPW;
         private System.Windows.Forms.NumericUpDown numResetAfter;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.ComboBox comboFilterByOS;
@@ -3993,6 +4001,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem sendControlCommandsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem graphicsLogfileToolStripMenuItem;
         private System.Windows.Forms.VScrollBar vScrollBarVpwConsole;
+        public System.Windows.Forms.RadioButton radioVPW;
+        private System.Windows.Forms.ToolStripMenuItem parseCAN78LogfileToBinToolStripMenuItem;
     }
 }
 

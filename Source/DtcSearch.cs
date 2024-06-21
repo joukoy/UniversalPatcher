@@ -169,14 +169,19 @@ namespace UniversalPatcher
                     string codeTmp = dtc.codeInt.ToString("X4");
                     dtc.Code = DecodeDTC(codeTmp);
                     dtc.Description = GetDtcDescription(dtc.Code);
-                    dtc.Values = "Enum: 0:Enabled, 1: Disabled";
+                    //dtc.Values = "Enum: 1:Enabled, 0: Disabled";
                     dtc.StatusByte = PCM.buf[addr - 1];
                     dtc.StatusMask = PCM.buf[addr - 2];
 
-                    dtc.milAddrInt = StatusTables[0] + dtc.StatusByte;
+                    //dtc.milAddrInt = StatusTables[0] + dtc.StatusByte;
+                    //dtc.TypeAddrInt = StatusTables[1] + dtc.StatusByte;
+                    //dtc.milAddrInt2 = StatusTables[2] + dtc.StatusByte;
+                    //dtc.statusAddrInt = StatusTables[3] + dtc.StatusByte;
+
+                    dtc.statusAddrInt = StatusTables[0] + dtc.StatusByte;
                     dtc.TypeAddrInt = StatusTables[1] + dtc.StatusByte;
-                    dtc.milAddrInt2 = StatusTables[2] + dtc.StatusByte;
-                    dtc.statusAddrInt = StatusTables[3] + dtc.StatusByte;
+                    dtc.milAddrInt = StatusTables[2] + dtc.StatusByte;
+                    dtc.TypeXAddrInt = StatusTables[3] + dtc.StatusByte;
 
                     if (dtc.StatusByte > lastStatusByte)
                     {
@@ -192,26 +197,42 @@ namespace UniversalPatcher
                     }
                     prevMask = dtc.StatusMask;
                     header += dtc.Code + ",";
-                    if ((PCM.buf[StatusTables[0] + dtc.StatusByte] & dtc.StatusMask) == 0)
-                        dtc.MilStatus = 0;
-                    else
-                        dtc.MilStatus = 1;
-
-                    if ((PCM.buf[StatusTables[1] + dtc.StatusByte] & dtc.StatusMask) == 0)
-                        dtc.Type = 0;
-                    else
-                        dtc.Type =1;
-
-                    if ((PCM.buf[StatusTables[3] + dtc.StatusByte] & dtc.StatusMask) == 0)
-                    {
-                        dtc.Status = 1;
-                        dtc.StatusTxt = "Enabled";
-                    }
-                    else
+                    if ((PCM.buf[dtc.statusAddrInt] & dtc.StatusMask) == 0)
                     {
                         dtc.Status = 0;
-                        dtc.StatusTxt = "Disabled";
                     }
+                    else
+                    {
+                        dtc.Status = 1;
+                    }
+
+                    if ((PCM.buf[dtc.TypeAddrInt] & dtc.StatusMask) == 0)
+                    {
+                        dtc.Type = 0;
+                    }
+                    else
+                    {
+                        dtc.Type = 1;
+                    }
+
+                    if ((PCM.buf[dtc.TypeXAddrInt] & dtc.StatusMask) == 0)
+                    {
+                        dtc.TypeX = 0;
+                    }
+                    else
+                    {
+                        dtc.Status = 1;
+                    }
+
+                    if ((PCM.buf[dtc.milAddrInt] & dtc.StatusMask) == 0)
+                    {
+                        dtc.MilStatus = 0;
+                    }
+                    else
+                    {
+                        dtc.MilStatus = 1;
+                    }
+
                     retVal.Add(dtc);
                     tableLen++;
                 }

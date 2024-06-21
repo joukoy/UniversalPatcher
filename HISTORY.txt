@@ -708,3 +708,11 @@
 - Logger: Don't use Device timestamps for timestamps with J2534 devices
 - J-Console: added IOCTL:function[:argument]
 - Added file script_commands.txt, short description of available commands in console
+
+0.22.20
+- TableEditor: Fixed bug: In compare mode, up/down table not working
+- Logger: Fixed bug in JET device driver, device disconnected in 3 seconds after connection
+- XML Editor: Fixed bug: Copy row -> paste row more than once makes "mirrored" copies, not new objects
+- Logger: Added parsing for mode 78 logfile to bin
+- Upatcher: Moved class initializations to constructor to avoid error in win 7 
+
