@@ -647,6 +647,7 @@ namespace UniversalPatcher
                     frmT.tunerSelectedTables = tnode.filteredTds;
                 }
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
+                frmT.CleanUp();
                 frmT.PrepareTable(PCM, td, tableTds, currentBin);
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 {

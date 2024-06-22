@@ -716,3 +716,6 @@
 - Logger: Added parsing for mode 78 logfile to bin
 - Upatcher: Moved class initializations to constructor to avoid error in win 7 
 
+0.22.21
+- Tuner: Fixed bug: Table editor not updated in tree mode after first table selection
+

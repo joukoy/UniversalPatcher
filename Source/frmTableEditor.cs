@@ -348,7 +348,7 @@ namespace UniversalPatcher
 
         //Set default values before opening new table
         //Required for tree/docked mode tuner
-        private  void CleanUp()
+        public void CleanUp()
         {
             compareToolStripMenuItem.DropDownItems.Clear();
             compareFiles = new List<CompareFile>();

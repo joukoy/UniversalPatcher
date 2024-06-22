@@ -18,13 +18,6 @@ using static Helpers;
 
 public class Upatcher
 {
-    public Upatcher()
-    {
-        AppSettings = new UpatcherSettings();
-        BadChkFileList = new List<StaticSegmentInfo>();
-        parser = new MathParser();
-        savingMath = new SavingMath();
-    }
     public class DetectRule
     {
         public DetectRule() { }
@@ -624,7 +617,12 @@ public class Upatcher
     {
         try
         {
+            AppSettings = new UpatcherSettings();
+            BadChkFileList = new List<StaticSegmentInfo>();
+            parser = new MathParser();
+            savingMath = new SavingMath();
             LoadAppSettings();
+
             ClipBrd = new List<object>();
             if (args.Length > 0)
             {
