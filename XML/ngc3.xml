@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version>1</Version>
+    <Addresses>10000-FFFFF</Addresses>
+    <SwapAddress />
+    <CS1Address>e0000:2:hex</CS1Address>
+    <CS2Address>F8938:4:hex</CS2Address>
+    <Checksum1Method>Bytesum</Checksum1Method>
+    <Checksum2Method>Ngc3</Checksum2Method>
+    <CS1Blocks>10000-e0000,e0004-FFFFF</CS1Blocks>
+    <CS2Blocks>E015C-F8937</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>e0078:10:text</PNAddr>
+    <VerAddr>e0016:4:text</VerAddr>
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>3</CS1Method>
+    <CS2Method>7</CS2Method>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

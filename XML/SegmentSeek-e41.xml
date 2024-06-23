@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentSeek>
+    <Name>cs1</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D48</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>start1</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D44</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>end1</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D48</SearchStr>
+    <Offset>-1</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>cs2</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D60</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>start2</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D56</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>end2</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D60</SearchStr>
+    <Offset>-1</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>cs3</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D36</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>start3</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D32</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>end3</Name>
+    <SearchStr>#20 00 00 00 20 05 FF FF 00 01 00 00 20 06 00 00 20 1F FF FF 48 13 00 04 48 13 00 04 48 13 00 04 +D36</SearchStr>
+    <Offset>-1</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+</ArrayOfSegmentSeek>

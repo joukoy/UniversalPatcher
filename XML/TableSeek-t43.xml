@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<ArrayOfTableSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableSeek>
+    <Categories />
+    <Name>CAN_IDS[TX]</Name>
+    <SearchStr>3D * @ @ 3D * 00 20 39 * @ @ 57</SearchStr>
+    <Rows>150</Rows>
+    <Columns>2</Columns>
+    <RowHeaders />
+    <ColHeaders>TX,ARG</ColHeaders>
+    <Math>X</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UINT32</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Hex</OutputType>
+    <Min>0</Min>
+    <Max>999999999</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>CAN</Category>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>CAN_TX- ids setup in OS first is CAN id, second is arguments for usage. End of table is not known so user needs to figure where it ends, Usually it increments in numerical order, if at some point it decrements, that should be the end of table</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>CAN_IDS[RX]</Name>
+    <SearchStr>3D * @ @ 39 * @ @ 57 * 18 38 7d * * 2e</SearchStr>
+    <Rows>150</Rows>
+    <Columns>2</Columns>
+    <RowHeaders />
+    <ColHeaders>RX,ARG</ColHeaders>
+    <Math>X</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UINT32</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Hex</OutputType>
+    <Min>0</Min>
+    <Max>999999999</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>CAN</Category>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>CAN_RX- ids setup in OS first is CAN id, second is arguments for usage. End of table is not known so user needs to figure where it ends, Usually it increments in numerical order, if at some point it decrements, that should be the end of table</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+</ArrayOfTableSeek>
