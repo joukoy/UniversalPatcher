@@ -1,1 +1,1830 @@
-tableseek-e38.xml
+<?xml version="1.0"?>
+<ArrayOfTableSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableSeek>
+    <Categories />
+    <Name>hi oct spark06-07</Name>
+    <SearchStr>00 03 * * 00 3c 3f e0 * * a3 ff * * 3c 60 @ @ 38 63 @ @</SearchStr>
+    <Rows>33</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>3</Offset>
+    <ConditionalOffset>true</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>hi oct spark08-11</Name>
+    <SearchStr>00 03 * * 00 3c 3f a0 * * a3 bd * * 3c 60 @ @ 38 63 @ @</SearchStr>
+    <Rows>33</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>3</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>hi oct spark12-15</Name>
+    <SearchStr>00 03 * * 00 38 a3 ad * * 3c 60 @ @ 38 63 @ @</SearchStr>
+    <Rows>33</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>3</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>hi oct spark</Name>
+    <SearchStr>#k21 r21 02</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>3</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>low oct spark</Name>
+    <SearchStr>#k21 r21 02</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>3</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>IAT spark corr</Name>
+    <SearchStr>#21 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>-40,-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>3</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Base idle spark</Name>
+    <SearchStr>#21 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>3</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>@ @ * * @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>coast down spark</Name>
+    <SearchStr># 21 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>5</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Flex fuel spark</Name>
+    <SearchStr># 21 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>6</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Dfco min spark,egr, misfire limit</Name>
+    <SearchStr># 21 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>7</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>HalfCylBaseHiOctane Spark</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>HalfCylBaseLowOctane</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EGR SPARK</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Cam phaser spark table</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EGR dod spark</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>5</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Coolant spark correction</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>-20,-10,0,10,20,30,40,50,60,70,80,90,100,110,120,130,140</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>6</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Clutch Fuel Cut Off rpm/GmCyl</Name>
+    <SearchStr># 21 09 02</SearchStr>
+    <Rows>9</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>IdlePN_CatLightBase</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>2,3,4,5</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base catalyst light off spark table when in Park or Neutral during idle</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>IdleDR_CatLightBase</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments>2,3,4,5</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base catalyst light off spark table when in Drive or Reverse during idle</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>CatLightBase SPARK</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments>2,3,4,5</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description> Base catalyst light off spark table</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>SpeedLoadOffset</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/16</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Calibration which determines the temperature contribution as a function of engine speed and airflow.</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EGR_Max</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/655.35999</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>The maximum percent EGR that can be tolerated without misfire under ideal conditions for a given speed-load point.</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EGR_MaxDOD</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/655.35999</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>The maximum percent EGR that can be tolerated without misfire under ideal conditions for a given speed-load point while in \"displacement in demand\" (Cylinder deactivation) mode.</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EGRNomChargeTemp</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Nominal charge temperature for a given speed-load point used to offset the current charge temperature for the cha</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQ_R_OL_Flow</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/32767.999999</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>5</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description> The equivalence ratio gain used when open loop operation is in effect. This gain allows adjustment based on MAP and RPM</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQ_R_K_AIR</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/32767.999999</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>6</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base open equivalence ratio gain applied when AIR pump is requesting fuel enrichment. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQ_R_K_AIR_AirflowMult</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/32767.999999</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>7</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Equivalence ratio gain applied when the AIR pump is requesting fuel enrichment. The gain is a function of engine airflow and IVT. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQ_R_eqr_IVT_OpenLoopDriveE0</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>8</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description> Base open loop equivalence ratio applied when in drive with zero percent ethanol fuel</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQ_R_eqr_IVT_OpenLoopPNE0</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>9</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base open loop equivalence ratio applied when in Park or Neutral with zero percent of ethanol fuel</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQ_R_eqr_IVT_OpenLoopDriveE80</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>10</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQ_R_eqr_IVT_OpenLoopPNE80</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>11</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQR_K_AIR_Enrich</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/16384</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>12</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>AIR enrichment factor which is applied to the corrected fuel mass when AIR is active.</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>PistonSlapBase</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>13</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base piston slap spark retard</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>11/21-14</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31</RowHeaders>
+    <ColHeaders>0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</ColHeaders>
+    <Math>X/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>14</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>11/21-15</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>15</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>11/21-16</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>16</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>EQ_R_OL_IVT_MAP</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/32767.999999</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>21/21word-2</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>21/21word-3</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>21/21word-4</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>21/21word-5</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>5</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>21/21word--6</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>6</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>21/21word-7</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>7</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>21/21word--8</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>8</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>DodSwitch*06-11</Name>
+    <SearchStr>7C 08 02 A6 90 01 00 0C 3D 80 @ @ 89 8C @ @ 2C 0C 00 00 40 82 00 6C 3C 60 00 24</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Cylinder_Deac</Category>
+    <Units>BOOLEAN</Units>
+    <Values>BOOLEAN</Values>
+    <RowMajor>true</RowMajor>
+    <Description> Boolean to disable or enable cylinder deactivation functionality. Cylinder Deactivation Functionality is disabled whenever this calibration is set to TRUE. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>DodSwitch*12-15</Name>
+    <SearchStr>20 94 21 FF F8 7C 08 02 A6 90 01 00 0C 3D 80 @ @ 89 8C @ @ 2C 0C 00 00 40 82 00 5C A0 6D 1D</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Cylinder_Deac</Category>
+    <Units>BOOLEAN</Units>
+    <Values>BOOLEAN</Values>
+    <RowMajor>true</RowMajor>
+    <Description> Boolean to disable or enable cylinder deactivation functionality. Cylinder Deactivation Functionality is disabled whenever this calibration is set to TRUE. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Dwell temp multiplier</Name>
+    <SearchStr>#k11 r21 00</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32</RowHeaders>
+    <ColHeaders>deg C -40,deg C -25,deg C -10,deg C 5,deg C 20,deg C 35,deg C 50,deg C 65,deg C 80,deg C 95,deg C 110,deg C 125,deg C 140,deg C 155,deg C 170,deg C 185,deg C 200</ColHeaders>
+    <Math>X/256</Math>
+    <Offset>3</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>3</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>DwellMain*06-07</Name>
+    <SearchStr>3C 60 @ @ * * * * 38 63 @ @ 38 BD 00 00 4B * * * 3B C3</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32</RowHeaders>
+    <ColHeaders>0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</ColHeaders>
+    <Math>X/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>true</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>DwellMain*08-11</Name>
+    <SearchStr>3C 60 @ @ 38 63 @ @ 38 9C 00 00 38 BE 00 00 4B E9</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32</RowHeaders>
+    <ColHeaders>0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</ColHeaders>
+    <Math>X/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>true</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>DwellMain*12-</Name>
+    <SearchStr>3C 60 @ @ 38 63 @ @ 38 9D 00 00 38 BE 00 00 4B EB</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32</RowHeaders>
+    <ColHeaders>0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</ColHeaders>
+    <Math>X/128</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>true</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KeIMOG_e_ImmobFtnSelection</Name>
+    <SearchStr>01 00 0C 3C 60 @ @ A8 63 @ @ 2C 03 00 02 40 82 00 14</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>enum</ColHeaders>
+    <Math>X</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units>enum</Units>
+    <Values>Enum: 0:CeIMOR_e_NAO_TheftAlg,1:CeIMOR_e_PPEI3_ImmobAlg,2:CeIMOR_e_GMIO_ImmobAlg</Values>
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KeIMOG_b_ImmobFtnEnbld</Name>
+    <SearchStr>00 01 * * 00 * 2C 1F 00 02 41 82 00 2C 3D 80 @ @ 89 8C @ @ 2C 0C 00 00</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>enum</ColHeaders>
+    <Math>X</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units>enum</Units>
+    <Values>Enum: 0:OFF,1:ON</Values>
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Remote Start Timer #1</Name>
+    <SearchStr>30 00 * * 00 10 3D 80 @ @ A1 8C @ @ 48 00 00 0C 3D</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1200</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>64354</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Remote Start Timer #1. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>Remote Start Timer #2</Name>
+    <SearchStr>48 00 00 0c 3d 80 @ @ a1 8c @ @ b1 * * * 2c 06 00 00 41 81 00 0c 38 c0 00 00 48 00 00 08</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1200</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>64354</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>Remote Start Timer #2. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KtMAFI_dm_EngAirFlowFull</Name>
+    <SearchStr>3C 60 @ @ FD AD 58 28 38 63 @ @</SearchStr>
+    <Rows>101</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>0,150,300,450,600,750,900,1050,1200,1350,1500,1650,1800,1950,2100,2250,2400,2550,2700,2850,3000,3150,3300,3450,3600,3750,3900,4050,4200,4350,4500,4650,4800,4950,5100,5250,5400,5550,5700,5850,6000,6150,6300,6450,6600,6750,6900,7050,7200,7350,7500,7650,7800,7950,8100,8250,8400,8550,8700,8850,9000,9150,9300,9450,9600,9750,9900,10050,10200,10350,10500,10650,10800,10950,11100,11250,11400,11550,11700,11850,12000,12150,12300,12450,12600,12750,12900,13050,13200,13350,13500,13650,13800,13950,14100,14250,14400,14550,14700,14850,15000</RowHeaders>
+    <ColHeaders>g/s </ColHeaders>
+    <Math>X</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>FLOAT32</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>3000</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>MAF_Engine_Sensors</Category>
+    <Units>g/s </Units>
+    <Values>0 - 3000</Values>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Description> Table used to convert the air meter frequency to the correct airflow when the frequency is above 5800 hertz. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001EB7A4</RefAddress>
+    <ExtraDescription />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KtMAFI_dm_EngAirFlowHi</Name>
+    <SearchStr />
+    <Rows>33</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Hz 5800,Hz 6000,Hz 6200,Hz 6400,Hz 6600,Hz 6800,Hz 7000,Hz 7200,Hz 7400,Hz 7600,Hz 7800,Hz 8000,Hz 8200,Hz 8400,Hz 8600,Hz 8800,Hz 9000,Hz 9200,Hz 9400,Hz 9600,Hz 9800,Hz 10000,Hz 10200,Hz 10400,Hz 10600,Hz 10800,Hz 11000,Hz 11200,Hz 11400,Hz 11600,Hz 11800,Hz 12000,Hz 12200</RowHeaders>
+    <ColHeaders>g/s </ColHeaders>
+    <Math>X/128</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>511.9921875</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>MAF_Engine_Sensors</Category>
+    <Units>g/s </Units>
+    <Values>0 - 511.9921875</Values>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Description> Table used to convert the air meter frequency to the correct airflow when the frequency is above 5800 hertz. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001EB7A4</RefAddress>
+    <ExtraDescription />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KeFPMC_b_VariableSpeedPump</Name>
+    <SearchStr>90 01 00 14 3D 80 @ @ 89 8C @ @ 2C 0C 00 00 40 82 00 * 4b * * * * c3</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>BOOLEAN</ColHeaders>
+    <Math>X/1</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>OL_FuelPump</Category>
+    <Units>BOOLEAN</Units>
+    <Values>0 - 255</Values>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Description> Calibration switch used to make variable speed fuel pump logic active. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001E49D4</RefAddress>
+    <ExtraDescription />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KtFPMC_Pct_PWM_DutyCycle*06-11</Name>
+    <SearchStr>3c 60 * * * * * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * b0 69</SearchStr>
+    <Rows>9</Rows>
+    <Columns>9</Columns>
+    <RowHeaders>Table: KtFPMC_n_Engine</RowHeaders>
+    <ColHeaders>Table: KtFPMC_dm_FuelFlow</ColHeaders>
+    <Math>X/655.36</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>99.99847412109375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>OL_FuelPump</Category>
+    <Units>% </Units>
+    <Values>0 - 99.9984741210938</Values>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Description> Percent duty cycle. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001E49E4</RefAddress>
+    <ExtraDescription />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KtFPMC_Pct_PWM_DutyCycle*12-15</Name>
+    <SearchStr>00 00 3C 60 * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * 3c 80</SearchStr>
+    <Rows>9</Rows>
+    <Columns>9</Columns>
+    <RowHeaders>Table: KtFPMC_n_Engine</RowHeaders>
+    <ColHeaders>Table: KtFPMC_dm_FuelFlow</ColHeaders>
+    <Math>X/655.36</Math>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>99.99847412109375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>OL_FuelPump</Category>
+    <Units>% </Units>
+    <Values>0 - 99.9984741210938</Values>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Description> Percent duty cycle. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001E49E4</RefAddress>
+    <ExtraDescription />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KtFPMC_n_Engine*06-11</Name>
+    <SearchStr>3c 60 * * * * * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * b0 69</SearchStr>
+    <Rows>9</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>rpm</ColHeaders>
+    <Math>X/8</Math>
+    <Offset>168</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8191.875</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>AXIS_PTS</Category>
+    <Units>rpm</Units>
+    <Values>0 - 8191.875</Values>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Description> Calibratable table axis used when rescaling engine speed. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001E4A8A</RefAddress>
+    <ExtraDescription />
+    <ExtraCategories />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KtFPMC_n_Engine*12-15</Name>
+    <SearchStr>00 00 3C 60 * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * 3c 80</SearchStr>
+    <Rows>9</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>rpm</ColHeaders>
+    <Math>X/8</Math>
+    <Offset>168</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8191.875</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>AXIS_PTS</Category>
+    <Units>rpm</Units>
+    <Values>0 - 8191.875</Values>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Description> Calibratable table axis used when rescaling engine speed. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001E4A8A</RefAddress>
+    <ExtraDescription />
+    <ExtraCategories />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KtFPMC_dm_FuelFlow*06-11</Name>
+    <SearchStr>3c 60 * * * * * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * b0 69</SearchStr>
+    <Rows>9</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <Offset>188</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>5</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>63.9990234375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>AXIS_PTS</Category>
+    <Units />
+    <Values>0 - 63.9990234375</Values>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Description> Calibratable table axis used when rescaling fuel flow. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001E4A9E</RefAddress>
+    <ExtraDescription />
+    <ExtraCategories />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>KtFPMC_dm_FuelFlow*12-15</Name>
+    <SearchStr>00 00 3C 60 * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * 3c 80</SearchStr>
+    <Rows>9</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <Offset>188</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>5</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>63.9990234375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>AXIS_PTS</Category>
+    <Units />
+    <Values>0 - 63.9990234375</Values>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Description> Calibratable table axis used when rescaling fuel flow. </Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+    <RefAddress>001E4A9E</RefAddress>
+    <ExtraDescription />
+    <ExtraCategories />
+  </TableSeek>
+  <TableSeek>
+    <Categories />
+    <Name>CAN_IDS[TX]</Name>
+    <SearchStr>4E 80 00 21 3D * @ @ 3D * 00 1C 39 * @ @</SearchStr>
+    <Rows>200</Rows>
+    <Columns>2</Columns>
+    <RowHeaders />
+    <ColHeaders>CAN_TXid,txARG</ColHeaders>
+    <Math>X</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UINT32</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Hex</OutputType>
+    <Min>0</Min>
+    <Max>999999999999</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>CAN_TX- ids setup in OS first is CAN id, second is arguments for usage. End of table is not known so user needs to figure where it ends, Usually it increments in numerical order, if at some point it decrements, that should be the end of table</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Name>CAN_IDS[RX]</Name>
+    <SearchStr>4b * * * 3D 20 @ @ 39 29 @ @ 57 ac</SearchStr>
+    <Rows>200</Rows>
+    <Columns>2</Columns>
+    <RowHeaders />
+    <ColHeaders>CAN_RXid,rxARG</ColHeaders>
+    <Math>X</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UINT32</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Hex</OutputType>
+    <Min>0</Min>
+    <Max>999999999999</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>CAN_RX- ids setup in OS first is CAN id, second is arguments for usage. End of table is not known so user needs to figure where it ends, Usually it increments in numerical order, if at some point it decrements, that should be the end of table</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+</ArrayOfTableSeek>

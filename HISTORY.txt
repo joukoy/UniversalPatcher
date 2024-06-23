@@ -719,3 +719,5 @@
 0.22.21
 - Tuner: Fixed bug: Table editor not updated in tree mode after first table selection
 
+0.22.22
+- XML updates

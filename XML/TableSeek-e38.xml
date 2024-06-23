@@ -1492,6 +1492,7 @@
     <DispUnits>Undefined</DispUnits>
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KtMAFI_dm_EngAirFlowFull</Name>
     <SearchStr>3C 60 @ @ FD AD 58 28 38 63 @ @</SearchStr>
     <Rows>101</Rows>
@@ -1522,6 +1523,7 @@
     <ExtraDescription />
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KtMAFI_dm_EngAirFlowHi</Name>
     <SearchStr />
     <Rows>33</Rows>
@@ -1552,6 +1554,7 @@
     <ExtraDescription />
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KeFPMC_b_VariableSpeedPump</Name>
     <SearchStr>90 01 00 14 3D 80 @ @ 89 8C @ @ 2C 0C 00 00 40 82 00 * 4b * * * * c3</SearchStr>
     <Rows>1</Rows>
@@ -1582,6 +1585,7 @@
     <ExtraDescription />
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KtFPMC_Pct_PWM_DutyCycle*06-11</Name>
     <SearchStr>3c 60 * * * * * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * b0 69</SearchStr>
     <Rows>9</Rows>
@@ -1612,6 +1616,7 @@
     <ExtraDescription />
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KtFPMC_Pct_PWM_DutyCycle*12-15</Name>
     <SearchStr>00 00 3C 60 * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * 3c 80</SearchStr>
     <Rows>9</Rows>
@@ -1642,6 +1647,7 @@
     <ExtraDescription />
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KtFPMC_n_Engine*06-11</Name>
     <SearchStr>3c 60 * * * * * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * b0 69</SearchStr>
     <Rows>9</Rows>
@@ -1673,6 +1679,7 @@
     <ExtraCategories />
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KtFPMC_n_Engine*12-15</Name>
     <SearchStr>00 00 3C 60 * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * 3c 80</SearchStr>
     <Rows>9</Rows>
@@ -1704,6 +1711,7 @@
     <ExtraCategories />
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KtFPMC_dm_FuelFlow*06-11</Name>
     <SearchStr>3c 60 * * * * * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * b0 69</SearchStr>
     <Rows>9</Rows>
@@ -1735,6 +1743,7 @@
     <ExtraCategories />
   </TableSeek>
   <TableSeek>
+    <Categories />
     <Name>KtFPMC_dm_FuelFlow*12-15</Name>
     <SearchStr>00 00 3C 60 * * * * * * * * * * * * * * 3b * 00 00 3C 60 @ @ 38 63 @ @ 57 * 04 3E 57 * * * * * * * * * * * 3c 80</SearchStr>
     <Rows>9</Rows>
@@ -1766,27 +1775,55 @@
     <ExtraCategories />
   </TableSeek>
   <TableSeek>
-    <SearchStr />
-    <Rows>0</Rows>
-    <Columns>0</Columns>
+    <Categories />
+    <Name>CAN_IDS[TX]</Name>
+    <SearchStr>4E 80 00 21 3D * @ @ 3D * 00 1C 39 * @ @</SearchStr>
+    <Rows>200</Rows>
+    <Columns>2</Columns>
     <RowHeaders />
-    <ColHeaders />
+    <ColHeaders>CAN_TXid,txARG</ColHeaders>
     <Math>X</Math>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <SignedOffset>false</SignedOffset>
-    <DataType>UBYTE</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
+    <DataType>UINT32</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Hex</OutputType>
     <Min>0</Min>
-    <Max>255</Max>
+    <Max>999999999999</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
     <Units />
     <Values />
     <RowMajor>true</RowMajor>
-    <Description />
+    <Description>CAN_TX- ids setup in OS first is CAN id, second is arguments for usage. End of table is not known so user needs to figure where it ends, Usually it increments in numerical order, if at some point it decrements, that should be the end of table</Description>
+    <MSB>true</MSB>
+    <DispUnits>Undefined</DispUnits>
+  </TableSeek>
+  <TableSeek>
+    <Name>CAN_IDS[RX]</Name>
+    <SearchStr>4b * * * 3D 20 @ @ 39 29 @ @ 57 ac</SearchStr>
+    <Rows>200</Rows>
+    <Columns>2</Columns>
+    <RowHeaders />
+    <ColHeaders>CAN_RXid,rxARG</ColHeaders>
+    <Math>X</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UINT32</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Hex</OutputType>
+    <Min>0</Min>
+    <Max>999999999999</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units />
+    <Values />
+    <RowMajor>true</RowMajor>
+    <Description>CAN_RX- ids setup in OS first is CAN id, second is arguments for usage. End of table is not known so user needs to figure where it ends, Usually it increments in numerical order, if at some point it decrements, that should be the end of table</Description>
     <MSB>true</MSB>
     <DispUnits>Undefined</DispUnits>
   </TableSeek>
