@@ -77,6 +77,11 @@ namespace UniversalPatcher
             this.label3 = new System.Windows.Forms.Label();
             this.dataGridLogData = new System.Windows.Forms.DataGridView();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.comboWBport = new System.Windows.Forms.ComboBox();
+            this.comboWBType = new System.Windows.Forms.ComboBox();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
             this.groupProtocol = new System.Windows.Forms.GroupBox();
             this.txtPcmAddress = new System.Windows.Forms.TextBox();
             this.label43 = new System.Windows.Forms.Label();
@@ -322,6 +327,7 @@ namespace UniversalPatcher
             this.parseCANLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCANMode36LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCAN23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseCAN78LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphicsLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -342,7 +348,7 @@ namespace UniversalPatcher
             this.timerShowLogTxt = new System.Windows.Forms.Timer(this.components);
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
-            this.parseCAN78LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.labelAFR = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -351,6 +357,7 @@ namespace UniversalPatcher
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
             this.tabSettings.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.groupProtocol.SuspendLayout();
             this.groupBox10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).BeginInit();
@@ -729,6 +736,7 @@ namespace UniversalPatcher
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupBox6);
             this.tabSettings.Controls.Add(this.groupProtocol);
             this.tabSettings.Controls.Add(this.groupBox10);
             this.tabSettings.Controls.Add(this.groupHWSettings);
@@ -739,6 +747,53 @@ namespace UniversalPatcher
             this.tabSettings.TabIndex = 3;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.comboWBport);
+            this.groupBox6.Controls.Add(this.comboWBType);
+            this.groupBox6.Controls.Add(this.label45);
+            this.groupBox6.Controls.Add(this.label44);
+            this.groupBox6.Location = new System.Drawing.Point(10, 288);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(357, 74);
+            this.groupBox6.TabIndex = 37;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Serial WB";
+            // 
+            // comboWBport
+            // 
+            this.comboWBport.FormattingEnabled = true;
+            this.comboWBport.Location = new System.Drawing.Point(85, 41);
+            this.comboWBport.Name = "comboWBport";
+            this.comboWBport.Size = new System.Drawing.Size(255, 21);
+            this.comboWBport.TabIndex = 4;
+            // 
+            // comboWBType
+            // 
+            this.comboWBType.FormattingEnabled = true;
+            this.comboWBType.Location = new System.Drawing.Point(85, 17);
+            this.comboWBType.Name = "comboWBType";
+            this.comboWBType.Size = new System.Drawing.Size(255, 21);
+            this.comboWBType.TabIndex = 3;
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(16, 44);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(29, 13);
+            this.label45.TabIndex = 1;
+            this.label45.Text = "Port:";
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(16, 20);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(34, 13);
+            this.label44.TabIndex = 0;
+            this.label44.Text = "Type:";
             // 
             // groupProtocol
             // 
@@ -3447,6 +3502,13 @@ namespace UniversalPatcher
             this.parseCAN23LogfileToBinToolStripMenuItem.Text = "Parse CAN23 logfile to bin";
             this.parseCAN23LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN23LogfileToBinToolStripMenuItem_Click);
             // 
+            // parseCAN78LogfileToBinToolStripMenuItem
+            // 
+            this.parseCAN78LogfileToBinToolStripMenuItem.Name = "parseCAN78LogfileToBinToolStripMenuItem";
+            this.parseCAN78LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.parseCAN78LogfileToBinToolStripMenuItem.Text = "Parse CAN78 logfile to bin";
+            this.parseCAN78LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN78LogfileToBinToolStripMenuItem_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -3599,18 +3661,22 @@ namespace UniversalPatcher
             this.labelProtocol.TabIndex = 25;
             this.labelProtocol.Text = "VPW";
             // 
-            // parseCAN78LogfileToBinToolStripMenuItem
+            // labelAFR
             // 
-            this.parseCAN78LogfileToBinToolStripMenuItem.Name = "parseCAN78LogfileToBinToolStripMenuItem";
-            this.parseCAN78LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
-            this.parseCAN78LogfileToBinToolStripMenuItem.Text = "Parse CAN78 logfile to bin";
-            this.parseCAN78LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN78LogfileToBinToolStripMenuItem_Click);
+            this.labelAFR.AutoSize = true;
+            this.labelAFR.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelAFR.Location = new System.Drawing.Point(718, 3);
+            this.labelAFR.Name = "labelAFR";
+            this.labelAFR.Size = new System.Drawing.Size(30, 15);
+            this.labelAFR.TabIndex = 26;
+            this.labelAFR.Text = "AFR";
             // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(980, 708);
+            this.Controls.Add(this.labelAFR);
             this.Controls.Add(this.labelProtocol);
             this.Controls.Add(this.btnConnect);
             this.Controls.Add(this.labelConnected);
@@ -3633,6 +3699,8 @@ namespace UniversalPatcher
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).EndInit();
             this.tabSettings.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.groupProtocol.ResumeLayout(false);
             this.groupProtocol.PerformLayout();
             this.groupBox10.ResumeLayout(false);
@@ -4003,6 +4071,12 @@ namespace UniversalPatcher
         private System.Windows.Forms.VScrollBar vScrollBarVpwConsole;
         public System.Windows.Forms.RadioButton radioVPW;
         private System.Windows.Forms.ToolStripMenuItem parseCAN78LogfileToBinToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.ComboBox comboWBport;
+        private System.Windows.Forms.ComboBox comboWBType;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label labelAFR;
     }
 }
 

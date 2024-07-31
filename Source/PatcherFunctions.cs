@@ -558,6 +558,7 @@ public class Upatcher
     //public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
     public static string selectedCompareBin;
 
+    public static WideBand WB;
 
     public enum AddressDataType
     {

@@ -181,6 +181,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DataLogger\SBEC.cs" />
+    <Compile Include="DataLogger\WideBand.cs" />
     <Compile Include="frmByteSwap.cs">
       <SubType>Form</SubType>
     </Compile>

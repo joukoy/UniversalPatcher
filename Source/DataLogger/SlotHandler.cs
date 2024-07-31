@@ -8,6 +8,7 @@ using static LoggerUtils;
 using static UniversalPatcher.DataLogger;
 using System.Diagnostics;
 using static UniversalPatcher.PidConfig;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -90,25 +91,37 @@ namespace UniversalPatcher
                 {
                     calculatedvalues[pp] = "";
                     PidConfig pc = datalogger.PidProfile[pp];
-                    int ind = ReceivingPids.IndexOf(pc.addr);
-                    if (ind > -1)
+                    if (pc.Math.ToUpper().StartsWith("WBAFR"))
                     {
-                        if (rawPidValues[ind] > double.MinValue)
-                        {
-                            double val1 = rawPidValues[ind];
-                            double val2 = double.MinValue;
-                            if (pc.addr2 > -1)
-                            {
-                                int ind2 = ReceivingPids.IndexOf(pc.addr2);
-                                if (ind2 > -1)
-                                    val2 = rawPidValues[ind2];
-                            }
-                            calculatedvalues[pp] = pc.GetCalculatedValue(val1, val2);
-                        }
+                        calculatedvalues[pp] = WB.AFR.ToString();
+                    }
+                    else if (pc.Math.ToUpper().StartsWith("WBRAW"))
+                    {
+                        string wbmath = pc.Math.Replace("WBRAW", WB.RAW.ToString());
+                        calculatedvalues[pp] = parser.Parse(wbmath).ToString();
                     }
                     else
                     {
-                        //Debug.WriteLine("Pid not found: " + PidProfile[pp].PidName);
+                        int ind = ReceivingPids.IndexOf(pc.addr);
+                        if (ind > -1)
+                        {
+                            if (rawPidValues[ind] > double.MinValue)
+                            {
+                                double val1 = rawPidValues[ind];
+                                double val2 = double.MinValue;
+                                if (pc.addr2 > -1)
+                                {
+                                    int ind2 = ReceivingPids.IndexOf(pc.addr2);
+                                    if (ind2 > -1)
+                                        val2 = rawPidValues[ind2];
+                                }
+                                calculatedvalues[pp] = pc.GetCalculatedValue(val1, val2);
+                            }
+                        }
+                        else
+                        {
+                            //Debug.WriteLine("Pid not found: " + PidProfile[pp].PidName);
+                        }
                     }
                 }
             }
@@ -133,25 +146,33 @@ namespace UniversalPatcher
                 {
                     calculatedvalues[pp] = double.MinValue;
                     PidConfig pc = datalogger.PidProfile[pp];
-                    int ind = ReceivingPids.IndexOf(pc.addr);
-                    if (ind > -1)
+                    if (pc.Math.ToUpper().StartsWith("WBAFR"))
                     {
-                        if (rawPidValues[ind] > double.MinValue)
-                        {
-                            double val1 = rawPidValues[ind];
-                            double val2 = double.MinValue;
-                            if (pc.addr2 > -1)
-                            {
-                                int ind2 = ReceivingPids.IndexOf(pc.addr2);
-                                if (ind2 > -1)
-                                    val2 = rawPidValues[ind2];
-                            }
-                            calculatedvalues[pp] = pc.GetCalculatedDoubleValue(val1, val2);
-                        }
+                        calculatedvalues[pp] = WB.AFR;
+                    }
+                    else if (pc.Math.ToUpper().StartsWith("WBRAW"))
+                    {
+                        string wbmath = pc.Math.Replace("WBRAW", WB.RAW.ToString());
+                        calculatedvalues[pp] = parser.Parse(wbmath);
                     }
                     else
                     {
-                        //Debug.WriteLine("Pid not found: " + PidProfile[pp].PidName);
+                        int ind = ReceivingPids.IndexOf(pc.addr);
+                        if (ind > -1)
+                        {
+                            if (rawPidValues[ind] > double.MinValue)
+                            {
+                                double val1 = rawPidValues[ind];
+                                double val2 = double.MinValue;
+                                if (pc.addr2 > -1)
+                                {
+                                    int ind2 = ReceivingPids.IndexOf(pc.addr2);
+                                    if (ind2 > -1)
+                                        val2 = rawPidValues[ind2];
+                                }
+                                calculatedvalues[pp] = pc.GetCalculatedDoubleValue(val1, val2);
+                            }
+                        }
                     }
                 }
             }
@@ -199,7 +220,7 @@ namespace UniversalPatcher
                 //Generate unique list of pids, HighPriority first:
                 for (int p = 0; p < datalogger.PidProfile.Count; p++)
                 {
-                    if (datalogger.PidProfile[p].HighPriority && !ReceivingPids.Contains(datalogger.PidProfile[p].addr))
+                    if (datalogger.PidProfile[p].HighPriority && datalogger.PidProfile[p].addr > 0 && !ReceivingPids.Contains(datalogger.PidProfile[p].addr))
                     {
                         //ReadValue rv = datalogger.QuerySinglePidValue(datalogger.PidProfile[p].addr, datalogger.PidProfile[p].DataType);
                         //if (rv.PidValue > double.MinValue)
@@ -223,7 +244,7 @@ namespace UniversalPatcher
                 //Low priority pids:
                 for (int p = 0; p < datalogger.PidProfile.Count; p++)
                 {
-                    if (!datalogger.PidProfile[p].HighPriority && !ReceivingPids.Contains(datalogger.PidProfile[p].addr))
+                    if (!datalogger.PidProfile[p].HighPriority && datalogger.PidProfile[p].addr > 0 && !ReceivingPids.Contains(datalogger.PidProfile[p].addr))
                     {
                         //ReadValue rv = datalogger.QuerySinglePidValue(datalogger.PidProfile[p].addr, datalogger.PidProfile[p].DataType);
                         //if (rv.PidValue > double.MinValue)

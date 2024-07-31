@@ -297,6 +297,9 @@ namespace UniversalPatcher
         //public int TimeoutScriptWrite { get; set; }
         public int TimeoutConsoleReceive { get; set; }
         public int TimeoutJConsoleReceive { get; set; }
+
+        public WideBand.WBType Wbtype { get; set; }
+        public string WBSerial { get; set; }
         //public int TimeoutLoggingWrite { get; set; }
         //public int TimeoutJLoggingWrite { get; set; }
         //public int TimeoutJconsoleWrite { get; set; }

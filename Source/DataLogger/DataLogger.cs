@@ -454,6 +454,10 @@ namespace UniversalPatcher
                 }
                 for (int p = PidProfile.Count - 1; p >= 0; p--)
                 {
+                    if (PidProfile[p].Math.ToUpper().StartsWith("WB"))
+                    {
+                        continue;   
+                    }
                     if (TestedPids.Contains(PidProfile[p].addr))
                     {
                         if (PidProfile[p].addr2 < 0)

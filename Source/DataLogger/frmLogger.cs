@@ -186,8 +186,14 @@ namespace UniversalPatcher
             txtJConsoleSend.KeyPress += TxtJConsoleSend_KeyPress;
             chkConsole4x.Enter += ChkConsole4x_Enter;
             chkJConsole4x.Enter += ChkConsole4x_Enter;
+            comboWBport.SelectedIndexChanged += WB_Reload;
+            comboWBType.SelectedIndexChanged += WB_Reload;
             chkVpwBuffered.Checked = true;
             chkJconsoleUsebuffer.Checked = true;
+            WB = new WideBand();
+            this.comboWBType.SelectedIndexChanged += new System.EventHandler(this.comboWBType_SelectedIndexChanged);
+            this.comboWBport.SelectedIndexChanged += new System.EventHandler(this.comboWBport_SelectedIndexChanged);
+
             LoadOsPidFiles();
             if (PCM != null && !string.IsNullOrEmpty(PCM.OS))
             {
@@ -210,6 +216,12 @@ namespace UniversalPatcher
                 mi.Click += rtcMenu_Click;
                 rtcMenu.Items.Add(mi);
             }
+        }
+
+        private void WB_Reload(object sender, EventArgs e)
+        {
+            WB.Discard();
+            WB = new WideBand();
         }
 
         private void rtcMenu_Click(object sender, EventArgs e)
@@ -1020,6 +1032,7 @@ namespace UniversalPatcher
             try
             {
                 comboSerialPort.Items.Clear();
+                comboWBport.Items.Clear();
                 if (chkFTDI.Checked)
                 {
                     string[] ftdiDevs = new string[0];
@@ -1068,7 +1081,10 @@ namespace UniversalPatcher
                             {
                                 Console.WriteLine(s);
                                 if (!comboSerialPort.Items.Contains(s))
+                                {
                                     comboSerialPort.Items.Add(s);
+                                    comboWBport.Items.Add(s);
+                                }
                             }
                             if (LoadDefaults)
                             {
@@ -1076,11 +1092,16 @@ namespace UniversalPatcher
                                     comboSerialPort.Text = AppSettings.LoggerComPort;
                                 else
                                     comboSerialPort.Text = comboSerialPort.Items[0].ToString();
+                                if (!string.IsNullOrEmpty(AppSettings.WBSerial) && comboWBport.Items.Contains(AppSettings.WBSerial))
+                                    comboWBport.Text = AppSettings.WBSerial;
+                                else
+                                    comboWBport.Text = comboWBport.Items[0].ToString();
                             }
                         }
                         else
                         {
                             comboSerialPort.Text = "";
+                            comboWBport.Text = "";
                         }
                     }
                 }
@@ -1222,6 +1243,9 @@ namespace UniversalPatcher
                 comboSerialDeviceType.Items.Add(JetDevice.DeviceType);
                 comboSerialDeviceType.Items.Add(OBDXProDevice.DeviceType);
                 comboSerialDeviceType.Text = AppSettings.LoggerSerialDeviceType;
+
+                comboWBType.DataSource = Enum.GetValues(typeof(WideBand.WBType));
+                comboWBType.Text = AppSettings.Wbtype.ToString();
 
                 LoadPorts(true);
                 LoadJPorts();
@@ -1762,7 +1786,7 @@ namespace UniversalPatcher
                     }
                     AppSettings.Save();
                 }
-
+                WB.Discard();                
                 Thread.Sleep(100);
             }
             catch { }
@@ -1848,45 +1872,70 @@ namespace UniversalPatcher
 
         private void SelectProfile(string fname)
         {
-            string defname = Path.Combine(Application.StartupPath, "Logger", "Profiles", "profile1.xml");
-            if (!string.IsNullOrEmpty(profileFile) && File.Exists(profileFile))
-                defname = profileFile;
-            if (string.IsNullOrEmpty(fname))
+            try
             {
-                fname = SelectFile("Select profile file", XmlFilter, defname);
+                string defname = Path.Combine(Application.StartupPath, "Logger", "Profiles", "profile1.xml");
+                if (!string.IsNullOrEmpty(profileFile) && File.Exists(profileFile))
+                    defname = profileFile;
+                if (string.IsNullOrEmpty(fname))
+                {
+                    fname = SelectFile("Select profile file", XmlFilter, defname);
+                }
+                if (fname.Length == 0)
+                    return;
+                profileFile = fname;
+                this.Text = "Logger - " + profileFile;
+                datalogger.LoadProfile(fname);
+                if (GraphicsForm != null && GraphicsForm.Visible)
+                {
+                    GraphicsForm.SetupLiveGraphics();
+                }
+                bsLogProfile.DataSource = datalogger.PidProfile;
+                dataGridLogProfile.DataSource = bsLogProfile;
+                dataGridLogData.Rows.Clear();
+                SetupLogDataGrid();
+                ProfileDirty = false;
+                CheckMaxPids();
+                UpdateProfile();
             }
-            if (fname.Length == 0)
-                return;
-            profileFile = fname;
-            this.Text = "Logger - " + profileFile;
-            datalogger.LoadProfile(fname);
-            if (GraphicsForm != null && GraphicsForm.Visible)
+            catch (Exception ex)
             {
-                GraphicsForm.SetupLiveGraphics();
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
             }
-            bsLogProfile.DataSource = datalogger.PidProfile;
-            dataGridLogProfile.DataSource = bsLogProfile;
-            dataGridLogData.Rows.Clear();
-            SetupLogDataGrid();
-            ProfileDirty = false;
-            CheckMaxPids();
-            UpdateProfile();
         }
 
         private void SelectSaveProfile(string fname = "")
         {
-            string defname = Path.Combine(Application.StartupPath, "Logger", "Profiles","profile1.xml");
-            if (!string.IsNullOrEmpty(profileFile))
-                defname = profileFile;
-            if (fname.Length == 0)
-                fname = SelectSaveFile(XmlFilter, defname);
-            if (fname.Length == 0)
-                return;
-            profileFile = fname;
-            this.Text = "Logger - " + profileFile;
-            datalogger.SaveProfile(fname);
-            ProfileDirty = false;
-            LoadProfileList();
+            try
+            {
+                dataGridLogProfile.EndEdit();
+                string defname = Path.Combine(Application.StartupPath, "Logger", "Profiles", "profile1.xml");
+                if (!string.IsNullOrEmpty(profileFile))
+                    defname = profileFile;
+                if (fname.Length == 0)
+                    fname = SelectSaveFile(XmlFilter, defname);
+                if (fname.Length == 0)
+                    return;
+                profileFile = fname;
+                this.Text = "Logger - " + profileFile;
+                datalogger.SaveProfile(fname);
+                ProfileDirty = false;
+                LoadProfileList();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void loadProfileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5021,6 +5070,14 @@ namespace UniversalPatcher
         {
             try
             {
+                if (WB != null && WB.AFR > 0)
+                {
+                    labelAFR.Text = "AFR: " + WB.AFR.ToString("#0.0");
+                }
+                else
+                {
+                    labelAFR.Text = "";
+                }
                 if (chkVpwToScreen.Checked && chkVpwBuffered.Checked == false)
                 {
                     while (consoleLogQueue.Count > 0)
@@ -5644,6 +5701,18 @@ namespace UniversalPatcher
                 return;
             LogToBinConverter cltb = new LogToBinConverter(LogToBinConverter.RMode.CAN78);
             cltb.ConvertFile(fName);
+        }
+
+        private void comboWBType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AppSettings.Wbtype = (WideBand.WBType)comboWBType.SelectedItem;
+            AppSettings.Save();
+        }
+
+        private void comboWBport_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AppSettings.WBSerial = comboWBport.Text;
+            AppSettings.Save();
         }
     }
 }

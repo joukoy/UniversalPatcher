@@ -19,6 +19,7 @@ namespace UniversalPatcher
             DataType = ProfileDataType.UBYTE;
             addr2 = -1;
             Math = "X";
+            Type = DefineBy.Pid;
         }
 
         public enum ProfileDataType
