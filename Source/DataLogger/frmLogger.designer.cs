@@ -2179,6 +2179,7 @@ namespace UniversalPatcher
             this.chkJconsoleDevTimestamps.TabIndex = 39;
             this.chkJconsoleDevTimestamps.Text = "Device timestamps";
             this.chkJconsoleDevTimestamps.UseVisualStyleBackColor = true;
+            this.chkJconsoleDevTimestamps.CheckedChanged += new System.EventHandler(this.chkJconsoleDevTimestamps_CheckedChanged);
             // 
             // chkJconsoleUsebuffer
             // 
@@ -2200,6 +2201,7 @@ namespace UniversalPatcher
             this.chkJConsoleTimestamps.TabIndex = 38;
             this.chkJConsoleTimestamps.Text = "Timestamps";
             this.chkJConsoleTimestamps.UseVisualStyleBackColor = true;
+            this.chkJConsoleTimestamps.CheckedChanged += new System.EventHandler(this.chkJConsoleTimestamps_CheckedChanged);
             // 
             // chkJConsoleToFile
             // 

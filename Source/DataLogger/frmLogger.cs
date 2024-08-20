@@ -75,6 +75,12 @@ namespace UniversalPatcher
         private string CurrentPortName;
         private string jConsoleFilters;
         private string jConsoleFilters2;
+        private bool jConsoleTimestamps;
+        private bool jConsoleDevTimestamps;
+        private bool ConsoleTimestamps;
+        private bool ConsoleDevTimestamps;
+        private bool jConsoleVPW = false;
+        private bool jConsoleCAN = false;
 
         [DllImport("user32.dll")]
         public static extern bool LockWindowUpdate(IntPtr hWndLock);
@@ -548,46 +554,44 @@ namespace UniversalPatcher
             try
             {
                 if (e.Msg == null || e.Msg.Length == 0)
-                    return;
-                this.Invoke((MethodInvoker)delegate () {
-                    StringBuilder sMsg = new StringBuilder();
-                    if (chkConsoleTimestamps.Checked)
-                    {
-                        sMsg.Append("[" + new DateTime(e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
-                    }
-                    if (chkVpwDevTimestamps.Checked)
-                    {
-                        sMsg.Append("[" + e.Msg.DeviceTimestamp.ToString("D20") + "] ");
-                    }
-                    //sMsg.Append(" Diff: " + new DateTime((long)(e.Msg.TimeStamp - (ulong)e.Msg.DevTimeStamp)).ToString("yyyy MM dd HH:mm:ss.fff") + "| ");
-                    sMsg.Append(e.Msg.ToString() + Environment.NewLine);
-                    AppendLogText(Color.DarkGreen, sMsg.ToString(), e.Msg.TimeStamp);
+                return;
+                StringBuilder sMsg = new StringBuilder();
+                if (ConsoleTimestamps)
+                {
+                    sMsg.Append("[" + new DateTime(e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
+                }
+                if (ConsoleDevTimestamps)
+                {
+                    sMsg.Append("[" + e.Msg.DeviceTimestamp.ToString("D20") + "] ");
+                }
+                //sMsg.Append(" Diff: " + new DateTime((long)(e.Msg.TimeStamp - (ulong)e.Msg.DevTimeStamp)).ToString("yyyy MM dd HH:mm:ss.fff") + "| ");
+                sMsg.Append(e.Msg.ToString() + Environment.NewLine);
+                AppendLogText(Color.DarkGreen, sMsg.ToString(), e.Msg.TimeStamp);
 
-                    if (chkVpwToFile.Checked && vpwConsoleStream != null)
-                    {
-                        vpwConsoleStream.WriteLine("\\cf1 " + sMsg.ToString() + "\\par");
-                    }
+                if (vpwConsoleStream != null)
+                {
+                    vpwConsoleStream.WriteLine("\\cf1 " + sMsg.ToString() + "\\par");
+                }
 
-                    if (e.Msg.Length > 3 && ( serialRadioButton.Checked || comboJ2534Protocol.Text.Contains("VPW")))
+                if (e.Msg.Length > 3 && datalogger.VPWProtocol)
+                {
+                    byte[] rcv = e.Msg.GetBytes();
+                    if (rcv[1] == 0xfe && rcv[3] == 0xa0)
                     {
-                        byte[] rcv = e.Msg.GetBytes();
-                        if (rcv[1] == 0xfe && rcv[3] == 0xa0)
-                        {
-                            Debug.WriteLine("Received 0xFE, , 0xA0 - Ready to switch to 4x");
-                            waiting4x = true;
-                        }
-                        if (waiting4x && rcv[1] == 0xfe && rcv[3] == 0xa1)
-                        {
-                            waiting4x = false;
-                            Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
-                            if (datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX))
-                                Debug.WriteLine("Switched to 4X");
-                            else
-                                Debug.WriteLine("Switch to 4X failed");
-                        }
+                        Debug.WriteLine("Received 0xFE, , 0xA0 - Ready to switch to 4x");
+                        waiting4x = true;
                     }
+                    if (waiting4x && rcv[1] == 0xfe && rcv[3] == 0xa1)
+                    {
+                        waiting4x = false;
+                        Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
+                        if (datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX))
+                            Debug.WriteLine("Switched to 4X");
+                        else
+                            Debug.WriteLine("Switch to 4X failed");
+                    }
+                }
 
-                });
             }
             catch (Exception ex)
             {
@@ -608,84 +612,82 @@ namespace UniversalPatcher
                     return;
 
                 Application.DoEvents();
-                this.Invoke((MethodInvoker)delegate () {
-                    StringBuilder logTxt = new StringBuilder();
-                    if (chkJConsoleTimestamps.Checked)
-                    {
-                        logTxt.Append("[" + new DateTime((long)e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
-                    }
-                    if (chkJconsoleDevTimestamps.Checked)
-                    {
-                        logTxt.Append("[" + e.Msg.DeviceTimestamp.ToString("D20") + "] ");
-                    }
+                StringBuilder logTxt = new StringBuilder();
+                if (jConsoleTimestamps)
+                {
+                    logTxt.Append("[" + new DateTime((long)e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
+                }
+                if (jConsoleDevTimestamps)
+                {
+                    logTxt.Append("[" + e.Msg.DeviceTimestamp.ToString("D20") + "] ");
+                }
 
-                    logTxt.Append(e.Msg.ToString() + Environment.NewLine);
+                logTxt.Append(e.Msg.ToString() + Environment.NewLine);
+                if (e.Msg.SecondaryProtocol)
+                {
+                    AppendJconsoleLogText(Color.Aquamarine, logTxt.ToString(), e.Msg.TimeStamp);
+                }
+                else
+                {
+                    AppendJconsoleLogText(Color.DarkGreen, logTxt.ToString(), e.Msg.TimeStamp);
+                }
+                if (jConsoleStream != null)
+                {
                     if (e.Msg.SecondaryProtocol)
                     {
-                        AppendJconsoleLogText(Color.Aquamarine, logTxt.ToString(), e.Msg.TimeStamp);
+                        jConsoleStream.WriteLine("\\cf1 " + logTxt.ToString() +"\\par");
                     }
                     else
                     {
-                        AppendJconsoleLogText(Color.DarkGreen, logTxt.ToString(), e.Msg.TimeStamp);
+                        jConsoleStream.WriteLine("\\cf2 " + logTxt.ToString() + "\\par");
                     }
-                    if (chkJConsoleToFile.Checked && jConsoleStream != null)
+                }
+                if (e.Msg.Length > 3 && jConsoleVPW)
+                {
+                    byte[] rcv = e.Msg.GetBytes();
+                    if (rcv[1] == 0xfe && rcv[3] == 0xa0)
                     {
-                        if (e.Msg.SecondaryProtocol)
+                        Debug.WriteLine("Received 0xFE, , 0xA0 - Ready to switch to 4x");
+                        jConsoleWaiting4x = true;
+                    }
+                    if (jConsoleWaiting4x && rcv[1] == 0xfe && rcv[3] == 0xa1)
+                    {
+                        jConsoleWaiting4x = false;
+                        Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
+                        if (jConsole.JDevice.SetVpwSpeed(VpwSpeed.FourX))
+                            Debug.WriteLine("Switched to 4X");
+                        else
+                            Debug.WriteLine("Switch to 4X failed");
+                    }
+                }
+                if (timerKeepBusQuiet.Enabled && jConsoleCAN)
+                {
+                    byte[] rcv = e.Msg.GetBytes();
+                    if (rcv.Length == 12)
+                    {
+                        if (canDeviceResponses < 0)
                         {
-                            jConsoleStream.WriteLine("\\cf1 " + logTxt.ToString() +"\\par");
+                            lastResponseTime = DateTime.Now;
+                            //Still waiting for quiet responses
+                            canQuietResponses++;
+                            Debug.WriteLine("Quiet message count: " + canQuietResponses.ToString());
                         }
                         else
                         {
-                            jConsoleStream.WriteLine("\\cf2 " + logTxt.ToString() + "\\par");
-                        }
-                    }
-                    if (e.Msg.Length > 3 &&  comboJ2534Protocol.Text.Contains("VPW"))
-                    {
-                        byte[] rcv = e.Msg.GetBytes();
-                        if (rcv[1] == 0xfe && rcv[3] == 0xa0)
-                        {
-                            Debug.WriteLine("Received 0xFE, , 0xA0 - Ready to switch to 4x");
-                            jConsoleWaiting4x = true;
-                        }
-                        if (jConsoleWaiting4x && rcv[1] == 0xfe && rcv[3] == 0xa1)
-                        {
-                            jConsoleWaiting4x = false;
-                            Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
-                            if (jConsole.JDevice.SetVpwSpeed(VpwSpeed.FourX))
-                                Debug.WriteLine("Switched to 4X");
-                            else
-                                Debug.WriteLine("Switch to 4X failed");
-                        }
-                    }
-                    if (timerKeepBusQuiet.Enabled && comboJ2534Protocol.Text.Contains("CAN"))
-                    {
-                        byte[] rcv = e.Msg.GetBytes();
-                        if (rcv.Length == 12)
-                        {
-                            if (canDeviceResponses < 0)
+                            if (rcv[5] == 0x5A && rcv[6] == 0xB0)
                             {
                                 lastResponseTime = DateTime.Now;
-                                //Still waiting for quiet responses
-                                canQuietResponses++;
-                                Debug.WriteLine("Quiet message count: " + canQuietResponses.ToString());
-                            }
-                            else
-                            {
-                                if (rcv[5] == 0x5A && rcv[6] == 0xB0)
+                                CANDevice cDev = CANQuery.DecodeMsg(rcv);
+                                if (cDev != null)
                                 {
-                                    lastResponseTime = DateTime.Now;
-                                    CANDevice cDev = CANQuery.DecodeMsg(rcv);
-                                    if (cDev != null)
-                                    {
-                                        canDevs.Add(cDev);
-                                        //richJConsole.AppendText(cDev.ToString() + Environment.NewLine);
-                                        AppendJconsoleLogText(Color.Black, cDev.ToString() + Environment.NewLine, e.Msg.TimeStamp);
-                                    }
+                                    canDevs.Add(cDev);
+                                    //richJConsole.AppendText(cDev.ToString() + Environment.NewLine);
+                                    AppendJconsoleLogText(Color.Black, cDev.ToString() + Environment.NewLine, e.Msg.TimeStamp);
                                 }
                             }
                         }
                     }
-                });
+                }
             }
             catch (Exception ex)
             {
@@ -704,31 +706,29 @@ namespace UniversalPatcher
             {
                 if (e.Msg == null || e.Msg.Length == 0)
                     return;
-                this.Invoke((MethodInvoker)delegate () {
-                    StringBuilder logTxt = new StringBuilder();
-                    if (chkConsoleTimestamps.Checked)
-                    {
-                        logTxt.Append("[" + new DateTime((long)e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
-                    }
-                    if (chkVpwDevTimestamps.Checked)
-                    {
-                        logTxt.Append("[" + e.Msg.DeviceTimestamp.ToString("D20") + "] ");
-                    }
+                StringBuilder logTxt = new StringBuilder();
+                if (ConsoleTimestamps)
+                {
+                    logTxt.Append("[" + new DateTime((long)e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
+                }
+                if (ConsoleDevTimestamps)
+                {
+                    logTxt.Append("[" + e.Msg.DeviceTimestamp.ToString("D20") + "] ");
+                }
 
-                    logTxt.Append(e.Msg.ToString());
-                    if (e.Msg.Error > 0)
-                    {
-                        logTxt.Append(" (" + ((J2534Err)e.Msg.Error).ToString() + ")");
-                    }
-                    logTxt.Append(Environment.NewLine);
+                logTxt.Append(e.Msg.ToString());
+                if (e.Msg.Error > 0)
+                {
+                    logTxt.Append(" (" + ((J2534Err)e.Msg.Error).ToString() + ")");
+                }
+                logTxt.Append(Environment.NewLine);
 
-                    AppendLogText(Color.Red, logTxt.ToString(), e.Msg.TimeStamp);
+                AppendLogText(Color.Red, logTxt.ToString(), e.Msg.TimeStamp);
 
-                    if (chkVpwToFile.Checked && vpwConsoleStream != null)
-                    {
-                        vpwConsoleStream.WriteLine("\\cf3 " + logTxt.ToString() + "\\par");
-                    }
-                });
+                if (vpwConsoleStream != null)
+                {
+                    vpwConsoleStream.WriteLine("\\cf3 " + logTxt.ToString() + "\\par");
+                }
                 Application.DoEvents();
             }
             catch (Exception ex)
@@ -749,40 +749,38 @@ namespace UniversalPatcher
                 if (e.Msg == null || e.Msg.Length == 0)
                     return;
 
-                this.Invoke((MethodInvoker)delegate () {
-                    Application.DoEvents();
-                    StringBuilder logTxt = new StringBuilder();
-                    if (chkJConsoleTimestamps.Checked)
-                    {
-                        logTxt.Append( "[" + new DateTime((long)e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
-                    }
-                    if (chkJconsoleDevTimestamps.Checked)
-                    {
-                        logTxt.Append("[" + e.Msg.DeviceTimestamp.ToString("D20") + "] ");
-                    }
+                Application.DoEvents();
+                StringBuilder logTxt = new StringBuilder();
+                if (jConsoleTimestamps)
+                {
+                    logTxt.Append( "[" + new DateTime((long)e.Msg.TimeStamp).ToString("HH:mm:ss.fff") + "] ");
+                }
+                if (jConsoleDevTimestamps)
+                {
+                    logTxt.Append("[" + e.Msg.DeviceTimestamp.ToString("D20") + "] ");
+                }
 
-                    logTxt.Append(e.Msg.ToString() + Environment.NewLine);
+                logTxt.Append(e.Msg.ToString() + Environment.NewLine);
+                if (e.Msg.SecondaryProtocol)
+                {
+                    AppendJconsoleLogText(Color.Purple, logTxt.ToString(), e.Msg.TimeStamp);
+                }
+                else
+                {
+                    AppendJconsoleLogText(Color.Red, logTxt.ToString(), e.Msg.TimeStamp);
+                }
+                if (jConsoleStream != null)
+                {
                     if (e.Msg.SecondaryProtocol)
                     {
-                        AppendJconsoleLogText(Color.Purple, logTxt.ToString(), e.Msg.TimeStamp);
+                        jConsoleStream.WriteLine("\\cf4 " + logTxt.ToString() + "\\par");
                     }
                     else
                     {
-                        AppendJconsoleLogText(Color.Red, logTxt.ToString(), e.Msg.TimeStamp);
+                        jConsoleStream.WriteLine("\\cf3 " + logTxt.ToString() + "\\par");
                     }
-                    if (chkJConsoleToFile.Checked && jConsoleStream != null)
-                    {
-                        if (e.Msg.SecondaryProtocol)
-                        {
-                            jConsoleStream.WriteLine("\\cf4 " + logTxt.ToString() + "\\par");
-                        }
-                        else
-                        {
-                            jConsoleStream.WriteLine("\\cf3 " + logTxt.ToString() + "\\par");
-                        }
-                    }
+                }
 
-                });
             }
             catch (Exception ex)
             {
@@ -3642,6 +3640,14 @@ namespace UniversalPatcher
         private void comboJ2534Protocol_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadJ2534Baudrates();
+            if (comboJ2534Protocol.Text.Contains("VPW"))
+                jConsoleVPW = true;
+            else
+                jConsoleVPW = false;
+            if (comboJ2534Protocol.Text.Contains("CAN"))
+                jConsoleCAN = true;
+            else
+                jConsoleCAN = false;
         }
 
         private void comboJ2534Init_SelectedIndexChanged(object sender, EventArgs e)
@@ -5683,10 +5689,12 @@ namespace UniversalPatcher
 
         private void chkVpwDevTimestamps_CheckedChanged(object sender, EventArgs e)
         {
+            ConsoleDevTimestamps = chkVpwDevTimestamps.Checked;
         }
 
         private void chkConsoleTimestamps_CheckedChanged(object sender, EventArgs e)
         {
+            ConsoleTimestamps = chkConsoleTimestamps.Checked;
         }
 
         private void parseLogfileToBinToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -5713,6 +5721,16 @@ namespace UniversalPatcher
         {
             AppSettings.WBSerial = comboWBport.Text;
             AppSettings.Save();
+        }
+
+        private void chkJConsoleTimestamps_CheckedChanged(object sender, EventArgs e)
+        {
+            jConsoleTimestamps = chkJConsoleTimestamps.Checked;
+        }
+
+        private void chkJconsoleDevTimestamps_CheckedChanged(object sender, EventArgs e)
+        {
+            jConsoleDevTimestamps = chkJconsoleDevTimestamps.Checked;
         }
     }
 }

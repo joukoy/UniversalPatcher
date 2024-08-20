@@ -726,3 +726,6 @@
 - Logger: Added support for serial port connected wideband O2 sensor
 	* add new math value to profile, set address to negative number and use WBAFR or WBRAW as math. Example: (WBRAW / 1000 + 0.5) * 14.7
 
+0.22.24
+- Logger: Added support for WBAFR and WBRAW in other pid Math
+

@@ -361,9 +361,21 @@ namespace UniversalPatcher
                 else
                 {
                     string assignedMath = Math.ToLower().Replace("x", value1.ToString());
-                    if (Math.Contains("y") && value2 > double.MinValue)
+                    if (Math.ToLower().Contains("y") && value2 > double.MinValue)
+                    {
                         assignedMath = assignedMath.ToLower().Replace("y", value2.ToString());
+                    }
+                    if (Math.ToUpper().Contains("WBAFR") && WB != null)
+                    {
+                        assignedMath = assignedMath.ToUpper().Replace("WBAFR", WB.AFR.ToString());
+                    }
+                    if (Math.ToUpper().Contains("WBRAW") && WB != null)
+                    {
+                        assignedMath = assignedMath.ToUpper().Replace("WBRAW", WB.RAW.ToString());
+                    }
+                    Debug.WriteLine("assignedMath:" + assignedMath);
                     double calcVal = parser.Parse(assignedMath);
+                    Debug.WriteLine("Calc value:" + calcVal.ToString());
                     return calcVal.ToString();
                 }
             }
@@ -374,7 +386,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, LoggerUtils line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, PidConfig line " + line + ": " + ex.Message);
             }
             return "";
         }
@@ -398,8 +410,18 @@ namespace UniversalPatcher
                 else
                 {
                     string assignedMath = Math.ToLower().Replace("x", value1.ToString());
-                    if (Math.Contains("y") && value2 > double.MinValue)
+                    if (Math.ToLower().Contains("y") && value2 > double.MinValue)
+                    {
                         assignedMath = assignedMath.ToLower().Replace("y", value2.ToString());
+                    }
+                    if (Math.ToUpper().Contains("WBAFR") && WB != null)
+                    {
+                        assignedMath = assignedMath.ToUpper().Replace("WBAFR", WB.AFR.ToString());
+                    }
+                    if (Math.ToUpper().Contains("WBRAW") && WB != null)
+                    {
+                        assignedMath = assignedMath.ToUpper().Replace("WBRAW", WB.RAW.ToString());
+                    }
                     double calcVal = parser.Parse(assignedMath);
                     return calcVal;
                 }
@@ -411,7 +433,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, LoggerUtils line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, PidConfig line " + line + ": " + ex.Message);
             }
             return double.MinValue;
         }

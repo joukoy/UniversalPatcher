@@ -441,6 +441,7 @@
     <ConditionalOffset />
     <Linear>true</Linear>
     <CodesPerStatus>1</CodesPerStatus>
+    <StatusMath>X&amp;7</StatusMath>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e78</XMLFile>
@@ -456,6 +457,7 @@
     <ConditionalOffset />
     <Linear>true</Linear>
     <CodesPerStatus>1</CodesPerStatus>
+    <StatusMath>X&amp;7</StatusMath>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e82</XMLFile>
