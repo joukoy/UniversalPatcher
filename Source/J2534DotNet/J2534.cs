@@ -492,11 +492,12 @@ namespace J2534DotNet
                 }
                 if (returnValue == J2534Err.STATUS_NOERROR)
                 {
-                    IntPtr pNextConf = IntPtr.Add(Ptr,8); //Numofelements in beginning, then Ptr to SConfig structure
+                    int confCount = Marshal.ReadInt32(Ptr);//Numofelements in beginning, then Ptr to SConfig structure
+                    IntPtr pNextConf = Marshal.ReadIntPtr(Ptr, 4);
                     config.Clear();
-                    for (int s = 0; s < config.Count; s++)
+                    for (int s = 0; s < confCount; s++)
                     {
-                        SConfig sc = (SConfig)Marshal.PtrToStructure(Ptr, typeof(SConfig));
+                        SConfig sc = (SConfig)Marshal.PtrToStructure(pNextConf, typeof(SConfig));
                         config.Add(sc);
                         pNextConf = IntPtr.Add(pNextConf, Marshal.SizeOf(typeof(SConfig)));
                     }

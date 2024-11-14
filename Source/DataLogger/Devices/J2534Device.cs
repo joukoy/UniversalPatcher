@@ -1166,6 +1166,7 @@ namespace UniversalPatcher
                     Logger("Stopping perodic message, id: " + pMsg.Value.ToString());
                     J2534Port.Functions.StopPeriodicMsg(ChannelID, pMsg.Value);
                 }
+                periodicMsgIds1.Clear();
                 if (AppSettings.ClearFuncAddrOnDisconnect)
                 {
                     Logger("Clearing functional address table (primary protocol)");

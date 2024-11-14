@@ -34,8 +34,20 @@ namespace UniversalPatcher
         private double[] newPidValues;
         private double[] newHighPriorityPidValues;
         private double[] lowPriorityPidValues;
+        public List<PidVal> PidValues = new List<PidVal>();
 
         public bool VPWProtocol = true;
+
+        public class PidVal
+        {
+            public PidVal(int Pid, double Val)
+            {
+                this.Pid = Pid;
+                this.Val = Val;
+            }
+            public int Pid;
+            public double Val;
+        }
 
         public class Slot
         {
@@ -81,7 +93,61 @@ namespace UniversalPatcher
                 }
             }
         }
+        public double GetValueOfPid(int Pid)
+        {
+            PidVal pv = PidValues.Where(X => X.Pid == Pid).FirstOrDefault();
+            if (pv == null)
+                return double.MinValue;
+            return pv.Val;
+        }
+        public void SetPidValue(int Pid, double Val)
+        {
+            PidVal pv = PidValues.Where(X => X.Pid == Pid).FirstOrDefault();
+            if (pv == null)
+            {
+                pv = new PidVal(Pid, Val);
+                PidValues.Add(pv);
+            }
+            else
+            {
+                pv.Val = Val;
+            }
+        }
 
+        private string ReplaceMathVariables(string PcMath)
+        {
+            string newMath = null;
+            try
+            {
+                newMath = PcMath.ToUpper();
+                if (!newMath.Contains("[PID"))
+                {
+                    return null;
+                }
+                while (newMath.Contains("[PID"))
+                {
+                    int start = newMath.IndexOf("[PID");
+                    int end = newMath.IndexOf("]", start);
+                    string pidStr = newMath.Substring(start, (end - start) + 1);
+                    string pidNrStr = pidStr.Substring(4, pidStr.Length - 5);
+                    if (HexToInt(pidNrStr, out int pidNr))
+                    {
+                        double pidVal = GetValueOfPid(pidNr);
+                        newMath = newMath.Replace(pidStr, pidVal.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, SlotHandler line " + line + ": " + ex.Message);
+            }
+            return newMath;
+        }
         public string[] CalculatePidValues(double[] rawPidValues)
         {
             string[] calculatedvalues = new string[datalogger.PidProfile.Count];
@@ -91,14 +157,10 @@ namespace UniversalPatcher
                 {
                     calculatedvalues[pp] = "";
                     PidConfig pc = datalogger.PidProfile[pp];
-                    if (pc.Math.ToUpper().StartsWith("WBAFR"))
+                    string newMath = ReplaceMathVariables(pc.Math);
+                    if (pc.Type == DefineBy.Math && !string.IsNullOrEmpty(newMath))
                     {
-                        calculatedvalues[pp] = WB.AFR.ToString();
-                    }
-                    else if (pc.Math.ToUpper().StartsWith("WBRAW"))
-                    {
-                        string wbmath = pc.Math.Replace("WBRAW", WB.RAW.ToString());
-                        calculatedvalues[pp] = parser.Parse(wbmath).ToString();
+                        calculatedvalues[pp] = parser.Parse(newMath).ToString();
                     }
                     else
                     {
@@ -116,6 +178,7 @@ namespace UniversalPatcher
                                         val2 = rawPidValues[ind2];
                                 }
                                 calculatedvalues[pp] = pc.GetCalculatedValue(val1, val2);
+                                SetPidValue(pc.addr, rawPidValues[ind]);
                             }
                         }
                         else
@@ -146,14 +209,10 @@ namespace UniversalPatcher
                 {
                     calculatedvalues[pp] = double.MinValue;
                     PidConfig pc = datalogger.PidProfile[pp];
-                    if (pc.Math.ToUpper().StartsWith("WBAFR"))
+                    string newMath = ReplaceMathVariables(pc.Math);
+                    if (pc.Type == DefineBy.Math && !string.IsNullOrEmpty(newMath))
                     {
-                        calculatedvalues[pp] = WB.AFR;
-                    }
-                    else if (pc.Math.ToUpper().StartsWith("WBRAW"))
-                    {
-                        string wbmath = pc.Math.Replace("WBRAW", WB.RAW.ToString());
-                        calculatedvalues[pp] = parser.Parse(wbmath);
+                        calculatedvalues[pp] = parser.Parse(newMath);
                     }
                     else
                     {
@@ -171,6 +230,7 @@ namespace UniversalPatcher
                                         val2 = rawPidValues[ind2];
                                 }
                                 calculatedvalues[pp] = pc.GetCalculatedDoubleValue(val1, val2);
+                                SetPidValue(pc.addr, rawPidValues[ind]);
                             }
                         }
                     }
@@ -237,7 +297,7 @@ namespace UniversalPatcher
                         {
                             ReceivingPids.Add((ushort)datalogger.PidProfile[p].addr2);
                             pidDataTypes.Add(datalogger.PidProfile[p].DataType);
-                            HighPriorityPids.Add(datalogger.PidProfile[p].addr);
+                            HighPriorityPids.Add(datalogger.PidProfile[p].addr2);
                         }
                     }
                 }
@@ -261,7 +321,7 @@ namespace UniversalPatcher
                         {
                             ReceivingPids.Add((ushort)datalogger.PidProfile[p].addr2);
                             pidDataTypes.Add(datalogger.PidProfile[p].DataType);
-                            LowPriorityPids.Add(datalogger.PidProfile[p].addr);
+                            LowPriorityPids.Add(datalogger.PidProfile[p].addr2);
                         }
                     }
                 }

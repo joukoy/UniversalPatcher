@@ -406,60 +406,63 @@ namespace UniversalPatcher
                     {
                         csAddr.Address = csA;
                         uint csAddress = csA;
-                        foreach (byte complement in selectedComplements)
+                        //for (UInt64 initial = 0; initial < 0xFFFF; initial++)
+                        UInt64 initial = cum.InitialValue;
                         {
-                            csAddr.Bytes = (ushort)cum.CsBytes;
-                            foreach (bool MSB in new[] { true, false })
+                            foreach (byte complement in selectedComplements)
                             {
-                                if (MSB && cum.MSB == false)
+                                csAddr.Bytes = (ushort)cum.CsBytes;
+                                foreach (bool MSB in new[] { true, false })
                                 {
-                                    continue;
-                                }
-                                if (!MSB && cum.LSB == false)
-                                {
-                                    continue;
-                                }
-                                for (int rrb = 0; rrb < rangeReadBlocks.Count; rrb++)
-                                {
-                                    Block block = rangeReadBlocks[rrb];
-                                    if (radioCsUtilReadRange.Checked)   //Search only one block, which we have read from bin
+                                    if (MSB && cum.MSB == false)
                                     {
-                                        rangeBlocks.Clear();
-                                        rangeBlocks.Add(block);
-                                        if (radioCsAfterPair.Checked)
+                                        continue;
+                                    }
+                                    if (!MSB && cum.LSB == false)
+                                    {
+                                        continue;
+                                    }
+                                    for (int rrb = 0; rrb < rangeReadBlocks.Count; rrb++)
+                                    {
+                                        Block block = rangeReadBlocks[rrb];
+                                        if (radioCsUtilReadRange.Checked)   //Search only one block, which we have read from bin
                                         {
-                                            csAddr.Address = csAddresses[rrb];  //Use address read after address pair
-                                            csAddress = csAddresses[rrb];
+                                            rangeBlocks.Clear();
+                                            rangeBlocks.Add(block);
+                                            if (radioCsAfterPair.Checked)
+                                            {
+                                                csAddr.Address = csAddresses[rrb];  //Use address read after address pair
+                                                csAddress = csAddresses[rrb];
+                                            }
+                                        }
+                                        UInt64 oldVal = csUtilReadOldvalue(csAddress, (ushort)cum.CsBytes, MSB);
+                                        UInt64 csCalc = CalculateChecksum(MSB, frmpatcher.basefile.buf, csAddr, rangeBlocks, excludes,
+                                                    csm, (short)complement, csAddr.Bytes, false, true, initial);
+                                        UInt64 csCalcSwap = SwapBytes(csCalc, 8);
+
+                                        if (csCalc == oldVal && cum.NoSwapBytes && !FilterValues.Contains(csCalc))
+                                        {
+                                            if (chkCsUtilLogResults.Checked)
+                                                LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", No byteswap, MSB: " + MSB.ToString() + ", result: " + csCalc.ToString("X") + " [Match]");
+                                            CkSearchResult csr = new CkSearchResult(rangeBlocks[0].Start, rangeBlocks.LastOrDefault().End, csAddress, csCalc, radioCsUtilCSValue.Checked, csm, complement, false, cum.Polynomial(), cum.Xor, initial);
+                                            SearchResults.Add(csr);
+                                        }
+                                        else if (csCalcSwap == oldVal && cum.SwapBytes && !FilterValues.Contains(csCalcSwap))
+                                        {
+                                            if (chkCsUtilLogResults.Checked)
+                                                LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", Byteswap,  MSB: " + MSB.ToString() + ", result: " + csCalc.ToString("X") + " [Match]");
+                                            CkSearchResult csr = new CkSearchResult(rangeBlocks[0].Start, rangeBlocks.LastOrDefault().End, csAddress, csCalcSwap, radioCsUtilCSValue.Checked, csm, complement, true, cum.Polynomial(), cum.Xor, initial);
+                                            SearchResults.Add(csr);
+                                        }
+                                        else if (chkCsUtilLogResults.Checked && !chkCSUtilMatchOnly.Checked)
+                                        {
+                                            Logger("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ",  MSB: " + MSB.ToString() + ", result: " + csCalc.ToString("X"));
                                         }
                                     }
-                                    UInt64 oldVal = csUtilReadOldvalue(csAddress, (ushort)cum.CsBytes, MSB);
-                                    UInt64 csCalc = CalculateChecksum(MSB, frmpatcher.basefile.buf, csAddr, rangeBlocks, excludes,
-                                                csm, (short)complement, csAddr.Bytes, false, true, cum.InitialValue);
-                                    UInt64 csCalcSwap = SwapBytes(csCalc, 8);
 
-                                    if (csCalc == oldVal && cum.NoSwapBytes && !FilterValues.Contains(csCalc))
-                                    {
-                                        if (chkCsUtilLogResults.Checked)
-                                            LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", No byteswap, MSB: " + MSB.ToString() + ", result: " + csCalc.ToString("X") + " [Match]");
-                                        CkSearchResult csr = new CkSearchResult(rangeBlocks[0].Start, rangeBlocks.LastOrDefault().End, csAddress, csCalc, radioCsUtilCSValue.Checked, csm, complement, false, cum.Polynomial(), cum.Xor, cum.InitialValue);
-                                        SearchResults.Add(csr);
-                                    }
-                                    else if (csCalcSwap == oldVal && cum.SwapBytes && !FilterValues.Contains(csCalcSwap))
-                                    {
-                                        if (chkCsUtilLogResults.Checked)
-                                            LoggerBold("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ", Byteswap,  MSB: " + MSB.ToString() + ", result: " + csCalc.ToString("X") + " [Match]");
-                                        CkSearchResult csr = new CkSearchResult(rangeBlocks[0].Start, rangeBlocks.LastOrDefault().End, csAddress, csCalcSwap, radioCsUtilCSValue.Checked, csm, complement, true, cum.Polynomial(), cum.Xor, cum.InitialValue);
-                                        SearchResults.Add(csr);
-                                    }
-                                    else if (chkCsUtilLogResults.Checked && !chkCSUtilMatchOnly.Checked)
-                                    {
-                                        Logger("Address: " + csAddress.ToString("X8") + ", Method: " + csm.ToString() + ", Complement: " + complement.ToString() + ",  MSB: " + MSB.ToString() + ", result: " + csCalc.ToString("X"));
-                                    }
                                 }
-                                
                             }
                         }
-
                     }
                 }
             }

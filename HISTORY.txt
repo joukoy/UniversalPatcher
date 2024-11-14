@@ -729,3 +729,8 @@
 0.22.24
 - Logger: Added support for WBAFR and WBRAW in other pid Math
 
+0.22.25
+- Logger: Added support for multiple pids in Math-pid. 
+	Example: ([PID1145]/0.2304 + [PID1146]/0.2304 + [PID1148]/0.2304 + [PID1149]/0.2304)/4
+	Divide O2 sensors raw values by 0.2304 to get millivolts, and calculate average value
+
