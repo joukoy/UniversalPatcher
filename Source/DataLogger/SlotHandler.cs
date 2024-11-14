@@ -164,20 +164,20 @@ namespace UniversalPatcher
                     }
                     else
                     {
+                        double val1 = double.MinValue;
+                        double val2 = double.MinValue;
                         int ind = ReceivingPids.IndexOf(pc.addr);
                         if (ind > -1)
                         {
                             if (rawPidValues[ind] > double.MinValue)
                             {
-                                double val1 = rawPidValues[ind];
-                                double val2 = double.MinValue;
+                                val1 = rawPidValues[ind];
                                 if (pc.addr2 > -1)
                                 {
                                     int ind2 = ReceivingPids.IndexOf(pc.addr2);
                                     if (ind2 > -1)
                                         val2 = rawPidValues[ind2];
                                 }
-                                calculatedvalues[pp] = pc.GetCalculatedValue(val1, val2);
                                 SetPidValue(pc.addr, rawPidValues[ind]);
                             }
                         }
@@ -185,6 +185,7 @@ namespace UniversalPatcher
                         {
                             //Debug.WriteLine("Pid not found: " + PidProfile[pp].PidName);
                         }
+                        calculatedvalues[pp] = pc.GetCalculatedValue(val1, val2);
                     }
                 }
             }
@@ -216,23 +217,24 @@ namespace UniversalPatcher
                     }
                     else
                     {
+                        double val1 = double.MinValue;
+                        double val2 = double.MinValue;
                         int ind = ReceivingPids.IndexOf(pc.addr);
                         if (ind > -1)
                         {
                             if (rawPidValues[ind] > double.MinValue)
                             {
-                                double val1 = rawPidValues[ind];
-                                double val2 = double.MinValue;
+                                val1 = rawPidValues[ind];
                                 if (pc.addr2 > -1)
                                 {
                                     int ind2 = ReceivingPids.IndexOf(pc.addr2);
                                     if (ind2 > -1)
                                         val2 = rawPidValues[ind2];
                                 }
-                                calculatedvalues[pp] = pc.GetCalculatedDoubleValue(val1, val2);
                                 SetPidValue(pc.addr, rawPidValues[ind]);
                             }
                         }
+                        calculatedvalues[pp] = pc.GetCalculatedDoubleValue(val1, val2);
                     }
                 }
             }
