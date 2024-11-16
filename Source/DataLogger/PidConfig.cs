@@ -324,11 +324,70 @@ namespace UniversalPatcher
             }
             return retVal.Trim('-');
         }
+        public double GetValueOfPid(int Pid, List<SlotHandler.PidVal> PidValues)
+        {
+            SlotHandler.PidVal pv = PidValues.Where(X => X.Pid == Pid).FirstOrDefault();
+            if (pv == null)
+                return double.MinValue;
+            return pv.Val;
+        }
 
-        public string GetCalculatedValue(double value1, double value2)
+        private string ReplaceMathVariables(string PcMath, List<SlotHandler.PidVal> PidValues)
         {
             try
             {
+                if (!PcMath.Contains("[PID"))
+                {
+                    return PcMath;
+                }
+                string newMath = PcMath;
+                while (newMath.Contains("[PID"))
+                {
+                    int start = newMath.IndexOf("[PID");
+                    int end = newMath.IndexOf("]", start);
+                    string pidStr = newMath.Substring(start, (end - start) + 1);
+                    string pidNrStr = pidStr.Substring(4, pidStr.Length - 5);
+                    if (!HexToInt(pidNrStr, out int pidNr))
+                    {
+                        LoggerBold("Can't convert from hex: " + pidNrStr);
+                        return PcMath;
+                    }
+                    else
+                    {
+                        double pidVal = GetValueOfPid(pidNr, PidValues);
+                        newMath = newMath.Replace(pidStr, pidVal.ToString());
+                    }
+                }
+                return newMath;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, SlotHandler line " + line + ": " + ex.Message);
+                return PcMath;
+            }
+        }
+
+        public string GetCalculatedValue(List<SlotHandler.PidVal> PidValues)
+        {
+            try
+            {
+                double value1 = double.MinValue;
+                double value2 = double.MinValue;
+                SlotHandler.PidVal pv1 = PidValues.Where(X => X.Pid == addr).FirstOrDefault();
+                if (pv1 != null)
+                {
+                    value1 = pv1.Val;
+                }
+                SlotHandler.PidVal pv2 = PidValues.Where(X => X.Pid == addr2).FirstOrDefault();
+                if (pv2 != null)
+                {
+                    value2 = pv2.Val;
+                }
                 if (Math.ToLower().StartsWith("circuitstatus"))
                 {
                     //BYTES 1-2 ARE THE DTC ENCODED AS BCD (PO443 = $04 $43) BYTE 3 BIT 7 PCM CONTROLLED STATE OF THE OUTPUT (1=ON 2=OFF)
@@ -373,9 +432,10 @@ namespace UniversalPatcher
                     {
                         assignedMath = assignedMath.ToUpper().Replace("WBRAW", WB.RAW.ToString());
                     }
-                    Debug.WriteLine("assignedMath:" + assignedMath);
+                    assignedMath = ReplaceMathVariables(assignedMath.ToUpper(),PidValues);
+                    Debug.WriteLine("assignedMath: " + assignedMath);
                     double calcVal = parser.Parse(assignedMath);
-                    Debug.WriteLine("Calc value:" + calcVal.ToString());
+                    Debug.WriteLine("Calc value: " + calcVal.ToString());
                     return calcVal.ToString();
                 }
             }
@@ -391,10 +451,22 @@ namespace UniversalPatcher
             return "";
         }
 
-        public double GetCalculatedDoubleValue(double value1, double value2)
+        public double GetCalculatedDoubleValue(List<SlotHandler.PidVal> PidValues)
         {
             try
             {
+                double value1 = double.MinValue;
+                double value2 = double.MinValue;
+                SlotHandler.PidVal pv1 = PidValues.Where(X => X.Pid == addr).FirstOrDefault();
+                if (pv1 != null)
+                {
+                    value1 = pv1.Val;
+                }
+                SlotHandler.PidVal pv2 = PidValues.Where(X => X.Pid == addr2).FirstOrDefault();
+                if (pv2 != null)
+                {
+                    value2 = pv2.Val;
+                }
                 if (Math.ToLower().StartsWith("enum:") || Math.ToLower().StartsWith("bits:"))
                 {
                     return value1;
@@ -422,6 +494,7 @@ namespace UniversalPatcher
                     {
                         assignedMath = assignedMath.ToUpper().Replace("WBRAW", WB.RAW.ToString());
                     }
+                    assignedMath = ReplaceMathVariables(assignedMath.ToUpper(), PidValues);
                     double calcVal = parser.Parse(assignedMath);
                     return calcVal;
                 }
@@ -437,6 +510,7 @@ namespace UniversalPatcher
             }
             return double.MinValue;
         }
+
     }
 
 }

@@ -1555,7 +1555,10 @@ namespace UniversalPatcher
                     {
                         PidConfig pc = new PidConfig();
                         pc.Math = pi.ConversionFactor;
-                        string result = pc.GetCalculatedValue(val, 0);
+                        List<SlotHandler.PidVal> PidValues = new List<SlotHandler.PidVal>();
+                        SlotHandler.PidVal pv = new SlotHandler.PidVal(pc.addr,val);
+                        PidValues.Add(pv);
+                        string result = pc.GetCalculatedValue(PidValues);
                         Logger("Result: " + result);
                     }
                 }

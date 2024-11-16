@@ -3107,30 +3107,105 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        private string ReplaceMathVariables(string PcMath, ref List<SlotHandler.PidVal> PidValues)
+        {
+            string newMath = null;
+            try
+            {
+                newMath = PcMath.ToUpper();
+                if (!newMath.Contains("[PID"))
+                {
+                    return null;
+                }
+                while (newMath.Contains("[PID"))
+                {
+                    int start = newMath.IndexOf("[PID");
+                    int end = newMath.IndexOf("]", start);
+                    string pidStr = newMath.Substring(start, (end - start) + 1);
+                    string pidNrStr = pidStr.Substring(4, pidStr.Length - 5);
+                    if (HexToInt(pidNrStr, out int pidNr))
+                    {
+                        Parameter sp = stdParameters.Where(X => Convert.ToInt32(X.Id,16) == pidNr).FirstOrDefault();
+                        if (sp == null)
+                        {
+                            LoggerBold("Can't convert from hex: " + pidNrStr);
+                            return null;
+                        }
+                        else
+                        {
+                            PidConfig pc = new PidConfig();
+                            pc.Type = DefineBy.Pid;
+                            pc.addr = pidNr;
+                            PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), sp.DataType);
+                            pc.DataType = ConvertToDataType(pd);
+                            ReadValue rv = datalogger.QuerySinglePidValue(pc.addr, pc.DataType);
+                            if (rv.PidValue > double.MinValue)
+                            { 
+                               newMath = newMath.Replace(pidStr, rv.PidValue.ToString());
+                            }
+                            else
+                            {
+                                newMath = newMath.Replace(pidStr, "0");
+                            }
+                            SlotHandler.PidVal pv = new SlotHandler.PidVal(pidNr, rv.PidValue);
+                            PidValues.Add(pv);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, SlotHandler line " + line + ": " + ex.Message);
+            }
+            return newMath;
+        }
+
         private bool QueryPid(PidConfig pc)
         {
             try
             {
                 Connect(radioVPW.Checked,true,true, null);
+                List<SlotHandler.PidVal> PidValues = new List<SlotHandler.PidVal>();
 
-                ReadValue rv;
-                ReadValue rv2 = new ReadValue();
-                //rv = QueryRAM(pc.addr, pc.DataType);
-                rv = datalogger.QuerySinglePidValue(pc.addr, pc.DataType);
-                if (rv.FailureCode != 0) 
+                if (pc.Type == DefineBy.Math && pc.Math.ToUpper().Contains("[PID"))
                 {
-                    return false;
-                }
-                if (pc.addr2 > 0)
-                {
-                    rv2 = datalogger.QuerySinglePidValue(pc.addr2, pc.Pid2DataType);
-                }
-                if (rv.PidValue > double.MinValue)
-                {
-                    string calcVal = pc.GetCalculatedValue(rv.PidValue, rv2.PidValue);
+                    string newMath =  ReplaceMathVariables(pc.Math,ref PidValues);
+                    //double calcVal = parser.Parse(newMath);
+                    string calcVal = pc.GetCalculatedValue(PidValues);
                     Logger(pc.PidName + ": " + calcVal + " " + pc.Units);
                     Application.DoEvents();
                     return true;
+                }
+                else
+                {
+                    ReadValue rv;
+                    ReadValue rv2 = new ReadValue();
+                    //rv = QueryRAM(pc.addr, pc.DataType);
+                    rv = datalogger.QuerySinglePidValue(pc.addr, pc.DataType);
+                    if (rv.FailureCode != 0)
+                    {
+                        return false;
+                    }
+                    SlotHandler.PidVal pv1 = new SlotHandler.PidVal(pc.addr, rv.PidValue);
+                    PidValues.Add(pv1);
+                    if (pc.addr2 > 0)
+                    {
+                        rv2 = datalogger.QuerySinglePidValue(pc.addr2, pc.Pid2DataType);
+                        SlotHandler.PidVal pv2 = new SlotHandler.PidVal(pc.addr2, rv2.PidValue);
+                        PidValues.Add(pv2);
+                    }
+                    if (rv.PidValue > double.MinValue)
+                    {
+                        string calcVal = pc.GetCalculatedValue(PidValues);
+                        Logger(pc.PidName + ": " + calcVal + " " + pc.Units);
+                        Application.DoEvents();
+                        return true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -4839,7 +4914,10 @@ namespace UniversalPatcher
                         }
                         if (pc != null && !string.IsNullOrEmpty(pc.Math))
                         {
-                            string val = pc.GetCalculatedValue(pidData, 0);
+                            List<SlotHandler.PidVal> PidValues = new List<SlotHandler.PidVal>();
+                            SlotHandler.PidVal pv = new SlotHandler.PidVal(pc.addr, pidData);
+                            PidValues.Add(pv);
+                            string val = pc.GetCalculatedValue(PidValues);
                             if (string.IsNullOrEmpty(val))
                                 Logger("Bad math: " + pc.Math);
                             else

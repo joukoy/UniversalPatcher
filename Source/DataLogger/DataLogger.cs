@@ -454,7 +454,8 @@ namespace UniversalPatcher
                 }
                 for (int p = PidProfile.Count - 1; p >= 0; p--)
                 {
-                    if (PidProfile[p].Math.ToUpper().StartsWith("WB"))
+                    //if (PidProfile[p].Math.ToUpper().StartsWith("WB"))
+                    if (PidProfile[p].addr <= 0 || PidProfile[p].Type == DefineBy.Math)    //Dont test math pids
                     {
                         continue;   
                     }
@@ -490,12 +491,6 @@ namespace UniversalPatcher
                             else
                             {
                                 TestedPids.Add(PidProfile[p].addr2);
-                                //string calcVal = PidProfile[p].GetCalculatedValue(rv.PidValue, rv2.PidValue);
-                                //if (string.IsNullOrEmpty(calcVal))
-                                //{
-                                //compatible = false;
-                                //    LoggerBold("Warning: pid " + PidProfile[p].PidName + " returned empty value. This may be normal when engine not running");
-                                //}
                             }
                         }
                     }

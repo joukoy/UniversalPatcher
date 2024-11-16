@@ -736,3 +736,6 @@
 0.22.26
 - Logger: Fixed bug: if address is -1, value not displayed. For Math pids -1 is allowed value
 
+0.22.27
+- Logger: Support for multiple pids in Math pid when testing pids in profile editor
+
