@@ -68,7 +68,16 @@ namespace UniversalPatcher
         private int cvnSortIndex = 0;
         SortOrder cvnStrSortOrder = SortOrder.Ascending;
         ListViewColumnSorter lvwColumnSorter;
-
+        List<RenPart> renParts = new List<RenPart>();
+        private enum RenPart
+        {
+            Original,
+            OrigInBrackets,
+            OS,
+            Platform,
+            VIN,
+            Custom
+        }
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             basefile = new PcmFile();
@@ -151,11 +160,42 @@ namespace UniversalPatcher
 
             tabEditExtra.Enter += TabEditExtra_Enter;
 
+            renParts.Add(RenPart.Original);
+            //dataGridViewRenParts.DataSource = renParts;
+            //UseComboBoxForEnums(dataGridViewRenParts);
+            comboRenParts.ValueMember = "Value";
+            comboRenParts.DisplayMember = "Name";
+            comboRenParts.DataSource = Enum.GetValues(typeof(RenPart)).Cast<object>().Select(v => new
+            {
+                Value = v,
+                Name = v.ToString()
+            }).ToList();
+            //dataGridViewRenParts.Columns.Add("Part", "Part");
+            DataGridViewComboBoxCell dgcc = new DataGridViewComboBoxCell();
+            dgcc.ValueMember = "Value";
+            dgcc.DisplayMember = "Name";
+            dgcc.DataSource = Enum.GetValues(typeof(RenPart)).Cast<object>().Select(v => new
+            {
+                Value = v,
+                Name = v.ToString()
+            }).ToList();
+            DataGridViewColumn dgcPart = new DataGridViewColumn(dgcc);
+            dataGridViewRenParts.Columns.Add(dgcPart);
+            dataGridViewRenParts.Columns.Add("Custom", "Custom");
+            RenPart rp = RenPart.Original; 
+            dgcc.Value = rp;
+            dataGridViewRenParts.Rows.Add();
+            dataGridViewRenParts.Rows[0].Cells[0] = dgcc;
+            dataGridViewRenParts.DataError += DataGridViewRenParts_DataError;
             this.AllowDrop = true;
             this.DragEnter += FrmPatcher_DragEnter;
             this.DragDrop += FrmPatcher_DragDrop;
         }
 
+        private void DataGridViewRenParts_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            
+        }
 
         private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
         {
@@ -3056,13 +3096,25 @@ namespace UniversalPatcher
         {
             try
             {
+                frmEditXML frmE = new frmEditXML();
                 string fName;
                 if (basefile.configFileFullName.Length == 0)
-                    fName = SelectFile("Select tableseekfile", XmlFilter);
+                {
+                    fName = SelectFile("Select tableseekfile (Cancel = edit current list or create new)", XmlFilter);
+                    if (string.IsNullOrEmpty(fName))
+                    {
+                        frmE.EditCurrentTableSeek(fName);
+                    }
+                    else
+                    {
+                        frmE.LoadTableSeek(fName);
+                    }
+                }
                 else
+                {
                     fName = basefile.TableSeekFile;
-                frmEditXML frmE = new frmEditXML();
-                frmE.LoadTableSeek(fName);
+                    frmE.EditCurrentTableSeek(fName);
+                }
                 frmE.Show();
             }
             catch (Exception ex)
@@ -4063,7 +4115,7 @@ namespace UniversalPatcher
                 frmE.LoadPlatformConfig(basefile);
                 frmE.Show();*/
                 frmPropertyEditor fpe = new frmPropertyEditor();
-                fpe.LoadObject(basefile.platformConfig);
+                fpe.LoadObject(basefile.platformConfig, "PlatformConfig");
                 fpe.Text = "Platform config [" + basefile.configFile + "]";
                 if (fpe.ShowDialog() == DialogResult.OK)
                 {
@@ -4208,10 +4260,60 @@ namespace UniversalPatcher
                         PcmFile PCM = new PcmFile(fName, true, "");
                         Logger("File: " + fName + ", Platform: " + PCM.configFile + ", OS: " + PCM.OS);
                         string dstFile;
+                        string dstFname = "";
+                        for (int r=0;r<dataGridViewRenParts.Rows.Count;r++)
+                        {
+                            if (dataGridViewRenParts.Rows[r].Cells[0].Value == null)
+                            {
+                                continue;
+                            }
+                            RenPart rp = (RenPart)dataGridViewRenParts.Rows[r].Cells[0].Value;
+                            if (rp == RenPart.Custom)
+                            {
+                                dstFname += dataGridViewRenParts.Rows[r].Cells[1].Value.ToString();
+                            }
+                            else if (rp == RenPart.Original)
+                            {
+                                dstFname += Path.GetFileNameWithoutExtension(fName);
+                            }
+                            else if (rp == RenPart.OrigInBrackets)
+                            {
+                                dstFname += "[" + Path.GetFileNameWithoutExtension(fName) + "]";
+                            }
+                            else if (rp == RenPart.OS)
+                            {
+                                dstFname += PCM.OS;
+                            }
+                            else if (rp == RenPart.Platform)
+                            {
+                                dstFname += PCM.configFile;
+                            }
+                            else if (rp == RenPart.VIN)
+                            {
+                                string vin = "VIN";
+                                for (int seg=0;seg<PCM.Segments.Count;seg++)
+                                {
+                                    int idx = PCM.segmentinfos[seg].ExtraInfo.IndexOf("VIN");
+                                    if (idx > 0)
+                                    {
+                                        int idx2 = PCM.segmentinfos[seg].ExtraInfo.IndexOf(Environment.NewLine, idx + 4);
+                                        if (idx2 > 0)
+                                        {
+                                            vin = PCM.segmentinfos[seg].ExtraInfo.Substring(idx +4, idx2 - idx - 4).Trim();
+                                            break;
+                                        }
+                                    }
+                                }
+                                dstFname += vin;
+                            }
+                            dstFname += txtSeparRenParts.Text;
+                        }
+                        dstFname = dstFname.Substring(0, dstFname.Length - txtSeparRenParts.Text.Length);
+                        dstFname += ".bin";
                         if (radioSortPlatform.Checked)
-                            dstFile = Path.Combine(dstFldr, PCM.configFile, Path.GetFileName(fName));
+                            dstFile = Path.Combine(dstFldr, PCM.configFile, dstFname);
                         else if (radioSortOS.Checked)
-                            dstFile = Path.Combine(dstFldr, PCM.OS, Path.GetFileName(fName));
+                            dstFile = Path.Combine(dstFldr, PCM.OS, dstFname);
                         else
                         {
                             dstFile = Path.Combine(dstFldr, PCM.configFile, PCM.OS, Path.GetFileName(fName));
@@ -4386,7 +4488,7 @@ namespace UniversalPatcher
         {
             frmPropertyEditor fpe = new frmPropertyEditor();
             UpatcherSettings tmpSettings = AppSettings.ShallowCopy();
-            fpe.LoadObject(tmpSettings);
+            fpe.LoadObject(tmpSettings, "AllSettings");
             fpe.resetToDefaultValueToolStripMenuItem.Enabled = true;
             if (fpe.ShowDialog() == DialogResult.OK)
             {
@@ -4523,6 +4625,65 @@ namespace UniversalPatcher
                 return;
             Ngc3Checksum ngc3 = new Ngc3Checksum();
             ngc3.savetables(fName);
+        }
+
+        private void btnRemoveRenParts_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewRenParts.SelectedRows.Count > 0)
+                {
+                    for (int r = dataGridViewRenParts.SelectedRows.Count - 1; r >= 0; r--)
+                    {
+                        dataGridViewRenParts.Rows.RemoveAt(dataGridViewRenParts.SelectedRows[r].Index);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnAddRenParts_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                RenPart rp = (RenPart)comboRenParts.SelectedValue;
+                DataGridViewComboBoxCell dgcc = new DataGridViewComboBoxCell();
+                dgcc.ValueMember = "Value";
+                dgcc.DisplayMember = "Name";
+                dgcc.DataSource = Enum.GetValues(typeof(RenPart)).Cast<object>().Select(v => new
+                {
+                    Value = v,
+                    Name = v.ToString()
+                }).ToList();
+                dgcc.Value = rp;
+                int r = dataGridViewRenParts.Rows.Add();
+                dataGridViewRenParts.Rows[r].Cells[0] = dgcc;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("frmPatcher, line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void xDFChecksumPluginsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML frmEX = new frmEditXML();
+            frmEX.LoadXdfPlugins();
+            frmEX.Show();
         }
     }
 }

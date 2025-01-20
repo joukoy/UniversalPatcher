@@ -46,7 +46,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void AddtoRef(uint OS, string CS1Addr,string OsStroeAddr, string MafAddr, string VeTable, string CalStart, string Crc, string Tables3d)
+        public void AddtoRef(uint OS, string CS1Addr,string OsStoreAddr, string MafAddr, string VeTable, string CalStart, string Crc, string Tables3d)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace UniversalPatcher
                 row["MAFAddress"] = MafAddr;
                 row["VETable"] = VeTable;
                 row["CalStart"] = CalStart;
-                row["OSStoreAddr"] = OsStroeAddr;
+                row["OSStoreAddr"] = OsStoreAddr;
 
 
                 v6RefTb.Rows.Add(row);
@@ -125,14 +125,20 @@ namespace UniversalPatcher
                     v6tablelist += PCM.v6tables[i].address.ToString("X") + ":" + PCM.v6tables[i].rows.ToString();
                 }
 
-                string qry = "CS1Address = '" + PCM.segmentAddressDatas[0].CS1Address.Address.ToString("X") + "' AND 3DTables = '" + v6tablelist + "'";
-                DataRow[] res = v6RefTb.Select(qry);
+                //string qry = "CS1Address = '" + PCM.segmentAddressDatas[0].CS1Address.Address.ToString("X") + "' AND 3DTables = '" + v6tablelist + "'";
+                string qry = "CS1Address = '" + PCM.segmentAddressDatas[0].CS1Address.Address.ToString("X") + "'";
+                DataRow[] res = v6RefTb.Select(qry);                
                 if (res.Length > 0)
                 {
                     retval = new uint[res.Length];
                     for (int i = 0; i < res.Length; i++)
                     {
-                        retval[i] = Convert.ToUInt32(res[i]["OS"]);
+                        string tables3d = res[i]["3DTables"].ToString();
+                        int len = tables3d.Length;
+                        if (v6tablelist.Length >= len && tables3d == v6tablelist.Substring(0,len))
+                        {
+                            retval[i] = Convert.ToUInt32(res[i]["OS"]);
+                        }
                     }
                 }
             }

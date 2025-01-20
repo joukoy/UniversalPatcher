@@ -40,6 +40,10 @@ namespace UniversalPatcher
                     {
                         uint bytes = 1;
                         uint.TryParse(Parts[1], out bytes);
+                        if ((addr + bytes) > PCM.buf.Length)
+                        {
+                            return false;
+                        }
                         StringBuilder readBytes = new StringBuilder();
                         for (int a = 0; a < bytes; a++)
                         {
@@ -57,9 +61,25 @@ namespace UniversalPatcher
                     else
                     {
                         if (Parts.Length == 1)
-                            data = PCM.ReadUInt16(addr);
+                        {
+                            if (PCM.buf.Length > addr)
+                            {
+                                data = PCM.ReadUInt16(addr);
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
                         else
                         {
+                            if (byte.TryParse(Parts[1], out byte bLen))
+                            {
+                                if ((addr + bLen) > PCM.buf.Length)
+                                {
+                                    return false;
+                                }
+                            }
                             switch (Parts[1])
                             {
                                 case "1":
@@ -75,7 +95,7 @@ namespace UniversalPatcher
                                     data = PCM.ReadUInt64(addr);
                                     break;
                                 default:
-                                        data = PCM.ReadUInt32(addr);
+                                    data = PCM.ReadUInt32(addr);
                                     break;
                             }
 
@@ -111,7 +131,10 @@ namespace UniversalPatcher
             catch (Exception ex)
             {
                 //Something wrong, just skip this part and continue
-                Debug.WriteLine(ex.Message);
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
+                LoggerBold("Autodetect, line " + line + ": " + ex.Message);
                 return false;
             }
         }

@@ -739,3 +739,18 @@
 0.22.27
 - Logger: Support for multiple pids in Math pid when testing pids in profile editor
 
+0.22.28
+- Tuner: Show comment about password protected XDF if import fails
+- Tuner: Fixed bug: search first exact match of table when selecting table for compare
+- Tuner: Fixed bug: V6 compatible OS search failed in some cases
+- Autodetect: Better error handling/speed improvement
+- Tuner: Bug fixes and speed improvements
+- Offset visualizer: Bug fixes & speed improvements
+- Swap segments: Cosmetic changes
+- Tuner & XML Editor/Configs: Added Undo/Redo
+- Logger: Fix to OBDXpro driver, more delay to rset function 
+- Tuner: Fixed compatibility problem in XDF export: If tabledescription is over 900 chars long, Tunerpro crash
+- Tuner: XDF import bugfixes, Export rewrite: No templates, better support for checksums.
+- Logger: Option to disable PID compatibility checking. Workaround for bug: In some cases all pids are incorrectly marked incompatible
+
+

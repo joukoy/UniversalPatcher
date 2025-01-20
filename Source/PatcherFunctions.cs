@@ -542,6 +542,7 @@ public class Upatcher
     public static List<RichTextBox> LogReceivers;
     public static List<PidInfo> PidDescriptions;
     public static List<CANDevice> CanModules;
+    public static List<ReDo> RedoLog;
 
     public static string tableSearchFile;
     //public static string tableSeekFile = "";
@@ -673,6 +674,7 @@ public class Upatcher
             LogReceivers = new List<RichTextBox>();
             tableSeeks = new List<TableSeek>();
             segmentSeeks = new List<SegmentSeek>();
+            RedoLog = new List<ReDo>();
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
             {
                 MessageBox.Show("Incomplete installation, Universalpatcher files missing" + Environment.NewLine +
@@ -1184,7 +1186,7 @@ public class Upatcher
         TableData conversionTd = FindTableData(tmpTd, PCM.tableDatas);
         if (conversionTd != null)
         {
-            double conversionVal = GetValue(PCM.buf, (uint)(conversionTd.addrInt + conversionTd.Offset + conversionTd.ExtraOffset), conversionTd, 0, PCM);
+            double conversionVal = GetValue(PCM.buf, (uint)(conversionTd.addrInt + conversionTd.Offset + conversionTd.extraoffset), conversionTd, 0, PCM);
             retVal = mathStr.Replace("table:" + conversionTable, conversionVal.ToString());
             Debug.WriteLine("Using conversion table: " + conversionTd.TableName);
         }
@@ -1226,7 +1228,7 @@ public class Upatcher
                 return new string[0];
 
             uint step = (uint)(GetBits(headerTd.DataType) / 8);
-            uint addr = (uint)(headerTd.addrInt + headerTd.Offset + headerTd.ExtraOffset);
+            uint addr = headerTd.StartAddress();
             string[] retVal = new string[count];
             for (int a = 0; a < count; a++)
             {
@@ -1260,7 +1262,7 @@ public class Upatcher
             return null;
 
         uint step = (uint)(GetBits(headerTd.DataType) / 8);
-        uint addr = (uint)(headerTd.addrInt + headerTd.Offset + headerTd.ExtraOffset);
+        uint addr = headerTd.StartAddress();
         double[] retVal = new double[count];
         for (int a = 0; a < count; a++)
         {
@@ -1289,7 +1291,7 @@ public class Upatcher
                     break;
             }
 
-            uint addr = (uint)(mathTd.addrInt + mathTd.Offset + mathTd.ExtraOffset);
+            uint addr = mathTd.StartAddress();
             UInt32 bufAddr = (UInt32)(addr - offset);
             uint elemSize = (uint)mathTd.ElementSize();
             byte byteMask = 0x80;
@@ -1799,7 +1801,7 @@ public class Upatcher
         TableData pTd = basefile.tableDatas[tdId];
         frmTE.PrepareTable(basefile, pTd, null, "A");
         //frmTE.loadTable();
-        uint addr = (uint)(pTd.addrInt + pTd.Offset + pTd.ExtraOffset );
+        uint addr = pTd.StartAddress();
         uint step = (uint)GetElementSize(pTd.DataType);
         try
         {
@@ -2055,7 +2057,7 @@ public class Upatcher
         if ((td1.Rows * td1.Columns) != (td2.Rows * td2.Columns))
             return false;
         List<double> tableValues = new List<double>();
-        uint addr = (uint)(td1.addrInt + td1.Offset + td1.ExtraOffset);
+        uint addr = td1.StartAddress();
         uint step = (uint)GetElementSize(td1.DataType);
         if (td1.RowMajor)
         {
@@ -2082,7 +2084,7 @@ public class Upatcher
             }
         }
 
-        addr = (uint)(td2.addrInt + td2.Offset + td2.ExtraOffset);
+        addr = td2.StartAddress();
         step = (uint)GetElementSize(td2.DataType);
         int i = 0;
         if (td2.RowMajor)
@@ -2122,11 +2124,12 @@ public class Upatcher
         return match;
     }
 
-    public static void SaveOBD2Codes()
+    public static void SaveOBD2Codes(string fName)
     {
-        string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
-        Logger("Saving file " + OBD2CodeFile + "...", false);
-        using (FileStream stream = new FileStream(OBD2CodeFile, FileMode.Create))
+        if (string.IsNullOrEmpty(fName))
+            fName = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
+        Logger("Saving file " + fName + "...", false);
+        using (FileStream stream = new FileStream(fName, FileMode.Create))
         {
             System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<OBD2Code>));
             writer.Serialize(stream, OBD2Codes);
@@ -2820,6 +2823,12 @@ public class Upatcher
 
     public static TableData FindTableData(TableData refTd, List<TableData> tdList)
     {
+        TableData xTd = tdList.Where(X => X.TableName == refTd.TableName).FirstOrDefault();
+        if (xTd != null)
+        {
+            //Found exact match
+            return xTd;
+        }
         int pos1 = refTd.TableName.IndexOf("*");
         if (pos1 < 0)
             pos1 = refTd.TableName.Length;
@@ -2836,7 +2845,7 @@ public class Upatcher
                 return tdList[t];
             }
         }
-        //Not found (exact match) maybe close enough?
+        //Not found (exact match or wildcard match) maybe close enough?
         int required = AppSettings.TunerMinTableEquivalency;
         if (required == 100)
             return null;  //already searched for 100% match
@@ -3170,6 +3179,23 @@ public class Upatcher
         }
 
         return smoothedTable;
+    }
+    public static void AddToRedoLog(Object Obj, Object ObjCollection, string Collection, string ItemName, string Property, ReDo.RedoAction Action, Object OldValue, Object NewValue, int Position=-1)
+    {
+        string oldStr = "";
+        string newStr = "";
+        if (OldValue != null) oldStr = OldValue.ToString();
+        if (NewValue != null) newStr = NewValue.ToString();
+        if (Action == ReDo.RedoAction.Edit && oldStr == newStr)
+        {
+            Debug.WriteLine("Old value = " + oldStr + " == new value: " + newStr + ", skip");
+        }
+        else
+        {
+            Debug.WriteLine("Adding to redolog: " + Collection + ": " + ItemName + ", Oldvalue: " + oldStr + ", NewValue: " + newStr);
+            ReDo redo = new ReDo(Obj,ObjCollection,Collection,ItemName, Property, Action, OldValue, NewValue, Position);
+            RedoLog.Add(redo);
+        }
     }
 
 }

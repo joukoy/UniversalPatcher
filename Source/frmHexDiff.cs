@@ -93,8 +93,8 @@ namespace UniversalPatcher
                     uint step = (uint)GetElementSize(td.DataType);
                     uint step2 = (uint)GetElementSize(td2.DataType);
                     int count = td.Rows * td.Columns;
-                    uint addr = (uint)(td.addrInt + td.Offset + td.ExtraOffset);
-                    uint addr2 = (uint)(td2.addrInt + td2.Offset + td2.ExtraOffset);
+                    uint addr = td.StartAddress();
+                    uint addr2 = td2.StartAddress();
                     string data1 = "";
                     string data2 = "";
                     string formatStr = "";
@@ -529,7 +529,7 @@ namespace UniversalPatcher
                     frmTE.PrepareTable(pcm1, pTd, null, "A");
                     frmTE.LoadTable();
                     uint step = (uint)GetElementSize(pTd.DataType);
-                    uint addr = (uint)(pTd.addrInt + pTd.Offset + pTd.ExtraOffset);
+                    uint addr = pTd.StartAddress();
                     if (pTd.RowMajor)
                     {
                         for (int r = 0; r < pTd.Rows; r++)

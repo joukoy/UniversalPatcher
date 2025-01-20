@@ -348,6 +348,12 @@
     <Compile Include="frmPatchSelector.Designer.cs">
       <DependentUpon>frmPatchSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmRedo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRedo.Designer.cs">
+      <DependentUpon>frmRedo.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmRenameXML.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -419,6 +425,12 @@
     </Compile>
     <Compile Include="frmSetDTC.Designer.cs">
       <DependentUpon>frmSetDTC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSortColumns.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSortColumns.Designer.cs">
+      <DependentUpon>frmSortColumns.cs</DependentUpon>
     </Compile>
     <Compile Include="frmSplashScreen.cs">
       <SubType>Form</SubType>
@@ -569,6 +581,7 @@
     </Compile>
     <Compile Include="Ngc3Checksum.cs" />
     <Compile Include="PcmPlatform.cs" />
+    <Compile Include="ReDo.cs" />
     <Compile Include="RootFinding.cs" />
     <Compile Include="SavingMath.cs" />
     <Compile Include="MathParser.cs" />
@@ -737,6 +750,9 @@
     <EmbeddedResource Include="frmPatchSelector.resx">
       <DependentUpon>frmPatchSelector.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmRedo.resx">
+      <DependentUpon>frmRedo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmRenameXML.resx">
       <DependentUpon>frmRenameXML.cs</DependentUpon>
     </EmbeddedResource>
@@ -766,6 +782,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSetDTC.resx">
       <DependentUpon>frmSetDTC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSortColumns.resx">
+      <DependentUpon>frmSortColumns.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSplashScreen.resx">
       <DependentUpon>frmSplashScreen.cs</DependentUpon>

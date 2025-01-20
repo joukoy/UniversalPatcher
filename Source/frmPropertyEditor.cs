@@ -21,6 +21,7 @@ namespace UniversalPatcher
         }
 
         private object myObj;
+        private string Collection;
         private void frmClassEditor_Load(object sender, EventArgs e)
         {
             txtFilter.KeyPress += TxtFilter_KeyPress;
@@ -34,7 +35,7 @@ namespace UniversalPatcher
 
         private void TxtFilter_KeyPress(object sender, KeyPressEventArgs e)
         {
-            LoadObject(myObj);
+            LoadObject(myObj, Collection);
         }
 
         private void SetCellValue(object currentobj, PropertyInfo prop, int row)
@@ -72,11 +73,12 @@ namespace UniversalPatcher
 
         }
 
-        public void LoadObject(object myObj)
+        public void LoadObject(object myObj, string Collection)
         {
             try
             {
                 this.myObj = myObj;
+                this.Collection = Collection;
                 //dataGridView1.ColumnCount = 1;
                 //dataGridView1.Columns[0].Width = 1000;
                 dataGridView1.RowHeadersWidth = 180;
@@ -100,26 +102,47 @@ namespace UniversalPatcher
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < dataGridView1.Rows.Count; i++)
+            try
             {
-                if (dataGridView1.Rows[i].HeaderCell.Value != null)
+                string itemName = "";
+                if (dataGridView1.Rows[0].Cells[0].Value != null)
                 {
-                    string propertyName = dataGridView1.Rows[i].HeaderCell.Value.ToString();
-                    var propertyInfo = myObj.GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Instance);
-                    if (propertyInfo != null && propertyInfo.CanWrite)
+                    itemName = dataGridView1.Rows[0].Cells[0].Value.ToString();
+                }
+                for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                {
+                    if (dataGridView1.Rows[i].HeaderCell.Value != null)
                     {
-                        if (dataGridView1.Rows[i].Cells[0].GetType() == typeof(DataGridViewComboBoxCell))
-                            propertyInfo.SetValue(myObj, Enum.ToObject(propertyInfo.PropertyType, dataGridView1.Rows[i].Cells[0].Value), null);
-                        else if (propertyInfo.PropertyType == typeof(SerializableFont))
-                            propertyInfo.SetValue(myObj, new SerializableFont(dataGridView1.Rows[i].Cells[0].Value.ToString()), null);
-                        else
-                            propertyInfo.SetValue(myObj, Convert.ChangeType(dataGridView1.Rows[i].Cells[0].Value, propertyInfo.PropertyType), null);
+                        string propertyName = dataGridView1.Rows[i].HeaderCell.Value.ToString();
+                        var propertyInfo = myObj.GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Instance);
+                        if (propertyInfo != null && propertyInfo.CanWrite)
+                        {
+                            Object oldVal = propertyInfo.GetValue(myObj, null);
+                            if (dataGridView1.Rows[i].Cells[0].GetType() == typeof(DataGridViewComboBoxCell))
+                                propertyInfo.SetValue(myObj, Enum.ToObject(propertyInfo.PropertyType, dataGridView1.Rows[i].Cells[0].Value), null);
+                            else if (propertyInfo.PropertyType == typeof(SerializableFont))
+                                propertyInfo.SetValue(myObj, new SerializableFont(dataGridView1.Rows[i].Cells[0].Value.ToString()), null);
+                            else
+                                propertyInfo.SetValue(myObj, Convert.ChangeType(dataGridView1.Rows[i].Cells[0].Value, propertyInfo.PropertyType), null);
+                            Object newVal = propertyInfo.GetValue(myObj, null);
+                            AddToRedoLog(myObj, null, Collection, itemName, propertyName, ReDo.RedoAction.Edit, oldVal, newVal);
+
+                        }
                     }
                 }
-            }
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmPropertyEditor, line " + line + ": " + ex.Message);
+            }
         }
 
         private void CopyToClipboard()

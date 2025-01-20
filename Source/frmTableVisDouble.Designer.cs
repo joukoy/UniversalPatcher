@@ -31,6 +31,9 @@ namespace UniversalPatcher
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.numExtraBytes = new System.Windows.Forms.NumericUpDown();
+            this.numAfterBytes = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
             this.chkSyncScroll = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnNextTable = new System.Windows.Forms.Button();
@@ -39,9 +42,11 @@ namespace UniversalPatcher
             this.label1 = new System.Windows.Forms.Label();
             this.radioShowSegment = new System.Windows.Forms.RadioButton();
             this.numBytesPerRow = new System.Windows.Forms.NumericUpDown();
-            this.numExtraBytes = new System.Windows.Forms.NumericUpDown();
+            this.numFrontBytes = new System.Windows.Forms.NumericUpDown();
             this.radioShowTable = new System.Windows.Forms.RadioButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.comboCopyColorsLeft = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.btnCreateTable1 = new System.Windows.Forms.Button();
             this.btnScrollToSelected1 = new System.Windows.Forms.Button();
             this.btnApplytoRight = new System.Windows.Forms.Button();
@@ -66,6 +71,8 @@ namespace UniversalPatcher
             this.numExtraOffset1 = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.labelFileName1 = new System.Windows.Forms.Label();
+            this.comboCopyColorsRight = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.btnCreateTable2 = new System.Windows.Forms.Button();
             this.btnScrollToSelected2 = new System.Windows.Forms.Button();
             this.btnApplytoLeft = new System.Windows.Forms.Button();
@@ -90,10 +97,11 @@ namespace UniversalPatcher
             this.numExtraOffset2 = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.labelFileName2 = new System.Windows.Forms.Label();
-            this.chkCopyColors1 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numBytesPerRow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numExtraBytes)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numAfterBytes)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numBytesPerRow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numFrontBytes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -124,6 +132,9 @@ namespace UniversalPatcher
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.numExtraBytes);
+            this.groupBox1.Controls.Add(this.numAfterBytes);
+            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.chkSyncScroll);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.btnNextTable);
@@ -132,7 +143,7 @@ namespace UniversalPatcher
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.radioShowSegment);
             this.groupBox1.Controls.Add(this.numBytesPerRow);
-            this.groupBox1.Controls.Add(this.numExtraBytes);
+            this.groupBox1.Controls.Add(this.numFrontBytes);
             this.groupBox1.Controls.Add(this.radioShowTable);
             this.groupBox1.Location = new System.Drawing.Point(6, 4);
             this.groupBox1.Name = "groupBox1";
@@ -142,12 +153,63 @@ namespace UniversalPatcher
             this.groupBox1.Text = "Show";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
+            // numExtraBytes
+            // 
+            this.numExtraBytes.Location = new System.Drawing.Point(557, 12);
+            this.numExtraBytes.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
+            this.numExtraBytes.Minimum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            -2147483648});
+            this.numExtraBytes.Name = "numExtraBytes";
+            this.numExtraBytes.Size = new System.Drawing.Size(60, 20);
+            this.numExtraBytes.TabIndex = 10;
+            this.numExtraBytes.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numExtraBytes.ValueChanged += new System.EventHandler(this.numExtraBytes_ValueChanged);
+            // 
+            // numAfterBytes
+            // 
+            this.numAfterBytes.Location = new System.Drawing.Point(496, 12);
+            this.numAfterBytes.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numAfterBytes.Name = "numAfterBytes";
+            this.numAfterBytes.Size = new System.Drawing.Size(55, 20);
+            this.numAfterBytes.TabIndex = 9;
+            this.numAfterBytes.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numAfterBytes.ValueChanged += new System.EventHandler(this.numAfterBytes_ValueChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(458, 15);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(32, 13);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "After:";
+            // 
             // chkSyncScroll
             // 
+            this.chkSyncScroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSyncScroll.AutoSize = true;
             this.chkSyncScroll.Checked = true;
             this.chkSyncScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSyncScroll.Location = new System.Drawing.Point(812, 13);
+            this.chkSyncScroll.Location = new System.Drawing.Point(1111, 13);
             this.chkSyncScroll.Name = "chkSyncScroll";
             this.chkSyncScroll.Size = new System.Drawing.Size(77, 17);
             this.chkSyncScroll.TabIndex = 7;
@@ -186,7 +248,7 @@ namespace UniversalPatcher
             // radioSegmentTBNames
             // 
             this.radioSegmentTBNames.AutoSize = true;
-            this.radioSegmentTBNames.Location = new System.Drawing.Point(445, 12);
+            this.radioSegmentTBNames.Location = new System.Drawing.Point(638, 13);
             this.radioSegmentTBNames.Name = "radioSegmentTBNames";
             this.radioSegmentTBNames.Size = new System.Drawing.Size(133, 17);
             this.radioSegmentTBNames.TabIndex = 3;
@@ -207,7 +269,7 @@ namespace UniversalPatcher
             // radioShowSegment
             // 
             this.radioShowSegment.AutoSize = true;
-            this.radioShowSegment.Location = new System.Drawing.Point(587, 12);
+            this.radioShowSegment.Location = new System.Drawing.Point(777, 12);
             this.radioShowSegment.Name = "radioShowSegment";
             this.radioShowSegment.Size = new System.Drawing.Size(67, 17);
             this.radioShowSegment.TabIndex = 2;
@@ -229,23 +291,23 @@ namespace UniversalPatcher
             0});
             this.numBytesPerRow.ValueChanged += new System.EventHandler(this.numBytesPerRow_ValueChanged);
             // 
-            // numExtraBytes
+            // numFrontBytes
             // 
-            this.numExtraBytes.Location = new System.Drawing.Point(362, 9);
-            this.numExtraBytes.Maximum = new decimal(new int[] {
+            this.numFrontBytes.Location = new System.Drawing.Point(394, 13);
+            this.numFrontBytes.Maximum = new decimal(new int[] {
             1000000,
             0,
             0,
             0});
-            this.numExtraBytes.Name = "numExtraBytes";
-            this.numExtraBytes.Size = new System.Drawing.Size(77, 20);
-            this.numExtraBytes.TabIndex = 1;
-            this.numExtraBytes.Value = new decimal(new int[] {
+            this.numFrontBytes.Name = "numFrontBytes";
+            this.numFrontBytes.Size = new System.Drawing.Size(58, 20);
+            this.numFrontBytes.TabIndex = 1;
+            this.numFrontBytes.Value = new decimal(new int[] {
             4,
             0,
             0,
             0});
-            this.numExtraBytes.ValueChanged += new System.EventHandler(this.numExtraBytes_ValueChanged);
+            this.numFrontBytes.ValueChanged += new System.EventHandler(this.numFrontBytes_ValueChanged);
             // 
             // radioShowTable
             // 
@@ -253,10 +315,10 @@ namespace UniversalPatcher
             this.radioShowTable.Checked = true;
             this.radioShowTable.Location = new System.Drawing.Point(255, 13);
             this.radioShowTable.Name = "radioShowTable";
-            this.radioShowTable.Size = new System.Drawing.Size(103, 17);
+            this.radioShowTable.Size = new System.Drawing.Size(133, 17);
             this.radioShowTable.TabIndex = 0;
             this.radioShowTable.TabStop = true;
-            this.radioShowTable.Text = "Table, +/- bytes:";
+            this.radioShowTable.Text = "Table, +/- bytes. Front:";
             this.radioShowTable.UseVisualStyleBackColor = true;
             this.radioShowTable.CheckedChanged += new System.EventHandler(this.radioShowTable_CheckedChanged);
             // 
@@ -270,7 +332,8 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.chkCopyColors1);
+            this.splitContainer1.Panel1.Controls.Add(this.comboCopyColorsLeft);
+            this.splitContainer1.Panel1.Controls.Add(this.label6);
             this.splitContainer1.Panel1.Controls.Add(this.btnCreateTable1);
             this.splitContainer1.Panel1.Controls.Add(this.btnScrollToSelected1);
             this.splitContainer1.Panel1.Controls.Add(this.btnApplytoRight);
@@ -285,6 +348,8 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.comboCopyColorsRight);
+            this.splitContainer1.Panel2.Controls.Add(this.label7);
             this.splitContainer1.Panel2.Controls.Add(this.btnCreateTable2);
             this.splitContainer1.Panel2.Controls.Add(this.btnScrollToSelected2);
             this.splitContainer1.Panel2.Controls.Add(this.btnApplytoLeft);
@@ -299,6 +364,24 @@ namespace UniversalPatcher
             this.splitContainer1.Size = new System.Drawing.Size(1200, 560);
             this.splitContainer1.SplitterDistance = 595;
             this.splitContainer1.TabIndex = 4;
+            // 
+            // comboCopyColorsLeft
+            // 
+            this.comboCopyColorsLeft.FormattingEnabled = true;
+            this.comboCopyColorsLeft.Location = new System.Drawing.Point(425, 47);
+            this.comboCopyColorsLeft.Name = "comboCopyColorsLeft";
+            this.comboCopyColorsLeft.Size = new System.Drawing.Size(121, 21);
+            this.comboCopyColorsLeft.TabIndex = 16;
+            this.comboCopyColorsLeft.SelectedIndexChanged += new System.EventHandler(this.comboCopyColorsLeft_SelectedIndexChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(380, 50);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(39, 13);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "Colors:";
             // 
             // btnCreateTable1
             // 
@@ -545,6 +628,24 @@ namespace UniversalPatcher
             this.labelFileName1.TabIndex = 1;
             this.labelFileName1.Text = "labelFileName1";
             // 
+            // comboCopyColorsRight
+            // 
+            this.comboCopyColorsRight.FormattingEnabled = true;
+            this.comboCopyColorsRight.Location = new System.Drawing.Point(431, 48);
+            this.comboCopyColorsRight.Name = "comboCopyColorsRight";
+            this.comboCopyColorsRight.Size = new System.Drawing.Size(134, 21);
+            this.comboCopyColorsRight.TabIndex = 17;
+            this.comboCopyColorsRight.SelectedIndexChanged += new System.EventHandler(this.comboCopyColorsRight_SelectedIndexChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(386, 52);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(39, 13);
+            this.label7.TabIndex = 16;
+            this.label7.Text = "Colors:";
+            // 
             // btnCreateTable2
             // 
             this.btnCreateTable2.Location = new System.Drawing.Point(485, 22);
@@ -790,17 +891,6 @@ namespace UniversalPatcher
             this.labelFileName2.TabIndex = 2;
             this.labelFileName2.Text = "labelFileName2";
             // 
-            // chkCopyColors1
-            // 
-            this.chkCopyColors1.AutoSize = true;
-            this.chkCopyColors1.Location = new System.Drawing.Point(466, 48);
-            this.chkCopyColors1.Name = "chkCopyColors1";
-            this.chkCopyColors1.Size = new System.Drawing.Size(81, 17);
-            this.chkCopyColors1.TabIndex = 14;
-            this.chkCopyColors1.Text = "Copy colors";
-            this.chkCopyColors1.UseVisualStyleBackColor = true;
-            this.chkCopyColors1.CheckedChanged += new System.EventHandler(this.chkCopyColors1_CheckedChanged);
-            // 
             // frmTableVisDouble
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -813,8 +903,10 @@ namespace UniversalPatcher
             this.Load += new System.EventHandler(this.frmTableVis_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numBytesPerRow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numExtraBytes)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numAfterBytes)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numBytesPerRow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numFrontBytes)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -850,7 +942,7 @@ namespace UniversalPatcher
         #endregion
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioShowSegment;
-        private System.Windows.Forms.NumericUpDown numExtraBytes;
+        private System.Windows.Forms.NumericUpDown numFrontBytes;
         private System.Windows.Forms.RadioButton radioShowTable;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numBytesPerRow;
@@ -908,6 +1000,12 @@ namespace UniversalPatcher
         private System.Windows.Forms.TabPage tabInfo2;
         private System.Windows.Forms.TabPage tabSearch2;
         private System.Windows.Forms.ListBox listBox2;
-        private System.Windows.Forms.CheckBox chkCopyColors1;
+        private System.Windows.Forms.NumericUpDown numAfterBytes;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox comboCopyColorsLeft;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox comboCopyColorsRight;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.NumericUpDown numExtraBytes;
     }
 }

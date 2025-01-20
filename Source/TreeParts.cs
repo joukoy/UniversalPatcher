@@ -382,7 +382,7 @@ namespace UniversalPatcher
                     return;
 
                 Tnode tnD = new Tnode("", "Dimensions", NType.Dimensions, "dimensions.ico");
-                tnD.Isroot = true;
+                //tnD.Isroot = true;
 
                 Dictionary<int, List<TableData>> dimensiontables = new Dictionary<int, List<TableData>>();
                 for (int i=1; i<=3;i++)
@@ -451,7 +451,7 @@ namespace UniversalPatcher
                     return;
 
                 Tnode tnT = new Tnode("", "ValueTypes", NType.Valuetype, "valuetype.ico");
-                tnT.Isroot = true;
+                //tnT.Isroot = true;
 
                 List<string> usedValueTypes = new List<string>();
                 Dictionary<string, List<TableData>> valueTypeTables = new Dictionary<string, List<TableData>>();
@@ -526,7 +526,7 @@ namespace UniversalPatcher
                     tnS.Node.Name = "OffsetTool";
                     tnS.Node.Text = "Offset";
                 }
-                tnS.Isroot = true;
+                //tnS.Isroot = true;
                 List<string> usedSegments = new List<string>();
                 Dictionary<string, List<TableData>> segTables = new Dictionary<string, List<TableData>>();
                 for (int t = 0; t < filteredTableDatas.Count; t++)
@@ -635,9 +635,10 @@ namespace UniversalPatcher
             {
                 if (TableDatas == null)
                     return;
+                Debug.WriteLine("Adding categories");
 
                 Tnode tnC = new Tnode("", "Categories",NType.Category, "category.ico");
-                tnC.Isroot = true;
+                //tnC.Isroot = true;
 
                 //Main categories
                 List<TableData> filteredTableDatas = TableDatas.OrderBy(x => x.Category).ToList();
@@ -679,70 +680,66 @@ namespace UniversalPatcher
                     }
                 }
 
-                //Extra categories
-                filteredTableDatas = TableDatas.OrderBy(x => x.ExtraCategories).ToList();
-
-                Tnode tnC2;
-                if (AppSettings.TunerTreeMode)
-                {
-                    tnC2 = new Tnode("", "Categories2", NType.Category, "category3.ico");
-                }
-                else
-                {
-                    tnC2 = tnC; //Disable second root. 
-                }
-                for (int i = 0; i < filteredTableDatas.Count; i++)
-                {
-                    if (string.IsNullOrEmpty(filteredTableDatas[i].ExtraCategories))
-                    {
-                        if (!tnC2.Node.Nodes.ContainsKey(ExtraCategories))
-                            _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.ico", tnC2.Node);
-                        if (!tnC2.Node.Nodes.ContainsKey(EmptyCategories))
-                            _ = new Tnode(EmptyCategories, EmptyCategories, NType.Category, "category3.ico", tnC2.Node);
-                        Tnode subTn = (Tnode)tnC2.Node.Nodes[EmptyCategories].Tag;
-                        subTn.ExtraCategory = true;
-                        subTn.filteredTds.Add(filteredTableDatas[i]);
-                        if (AppSettings.TunerShowTableCount)
-                            subTn.Node.Text = EmptyCategories + " [" + subTn.filteredTds.Count.ToString() + "]";
-                    }
-                    else
-                    {
-                        if (!tnC2.Node.Nodes.ContainsKey(ExtraCategories))
-                            _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.ico", tnC2.Node);
-
-                        string[] subCats = filteredTableDatas[i].SubCategories().ToArray();
-                        if (!tnC2.Node.Nodes.ContainsKey(subCats[0]))
-                        {
-                            _ = new Tnode(subCats[0], subCats[0], NType.Category, "category3.ico", tnC2.Node);
-                        }
-                        Tnode subTn = (Tnode)tnC2.Node.Nodes[subCats[0]].Tag;
-                        subTn.ExtraCategory = true;
-                        subTn.filteredTds.Add(filteredTableDatas[i]);
-                        if (AppSettings.TunerShowTableCount)
-                            subTn.Node.Text = subCats[0] + " [" + subTn.filteredTds.Count.ToString() + "]";
-                        StringBuilder sb = new StringBuilder(subCats[0]);
-                        for (int c = 1; c < subCats.Length; c++)
-                        {
-                            sb.Append(" - " + subCats[c]);
-                            if (!subTn.Node.Nodes.ContainsKey(sb.ToString())) //&& !subTn.Nodes.ContainsKey(filteredTableDatas[i].ExtraCategories))
-                            {
-                                _ = new Tnode(subCats[c], sb.ToString(), NType.Category, "category3.ico", subTn.Node);
-                            }
-                            subTn = (Tnode)subTn.Node.Nodes[sb.ToString()].Tag;
-                            subTn.ExtraCategory = true;
-                            subTn.filteredTds.Add(filteredTableDatas[i]);
-                            if (AppSettings.TunerShowTableCount)
-                                subTn.Node.Text = subCats[c] + " [" + subTn.filteredTds.Count.ToString() + "]";
-                        }
-                    }
-                }
                 if (tnC.Node.Nodes.Count > 0)
                 {
                     parent.Add(tnC.Node);
                 }
-                if (AppSettings.TunerTreeMode && tnC2.Node.Nodes.Count > 0)
+
+
+                //if (AppSettings.TunerTreeMode)
                 {
-                    parent.Add(tnC2.Node);
+                    //Extra categories
+                    filteredTableDatas = TableDatas.OrderBy(x => x.ExtraCategories).ToList();
+                    Tnode tnC2 = new Tnode("", "Categories2", NType.Category, "category3.ico");
+                    for (int i = 0; i < filteredTableDatas.Count; i++)
+                    {
+                        if (string.IsNullOrEmpty(filteredTableDatas[i].ExtraCategories))
+                        {
+                            if (!tnC2.Node.Nodes.ContainsKey(ExtraCategories))
+                                _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.ico", tnC2.Node);
+                            if (!tnC2.Node.Nodes.ContainsKey(EmptyCategories))
+                                _ = new Tnode(EmptyCategories, EmptyCategories, NType.Category, "category3.ico", tnC2.Node);
+                            Tnode subTn = (Tnode)tnC2.Node.Nodes[EmptyCategories].Tag;
+                            subTn.ExtraCategory = true;
+                            subTn.filteredTds.Add(filteredTableDatas[i]);
+                            if (AppSettings.TunerShowTableCount)
+                                subTn.Node.Text = EmptyCategories + " [" + subTn.filteredTds.Count.ToString() + "]";
+                        }
+                        else
+                        {
+                            if (!tnC2.Node.Nodes.ContainsKey(ExtraCategories))
+                                _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.ico", tnC2.Node);
+
+                            string[] subCats = filteredTableDatas[i].SubCategories().ToArray();
+                            if (!tnC2.Node.Nodes.ContainsKey(subCats[0]))
+                            {
+                                _ = new Tnode(subCats[0], subCats[0], NType.Category, "category3.ico", tnC2.Node);
+                            }
+                            Tnode subTn = (Tnode)tnC2.Node.Nodes[subCats[0]].Tag;
+                            subTn.ExtraCategory = true;
+                            subTn.filteredTds.Add(filteredTableDatas[i]);
+                            if (AppSettings.TunerShowTableCount)
+                                subTn.Node.Text = subCats[0] + " [" + subTn.filteredTds.Count.ToString() + "]";
+                            StringBuilder sb = new StringBuilder(subCats[0]);
+                            for (int c = 1; c < subCats.Length; c++)
+                            {
+                                sb.Append(" - " + subCats[c]);
+                                if (!subTn.Node.Nodes.ContainsKey(sb.ToString())) //&& !subTn.Nodes.ContainsKey(filteredTableDatas[i].ExtraCategories))
+                                {
+                                    _ = new Tnode(subCats[c], sb.ToString(), NType.Category, "category3.ico", subTn.Node);
+                                }
+                                subTn = (Tnode)subTn.Node.Nodes[sb.ToString()].Tag;
+                                subTn.ExtraCategory = true;
+                                subTn.filteredTds.Add(filteredTableDatas[i]);
+                                if (AppSettings.TunerShowTableCount)
+                                    subTn.Node.Text = subCats[c] + " [" + subTn.filteredTds.Count.ToString() + "]";
+                            }
+                        }
+                    }
+                    if (tnC2.Node.Nodes.Count > 0)
+                    {
+                        parent.Add(tnC2.Node);
+                    }
                 }
             }
             catch (Exception ex)

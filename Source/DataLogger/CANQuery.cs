@@ -10,11 +10,11 @@ namespace UniversalPatcher
 {
     public class CANDevice
     {
+        public string ModuleName { get; set; }
         public int ResID { get; set; }
         public int RequestID { get; set; }
         public int DiagID { get; set; }
         public byte ModuleID { get; set; }
-        public string ModuleName { get; set; }
         public string ModuleDescription { get; set; }
 
         public override string ToString()

@@ -20,7 +20,6 @@ namespace UniversalPatcher
             AutorefreshFileinfo = true;
             MainWindowPersistence = true;
             TableEditorAutoResize = true;
-            TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
             TunerMinTableEquivalency = 100;
             TableEditorMinTableEquivalency = 100;
             keyPressWait100ms = 2;
@@ -67,6 +66,7 @@ namespace UniversalPatcher
             LoggerConsoleDisplayInterval = 200;
             LoggerTesterPresentInterval = 4000;
             LoggerCanPcmAddress = 0x07E0;
+            LoggerTestPidCompatibility = true;
             RetryWriteTimes = 3;
             RetryWriteDelay = 10;
             LoggerResetAfterMiss = 50;
@@ -267,6 +267,7 @@ namespace UniversalPatcher
         public int RetryWriteDelay { get; set; }
         public int LoggerResetAfterMiss { get; set; }
         public bool ClearFuncAddrOnDisconnect { get; set; }
+        public bool LoggerTestPidCompatibility { get; set; }
         public string LogImportTimeStampFormat { get; set; }
         public bool LogImportTimeStampElapsed { get; set; }
         public bool LoggerGraphDisableResample { get; set; }

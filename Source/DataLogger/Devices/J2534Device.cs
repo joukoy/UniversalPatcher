@@ -967,15 +967,22 @@ namespace UniversalPatcher
         {
             try
             {
+                if (!J2534Port.Functions.isDllLoaded())
+                {
+                    Debug.WriteLine("Library not loaded: DLL is null");
+                    return false;
+                }
 
                 Process proc = Process.GetCurrentProcess();
                 foreach (ProcessModule dll in proc.Modules)
                 {
                     if (dll.FileName == J2534Port.LoadedDevice.FunctionLibrary)
                     {
+                        Debug.WriteLine("Library detected: " + dll.FileName);
                         return true;
                     }
                 }
+                Debug.WriteLine("Library not loaded");
             }
             catch (Exception ex)
             {

@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using static Helpers;
+using System.Text.RegularExpressions;
 
 namespace UniversalPatcher
 {
@@ -23,38 +24,12 @@ namespace UniversalPatcher
         private List<TableData> tdList;
         private List<string> Categories;
 
-        private string ConvertMath(string math)
-        {
-            string retVal = math.ToLower();
-
-            if (retVal.StartsWith("x+"))
-                retVal = retVal.Replace("x+", "x-");
-            else if (retVal.StartsWith("x-"))
-                retVal = retVal.Replace("x-", "x+");
-            else if (retVal.StartsWith("x*"))
-                retVal = retVal.Replace("x*", "x/");
-            else if (retVal.StartsWith("x/"))
-                retVal = retVal.Replace("x/", "x*");
-            else if (retVal.Contains("*"))
-                retVal = math.Replace("*", "/");
-
-            return retVal;
-        }
-
 
         private struct TableLink
         {
             public string xdfId;
             public string variable;
             public int tdId;
-        }
-
-        private enum LabelSource
-        {
-            Manual,
-            Internal,
-            Linked,
-            LinkedScale
         }
 
         private enum UnitType
@@ -181,6 +156,13 @@ namespace UniversalPatcher
             return td;
         }
 
+        public class XdfPlugin
+        {
+            public string Platform { get; set; }
+            public string Filename { get; set; }
+            public string pluginmoduleid { get; set; }
+            public string Url { get; set; }
+        }
         private class XdfAxis
         {
             public XdfAxis()
@@ -212,12 +194,6 @@ namespace UniversalPatcher
             {
                 try
                 {
-                    foreach (XElement lbl in axle.Elements("LABEL"))
-                    {
-                        Headers += lbl.Attribute("value").Value + ",";
-                    }
-                    if (Headers != null)
-                        Headers = Headers.Trim(',');
 
                     if (axle.Element("units") != null && axle.Element("units").Value.Length > 0)
                     {
@@ -232,20 +208,37 @@ namespace UniversalPatcher
                     if (axle.Element("indexcount") != null)
                         IndexCount = Convert.ToUInt16(axle.Element("indexcount").Value);
 
+                    foreach (XElement lbl in axle.Elements("LABEL"))
+                    {
+                        Headers += lbl.Attribute("value").Value + ",";
+                        //if (axle.Attribute("id").Value != "z" && !string.IsNullOrEmpty(Units))
+                          //  Headers += " " + Units;
+                        //Headers += ",";
+                    }
+                    if (Headers != null)
+                        Headers = Headers.Trim(',');
+
                     if (axle.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                         Addr = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                     string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
                     elementSize = (byte)(Convert.ToInt32(tmp) / 8);
-                    Math = axle.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.");
-                    Math = Math.Replace("/.", "/0.").ToLower();
-                    Math = Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
+                    if (axle.Element("MATH") == null || axle.Element("MATH").Attribute("equation") == null)
+                    {
+                        Debug.WriteLine("Math missing!");
+                    }
+                    else
+                    {
+                        Math = axle.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.");
+                        Math = Math.Replace("/.", "/0.").ToLower();
+                        Math = Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
+                    }
                     if (axle.Element("decimalpl") != null)
                         Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
                     if (axle.Element("outputtype") != null)
                         OutputType = (OutDataType)Convert.ToUInt16(axle.Element("outputtype").Value);
                     if (axle.Element("EMBEDDEDDATA") != null && axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
                     {
-                        byte flags = Convert.ToByte(axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16);
+                        ushort flags = Convert.ToUInt16(axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16);
                         Signed = Convert.ToBoolean(flags & 1);
                         if ((flags & 0x10000) == 0x10000)
                             Floating = true;
@@ -256,9 +249,9 @@ namespace UniversalPatcher
                             ByteOrder = Byte_Order.LSB;
                         }
                         if ((flags & 4) == 4)
-                            RowMajor = false;
-                        else
                             RowMajor = true;
+                        else
+                            RowMajor = false;
                     }
                     InputType = ConvertToDataType(elementSize, Signed, Floating);
                     if (axle.Element("min") != null)
@@ -387,7 +380,10 @@ namespace UniversalPatcher
                     {
                         string catTxt = cat.Attribute("name").Value;
                         int catId = Convert.ToInt32(cat.Attribute("index").Value.Replace("0x",""),16);
-                        categories.Add(catId,catTxt);
+                        if (!categories.ContainsKey(catId))
+                        {
+                            categories.Add(catId, catTxt);
+                        }
                     }
                 }
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFTABLE"))
@@ -419,7 +415,6 @@ namespace UniversalPatcher
                         if (axle.Attribute("id").Value == "x")
                         {
                             xdf.Columns = ax.IndexCount;
-                            xdf.Units = ax.Units;
                             if (ax.LinkId != null)
                             {
                                 xdf.ColumnHeaders = "TunerPro: " + ax.LinkId;
@@ -457,6 +452,7 @@ namespace UniversalPatcher
                         }
                         if (axle.Attribute("id").Value == "z")
                         {
+                            xdf.Units = ax.Units;
                             xdf.Address = ax.Addr;
                             xdf.Math = ax.Math;
                             xdf.Decimals = ax.Decimals;
@@ -605,7 +601,7 @@ namespace UniversalPatcher
                     xdf.Origin = "xdf";
                     xdf.Min = double.MinValue;
                     xdf.Max = double.MaxValue;
-                    if (element.Attribute("uniqueid") != null)
+                    if (element.Attribute("uniqueid") != null && !TpIdGuid.ContainsKey(element.Attribute("uniqueid").Value))
                     {
                         TpIdGuid.Add(element.Attribute("uniqueid").Value, xdf.guid);
                     }
@@ -761,8 +757,15 @@ namespace UniversalPatcher
                 Logger("Importing file " + fname + "...",false);
 
                 //doc = new XDocument(new XComment(" Written " + DateTime.Now.ToString("G", DateTimeFormatInfo.InvariantInfo)), XElement.Load(fname));
-                doc = new XDocument(XElement.Load(fname));
-                ConvertXdf(doc);
+                try
+                {
+                    doc = new XDocument(XElement.Load(fname));
+                    ConvertXdf(doc);
+                }
+                catch
+                {
+                    LoggerBold("Password protected, corrupted, or unsupported file.");
+                }
                 Logger("Done" + Environment.NewLine);
             }
             catch (Exception ex)
@@ -786,6 +789,18 @@ namespace UniversalPatcher
             {
                 string idTxt = tableNameTPid[conversionTable];
                 retVal = "      <embedinfo type=\"3\" linkobjid=\"0x" + idTxt + "\" />";                
+            }
+            return retVal;
+        }
+        private string LinkConversionHeader2(string HdrTxt, Dictionary<string, string> tableNameTPid)
+        {
+            //Examples: Table: haderTable
+            //Guid: headerTable
+            string retVal = "";
+            string conversionTable = HdrTxt.Substring(HdrTxt.IndexOf(':') + 1).Trim(); //Remove: table: or guid:
+            if (tableNameTPid.ContainsKey(conversionTable))
+            {
+                retVal = "0x" + tableNameTPid[conversionTable];
             }
             return retVal;
         }
@@ -826,6 +841,37 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        private string LinkConversionRaw2(string mathStr, out XElement xdfLink)
+        {
+            // Example: RAW:0x321:SWORD:MSB
+            xdfLink = new XElement("VAR");
+            string retVal = mathStr;
+            int start = mathStr.IndexOf("raw:");
+            int mid = mathStr.IndexOf(" ", start + 3);
+            string rawStr = mathStr.Substring(start, mid - start + 1);
+            string[] rawParts = rawStr.Split(':');
+            if (rawParts.Length < 3)
+            {
+                throw new Exception("Unknown RAW definition in Math: " + mathStr);
+            }
+            InDataType idt = (InDataType)Enum.Parse(typeof(InDataType), rawParts[2].ToUpper());
+            int bits = GetBits(idt);
+            string Address = rawParts[1];
+            byte flags = 00;
+            if (rawParts[2].Substring(0, 1) != "u")  //uint,ushort,ubyte
+                flags = 1;
+            if (rawParts[3] == "msb")
+                flags =(byte)(flags | 4);
+            xdfLink.SetAttributeValue("id", "r");
+            xdfLink.SetAttributeValue("id", "r");
+            xdfLink.SetAttributeValue("type", "address");
+            xdfLink.SetAttributeValue("address", rawParts[1]);
+            xdfLink.SetAttributeValue("sizeinbits", bits.ToString());
+            xdfLink.SetAttributeValue("flags", "0x" + flags.ToString("X"));
+
+            retVal = mathStr.Replace(rawStr, "r");
+            return retVal;
+        }
         private string LinkConversionRaw(string mathStr, out string linkTxt)
         {
             // Example: RAW:0x321:SWORD:MSB
@@ -846,9 +892,9 @@ namespace UniversalPatcher
             if (rawParts[2].Substring(0, 1) != "u")  //uint,ushort,ubyte
                 flags = 1;
             if (rawParts[3] == "msb")
-                flags =(byte)(flags | 4);
+                flags = (byte)(flags | 4);
 
-            linkTxt = Environment.NewLine + "        <VAR id=\"r\" type=\"address\" address=\"" + rawParts[1] 
+            linkTxt = Environment.NewLine + "        <VAR id=\"r\" type=\"address\" address=\"" + rawParts[1]
                 + "\" sizeinbits=\"" + bits.ToString() + "\" flags=\"0x" + flags.ToString("X") + "\" />";
 
             retVal = mathStr.Replace(rawStr, "r");
@@ -881,6 +927,36 @@ namespace UniversalPatcher
                 cats = "    <CATEGORYMEM index=\"0\" category=\"" + s.ToString() + "\" />" + Environment.NewLine;
             }
             return cats;
+        }
+        private XElement CreateCategoryElement(TableData td, int lastCategory)
+        {
+            int s = PCM.GetSegmentNumber(td.addrInt);
+            if (s == -1) s = lastCategory;
+            XElement xdfCat = new XElement("CATEGORYMEM");
+            List<string> tdCats = new List<string>();
+            tdCats.Add(td.Category);
+            tdCats.AddRange(td.SubCategories());
+            bool found = false;
+            for (int c = 0; c < tdCats.Count; c++)
+            {
+                string cat = tdCats[c];
+                for (int x = 1; x < Categories.Count; x++)
+                {
+                    if (Categories[x] == cat)
+                    {
+                        found = true;
+                        xdfCat.SetAttributeValue("index", c.ToString());
+                        xdfCat.SetAttributeValue("category", x.ToString());
+                        break;
+                    }
+                }
+            }
+            if (!found)
+            {
+                xdfCat.SetAttributeValue("index", "0");
+                xdfCat.SetAttributeValue("category", s.ToString());
+            }
+            return xdfCat;
         }
 
         public string ExportXdf(PcmFile basefile, List<TableData> tdList1)
@@ -946,7 +1022,7 @@ namespace UniversalPatcher
 
                 //Add OS ID:
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
-                if (PCM.OS != null && PCM.OS.Length > 0)
+                if (PCM.OS != null && PCM.OSSegment < PCM.segmentinfos.Length)
                 {
                     templateTxt = ReadTextFile(fName);
                     tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLEID", uniqId.ToString("X")));
@@ -965,6 +1041,7 @@ namespace UniversalPatcher
                     tableText.Replace("REPLACE-CATEGORIES", cat);
                     xdfText.Append(tableText);
                 }
+                
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
                 templateTxt = ReadTextFile(fName);
                 for (int t = 0; t < tdList.Count; t++)
@@ -990,11 +1067,15 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-LINKMATH", linkTxt);
                         tableText.Replace("REPLACE-MATH", mathTxt);
 
-                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset + td.ExtraOffset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEADDRESS", td.StartAddress().ToString("X"));
                         string descr = td.TableDescription;
                         if (td.Values.ToLower().StartsWith("enum:"))
                             descr += ", " + td.Values;
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        if (descr.Length > 900)
+                        {
+                            descr = descr.Substring(0, 900);
+                        }
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",","."));
@@ -1005,8 +1086,7 @@ namespace UniversalPatcher
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
                     }
                 }
-
-
+                
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdftable.txt");
                 templateTxt =ReadTextFile(fName);
                 for (int t = 0; t < tdList.Count; t++)
@@ -1021,14 +1101,6 @@ namespace UniversalPatcher
                         tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
                         string cat = CreateCategoryRows(td, lastCategory);
                         tableText.Replace("REPLACE-CATEGORIES", cat);
-                        /*if (td.Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
-                        {
-                            string[] hParts = td.Values.Substring(6).Split(',');
-                            for (int x = 0; x < hParts.Length; x++)
-                            {
-                                descr += Environment.NewLine + hParts[x];
-                            }
-                        }*/
 
                         string linkTxt = "";
                         string mathTxt = td.Math.ToLower();
@@ -1050,11 +1122,15 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-DECIMALS", td.Decimals.ToString());
                         tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)td.OutputType).ToString());
-                        tableText.Replace("REPLACE-TABLEADDRESS",((uint)(td.addrInt + td.Offset + td.ExtraOffset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEADDRESS",td.StartAddress().ToString("X"));
                         string descr = td.TableDescription;
                         if (td.Values.ToLower().StartsWith("enum:"))
                             descr += ", " + td.Values;
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        if (descr.Length > 900)
+                        {
+                            descr = descr.Substring(0, 900);
+                        }
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",", "."));
                         tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
@@ -1139,8 +1215,8 @@ namespace UniversalPatcher
                         xdfText.Append(tableText.ToString());       //Add generated table to end of xdfText
                     }
                 }
-
-
+                
+                
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfFlag.txt");
                 templateTxt = ReadTextFile(fName);
                 for (int t = 0; t < tdList.Count; t++)
@@ -1156,13 +1232,14 @@ namespace UniversalPatcher
                         string cat = CreateCategoryRows(td, lastCategory);
                         tableText.Replace("REPLACE-CATEGORIES", cat);
                         tableText.Replace("REPLACE-TABLEID", tableGuidTPid[td.guid.ToString()]);
-                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset + td.ExtraOffset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEADDRESS", td.StartAddress().ToString("X"));
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                         tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-MASK", td.BitMask);
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
                     }
                 }
+                
 
                 xdfText.Append("</XDFFORMAT>" + Environment.NewLine);
                 string defFname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions", basefile.OS + "-generated.xdf");
@@ -1185,6 +1262,626 @@ namespace UniversalPatcher
             }
             return retVal;
         }
-    
+
+ 
+        private void AddChecksumElements(ref XElement xdfFormat, PcmFile PCM)
+        {
+            try
+            {
+                List<XdfPlugin> xdfplugins;
+                XdfPlugin xdfPlugin = null;
+                string pluginXml = Path.Combine(Application.StartupPath, "XML", "XdfPlugins.xml");
+                if (File.Exists(pluginXml))
+                {
+                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<XdfPlugin>));
+                    System.IO.StreamReader file = new System.IO.StreamReader(pluginXml);
+                    xdfplugins = (List<XdfPlugin>)reader.Deserialize(file);
+                    file.Close();
+                    xdfPlugin = xdfplugins.Where(X => X.Platform.ToLower() == PCM.configFile.ToLower()).FirstOrDefault();
+                }
+                if (xdfPlugin != null)
+                {
+                    XElement xdfCS = new XElement("XDFCHECKSUM");
+                    xdfCS.SetAttributeValue("uniqueid", "0x99");
+                    xdfCS.SetElementValue("title", PCM.OS + " checksum");
+                    XElement xdfCsRegion = new XElement("REGION");
+                    xdfCsRegion.SetElementValue("pluginmoduleid", xdfPlugin.pluginmoduleid);
+                    xdfCsRegion.SetElementValue("datastart", "0x0");
+                    xdfCsRegion.SetElementValue("dataend", "0x" + PCM.buf.Length.ToString("X"));
+                    xdfCsRegion.SetElementValue("storeaddress", "0x0");
+                    xdfCsRegion.SetElementValue("calculationmethod", "0x0");
+                    xdfCS.Add(xdfCsRegion);
+                    xdfFormat.Add(xdfCS);
+                    string pluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Plugins", xdfPlugin.Filename);
+                    if (!File.Exists(pluginPath))
+                    {
+                        //System.Net.WebClient wc = new System.Net.WebClient();
+                        Logger("XDF requires Checksum plugin. Download from: ");
+                        Logger(xdfPlugin.Url);
+                        Logger(" => " + pluginPath);
+                        //wc.DownloadFile(xdfPlugin.Url, path);
+                    }
+                }
+                else if (PCM.Segments.Count == 0)
+                {
+                    LoggerBold("Add checksum calculation manually!!");
+                }
+                else
+                {
+                    bool incompatibleCS = false;
+                    foreach (SegmentConfig sc in PCM.Segments)
+                    {
+                        if (sc.CS1Blocks.Contains(",") || sc.CS2Blocks.Contains(",") ||
+                            (sc.CS1Method != (ushort)CSMethod.Bytesum && sc.CS1Method != (ushort)CSMethod.Wordsum && sc.CS1Method != (ushort)CSMethod.Dwordsum))
+                        {
+                            incompatibleCS = true;
+                            break;
+                        }
+                    }
+                    if (incompatibleCS)
+                    {
+                        LoggerBold("Add checksum calculation manually!!");
+                    }
+                    else
+                    {
+                        for (int seg = 0; seg < PCM.Segments.Count; seg++)
+                        {
+                            SegmentConfig sc = PCM.Segments[seg];
+                            if (sc.CS1Method == (ushort)CSMethod.Bytesum || sc.CS1Method == (ushort)CSMethod.Wordsum || sc.CS1Method == (ushort)CSMethod.Dwordsum)
+                            {
+                                SegmentInfo si = PCM.segmentinfos[seg];
+                                SegmentAddressData sa = PCM.segmentAddressDatas[seg];
+                                XElement xdfCS = new XElement("XDFCHECKSUM");
+                                xdfCS.SetAttributeValue("uniqueid", seg.ToString());
+                                xdfCS.SetElementValue("title", si.Name + " checksum 1");
+                                XElement xdfCsRegion = new XElement("REGION");
+                                xdfCsRegion.SetElementValue("datastart", "0x" + sa.CS1Blocks[0].Start.ToString("X"));
+                                xdfCsRegion.SetElementValue("dataend", "0x" + sa.CS1Blocks[0].End.ToString("X"));
+                                if (sc.CS1Method == (ushort)CSMethod.Wordsum)
+                                    xdfCsRegion.SetElementValue("datasizebits", "0x10");
+                                if (sc.CS1Method == (ushort)CSMethod.Dwordsum)
+                                    xdfCsRegion.SetElementValue("datasizebits", "0x20");
+                                xdfCsRegion.SetElementValue("storesizebits", "0x" + (sa.CS1Address.Bytes * 8).ToString("X"));
+                                xdfCsRegion.SetElementValue("storeaddress", "0x" + sa.CS1Address.Address.ToString("X"));
+                                if (sc.CS1Complement == 0)
+                                    xdfCsRegion.SetElementValue("calculationmethod", "0x0");
+                                else if (sc.CS1Complement == 1)
+                                    xdfCsRegion.SetElementValue("calculationmethod", "0x2");
+                                else if (sc.CS1Complement == 2)
+                                    xdfCsRegion.SetElementValue("calculationmethod", "0x1");
+                                xdfCS.Add(xdfCsRegion);
+                                xdfFormat.Add(xdfCS);
+                            }
+                            if (sc.CS2Method == (ushort)CSMethod.Bytesum || sc.CS2Method == (ushort)CSMethod.Wordsum || sc.CS2Method == (ushort)CSMethod.Dwordsum)
+                            {
+                                SegmentInfo si = PCM.segmentinfos[seg];
+                                SegmentAddressData sa = PCM.segmentAddressDatas[seg];
+                                XElement xdfCS = new XElement("XDFCHECKSUM");
+                                xdfCS.SetAttributeValue("uniqueid", seg.ToString());
+                                xdfCS.SetElementValue("title", si.Name + " checksum 2");
+                                XElement xdfCsRegion = new XElement("REGION");
+                                xdfCsRegion.SetElementValue("datastart", "0x" + sa.CS2Blocks[0].Start.ToString("X"));
+                                xdfCsRegion.SetElementValue("dataend", "0x" + sa.CS2Blocks[0].End.ToString("X"));
+                                if (sc.CS2Method == (ushort)CSMethod.Wordsum)
+                                    xdfCsRegion.SetElementValue("datasizebits", "0x10");
+                                if (sc.CS2Method == (ushort)CSMethod.Dwordsum)
+                                    xdfCsRegion.SetElementValue("datasizebits", "0x20");
+                                xdfCsRegion.SetElementValue("storesizebits", "0x" + (sa.CS2Address.Bytes * 8).ToString("X"));
+                                xdfCsRegion.SetElementValue("storeaddress", "0x" + sa.CS2Address.Address.ToString("X"));
+                                if (sc.CS2Complement == 0)
+                                    xdfCsRegion.SetElementValue("calculationmethod", "0x0");
+                                else if (sc.CS2Complement == 1)
+                                    xdfCsRegion.SetElementValue("calculationmethod", "0x2");
+                                else if (sc.CS2Complement == 2)
+                                    xdfCsRegion.SetElementValue("calculationmethod", "0x1");
+                                xdfCS.Add(xdfCsRegion);
+                                xdfFormat.Add(xdfCS);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("XDF, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private int GetXdfOutputType(TableData td)
+        {
+            int retVal = 1;
+            switch (td.OutputType)
+            {
+                case OutDataType.Float:
+                    retVal = 1;
+                    break;
+                case OutDataType.Bitmap:
+                    retVal = 2;
+                    break;
+                case OutDataType.Int:
+                    retVal = 2;
+                    break;
+                case OutDataType.Flag:
+                    retVal = 2;
+                    break;
+                case OutDataType.Hex:
+                    retVal = 3;
+                    break;
+                case OutDataType.Text:
+                    retVal = 4;
+                    break;
+                case OutDataType.Filename:
+                    retVal = 4;
+                    break;
+            }
+            return retVal;
+        }
+        public void ExportXdf2(PcmFile basefile, List<TableData> tdList1)
+        {
+            PCM = basefile;
+            tdList = tdList1;
+            int lastCategory = 0;
+            int dtcCategory = 0;
+            int uniqId = 0x100;
+            //List<int> uniqIds = new List<int>();
+            //List<string> tableNames = new List<string>();   //Store constant id/name for later use
+
+            Dictionary<string, int> tableNameNr = new Dictionary<string, int>();
+            Dictionary<string, string> tableNameTPid = new Dictionary<string, string>();
+            Dictionary<string, string> tableGuidTPid = new Dictionary<string, string>();
+
+            try
+            {
+
+                Categories = new List<string>();
+                Categories.AddRange(PCM.tableCategories);
+                //Reserve TunerPro ID for all tables and add to dictionaries:
+                for (int nr = 0; nr < tdList.Count; nr++)
+                {
+                    TableData td1 = tdList[nr];
+                    if (!tableNameNr.ContainsKey(td1.TableName))
+                    {
+                        tableNameNr.Add(td1.TableName, nr);
+                        tableNameTPid.Add(td1.TableName, uniqId.ToString("X"));
+                    }
+                    tableGuidTPid.Add(td1.guid.ToString(), uniqId.ToString("X"));
+                    uniqId++;
+                }
+
+                XElement xdfFormat = new XElement("XDFFORMAT");
+                xdfFormat.SetAttributeValue("Version", "1.60");
+                XElement xdfHdr = new XElement("XDFHEADER");
+                xdfHdr.SetElementValue("flags", "0x1");
+                xdfHdr.SetElementValue("description", "");
+                if (string.IsNullOrEmpty(PCM.OS))
+                    xdfHdr.SetElementValue("deftitle", "Universalpatcher exported XDF");
+                else
+                    xdfHdr.SetElementValue("deftitle", PCM.OS);
+                XElement xdfBaseOffset = new XElement("BASEOFFSET");
+                xdfBaseOffset.SetAttributeValue("offset", "0");
+                xdfBaseOffset.SetAttributeValue("subtract", "0");
+                xdfHdr.Add(xdfBaseOffset);
+                XElement xdfDefaults = new XElement("DEFAULTS");
+                xdfDefaults.SetAttributeValue("datasizeinbits", "8");
+                xdfDefaults.SetAttributeValue("sigdigits", "2");
+                xdfDefaults.SetAttributeValue("outputtype", "1");
+                xdfDefaults.SetAttributeValue("signed", "0");
+                if (PCM.platformConfig.MSB)
+                    xdfDefaults.SetAttributeValue("lsbfirst", "0");
+                else
+                    xdfDefaults.SetAttributeValue("lsbfirst", "1");
+                xdfDefaults.SetAttributeValue("float", "0");
+                xdfHdr.Add(xdfDefaults);
+                XElement xdfRegion = new XElement("REGION");
+                xdfRegion.SetAttributeValue("type", "0xFFFFFFFF");
+                xdfRegion.SetAttributeValue("startaddress", "0x0");
+                xdfRegion.SetAttributeValue("size", basefile.fsize.ToString("X"));
+                xdfRegion.SetAttributeValue("regionflags", "0x0");
+                xdfRegion.SetAttributeValue("name", "Binary File");
+                xdfRegion.SetAttributeValue("desc", "This region describes the bin file edited by this XDF");
+                xdfHdr.Add(xdfRegion);
+
+                List<string> addedCategories = new List<string>();
+                for (int s = 1; s < Categories.Count; s++)
+                {
+                    string catName = Categories[s].Replace("&", "+");
+                    if (!addedCategories.Contains(catName))
+                    {
+                        addedCategories.Add(catName);
+                        XElement xdfCat = new XElement("CATEGORY");
+                        xdfCat.SetAttributeValue("index", "0x" + (s - 1).ToString("X"));
+                        xdfCat.SetAttributeValue("name", catName);
+                        xdfHdr.Add(xdfCat);
+                        lastCategory = s;
+                    }
+                }
+                if (!addedCategories.Contains("DTC"))
+                {
+                    dtcCategory = lastCategory + 1;
+                    XElement xdfDtcCat = new XElement("CATEGORY");
+                    xdfDtcCat.SetAttributeValue("index", "0x" + (dtcCategory - 1).ToString("X"));
+                    xdfDtcCat.SetAttributeValue("name", "DTC");
+                    xdfHdr.Add(xdfDtcCat);
+                }
+                if (!addedCategories.Contains("Other"))
+                {
+                    lastCategory = dtcCategory + 1;
+                    XElement xdfOtherCat = new XElement("CATEGORY");
+                    xdfOtherCat.SetAttributeValue("index", "0x" + (dtcCategory - 1).ToString("X"));
+                    xdfOtherCat.SetAttributeValue("name", "Other");
+                    xdfHdr.Add(xdfOtherCat);
+                }
+                xdfFormat.Add(xdfHdr);
+
+                AddChecksumElements(ref xdfFormat, basefile);
+
+                //Add OS ID:
+                if (PCM.OS != null && basefile.OSSegment < basefile.Segments.Count)
+                {
+                    XElement xdfOsId = new XElement("XDFCONSTANT");
+                    xdfOsId.SetAttributeValue("uniqueid", uniqId.ToString("X"));
+                    xdfOsId.SetAttributeValue("flags", "0xC");
+                    uniqId++;
+                    xdfOsId.SetElementValue("title", "OS ID - Dont modify, must match XDF!");
+                    xdfOsId.SetElementValue("description", "DONT MODIFY");
+                    XElement xdfOsidCat = new XElement("CATEGORYMEM");
+                    xdfOsidCat.SetAttributeValue("index", "0");
+                    xdfOsidCat.SetAttributeValue("category", (basefile.OSSegment + 1).ToString("X"));
+                    xdfOsId.Add(xdfOsidCat);
+                    XElement xdfOsIdEmbed = new XElement("EMBEDDEDDATA");
+                    xdfOsIdEmbed.SetAttributeValue("mmedaddress", "0x" + basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
+                    xdfOsIdEmbed.SetAttributeValue("mmedelementsizebits", (basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Bytes * 8).ToString());
+                    xdfOsIdEmbed.SetAttributeValue("mmedmajorstridebits", "0");
+                    xdfOsIdEmbed.SetAttributeValue("mmedminorstridebits", "0");
+                    xdfOsId.Add(xdfOsIdEmbed);
+                    xdfOsId.SetElementValue("units", "");
+                    //xdfOsId.SetElementValue("decimalpl", "");
+                    xdfOsId.SetElementValue("outputtype", "2");
+                    xdfOsId.SetElementValue("rangehigh", basefile.OS);
+                    xdfOsId.SetElementValue("rangelow", basefile.OS);
+                    xdfOsId.SetElementValue("datatype", "2");
+                    xdfOsId.SetElementValue("unittype", "2");
+                    XElement xdfOsidDalink = new XElement("DALINK");
+                    xdfOsidDalink.SetAttributeValue("index","0");
+                    xdfOsId.Add(xdfOsidDalink);
+                    XElement xdfOsidMath = new XElement("MATH");
+                    xdfOsidMath.SetAttributeValue("equation","X");
+                    XElement xdfOsidMathVar = new XElement("VAR");
+                    xdfOsidMathVar.SetAttributeValue("id", "X");
+                    xdfOsidMath.Add(xdfOsidMathVar);
+                    xdfOsId.Add(xdfOsidMath);
+                    xdfFormat.Add(xdfOsId);
+                }
+
+                for (int t = 0; t < tdList.Count; t++)
+                {
+                    //Add all constants
+                    TableData td = tdList[t];
+                    if (td.Columns < 2 && td.Rows < 2 && td.OutputType != OutDataType.Flag)
+                    {
+                        string tableName = td.TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); ;
+                        if (td.TableName == null || td.TableName.Length == 0)
+                            tableName = td.Address;
+
+                        XElement xdfConst = new XElement("XDFCONSTANT");
+                        xdfConst.SetAttributeValue("uniqueid", tableGuidTPid[td.guid.ToString()]);
+                        xdfConst.SetAttributeValue("flags", "0xC");
+                        xdfConst.SetElementValue("title", tableName);
+                        string descr = td.TableDescription;
+                        if (td.Values.ToLower().StartsWith("enum:") && !descr.ToLower().Contains("enum:")) 
+                            descr += ", " + td.Values;
+                        descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        if (descr.Length > 900)
+                        {
+                            descr = descr.Substring(0, 900);
+                        }
+                        xdfConst.SetElementValue("description", descr);
+                        XElement xdfConstCat = CreateCategoryElement(td, lastCategory);
+                        xdfConst.Add(xdfConstCat);
+                        XElement xdfConstEmbed = new XElement("EMBEDDEDDATA");
+                        xdfConstEmbed.SetAttributeValue("mmedaddress", "0x" + td.StartAddress().ToString("X"));
+                        xdfConstEmbed.SetAttributeValue("mmedelementsizebits", GetBits(td.DataType).ToString());
+                        xdfConstEmbed.SetAttributeValue("mmedmajorstridebits", "0");
+                        xdfConstEmbed.SetAttributeValue("mmedminorstridebits", "0");
+                        xdfConst.Add(xdfConstEmbed);
+                        xdfConst.SetElementValue("units", td.Units);
+                        xdfConst.SetElementValue("decimalpl", td.Decimals.ToString());
+                        xdfConst.SetElementValue("outputtype", GetXdfOutputType(td));
+                        xdfConst.SetElementValue("rangehigh", td.Max.ToString().Replace(",", "."));
+                        xdfConst.SetElementValue("rangelow", td.Min.ToString().Replace(",", "."));
+                        xdfConst.SetElementValue("datatype", "2");
+                        xdfConst.SetElementValue("unittype", "2");
+                        XElement xdfConstDalink = new XElement("DALINK");
+                        xdfConstDalink.SetAttributeValue("index", "0");
+                        XElement xdfConstMath = new XElement("MATH");
+                        XElement xdfConstMathVar = new XElement("VAR");
+                        xdfConst.Add(xdfConstDalink);
+                        string mathTxt = td.Math.ToLower();
+                        if (mathTxt.Contains("raw:"))
+                        {
+                            mathTxt = LinkConversionRaw2(mathTxt, out XElement xdfConstLink);
+                            xdfConstMathVar.Add(xdfConstLink);
+                        }
+                        xdfConstMath.SetAttributeValue("equation", mathTxt);
+                        xdfConstMathVar.SetAttributeValue("id", "X");
+                        xdfConstMath.Add(xdfConstMathVar);
+                        xdfConst.Add(xdfConstMath);
+                        xdfFormat.Add(xdfConst);
+                    }
+                }
+
+                for (int t = 0; t < tdList.Count; t++)
+                {
+                    //Add all tables
+                    TableData td = tdList[t];
+                    if (td.Dimensions() > 1)
+                    {
+                        string tableName = td.TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); ;
+                        if (td.TableName == null || td.TableName.Length == 0)
+                            tableName = td.Address;
+
+                        XElement xdfTable = new XElement("XDFTABLE");
+                        xdfTable.SetAttributeValue("uniqueid", tableGuidTPid[td.guid.ToString()]);
+                        xdfTable.SetAttributeValue("flags", "0x30");
+                        xdfTable.SetElementValue("title", tableName);
+                        string descr = td.TableDescription;
+                        if (td.Values.ToLower().StartsWith("enum:") && !descr.ToLower().Contains("enum:"))
+                        {
+                            descr += ", " + td.Values;
+                        }
+                        descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        if (descr.Length > 900)
+                        {
+                            descr = descr.Substring(0, 900);
+                        }
+                        xdfTable.SetElementValue("description", descr);
+                        XElement xdfTableCat = CreateCategoryElement(td, lastCategory);
+                        xdfTable.Add(xdfTableCat);
+                        //Add X axis
+                        {
+                            XElement xdfXaxis = new XElement("XDFAXIS");
+                            xdfXaxis.SetAttributeValue("id", "x");
+                            xdfXaxis.SetAttributeValue("unigueid", "0x0");
+                            XElement xdfXAxisEmbed = new XElement("EMBEDDEDDATA");
+                            xdfXAxisEmbed.SetAttributeValue("mmedelementsizebits", GetBits(td.DataType).ToString());
+                            xdfXAxisEmbed.SetAttributeValue("mmedmajorstridebits", "-32");
+                            xdfXAxisEmbed.SetAttributeValue("mmedminorstridebits", "0");
+                            xdfXaxis.Add(xdfXAxisEmbed);
+                            xdfXaxis.SetElementValue("indexcount", td.Columns.ToString());
+                            xdfXaxis.SetElementValue("units", td.Units);
+                            xdfXaxis.SetElementValue("outputtype", "4");
+                            xdfXaxis.SetElementValue("datatype", "2");
+                            xdfXaxis.SetElementValue("unittype", "0");
+
+                            if (string.IsNullOrEmpty(td.ColumnHeaders))
+                            {
+                                for (int d = 0; d < td.Columns; d++)
+                                {
+                                    XElement xdfXcol = new XElement("LABEL");
+                                    xdfXcol.SetAttributeValue("index", d.ToString());
+                                    xdfXcol.SetAttributeValue("value", d.ToString());
+                                    xdfXaxis.Add(xdfXcol);
+                                }
+                            }
+                            else if (td.ColumnHeaders.ToLower().StartsWith("table:"))
+                            {
+                                string linkXTxt = LinkConversionHeader2(td.RowHeaders, tableNameTPid);
+                                XElement xdfXembed = new XElement("embedinfo");
+                                xdfXembed.SetAttributeValue("type", "3");
+                                xdfXembed.SetAttributeValue("linkobjid", linkXTxt);
+                                xdfXaxis.Add(xdfXembed);
+                            }
+                            else if (td.ColumnHeaders.ToLower().StartsWith("guid:"))
+                            {
+                                string linkXTxt = LinkConversionHeader2(td.RowHeaders, tableGuidTPid);
+                                XElement xdfXembed = new XElement("embedinfo");
+                                xdfXembed.SetAttributeValue("type", "3");
+                                xdfXembed.SetAttributeValue("linkobjid", linkXTxt);
+                                xdfXaxis.Add(xdfXembed);
+                            }
+                            else
+                            {
+                                string[] hParts = td.ColumnHeaders.Split(',');
+                                for (int row = 0; row < hParts.Length; row++)
+                                {
+                                    XElement xdfXLabel = new XElement("LABEL");
+                                    xdfXLabel.SetAttributeValue("index", row.ToString());
+                                    xdfXLabel.SetAttributeValue("value", hParts[row]);
+                                    xdfXaxis.Add(xdfXLabel);
+                                }
+                            }
+
+                            XElement xdfTableDalink = new XElement("DALINK");
+                            xdfTableDalink.SetAttributeValue("index", "0");
+                            xdfXaxis.Add(xdfTableDalink);
+                            XElement xdfXMath = new XElement("MATH");
+                            xdfXMath.SetAttributeValue("equation", "X");
+                            XElement xdfXMathVar = new XElement("VAR");
+                            xdfXMathVar.SetAttributeValue("id", "X");
+                            xdfXMath.Add(xdfXMathVar);
+                            xdfXaxis.Add(xdfXMath);
+                            xdfTable.Add(xdfXaxis);
+                        }
+                        //Add Y axis
+                        {
+                            XElement xdfYaxis = new XElement("XDFAXIS");
+                            xdfYaxis.SetAttributeValue("id", "y");
+                            xdfYaxis.SetAttributeValue("unigueid", "0x1");
+                            XElement xdfYaxisEmbed = new XElement("EMBEDDEDDATA");
+                            xdfYaxisEmbed.SetAttributeValue("mmedelementsizebits", GetBits(td.DataType).ToString());
+                            xdfYaxisEmbed.SetAttributeValue("mmedmajorstridebits", "-32");
+                            xdfYaxisEmbed.SetAttributeValue("mmedminorstridebits", "0");
+                            xdfYaxis.Add(xdfYaxisEmbed);
+                            xdfYaxis.SetElementValue("indexcount", td.Rows.ToString());
+                            xdfYaxis.SetElementValue("outputtype", "4");
+                            xdfYaxis.SetElementValue("datatype", "2");
+                            xdfYaxis.SetElementValue("unittype", "2");
+                            if (td.RowHeaders == "")
+                            {
+                                for (int d = 0; d < td.Rows; d++)
+                                {
+                                    XElement xdfYrow = new XElement("LABEL");
+                                    xdfYrow.SetAttributeValue("index", d.ToString());
+                                    xdfYrow.SetAttributeValue("value", d.ToString());
+                                    xdfYaxis.Add(xdfYrow);
+                                }
+                            }
+                            else if (td.RowHeaders.ToLower().StartsWith("table:"))
+                            {
+                                string linkYTxt = LinkConversionHeader2(td.RowHeaders, tableNameTPid);
+                                XElement xdfYembed = new XElement("embedinfo");
+                                xdfYembed.SetAttributeValue("type", "3");
+                                xdfYembed.SetAttributeValue("linkobjid", linkYTxt);
+                                xdfYaxis.Add(xdfYembed);
+                            }
+                            else if (td.RowHeaders.ToLower().StartsWith("guid:"))
+                            {
+                                string linkYTxt = LinkConversionHeader2(td.RowHeaders, tableGuidTPid);
+                                XElement xdfYembed = new XElement("embedinfo");
+                                xdfYembed.SetAttributeValue("type", "3");
+                                xdfYembed.SetAttributeValue("linkobjid", linkYTxt);
+                                xdfYaxis.Add(xdfYembed);
+                            }
+                            else
+                            {
+                                string[] hParts = td.RowHeaders.Split(',');
+                                for (int row = 0; row < hParts.Length; row++)
+                                {
+                                    XElement xdfYLabel = new XElement("LABEL");
+                                    xdfYLabel.SetAttributeValue("index", row.ToString());
+                                    xdfYLabel.SetAttributeValue("value", hParts[row]);
+                                    xdfYaxis.Add(xdfYLabel);
+                                }
+                            }
+                            XElement xdfYMath = new XElement("MATH");
+                            xdfYMath.SetAttributeValue("equation", "X");
+                            XElement xdfYMathVar = new XElement("VAR");
+                            xdfYMathVar.SetAttributeValue("id", "X");
+                            xdfYMath.Add(xdfYMathVar);
+                            xdfYaxis.Add(xdfYMath);
+                            xdfTable.Add(xdfYaxis);
+                        }
+                        //Add Z axis
+                        {
+                            XElement xdfZaxis = new XElement("XDFAXIS");
+                            xdfZaxis.SetAttributeValue("id", "z");
+
+                            XElement xdfZaxisEmbed = new XElement("EMBEDDEDDATA");
+                            int tableFlags = 0;
+                            if (GetSigned(td.DataType))
+                            {
+                                tableFlags++;
+                            }
+                            if (td.ByteOrder == Byte_Order.LSB)
+                            {
+                                tableFlags += 2;
+                            }
+                            if (td.RowMajor == true)
+                            {
+                                tableFlags += 4;
+                            }
+                            if (tableFlags > 0)
+                            {
+                                xdfZaxisEmbed.SetAttributeValue("mmedtypeflags", "0x" + tableFlags.ToString("X2"));
+                            }
+                            xdfZaxisEmbed.SetAttributeValue("mmedaddress", "0x" + td.StartAddress().ToString("X"));
+                            xdfZaxisEmbed.SetAttributeValue("mmedelementsizebits", GetBits(td.DataType).ToString());
+                            xdfZaxisEmbed.SetAttributeValue("mmedrowcount", td.Rows.ToString());
+                            xdfZaxisEmbed.SetAttributeValue("mmedcolcount", td.Columns.ToString());
+                            xdfZaxisEmbed.SetAttributeValue("mmedmajorstridebits", "0");
+                            xdfZaxisEmbed.SetAttributeValue("mmedminorstridebits", "0");
+                            xdfZaxis.Add(xdfZaxisEmbed);
+                            xdfZaxis.SetElementValue("decimaplpl", td.Decimals.ToString());
+                            xdfZaxis.SetElementValue("min", td.Min.ToString());
+                            xdfZaxis.SetElementValue("max", td.Max.ToString());
+                            xdfZaxis.SetElementValue("outputtype", GetXdfOutputType(td));
+                            xdfTable.Add(xdfZaxis);
+                            XElement xdfZmath = new XElement("MATH");
+                            XElement xdfZmathVar = new XElement("VAR");
+                            xdfZmathVar.SetAttributeValue("id", "X");
+                            string linkTxt = "";
+                            string mathTxt = td.Math.ToLower();
+                            if (mathTxt.Contains("table:"))
+                                mathTxt = LinkConversionTable(mathTxt, tableNameTPid, out linkTxt);
+                            if (mathTxt.Contains("raw:"))
+                            {
+                                mathTxt = LinkConversionRaw2(mathTxt, out XElement xdfTableLink);
+                                xdfZmathVar.Add(xdfTableLink);
+                            }
+                            xdfZmath.SetAttributeValue("equation", mathTxt);
+                            xdfZmathVar.SetAttributeValue("id", "X");
+                            xdfZmath.Add(xdfZmathVar);
+                            xdfZaxis.Add(xdfZmath);
+                        }
+                        xdfFormat.Add(xdfTable);
+
+                    }
+                }
+
+                for (int t = 0; t < tdList.Count; t++)
+                {
+                    //Add all flags
+                    TableData td = tdList[t];
+                    if (td.OutputType == OutDataType.Flag && td.Dimensions() == 1)
+                    {
+                        string tableName = td.TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        if (td.TableName == null || td.TableName.Length == 0)
+                            tableName = td.Address;
+
+                        XElement xdfFlag = new XElement("XDFFLAG");
+                        xdfFlag.SetAttributeValue("uniqueid", tableGuidTPid[td.guid.ToString()]);
+                        xdfFlag.SetElementValue("title", tableName);
+                        string descr = td.TableDescription;
+                        if (td.Values.ToLower().StartsWith("enum:") && !descr.ToLower().Contains("enum:"))
+                            descr += ", " + td.Values;
+                        descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        if (descr.Length > 900)
+                        {
+                            descr = descr.Substring(0, 900);
+                        }
+                        xdfFlag.SetElementValue("description", descr);
+                        XElement xdfFlagCat = CreateCategoryElement(td, lastCategory);
+                        xdfFlag.Add(xdfFlagCat);
+                        XElement xdfFlagEmbed = new XElement("EMBEDDEDDATA");
+                        xdfFlagEmbed.SetAttributeValue("mmedaddress", td.StartAddress().ToString("X"));
+                        xdfFlagEmbed.SetAttributeValue("mmedelementsizebits", GetBits(td.DataType).ToString());
+                        xdfFlagEmbed.SetAttributeValue("mmedmajorstridebits", "0");
+                        xdfFlagEmbed.SetAttributeValue("mmedminorstridebits", "0");
+                        xdfFlag.Add(xdfFlagEmbed);
+                        xdfFlag.SetElementValue("mask", td.BitMask);
+                        xdfFormat.Add(xdfFlag);
+
+                    }
+                }
+                //XDocument xdfDoc = new XDocument();
+                //xdfDoc.Add(xdfFormat);
+
+                StringBuilder sb = new StringBuilder("<!-- Written " + DateTime.Now.ToString("MM/dd/yyyy H:mm") + " -->" + Environment.NewLine);
+                sb.Append(xdfFormat.ToString());
+                string defFname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions", basefile.OS + "-generated.xdf");
+                string fileName = SelectSaveFile(XdfFilter, defFname);
+                if (fileName.Length == 0)
+                    return;
+                Logger( "Writing to file: " + Path.GetFileName(fileName));
+                File.WriteAllText(fileName,sb.ToString());
+                Logger( "[OK]");
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold ("Export XDF, line " + line + ": " + ex.Message +" Inner ex: " + ex.InnerException);
+            }
+        }
+
     }
 }

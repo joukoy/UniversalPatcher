@@ -82,8 +82,8 @@ namespace UniversalPatcher
             {
                 if (compTd.Dimensions() == 1)
                 {
-                    double curVal = GetValue(peekPCM.buf, (uint)(compTd.addrInt + compTd.Offset + compTd.ExtraOffset), compTd,0,peekPCM);
-                    UInt64 rawVal = (UInt64) GetRawValue(peekPCM.buf,(uint)(compTd.addrInt + compTd.Offset + compTd.ExtraOffset), compTd,0,peekPCM.platformConfig.MSB);
+                    double curVal = GetValue(peekPCM.buf, compTd.StartAddress(), compTd,0,peekPCM);
+                    UInt64 rawVal = (UInt64) GetRawValue(peekPCM.buf,compTd.StartAddress(), compTd,0,peekPCM.platformConfig.MSB);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + compTd.Units;
                     string maskTxt = "";
@@ -174,7 +174,7 @@ namespace UniversalPatcher
                 else
                 {
                     string tblData = ""; //"Current values: " + Environment.NewLine;
-                    uint addr = (uint)(compTd.addrInt + compTd.Offset + compTd.ExtraOffset);
+                    uint addr = compTd.StartAddress();
                     if (compTd.RowMajor)
                     {
                         for (int r = 0; r < compTd.Rows; r++)

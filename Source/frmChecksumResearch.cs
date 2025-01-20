@@ -926,7 +926,7 @@ namespace UniversalPatcher
         {
             CsUtilMethod cum = new CsUtilMethod();
             frmPropertyEditor fpe = new frmPropertyEditor();
-            fpe.LoadObject(cum);
+            fpe.LoadObject(cum, "ChecksumResearch");
             if (fpe.ShowDialog() == DialogResult.OK)
             {
                 csUtilMethods.Add(cum);
@@ -954,7 +954,7 @@ namespace UniversalPatcher
                     cum = (CsUtilMethod)dataGridCsUtilMethods.Rows[r].DataBoundItem;
                 }
                 frmPropertyEditor fpe = new frmPropertyEditor();
-                fpe.LoadObject(cum);
+                fpe.LoadObject(cum, "ChecksumResearch");
                 if (fpe.ShowDialog() == DialogResult.OK)
                 {
                     if (csUtilMethods.Count == 0)

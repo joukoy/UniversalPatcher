@@ -132,6 +132,15 @@ namespace UniversalPatcher
                 return false;
             }
 
+            //Read voltage
+            Response<double> ReadVoltageVal = ReadVoltage();
+            if (ReadVoltageVal.Status != ResponseStatus.Success)
+            {
+                Logger("Unable to read voltage.");
+                return false;
+            }
+            Logger("Voltage is: " + ReadVoltageVal.Value.ToString("F2") + "V");
+
             //Set protocol to VPW mode
             Status = SetProtocol(OBDProtocols.VPW);
             if (Status == false)
@@ -158,7 +167,30 @@ namespace UniversalPatcher
             Logger("Device Successfully Initialized and Ready");
             return true;
         }
+        private Response<double> ReadVoltage()
+        {
+            byte[] Msg = new byte[] { 0x3A, 2, 0x0, (byte)0, 0 };
+            Msg[Msg.Length - 1] = CalcChecksum(Msg);
+            this.Port.Send(Msg);
 
+            byte[] RespBytes = new byte[Msg.Length];
+            Array.Copy(Msg, RespBytes, Msg.Length);
+            RespBytes[0] += (byte)0x10;
+            RespBytes[RespBytes.Length - 1] = CalcChecksum(RespBytes);
+            Response<OBDMessage> response = ReadDVIPacket();
+            if (response.Status != ResponseStatus.Success)
+            {
+                //   this.Logger.AddDebugMessage("Network enabled");
+                return Response.Create(response.Status, (double)0);
+            }
+            else
+            {
+                int RawADC = (int)((response.Value[4] * Math.Pow(0x100, 1)) + response.Value[5]);
+                double COnvertedVoltage = ((((double)RawADC * 0.009047468) + 0.2)); //Should match for both VT and GT (Close enough).
+                //this.Logger.AddDebugMessage("Voltage is: " + COnvertedVoltage.ToString("F2") + "V"); //2 decimal places
+                return Response.Create(ResponseStatus.Success, COnvertedVoltage);
+            }
+        }
         public override bool SetProgramminVoltage(PinNumber pinNumber, uint voltage)
         {
             LoggerBold("SetProgramminVoltage not implemented for " + DeviceType);
@@ -627,7 +659,9 @@ namespace UniversalPatcher
             //Send ELM reset
             byte[] MsgATZ = { (byte)'A', (byte)'T', (byte)'Z', 0xD };
             this.Port.Send(MsgATZ);
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep(50);
+            this.Port.Send(MsgATZ);
+            System.Threading.Thread.Sleep(300);
             this.Port.DiscardBuffers();
 
             //AT@1 will return OBDX Pro VT - will then need to change its API to DVI bytes.
@@ -636,6 +670,9 @@ namespace UniversalPatcher
             Response<String> m = ReadELMPacket("AT@1");
             if (m.Status == ResponseStatus.Success) Logger("Device Found: " + m.Value);
             else { Logger("OBDX Pro device not found or failed response"); return false; }
+
+            System.Threading.Thread.Sleep(150);
+            this.Port.DiscardBuffers();
 
             //Change to DVI protocol DX 
             byte[] MsgDXDP = { (byte)'D', (byte)'X', (byte)'D', (byte)'P', (byte)'1', 0xD };

@@ -35,6 +35,7 @@ namespace UniversalPatcher
                 }
             }
             this.ResizeEnd += FrmTdEditor_ResizeEnd;
+            this.FormClosing += FrmTdEditor_FormClosing;
         }
         private void FrmTdEditor_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
@@ -102,10 +103,13 @@ namespace UniversalPatcher
                     var propertyInfo = td.GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Instance);
                     if (propertyInfo != null && propertyInfo.CanWrite)
                     {
+                        Object oldVal = propertyInfo.GetValue(td, null);
                         if (dataGridView1.Rows[i].Cells[0].GetType() == typeof(DataGridViewComboBoxCell))
                             propertyInfo.SetValue(td, Enum.ToObject(propertyInfo.PropertyType, dataGridView1.Rows[i].Cells[0].Value), null);
                         else
                             propertyInfo.SetValue(td, Convert.ChangeType(dataGridView1.Rows[i].Cells[0].Value, propertyInfo.PropertyType), null);
+                        Object newVal = propertyInfo.GetValue(td, null);
+                        AddToRedoLog(td, null, "TableData", td.TableName, propertyName, ReDo.RedoAction.Edit, oldVal,newVal);
                     }
                 }
             }

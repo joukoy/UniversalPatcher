@@ -73,6 +73,7 @@ namespace UniversalPatcher
         public string ExtraTableName { get; set; }
         public string ExtraDescription { get; set; }
         public string ExtraCategories { get; set; }
+        public string ApplySearchForCount { get; set; }
 
         private PcmFile PCM;
 
@@ -679,6 +680,107 @@ namespace UniversalPatcher
                     }
 
                 }
+                Debug.WriteLine("Applying search for next XX tables");
+                for (int seekId = 0; seekId < tableSeeks.Count; seekId++)
+                {
+                    TableSeek ts1 = tableSeeks[seekId];
+                    string applyStr = ts1.ApplySearchForCount;
+                    if (!string.IsNullOrEmpty(ts1.ApplySearchForCount) && ts1.ApplySearchForCount != "0")
+                    {
+                        FoundTable ft = PCM.foundTables.Where(X => X.configId == seekId).FirstOrDefault();
+                        if (ft == null)
+                        {
+                            Debug.WriteLine("Error, Table not found from FoundTables: " + ts1.Name);
+                            continue;
+                        }
+                        Debug.WriteLine("Table: " + ts1.Name + ", count: " + ts1.ApplySearchForCount);
+                        int applyStart = seekId;
+                        int applyEnd = seekId;
+                        bool neg = false;
+                        if (applyStr.StartsWith("-"))
+                        {
+                            applyStr = applyStr.Trim('-');
+                            neg = true;
+                        }
+                        if (applyStr.Contains("-"))
+                        {
+                            //Range. Example -3-5, tables s-3 ... s+5
+                            string[] aParts = applyStr.Split('-');
+                            if (aParts.Length == 2 && int.TryParse(aParts[0], out int s1) && int.TryParse(aParts[1], out int s2))
+                            {
+                                applyStart = seekId - s1;
+                                applyEnd = seekId + s2;
+                                if (neg)
+                                {
+                                    applyStart = -1 * applyStart;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //Example: 5
+                            //Example: -3
+                            if (int.TryParse(ts1.ApplySearchForCount, out int a1))
+                            {
+                                if (a1 < 0)
+                                {
+                                    applyStart = seekId + a1;
+                                    applyEnd = seekId - 1;
+                                }
+                                else
+                                {
+                                    applyStart = seekId + 1;
+                                    applyEnd = seekId + a1;
+                                }
+                            }
+                        }
+                        if (applyStart < 0)
+                        {
+                            Debug.WriteLine("Can't start from " + applyStart.ToString() + ", starting from 0");
+                            applyStart = 0;
+                        }
+                        Debug.WriteLine("Applying to tableseeks: " + applyStart.ToString()  + " - " + applyEnd.ToString());
+
+                        for (int applyId = applyStart; applyId <= applyEnd && applyId < tableSeeks.Count; applyId++)
+                        {
+                            if (applyId == seekId)
+                            {
+                                Debug.WriteLine("Skpping original tableseek");
+                                continue;
+                            }
+                            TableSeek ts2 = tableSeeks[applyId];
+                            if (HexToUint(ts1.RefAddress, out uint ref1) && HexToUint(ts2.RefAddress, out uint ref2))
+                            {
+                                int diff = (int)(ref2 - ref1);
+                                FoundTable ft2 = new FoundTable(PCM);
+                                ft2.configId = applyId;
+                                ft2.addrInt = (uint)(ft.addrInt + diff);
+                                ft2.Name = ts2.Name;
+                                ft2.Description = ts2.Description;
+                                if (!string.IsNullOrEmpty(ts2.Category))
+                                {
+                                    ft2.Category = ts2.Category;
+                                }
+                                else
+                                {
+                                    ft2.Category = "Seg-" + PCM.GetSegmentName(ft2.addrInt);
+                                }
+                                ft2.Address = ft2.addrInt.ToString("X8");
+                                if (ts2.Rows > 0)
+                                    ft2.Rows = ts2.Rows;
+                                else
+                                    ft2.Rows = ft.Rows;
+                                if (ts2.Columns > 0)
+                                    ft2.Columns = ts2.Columns;
+                                else
+                                    ft2.Columns = ft.Columns;
+
+                                PCM.foundTables.Add(ft2);
+                                Debug.WriteLine("Added table: " + ts2.Name + ", Address: " + ft2.Address);
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -737,6 +839,12 @@ namespace UniversalPatcher
         public int configId;
         public string Category { get; set; }
         public string Description { get; set; }
+        public FoundTable ShallowCopy()
+        {
+            FoundTable newFt = (FoundTable)this.MemberwiseClone();
+            return newFt;
+        }
+
     }
 
 

@@ -53,6 +53,7 @@ namespace UniversalPatcher
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.convertToDataTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scalingConversionFactorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undoRedoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.labelHelp = new System.Windows.Forms.Label();
@@ -218,7 +219,8 @@ namespace UniversalPatcher
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.convertToDataTypeToolStripMenuItem,
-            this.scalingConversionFactorToolStripMenuItem});
+            this.scalingConversionFactorToolStripMenuItem,
+            this.undoRedoToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -238,6 +240,13 @@ namespace UniversalPatcher
             this.scalingConversionFactorToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.scalingConversionFactorToolStripMenuItem.Text = "Scaling => ConversionFactor";
             this.scalingConversionFactorToolStripMenuItem.Click += new System.EventHandler(this.scalingConversionFactorToolStripMenuItem_Click);
+            // 
+            // undoRedoToolStripMenuItem
+            // 
+            this.undoRedoToolStripMenuItem.Name = "undoRedoToolStripMenuItem";
+            this.undoRedoToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.undoRedoToolStripMenuItem.Text = "Undo/Redo";
+            this.undoRedoToolStripMenuItem.Click += new System.EventHandler(this.undoRedoToolStripMenuItem_Click);
             // 
             // importToolStripMenuItem
             // 
@@ -348,5 +357,6 @@ namespace UniversalPatcher
         private TextBox txtSearch;
         private ComboBox comboFilterBy;
         private ToolStripMenuItem testMathToolStripMenuItem;
+        private ToolStripMenuItem undoRedoToolStripMenuItem;
     }
 }

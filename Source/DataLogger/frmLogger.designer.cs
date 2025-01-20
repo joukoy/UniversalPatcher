@@ -107,6 +107,7 @@ namespace UniversalPatcher
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.groupAdvanced = new System.Windows.Forms.GroupBox();
+            this.chkTestPidCompatibility = new System.Windows.Forms.CheckBox();
             this.btnStartIdleTraffic = new System.Windows.Forms.Button();
             this.numIdleTrafficInterval = new System.Windows.Forms.NumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
@@ -328,6 +329,7 @@ namespace UniversalPatcher
             this.parseCANMode36LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCAN23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCAN78LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseKline23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphicsLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1050,6 +1052,7 @@ namespace UniversalPatcher
             // 
             // groupAdvanced
             // 
+            this.groupAdvanced.Controls.Add(this.chkTestPidCompatibility);
             this.groupAdvanced.Controls.Add(this.btnStartIdleTraffic);
             this.groupAdvanced.Controls.Add(this.numIdleTrafficInterval);
             this.groupAdvanced.Controls.Add(this.label21);
@@ -1073,6 +1076,16 @@ namespace UniversalPatcher
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced settings";
             this.groupAdvanced.Enter += new System.EventHandler(this.groupAdvanced_Enter);
+            // 
+            // chkTestPidCompatibility
+            // 
+            this.chkTestPidCompatibility.AutoSize = true;
+            this.chkTestPidCompatibility.Location = new System.Drawing.Point(9, 75);
+            this.chkTestPidCompatibility.Name = "chkTestPidCompatibility";
+            this.chkTestPidCompatibility.Size = new System.Drawing.Size(124, 17);
+            this.chkTestPidCompatibility.TabIndex = 46;
+            this.chkTestPidCompatibility.Text = "Test pid compatibility";
+            this.chkTestPidCompatibility.UseVisualStyleBackColor = true;
             // 
             // btnStartIdleTraffic
             // 
@@ -3470,7 +3483,8 @@ namespace UniversalPatcher
             this.parseCANLogfileToBinToolStripMenuItem,
             this.parseCANMode36LogfileToBinToolStripMenuItem,
             this.parseCAN23LogfileToBinToolStripMenuItem,
-            this.parseCAN78LogfileToBinToolStripMenuItem});
+            this.parseCAN78LogfileToBinToolStripMenuItem,
+            this.parseKline23LogfileToBinToolStripMenuItem});
             this.parseLogfileToBinToolStripMenuItem1.Name = "parseLogfileToBinToolStripMenuItem1";
             this.parseLogfileToBinToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
             this.parseLogfileToBinToolStripMenuItem1.Text = "Parse logfile to bin";
@@ -3510,6 +3524,13 @@ namespace UniversalPatcher
             this.parseCAN78LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.parseCAN78LogfileToBinToolStripMenuItem.Text = "Parse CAN78 logfile to bin";
             this.parseCAN78LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN78LogfileToBinToolStripMenuItem_Click);
+            // 
+            // parseKline23LogfileToBinToolStripMenuItem
+            // 
+            this.parseKline23LogfileToBinToolStripMenuItem.Name = "parseKline23LogfileToBinToolStripMenuItem";
+            this.parseKline23LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.parseKline23LogfileToBinToolStripMenuItem.Text = "Parse kline23 logfile to bin";
+            this.parseKline23LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseKline23LogfileToBinToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -4079,6 +4100,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.Label labelAFR;
+        private System.Windows.Forms.ToolStripMenuItem parseKline23LogfileToBinToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkTestPidCompatibility;
     }
 }
 

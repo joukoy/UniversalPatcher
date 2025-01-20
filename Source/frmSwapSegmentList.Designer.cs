@@ -50,6 +50,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioShowSize = new System.Windows.Forms.RadioButton();
             this.labelCurrentPN = new System.Windows.Forms.Label();
+            this.labelSelectedSegment2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -69,9 +70,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listSegments.HideSelection = false;
-            this.listSegments.Location = new System.Drawing.Point(3, 116);
+            this.listSegments.Location = new System.Drawing.Point(3, 119);
             this.listSegments.Name = "listSegments";
-            this.listSegments.Size = new System.Drawing.Size(774, 203);
+            this.listSegments.Size = new System.Drawing.Size(787, 231);
             this.listSegments.TabIndex = 1;
             this.listSegments.UseCompatibleStateImageBehavior = false;
             this.listSegments.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listSegments_ColumnClick);
@@ -89,7 +90,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1, 100);
+            this.label2.Location = new System.Drawing.Point(2, 100);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(103, 13);
             this.label2.TabIndex = 3;
@@ -98,7 +99,7 @@
             // btnExtract
             // 
             this.btnExtract.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnExtract.Location = new System.Drawing.Point(5, 325);
+            this.btnExtract.Location = new System.Drawing.Point(5, 356);
             this.btnExtract.Name = "btnExtract";
             this.btnExtract.Size = new System.Drawing.Size(106, 26);
             this.btnExtract.TabIndex = 4;
@@ -109,16 +110,18 @@
             // labelSelectedSegment
             // 
             this.labelSelectedSegment.AutoSize = true;
+            this.labelSelectedSegment.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelSelectedSegment.ForeColor = System.Drawing.Color.Red;
             this.labelSelectedSegment.Location = new System.Drawing.Point(5, 75);
             this.labelSelectedSegment.Name = "labelSelectedSegment";
-            this.labelSelectedSegment.Size = new System.Drawing.Size(10, 13);
+            this.labelSelectedSegment.Size = new System.Drawing.Size(12, 15);
             this.labelSelectedSegment.TabIndex = 5;
             this.labelSelectedSegment.Text = "-";
             // 
             // btnApply
             // 
             this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnApply.Location = new System.Drawing.Point(331, 325);
+            this.btnApply.Location = new System.Drawing.Point(331, 356);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(106, 26);
             this.btnApply.TabIndex = 6;
@@ -129,7 +132,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(673, 325);
+            this.btnOK.Location = new System.Drawing.Point(686, 356);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(106, 26);
             this.btnOK.TabIndex = 8;
@@ -153,7 +156,7 @@
             this.groupBox1.Controls.Add(this.chkLessChance);
             this.groupBox1.Controls.Add(this.chkHighChance);
             this.groupBox1.Controls.Add(this.chkFullmatch);
-            this.groupBox1.Location = new System.Drawing.Point(532, 75);
+            this.groupBox1.Location = new System.Drawing.Point(545, 75);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(245, 38);
             this.groupBox1.TabIndex = 11;
@@ -198,7 +201,7 @@
             // btnSavelist
             // 
             this.btnSavelist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSavelist.Location = new System.Drawing.Point(565, 325);
+            this.btnSavelist.Location = new System.Drawing.Point(578, 356);
             this.btnSavelist.Name = "btnSavelist";
             this.btnSavelist.Size = new System.Drawing.Size(106, 26);
             this.btnSavelist.TabIndex = 12;
@@ -259,7 +262,7 @@
             this.groupBox2.Controls.Add(this.chkSkipeeprom);
             this.groupBox2.Controls.Add(this.radioShow1x0);
             this.groupBox2.Controls.Add(this.txtSkiptext);
-            this.groupBox2.Location = new System.Drawing.Point(408, 7);
+            this.groupBox2.Location = new System.Drawing.Point(421, 7);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(362, 62);
             this.groupBox2.TabIndex = 15;
@@ -287,11 +290,21 @@
             this.labelCurrentPN.TabIndex = 16;
             this.labelCurrentPN.Text = "-";
             // 
+            // labelSelectedSegment2
+            // 
+            this.labelSelectedSegment2.AutoSize = true;
+            this.labelSelectedSegment2.Location = new System.Drawing.Point(182, 75);
+            this.labelSelectedSegment2.Name = "labelSelectedSegment2";
+            this.labelSelectedSegment2.Size = new System.Drawing.Size(10, 13);
+            this.labelSelectedSegment2.TabIndex = 17;
+            this.labelSelectedSegment2.Text = "-";
+            // 
             // frmSwapSegmentList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(782, 363);
+            this.ClientSize = new System.Drawing.Size(795, 394);
+            this.Controls.Add(this.labelSelectedSegment2);
             this.Controls.Add(this.labelCurrentPN);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnSavelist);
@@ -340,5 +353,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton radioShowSize;
         private System.Windows.Forms.Label labelCurrentPN;
+        private System.Windows.Forms.Label labelSelectedSegment2;
     }
 }

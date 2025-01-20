@@ -27,26 +27,27 @@ namespace UniversalPatcher
 
         private enum XMLTYPE
         {
-            autodetect,
-            tableseek,
-            tabledata,
-            segmentseek,
-            cvn,
-            dtcsearchconfig,
-            pidsearchconfig,
-            piddescriptions,
-            units,
-            filetypes,
-            segmentconfig,
-            obdresponses,
-            devicenames,
-            funcnames,
-            obd2codes,
+            Autodetect,
+            TableSeek,
+            TableData,
+            SegmentSeek,
+            Cvn,
+            DtcSearchConfig,
+            PidSearchConfig,
+            PidDescriptions,
+            Units,
+            FileTypes,
+            SegmentConfig,
+            ObdResponses,
+            DeviceNames,
+            FunctionNames,
+            OBD2Codes,
             CANmodules,
-            realtimecontrol,
+            RealtimeControl,
+            XdfPlugins
         }
 
-        private XMLTYPE xmlType = XMLTYPE.autodetect;
+        private XMLTYPE xmlType = XMLTYPE.Autodetect;
         private BindingSource bindingSource = new BindingSource();
         private bool starting = true;
         private string sortBy = "";
@@ -69,10 +70,13 @@ namespace UniversalPatcher
         private List<IdName> devicenames;
         private List<IdName> funcnames;
         private List<CANDevice> canmods;
+        private List<XDF.XdfPlugin> xdfplugins;
         private object currentObj;
         private object currentList;
         private Type currentType;
         public object SelectedObject;
+        private List<ReDo> redoLog = new List<ReDo>();
+
         private void frmEditXML_Load(object sender, EventArgs e)
         {
             if (AppSettings.MainWindowPersistence)
@@ -92,6 +96,9 @@ namespace UniversalPatcher
             dataGridView1.DataError += DataGridView1_DataError;
             dataGridView1.KeyPress += DataGridView1_KeyPress;
             txtSearch.TextChanged += TxtSearch_TextChanged;
+            dataGridView1.CellValidating += DataGridView1_CellValidating;
+            dataGridView1.UserAddedRow += DataGridView1_UserAddedRow;
+            dataGridView1.UserDeletedRow += DataGridView1_UserDeletedRow;
             //dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
         }
 
@@ -151,8 +158,9 @@ namespace UniversalPatcher
 
         public void LoadRules()
         {
-            xmlType = XMLTYPE.autodetect;
+            xmlType = XMLTYPE.Autodetect;
             detectrules = new List<DetectRule>();
+            currentList = detectrules;
             currentObj = new DetectRule();
             currentType = typeof(DetectRule);
             for (int i=0;i<DetectRules.Count;i++)
@@ -171,9 +179,10 @@ namespace UniversalPatcher
 
         public void LoadStockCVN()
         {
-            xmlType = XMLTYPE.cvn;
+            xmlType = XMLTYPE.Cvn;
             this.Text = "Edit stock CVN list";
             sCVN = new List<CVN>();
+            currentList = sCVN;
             currentObj = new CVN();
             currentType = typeof(CVN);
             for (int i=0; i<StockCVN.Count;i++)
@@ -191,9 +200,10 @@ namespace UniversalPatcher
 
         public void LoadDTCSearchConfig()
         {
-            xmlType = XMLTYPE.dtcsearchconfig;
+            xmlType = XMLTYPE.DtcSearchConfig;
             this.Text = "Edit DTC Search config";
             dtcSC = new List<DtcSearchConfig>();
+            currentList = dtcSC;
             currentObj = new DtcSearchConfig();
             currentType = typeof(DtcSearchConfig);
             for (int i=0; i< dtcSearchConfigs.Count;i++)
@@ -212,9 +222,10 @@ namespace UniversalPatcher
 
         public void LoadPIDSearchConfig()
         {
-            xmlType = XMLTYPE.pidsearchconfig;
+            xmlType = XMLTYPE.PidSearchConfig;
             this.Text = "Edit PID Search config";
             pidSC = new List<PidSearchConfig>();
+            currentList = pidSC;
             currentObj = new PidSearchConfig();
             currentType = typeof(PidSearchConfig);
             for (int i=0; i< pidSearchConfigs.Count; i++)
@@ -232,9 +243,10 @@ namespace UniversalPatcher
 
         public void LoadPIDDescriptions()
         {
-            xmlType = XMLTYPE.piddescriptions;
+            xmlType = XMLTYPE.PidDescriptions;
             this.Text = "Edit PID Descriptions";
             piddescriptions = new List<PidInfo>();
+            currentList = piddescriptions;
             currentObj = new PidInfo();
             currentType = typeof(PidInfo);
             for (int i = 0; i < PidDescriptions.Count; i++)
@@ -254,22 +266,89 @@ namespace UniversalPatcher
 
         public void LoadTableSeek(string fname)
         {
-            xmlType = XMLTYPE.tableseek;
-            fileName = fname;
-            this.Text = "Edit Table Seek config";
-            currentObj = new TableSeek();
-            currentType = typeof(TableSeek);
             if (fname.Length > 0 &&  File.Exists(fname))
                 tSeeks = TableSeek.LoadTableSeekFile(fname);
             else
                 tSeeks = new List<TableSeek>();
+            SetupTableSeek(fname);
+        }
+        public void EditCurrentTableSeek(string fname)
+        {
+            tSeeks = new List<TableSeek>();
+            foreach (TableSeek ts in tableSeeks)
+            {
+                tSeeks.Add(ts.ShallowCopy());
+            }
+            SetupTableSeek(fname);
+        }
+
+        private void SetupTableSeek(string fname)
+        {
+            xmlType = XMLTYPE.TableSeek;
+            fileName = fname;
+            this.Text = "Edit Table Seek config";
+            currentObj = new TableSeek();
+            currentList = tSeeks;
+            currentType = typeof(TableSeek);
             RefreshTableSeek();
             FillFilterBy();
+            //undoRedoToolStripMenuItem.Enabled = true;
         }
+
+        private void DataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            if (dataGridView1.CurrentCell != null)
+            {
+                object obj = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+                string itmName = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells[0].Value.ToString();
+                AddToRedoLog(obj, currentList, xmlType.ToString(), itmName, "", ReDo.RedoAction.Delete, "", "", dataGridView1.CurrentCell.RowIndex);
+            }
+        }
+
+        private void DataGridView1_UserAddedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            if (dataGridView1.CurrentCell != null)
+            {
+                object obj = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+                string itmName = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells[0].Value.ToString();
+                AddToRedoLog(obj, currentList, xmlType.ToString(), itmName, "", ReDo.RedoAction.Add, "", "");
+            }
+        }
+
+        private void DataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            try
+            {
+                var oldValue = dataGridView1[e.ColumnIndex, e.RowIndex].Value;
+                var newValue = e.FormattedValue;
+                if (dataGridView1.Columns[e.ColumnIndex].DefaultCellStyle.Format.Contains("X"))
+                {
+                    if (HexToUint64(newValue.ToString(), out UInt64 intVal))
+                    {
+                        newValue = intVal;
+                        dataGridView1[e.ColumnIndex, e.RowIndex].Value = intVal;
+                    }
+                }
+                object obj = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+                string prop = dataGridView1.Columns[e.ColumnIndex].HeaderText;
+                string itmName = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells[0].Value.ToString();
+                AddToRedoLog(obj, currentList, xmlType.ToString(), itmName,prop, ReDo.RedoAction.Edit, oldValue, newValue);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmEditXML, line " + line + ": " + ex.Message);
+            }
+        }
+
 
         public void LoadSegmentSeek(string fname)
         {
-            xmlType = XMLTYPE.segmentseek;
+            xmlType = XMLTYPE.SegmentSeek;
             fileName = fname;
             this.Text = "Edit Segment Seek config";
             currentObj = new SegmentSeek();
@@ -278,13 +357,14 @@ namespace UniversalPatcher
                 sSeeks = SegmentSeek.LoadSegmentSeekFile(fname);
             else
                 sSeeks = new List<SegmentSeek>();
+            currentList = sSeeks;
             RefreshSegmentSeek();
             FillFilterBy();
         }
 
         public void LoadRealTimeControlCommands()
         {
-            xmlType = XMLTYPE.realtimecontrol;
+            xmlType = XMLTYPE.RealtimeControl;
             if (!string.IsNullOrEmpty(AppSettings.ControlCommandsFile))
             {
                 fileName = AppSettings.ControlCommandsFile;
@@ -301,13 +381,14 @@ namespace UniversalPatcher
                 rtControls = LoadRealTimeControls();
             else
                 rtControls = new List<RealTimeControl>();
+            currentList = rtControls;
             RefreshRealTimeControls();
             FillFilterBy();
         }
 
         public void LoadObdResponses(string fname)
         {
-            xmlType = XMLTYPE.obdresponses;
+            xmlType = XMLTYPE.ObdResponses;
             fileName = fname;
             this.Text = "Edit OBD Responses";
             currentObj = new ObdEmu.OBDResponse();
@@ -316,14 +397,16 @@ namespace UniversalPatcher
                 obdresponses = ObdEmu.LoadObdResponseFile(fname);
             else
                 obdresponses = new List<ObdEmu.OBDResponse>();
+            currentList = obdresponses;
             RefreshObdResponses();
             FillFilterBy();
         }
 
         public void LoadTableData()
         {
-            xmlType = XMLTYPE.tabledata;
+            xmlType = XMLTYPE.TableData;
             this.Text = "Table data";
+            currentList = tableViews;
             currentObj = new TableData();
             currentType = typeof(TableData);
             bindingSource.DataSource = null;
@@ -338,9 +421,10 @@ namespace UniversalPatcher
 
         public void LoadSegmentConfig(PcmFile PCM)
         {
-            xmlType = XMLTYPE.segmentconfig;
+            xmlType = XMLTYPE.SegmentConfig;
             this.PCM = PCM;
             segmentconfigs = new List<SegmentConfig>();
+            currentList = segmentconfigs;
             currentObj = new SegmentConfig();
             currentType = typeof(SegmentConfig);
             for (int s = 0; s < PCM.Segments.Count; s++)
@@ -360,10 +444,41 @@ namespace UniversalPatcher
             }
             FillFilterBy();
         }
+        public void LoadXdfPlugins()
+        {
+            xmlType = XMLTYPE.XdfPlugins;
+            this.Text = "XDF Checksum plugins";
+            xdfplugins = new List<XDF.XdfPlugin>();
+            currentObj = new XDF.XdfPlugin();
+            currentType = typeof(XDF.XdfPlugin);
+            string pluginXml = Path.Combine(Application.StartupPath, "XML", "XdfPlugins.xml");
+            if (File.Exists(pluginXml))
+            {
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<XDF.XdfPlugin>));
+                System.IO.StreamReader file = new System.IO.StreamReader(pluginXml);
+                xdfplugins = (List<XDF.XdfPlugin>)reader.Deserialize(file);
+                file.Close();
+            }
+            labelHelp.Text = "";
+            if (xdfplugins.Count == 0)
+            {
+                XDF.XdfPlugin xdfplugin= new XDF.XdfPlugin();
+                xdfplugin.Platform = "p01-p59";
+                xdfplugin.pluginmoduleid = "a8d1fdd7-d985-4b09-9979-2735b69cc9a6";
+                xdfplugin.Url = "https://github.com/joukoy/gm-checksum-plugins/raw/refs/heads/master/GM-P01-P59-checksum-plugin.dll";
+                xdfplugins.Add(xdfplugin);
+            }
+            currentList = xdfplugins;
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = xdfplugins;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            FillFilterBy();
+        }
 
         public void LoadFileTypes()
         {
-            xmlType = XMLTYPE.filetypes;
+            xmlType = XMLTYPE.FileTypes;
             this.Text = "File Types";
             fileTypes = new List<FileType>();
             currentObj = new FileType();
@@ -390,9 +505,10 @@ namespace UniversalPatcher
         }
         public void LoadUnits()
         {
-            xmlType = XMLTYPE.units;
+            xmlType = XMLTYPE.Units;
             this.Text = "Units";
             units = new List<Units>();
+            currentList = units;
             currentObj = new Units();
             currentType = typeof(Units);
             for (int i=0; i<unitList.Count;i++)
@@ -412,6 +528,7 @@ namespace UniversalPatcher
             xmlType = XMLTYPE.CANmodules;
             this.Text = "CAN modules";
             canmods = new List<CANDevice>();
+            currentList = canmods;
             currentObj = new CANDevice();
             currentType = typeof(CANDevice);
             if (CanModules == null || CanModules.Count == 0)
@@ -463,9 +580,10 @@ namespace UniversalPatcher
 
         public void LoadDeviceNames()
         {
-            xmlType = XMLTYPE.devicenames;
+            xmlType = XMLTYPE.DeviceNames;
             this.Text = "Device names";
             devicenames = new List<IdName>();
+            currentList = devicenames;
             currentObj = new IdName();
             currentType = typeof(IdName);
             if (DeviceNames == null || DeviceNames.Count == 0)
@@ -501,9 +619,10 @@ namespace UniversalPatcher
 
         public void LoadFuncNames()
         {
-            xmlType = XMLTYPE.funcnames;
+            xmlType = XMLTYPE.FunctionNames;
             this.Text = "Function names";
             funcnames = new List<IdName>();
+            currentList = funcnames;
             currentObj = new IdName();
             currentType = typeof(IdName);
             if (FuncNames == null || FuncNames.Count == 0)
@@ -539,11 +658,12 @@ namespace UniversalPatcher
 
         public void LoadOBD2CodeList()
         {
-            xmlType = XMLTYPE.obd2codes;
+            xmlType = XMLTYPE.OBD2Codes;
             this.Text = "Edit OBD2 Codes";
             currentObj = new OBD2Code();
             currentType = typeof(OBD2Code);
             LoadOBD2Codes();
+            currentList = OBD2Codes;
             RefreshOBD2Codes();
             FillFilterBy();
         }
@@ -610,7 +730,7 @@ namespace UniversalPatcher
                 dataGridView1.EndEdit();
                 switch (xmlType)
                 {
-                    case XMLTYPE.cvn:
+                    case XMLTYPE.Cvn:
                         Logger("Saving file stockcvn.xml", false);
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
@@ -623,7 +743,7 @@ namespace UniversalPatcher
                         StockCVN = sCVN;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.filetypes:
+                    case XMLTYPE.FileTypes:
                         Logger("Saving file filetypes.xml", false);
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
@@ -636,7 +756,7 @@ namespace UniversalPatcher
                         fileTypeList = fileTypes;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.dtcsearchconfig:
+                    case XMLTYPE.DtcSearchConfig:
                         Logger("Saving file DtcSearch.xml", false);
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
@@ -649,7 +769,7 @@ namespace UniversalPatcher
                         dtcSearchConfigs = dtcSC;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.pidsearchconfig:
+                    case XMLTYPE.PidSearchConfig:
                         Logger("Saving file PidSearch.xml", false);
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
@@ -662,7 +782,7 @@ namespace UniversalPatcher
                         pidSearchConfigs = pidSC;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.piddescriptions:
+                    case XMLTYPE.PidDescriptions:
                         Logger("Saving file PidDescriptions.xml", false);
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "XML", "PidDescriptions.xml");
@@ -675,7 +795,7 @@ namespace UniversalPatcher
                         PidDescriptions = piddescriptions;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.obdresponses:
+                    case XMLTYPE.ObdResponses:
                         Logger("Saving file " + fName, false);
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "Logger", "Responses.xml");
@@ -687,10 +807,10 @@ namespace UniversalPatcher
                         }
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.obd2codes:
-                        SaveOBD2Codes();
+                    case XMLTYPE.OBD2Codes:
+                        SaveOBD2Codes(fName);
                         break;
-                    case XMLTYPE.tableseek:
+                    case XMLTYPE.TableSeek:
                         if (fName.Length == 0)
                             fName = SelectSaveFile(XmlFilter, "new-tableseek.xml");
                         if (fName.Length == 0)
@@ -705,7 +825,7 @@ namespace UniversalPatcher
                         tableSeeks = tSeeks;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.segmentseek:
+                    case XMLTYPE.SegmentSeek:
                         if (fName.Length == 0)
                             fName = SelectSaveFile(XmlFilter, "new-segmentseek.xml");
                         if (fName.Length == 0)
@@ -720,7 +840,7 @@ namespace UniversalPatcher
                         segmentSeeks = sSeeks;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.units:
+                    case XMLTYPE.Units:
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
                         Logger("Saving file " + fName, false);
@@ -733,7 +853,7 @@ namespace UniversalPatcher
                         unitList = units;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.funcnames:
+                    case XMLTYPE.FunctionNames:
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "XML", "functionnames.xml");
                         Logger("Saving file " + fName, false);
@@ -746,7 +866,7 @@ namespace UniversalPatcher
                         FuncNames = funcnames;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.devicenames:
+                    case XMLTYPE.DeviceNames:
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "XML", "devicenames.xml");
                         Logger("Saving file " + fName, false);
@@ -759,7 +879,7 @@ namespace UniversalPatcher
                         DeviceNames = devicenames;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.realtimecontrol:
+                    case XMLTYPE.RealtimeControl:
                         if (fName.Length == 0)
                             fName = Path.Combine(Application.StartupPath, "XML", "realtimecontrol.xml");
                         Logger("Saving file " + fName, false);
@@ -787,7 +907,18 @@ namespace UniversalPatcher
                         CanModules = canmods;
                         Logger(" [OK]");
                         break;
-                    case XMLTYPE.segmentconfig:
+                    case XMLTYPE.XdfPlugins:
+                        fName = Path.Combine(Application.StartupPath, "XML", "XdfPlugins.xml");
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XDF.XdfPlugin>));
+                            writer.Serialize(stream, xdfplugins);
+                            stream.Close();
+                        }
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.SegmentConfig:
                         if (fName.Length == 0)
                             fName = PCM.segmentFile;
                         Logger("Saving file " + fName, false);
@@ -965,7 +1096,7 @@ namespace UniversalPatcher
 
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            if (xmlType == XMLTYPE.tableseek && starting)
+            if (xmlType == XMLTYPE.TableSeek && starting)
             {
                 dataGridView1.AutoResizeColumns();
                 dataGridView1.Columns["SearchStr"].Width = 100;
@@ -1052,7 +1183,7 @@ namespace UniversalPatcher
 
                 switch (xmlType)
                 {
-                    case XMLTYPE.autodetect:
+                    case XMLTYPE.Autodetect:
                         List<DetectRule> compareList = detectrules.Where(t => typeof(DetectRule).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareList = compareList.OrderBy(x => typeof(DetectRule).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1060,7 +1191,7 @@ namespace UniversalPatcher
                             compareList = compareList.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareList;
                         break;
-                    case XMLTYPE.cvn:
+                    case XMLTYPE.Cvn:
                         List<CVN> compareCvnList = sCVN.Where(t => typeof(CVN).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareCvnList = compareCvnList.OrderBy(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1068,7 +1199,7 @@ namespace UniversalPatcher
                             compareCvnList = compareCvnList.OrderByDescending(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareCvnList;
                         break;
-                    case XMLTYPE.devicenames:
+                    case XMLTYPE.DeviceNames:
                         List<IdName> compareDevNames = devicenames.Where(t => typeof(IdName).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareDevNames = compareDevNames.OrderBy(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1076,7 +1207,7 @@ namespace UniversalPatcher
                             compareDevNames = compareDevNames.OrderByDescending(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareDevNames;
                         break;
-                    case XMLTYPE.dtcsearchconfig:
+                    case XMLTYPE.DtcSearchConfig:
                         List<DtcSearchConfig> compareDTCSearchList = dtcSC.Where(t => typeof(DtcSearchConfig).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareDTCSearchList = compareDTCSearchList.OrderBy(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1084,7 +1215,7 @@ namespace UniversalPatcher
                             compareDTCSearchList = compareDTCSearchList.OrderByDescending(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareDTCSearchList;
                         break;
-                    case XMLTYPE.filetypes:
+                    case XMLTYPE.FileTypes:
                         List<FileType> compareFileTypes = fileTypes.Where(t => typeof(FileType).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareFileTypes = compareFileTypes.OrderBy(x => typeof(FileType).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1092,7 +1223,7 @@ namespace UniversalPatcher
                             compareFileTypes = compareFileTypes.OrderByDescending(x => typeof(FileType).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareFileTypes;
                         break;
-                    case XMLTYPE.funcnames:
+                    case XMLTYPE.FunctionNames:
                         List<IdName> compareFuncNames = funcnames.Where(t => typeof(IdName).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareFuncNames = compareFuncNames.OrderBy(x => typeof(IdName).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1100,7 +1231,7 @@ namespace UniversalPatcher
                             compareFuncNames = compareFuncNames.OrderByDescending(x => typeof(IdName).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareFuncNames;
                         break;
-                    case XMLTYPE.obd2codes:
+                    case XMLTYPE.OBD2Codes:
                         List<OBD2Code> compareOBD2List = OBD2Codes.Where(t => typeof(OBD2Code).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareOBD2List = compareOBD2List.OrderBy(x => typeof(OBD2Code).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1108,7 +1239,7 @@ namespace UniversalPatcher
                             compareOBD2List = compareOBD2List.OrderByDescending(x => typeof(OBD2Code).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareOBD2List;
                         break;
-                    case XMLTYPE.tableseek:
+                    case XMLTYPE.TableSeek:
                         List<TableSeek> compareTSeekList = tSeeks.Where(t => typeof(TableSeek).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareTSeekList = compareTSeekList.OrderBy(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1116,7 +1247,7 @@ namespace UniversalPatcher
                             compareTSeekList = compareTSeekList.OrderByDescending(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareTSeekList;
                         break;
-                    case XMLTYPE.tabledata:
+                    case XMLTYPE.TableData:
                         List<TableData> compareTableDatas = PCM.tableDatas.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareTableDatas = compareTableDatas.OrderBy(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1124,7 +1255,7 @@ namespace UniversalPatcher
                             compareTableDatas = compareTableDatas.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareTableDatas;
                         break;
-                    case XMLTYPE.segmentseek:
+                    case XMLTYPE.SegmentSeek:
                         List<SegmentSeek> compareSegmentSeeks = segmentSeeks.Where(t => typeof(SegmentSeek).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareSegmentSeeks = compareSegmentSeeks.OrderBy(x => typeof(SegmentSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1132,7 +1263,7 @@ namespace UniversalPatcher
                             compareSegmentSeeks = compareSegmentSeeks.OrderByDescending(x => typeof(SegmentSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareSegmentSeeks;
                         break;
-                    case XMLTYPE.pidsearchconfig:
+                    case XMLTYPE.PidSearchConfig:
                         List<PidSearchConfig> comparePidSearchConfigs = pidSearchConfigs.Where(t => typeof(PidSearchConfig).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             comparePidSearchConfigs = comparePidSearchConfigs.OrderBy(x => typeof(PidSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1140,7 +1271,7 @@ namespace UniversalPatcher
                             comparePidSearchConfigs = comparePidSearchConfigs.OrderByDescending(x => typeof(PidSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = comparePidSearchConfigs;
                         break;
-                    case XMLTYPE.piddescriptions:
+                    case XMLTYPE.PidDescriptions:
                         List<PidInfo> comparePidDescrList = piddescriptions.Where(t => typeof(PidInfo).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             comparePidDescrList = comparePidDescrList.OrderBy(x => typeof(PidInfo).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1148,7 +1279,7 @@ namespace UniversalPatcher
                             comparePidDescrList = comparePidDescrList.OrderByDescending(x => typeof(PidInfo).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = comparePidDescrList;
                         break;
-                    case XMLTYPE.segmentconfig:
+                    case XMLTYPE.SegmentConfig:
                         List<SegmentConfig> compareSegmentConfigs = segmentconfigs.Where(t => typeof(SegmentConfig).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareSegmentConfigs = compareSegmentConfigs.OrderBy(x => typeof(SegmentConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1156,7 +1287,7 @@ namespace UniversalPatcher
                             compareSegmentConfigs = compareSegmentConfigs.OrderByDescending(x => typeof(SegmentConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareSegmentConfigs;
                         break;
-                    case XMLTYPE.realtimecontrol:
+                    case XMLTYPE.RealtimeControl:
                         List<RealTimeControl> compareRtcs = rtControls.Where(t => typeof(RealTimeControl).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareRtcs = compareRtcs.OrderBy(x => typeof(RealTimeControl).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1164,7 +1295,7 @@ namespace UniversalPatcher
                             compareRtcs = compareRtcs.OrderByDescending(x => typeof(RealTimeControl).GetProperty(sortBy).GetValue(x, null)).ToList();
                         bindingSource.DataSource = compareRtcs;
                         break;
-                    case XMLTYPE.units:
+                    case XMLTYPE.Units:
                         List<Units> compareUnitList = unitList.Where(t => typeof(Units).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearch.Text.ToLower().Trim())).ToList();
                         if (strSortOrder == SortOrder.Ascending)
                             compareUnitList = compareUnitList.OrderBy(x => typeof(Units).GetProperty(sortBy).GetValue(x, null)).ToList();
@@ -1238,8 +1369,8 @@ namespace UniversalPatcher
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             frmPropertyEditor fpe = new frmPropertyEditor();
-            object myObj = dataGridView1.CurrentRow.DataBoundItem;
-            fpe.LoadObject(myObj);
+            object myObj = dataGridView1.CurrentRow.DataBoundItem;            
+            fpe.LoadObject(myObj, xmlType.ToString());
             if (fpe.ShowDialog() == DialogResult.OK)
             {
                 Refreshdgrid();
@@ -1265,7 +1396,13 @@ namespace UniversalPatcher
 
                 //Clear selected cells
                 foreach (DataGridViewCell dgvCell in dataGridView1.SelectedCells)
+                {
+                    object obj = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+                    string prop = dataGridView1.Columns[dgvCell.ColumnIndex].HeaderText;
+                    string itmName = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells[0].Value.ToString();
+                    AddToRedoLog(obj, currentList, xmlType.ToString(), itmName, prop, ReDo.RedoAction.Delete, dgvCell.Value, "", dataGridView1.CurrentCell.RowIndex);
                     dgvCell.Value = string.Empty;
+                }
             }
             catch (Exception ex)
             {
@@ -1274,9 +1411,8 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmEditXML, line " + line + ": " + ex.Message);
             }
-
         }
 
         private void CopyToClipboard()
@@ -1345,8 +1481,11 @@ namespace UniversalPatcher
                         {                            
                             DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
                             //Copy to selected cells if 'chkPasteToSelectedCells' is checked
-                            /*if ((chkPasteToSelectedCells.Checked && cell.Selected) ||
-                                (!chkPasteToSelectedCells.Checked))*/
+                            object obj = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+                            string prop = dataGridView1.Columns[cell.ColumnIndex].HeaderText;
+                            string itmName = dataGridView1.Rows[cell.RowIndex].Cells[0].Value.ToString();
+                            AddToRedoLog(obj, currentList, xmlType.ToString(), itmName, prop, ReDo.RedoAction.Edit, cell.Value, cbValue[rowKey][cellKey]);
+
                             cell.Value = cbValue[rowKey][cellKey];
                             dataGridView1.BeginEdit(true);
                             dataGridView1.NotifyCurrentCellDirty(true);
@@ -1364,9 +1503,8 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmEditXML, line " + line + ": " + ex.Message);
             }
-
         }
 
         private Dictionary<int, Dictionary<int, string>> ClipBoardValues(string clipboardValue)
@@ -1415,9 +1553,14 @@ namespace UniversalPatcher
             {
                 object obj = row.DataBoundItem;
                 ClipBrd.Add(obj);
+                string itmName = row.Cells[0].Value.ToString();
+                AddToRedoLog(obj, currentList, xmlType.ToString(), itmName, "", ReDo.RedoAction.Delete, "", "", row.Index);
             }
             //CopyToClipboard();
-            dataGridView1.Rows.RemoveAt(dataGridView1.SelectedRows[0].Index);
+            for (int r = 0; r < dataGridView1.SelectedRows.Count; r++)
+            {
+                dataGridView1.Rows.RemoveAt(dataGridView1.SelectedRows[0].Index);
+            }
         }
 
         private void copyRowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1450,7 +1593,7 @@ namespace UniversalPatcher
                 //currentObj = Activator.CreateInstance(currentObj.GetType());
                 object testObj = ClipBrd[0];
                 bool isTablSeek = false;
-                if (xmlType == XMLTYPE.tableseek && testObj.GetType() == typeof(TableData))
+                if (xmlType == XMLTYPE.TableSeek && testObj.GetType() == typeof(TableData))
                 {
                     isTablSeek = true;
                 }
@@ -1472,6 +1615,8 @@ namespace UniversalPatcher
                         bindingSource.Insert(row, obj);
                     }
                     dataGridView1.Rows[row].Cells[0].Selected = true;
+                    string itmName = dataGridView1.Rows[row].Cells[0].Value.ToString();
+                    AddToRedoLog(ClipBrd[i], currentList, xmlType.ToString(), itmName, "", ReDo.RedoAction.Add, "", "",row);
                     //PasteClipboardValue();
                 }
                 /*                dataGridView1.BeginEdit(true);
@@ -1505,6 +1650,8 @@ namespace UniversalPatcher
                 dataGridView1.NotifyCurrentCellDirty(true);
                 dataGridView1.EndEdit();
                 dataGridView1.ClearSelection();
+                string itmName = dataGridView1.Rows[row].Cells[0].Value.ToString();
+                AddToRedoLog(currentObj, currentList, xmlType.ToString(), itmName, "", ReDo.RedoAction.Add, "", "",row);
             }
             catch (Exception ex)
             {
@@ -1580,46 +1727,12 @@ namespace UniversalPatcher
 
         }
 
-
-        /*        private void pidDatatypesToolStripMenuItem_Click(object sender, EventArgs e)
-                {
-                    for (int i=0; i< piddescriptions.Count; i++)
-                    {
-                        PidInfo pi = piddescriptions[i];
-                        switch (pi.Bytes)
-                        {
-                            case 1:
-                                if (pi.Signed)
-                                    piddescriptions[i].DataType = InDataType.SBYTE;
-                                else
-                                    piddescriptions[i].DataType = InDataType.UBYTE;
-                                break;
-                            case 2:
-                                if (pi.Signed)
-                                    piddescriptions[i].DataType = InDataType.SWORD;
-                                else
-                                    piddescriptions[i].DataType = InDataType.UWORD;
-                                break;
-                            case 3:
-                                if (pi.Signed)
-                                    piddescriptions[i].DataType = InDataType.THREEBYTES;
-                                else
-                                    piddescriptions[i].DataType = InDataType.THREEBYTES;
-                                break;
-                            case 4:
-                                if (pi.Signed)
-                                    piddescriptions[i].DataType = InDataType.INT32;
-                                else
-                                    piddescriptions[i].DataType = InDataType.UINT32;
-                                break;
-                        }
-                    }
-                    dataGridView1.EndEdit();
-                    bindingSource.EndEdit();
-                    dataGridView1.Refresh();
-                    this.Refresh();
-
-                }
-        */
+        private void undoRedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmRedo frmR = new frmRedo();
+            frmR.ShowDialog();
+            dataGridView1.Update();
+            this.Refresh();
+        }
     }
 }

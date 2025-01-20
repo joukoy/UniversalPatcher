@@ -38,6 +38,14 @@ namespace UniversalPatcher
                 sizeOffset = 4;
                 dataOffset = 5;
             }
+            else if (mode == RMode.KLINE23)
+            {
+                reqByte = 0x05;
+                addrOffset = 5;
+                sizeOffset = 8;
+                dataOffset = 4;
+            }
+
         }
 
         public enum RMode
@@ -46,7 +54,8 @@ namespace UniversalPatcher
             CAN = 1,
             CAN23 = 23,
             CAN36 = 36,
-            CAN78 = 78
+            CAN78 = 78,
+            KLINE23 = 3
         }
         private RMode readMode;
         private byte[] buf;
@@ -426,6 +435,65 @@ namespace UniversalPatcher
                 Debug.WriteLine("Error, LogToBinConverter line " + line + ": " + ex.Message);
             }
         }
+        private void ParseLine_KLINE(string Line, bool SizeOnly)
+        {
+            try
+            {
+                int pos = Line.LastIndexOf("]");
+                if (pos > 0)
+                {
+                    Line = Line.Substring(pos + 1).Trim();
+                }
+                byte[] lineData = Line.Replace(" ", "").ToBytes();
+                if (lineData.Length == 9  && lineData[4] == 0x23 && (toolId == 0 || lineData[2] == toolId))
+                {
+                    //Tool request for data
+                    reqRow = row;
+                    if (toolId == 0)
+                    {
+                        toolId = lineData[2];
+                        PCMid = lineData[1];
+                        Logger("PCM: " + PCMid.ToString("X2") + ", Tool: " + toolId.ToString("X2"));
+                    }
+                    blockLen = lineData[8];
+                    addr = (uint)(lineData[5] << 16 | lineData[6] << 8 | lineData[7]);
+                }
+                else if (lineData.Length > 4 && lineData.Length == (4 + blockLen) && lineData[3] == 0x63 && PCMid == lineData[2])
+                {
+                    if (SizeOnly)
+                    {
+                        if (FileSize < (addr + blockLen))
+                        {
+                            FileSize = (int)(addr + blockLen);
+                            //Debug.WriteLine("Addr: " + addr.ToString() + ", len: " + blockLen.ToString());
+                        }
+                    }
+                    else
+                    { 
+                        Array.Copy(lineData, 4, buf, addr, blockLen);
+                        for (uint c = addr; c < addr + blockLen; c++)
+                        {
+                            compareBuf[c] = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("Unknown line: " + Line);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, ParseLine, line " + line + ": " + ex.Message);
+                LoggerBold("File row: " + row);
+            }
+        }
+
 
         public void ConvertLines(string[] lines, string FileName)
         {
@@ -454,6 +522,9 @@ namespace UniversalPatcher
                             break;
                         case RMode.CAN78:
                             ParseLine_CAN78(Line, true);
+                            break;
+                        case RMode.KLINE23:
+                            ParseLine_KLINE(Line, true);
                             break;
                     }
                 }
@@ -508,6 +579,9 @@ namespace UniversalPatcher
                             break;
                         case RMode.CAN78:
                             ParseLine_CAN78(Line, false);
+                            break;
+                        case RMode.KLINE23:
+                            ParseLine_KLINE(Line, false);
                             break;
                     }
                 }

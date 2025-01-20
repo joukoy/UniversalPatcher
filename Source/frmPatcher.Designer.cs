@@ -226,6 +226,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboExtrainfoSegment = new System.Windows.Forms.ComboBox();
             this.tabSorter = new System.Windows.Forms.TabPage();
+            this.txtSeparRenParts = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.btnRemoveRenParts = new System.Windows.Forms.Button();
+            this.btnAddRenParts = new System.Windows.Forms.Button();
+            this.comboRenParts = new System.Windows.Forms.ComboBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.dataGridViewRenParts = new System.Windows.Forms.DataGridView();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.radioSortRename = new System.Windows.Forms.RadioButton();
             this.radioSortOverWrite = new System.Windows.Forms.RadioButton();
@@ -277,6 +284,7 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
+            this.xDFChecksumPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -321,6 +329,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytes)).BeginInit();
             this.tabEditExtra.SuspendLayout();
             this.tabSorter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRenParts)).BeginInit();
             this.groupBox9.SuspendLayout();
             this.groupBoxSortMode.SuspendLayout();
             this.groupBox8.SuspendLayout();
@@ -2550,6 +2559,13 @@
             // 
             // tabSorter
             // 
+            this.tabSorter.Controls.Add(this.txtSeparRenParts);
+            this.tabSorter.Controls.Add(this.label18);
+            this.tabSorter.Controls.Add(this.btnRemoveRenParts);
+            this.tabSorter.Controls.Add(this.btnAddRenParts);
+            this.tabSorter.Controls.Add(this.comboRenParts);
+            this.tabSorter.Controls.Add(this.label17);
+            this.tabSorter.Controls.Add(this.dataGridViewRenParts);
             this.tabSorter.Controls.Add(this.groupBox9);
             this.tabSorter.Controls.Add(this.groupBoxSortMode);
             this.tabSorter.Controls.Add(this.btnSortFiles);
@@ -2560,6 +2576,71 @@
             this.tabSorter.TabIndex = 8;
             this.tabSorter.Text = "Sort files";
             this.tabSorter.UseVisualStyleBackColor = true;
+            // 
+            // txtSeparRenParts
+            // 
+            this.txtSeparRenParts.Location = new System.Drawing.Point(578, 131);
+            this.txtSeparRenParts.Name = "txtSeparRenParts";
+            this.txtSeparRenParts.Size = new System.Drawing.Size(146, 20);
+            this.txtSeparRenParts.TabIndex = 10;
+            this.txtSeparRenParts.Text = "-";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(575, 115);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(56, 13);
+            this.label18.TabIndex = 9;
+            this.label18.Text = "Separator:";
+            // 
+            // btnRemoveRenParts
+            // 
+            this.btnRemoveRenParts.Location = new System.Drawing.Point(578, 82);
+            this.btnRemoveRenParts.Name = "btnRemoveRenParts";
+            this.btnRemoveRenParts.Size = new System.Drawing.Size(75, 23);
+            this.btnRemoveRenParts.TabIndex = 8;
+            this.btnRemoveRenParts.Text = "Remove";
+            this.btnRemoveRenParts.UseVisualStyleBackColor = true;
+            this.btnRemoveRenParts.Click += new System.EventHandler(this.btnRemoveRenParts_Click);
+            // 
+            // btnAddRenParts
+            // 
+            this.btnAddRenParts.Location = new System.Drawing.Point(578, 53);
+            this.btnAddRenParts.Name = "btnAddRenParts";
+            this.btnAddRenParts.Size = new System.Drawing.Size(75, 23);
+            this.btnAddRenParts.TabIndex = 7;
+            this.btnAddRenParts.Text = "Add";
+            this.btnAddRenParts.UseVisualStyleBackColor = true;
+            this.btnAddRenParts.Click += new System.EventHandler(this.btnAddRenParts_Click);
+            // 
+            // comboRenParts
+            // 
+            this.comboRenParts.FormattingEnabled = true;
+            this.comboRenParts.Location = new System.Drawing.Point(578, 23);
+            this.comboRenParts.Name = "comboRenParts";
+            this.comboRenParts.Size = new System.Drawing.Size(146, 21);
+            this.comboRenParts.TabIndex = 6;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(363, 7);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(71, 13);
+            this.label17.TabIndex = 5;
+            this.label17.Text = "Rename files:";
+            // 
+            // dataGridViewRenParts
+            // 
+            this.dataGridViewRenParts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dataGridViewRenParts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewRenParts.Location = new System.Drawing.Point(363, 23);
+            this.dataGridViewRenParts.Name = "dataGridViewRenParts";
+            this.dataGridViewRenParts.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewRenParts.Size = new System.Drawing.Size(204, 163);
+            this.dataGridViewRenParts.TabIndex = 4;
             // 
             // groupBox9
             // 
@@ -2641,7 +2722,8 @@
             // 
             // btnSortFiles
             // 
-            this.btnSortFiles.Location = new System.Drawing.Point(373, 19);
+            this.btnSortFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSortFiles.Location = new System.Drawing.Point(790, 14);
             this.btnSortFiles.Name = "btnSortFiles";
             this.btnSortFiles.Size = new System.Drawing.Size(75, 23);
             this.btnSortFiles.TabIndex = 1;
@@ -2798,6 +2880,7 @@
             this.functionNamesToolStripMenuItem,
             this.cANModulesToolStripMenuItem,
             this.cVNDatabaseToolStripMenuItem,
+            this.xDFChecksumPluginsToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
             this.moreSettingsToolStripMenuItem,
@@ -3015,6 +3098,13 @@
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
             // 
+            // xDFChecksumPluginsToolStripMenuItem
+            // 
+            this.xDFChecksumPluginsToolStripMenuItem.Name = "xDFChecksumPluginsToolStripMenuItem";
+            this.xDFChecksumPluginsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.xDFChecksumPluginsToolStripMenuItem.Text = "XDF Checksum Plugins";
+            this.xDFChecksumPluginsToolStripMenuItem.Click += new System.EventHandler(this.xDFChecksumPluginsToolStripMenuItem_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3097,6 +3187,8 @@
             this.tabEditExtra.ResumeLayout(false);
             this.tabEditExtra.PerformLayout();
             this.tabSorter.ResumeLayout(false);
+            this.tabSorter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRenParts)).EndInit();
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.groupBoxSortMode.ResumeLayout(false);
@@ -3362,5 +3454,13 @@
         private System.Windows.Forms.Button btnCsutilSelectSettings;
         private System.Windows.Forms.Button btnCustomFindStop;
         private System.Windows.Forms.Button btnHistogram;
+        private System.Windows.Forms.TextBox txtSeparRenParts;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Button btnRemoveRenParts;
+        private System.Windows.Forms.Button btnAddRenParts;
+        private System.Windows.Forms.ComboBox comboRenParts;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.DataGridView dataGridViewRenParts;
+        private System.Windows.Forms.ToolStripMenuItem xDFChecksumPluginsToolStripMenuItem;
     }
 }

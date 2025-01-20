@@ -11,8 +11,8 @@ namespace UniversalPatcher
         {
             MSB = true;
         }
-        public bool MSB { get; set; }
         public string SegmentFile { get; set; }
+        public bool MSB { get; set; }
         public string TableSeekFile { get; set; }
         public string SegmentSeekFile { get; set; }
         public string PidSearchString { get; set; }

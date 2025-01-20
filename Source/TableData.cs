@@ -9,6 +9,7 @@ using static Upatcher;
 using System.Diagnostics;
 using static Helpers;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace UniversalPatcher
 {
@@ -42,6 +43,8 @@ namespace UniversalPatcher
             CompatibleOS = "";
             BitMask = "";
             ByteOrder = Byte_Order.PlatformOrder;
+            ExtraOffset = "0";
+            //Mapped = false;
         }
 
         //public uint id { get; set; }
@@ -85,9 +88,10 @@ namespace UniversalPatcher
             {
                 if (value.Length > 0)
                 {
-                    UInt32 prevVal = addrInt;
-                    if (!HexToUint(value.Replace("0x",""), out addrInt))
-                        addrInt = prevVal;
+                    if (HexToUint(value.Replace("0x", ""), out UInt32 newVal))
+                    {
+                        addrInt = newVal;
+                    }
                 }
                 else
                 {
@@ -95,8 +99,53 @@ namespace UniversalPatcher
                 }
             }         
         }
+        [XmlIgnore]
+        public string ExtraOffsetAddress
+        {
+            get
+            {
+                if (addrInt == uint.MaxValue)
+                    return "";
+                else
+                    return StartAddress().ToString("X8");
+            }
+            set
+            {
+                if (value.Length > 0)
+                {
+                    if (HexToUint(value.Replace("0x", ""), out UInt32 newVal))
+                    {
+                        extraoffset = (int)(newVal - StartAddressNoExtra());
+                    }
+                }
+            }
+        }
         public int Offset { get; set; }
-        public int ExtraOffset { get; set; }
+        public string ExtraOffset { get; set; }
+        [XmlIgnoreAttribute]
+        [Browsable(false)]
+        [Bindable(false)]
+        public int extraoffset
+        {
+            get
+            {
+                if (ExtraOffset == "-0")
+                {
+                    return 0;
+                }
+                else
+                {
+                    if (int.TryParse(ExtraOffset, out int eo))
+                    {
+                        return eo;
+                    }
+                }
+                return 0;
+            }
+            set { ExtraOffset = value.ToString(); }
+        }
+
+        //public bool Mapped { get; set; }
         public InDataType DataType { get; set; }
         //public byte ElementSize;
         public string Math { get; set; }
@@ -222,12 +271,20 @@ namespace UniversalPatcher
 
         public uint StartAddress()
         {
-            return (uint)(addrInt + Offset + ExtraOffset);
+            return (uint)(addrInt + Offset + extraoffset);
+        }
+        public uint StartAddressNoExtra()
+        {
+            return (uint)(addrInt + Offset);
         }
 
         public uint EndAddress()
         {
-            return (uint)(addrInt + Offset + ExtraOffset + Size());
+            return (uint)(addrInt + Offset + extraoffset + Size());
+        }
+        public uint EndAddressNoExtra()
+        {
+            return (uint)(addrInt + Offset + Size());
         }
 
         public int Size()

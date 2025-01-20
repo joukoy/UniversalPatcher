@@ -84,7 +84,6 @@ namespace UniversalPatcher
             public List<TreeParts.Navi> Navigator { get; set; }
             public int NaviCurrent { get; set; }
             public string tunerFile { get; set; }
-
         }
         public byte[] buf;
         public string FileName;
@@ -115,6 +114,7 @@ namespace UniversalPatcher
         public List<TreeParts.Navi> Navigator = new List<TreeParts.Navi>();
         public int NaviCurrent;
         private string os;
+
         public List<string> tableCategories
         {
             get 
@@ -176,7 +176,12 @@ namespace UniversalPatcher
                     {
                         if (Segments[s].Name == "OS")
                             os = segmentinfos[s].PN;
+                        break;
                     }
+                }
+                if (string.IsNullOrEmpty(os) && !string.IsNullOrEmpty(configFile))
+                {
+                    os = configFile;
                 }
                 return os;
             }
@@ -2404,7 +2409,6 @@ namespace UniversalPatcher
                 Array.Reverse(tmp);
             Array.Copy(tmp, 0, buf, offset, 2);
         }
-
 
     }
 }

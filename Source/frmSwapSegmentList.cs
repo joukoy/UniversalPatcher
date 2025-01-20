@@ -157,6 +157,7 @@ namespace UniversalPatcher
             setuplistview();
             SwapBuffer = null;
             labelSelectedSegment.Text = "-";
+            labelSelectedSegment2.Text = "-";
             string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
             int SegIndex = comboSegments.SelectedIndex;
             labelCurrentPN.Text = "Current P/N: " + PCM.segmentinfos[SegIndex].PN + PCM.segmentinfos[SegIndex].Ver;
@@ -329,6 +330,7 @@ namespace UniversalPatcher
                 }
                 string FileName = listSegments.SelectedItems[0].Tag.ToString();
                 labelSelectedSegment.Text = "Selected: " + listSegments.SelectedItems[0].Text;
+                labelSelectedSegment2.Text = "-";
                 labelSelectedSegment.Tag = FileName;
                 uint fsize = (uint)new FileInfo(FileName).Length;
                 Logger("Reading file: " + FileName + " (0x" + fsize.ToString("X") +" B)");
@@ -444,6 +446,7 @@ namespace UniversalPatcher
                     Logger(" (0x" + fsize.ToString("X") + " B)");
                     SwapBuffer = ReadBin(FileName);
                     labelSelectedSegment.Text = "Selected: " + Path.GetFileName(FileName);
+                    labelSelectedSegment2.Text = "";
                     labelSelectedSegment.Tag = FileName;
                     Logger("[OK]");
                     Logger("Press \"Apply\" to swap");
@@ -453,7 +456,8 @@ namespace UniversalPatcher
                 { 
                     PcmFile tmpPCM = new PcmFile(FileName,true,PCM.configFileFullName);
                     SwapBuffer = new byte[TotalLength];
-                    labelSelectedSegment.Text = "Selected: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
+                    labelSelectedSegment.Text = "Selected P/N: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver;
+                    labelSelectedSegment2.Text = "From file: " + Path.GetFileName(FileName) ;
                     labelSelectedSegment.Tag = FileName;
                     uint Offset = 0;
                     if (PCM.segmentinfos[Seg].SwapAddress.Length == 0)

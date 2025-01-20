@@ -106,11 +106,12 @@ namespace UniversalPatcher
         {
             try
             {
-                if (port != null && port.IsOpen)
+                if (port != null )
                 {
-                    port.Close();
+                    if (port.IsOpen)
+                        port.Close();
+                    port.Dispose();
                 }
-                port.Dispose();
             }
             catch (Exception ex)
             {

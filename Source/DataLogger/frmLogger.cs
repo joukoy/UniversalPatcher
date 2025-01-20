@@ -1257,6 +1257,7 @@ namespace UniversalPatcher
                 chkJconsoleDevTimestamps.Checked = AppSettings.JConsoleDevTimestamps;
                 chkJConsole4x.Checked = AppSettings.JConsole4x;
                 chkConsole4x.Checked = AppSettings.LoggerConsole4x;
+                chkTestPidCompatibility.Checked = AppSettings.LoggerTestPidCompatibility;
                 comboJ2534DLL.Text = AppSettings.JConsoleDevice;
                 numConsoleScriptDelay.Value = AppSettings.LoggerScriptDelay;
                 chkStartJ2534Process.Checked = AppSettings.LoggerStartJ2534Process;
@@ -1744,6 +1745,7 @@ namespace UniversalPatcher
                     }
                 }
                 Debug.WriteLine("Closing frmLogger");
+                WB.Discard();
                 if (datalogger != null && datalogger.LogDevice != null)
                 {
                     if (datalogger.Receiver != null)
@@ -1754,7 +1756,8 @@ namespace UniversalPatcher
                     {
                         datalogger.StopLogging();
                     }
-                    Disconnect(true);
+                    //Disconnect(true);
+                    datalogger.LogDevice.Dispose();
                 }
                 if (jConsole != null && jConsole.JDevice != null && jConsole.Connected)
                 {
@@ -1784,7 +1787,6 @@ namespace UniversalPatcher
                     }
                     AppSettings.Save();
                 }
-                WB.Discard();                
                 Thread.Sleep(100);
             }
             catch { }
@@ -1974,7 +1976,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (datalogger.Connected && datalogger.LogRunning == false)
+                if (datalogger.Connected && datalogger.LogRunning == false && chkTestPidCompatibility.Checked)
                 {
                     QueryPid(pc);
                 }
@@ -2013,7 +2015,7 @@ namespace UniversalPatcher
         }
         private void AddSelectedPidsToProfile()
         {
-            if (!datalogger.Connected)
+            if (!datalogger.Connected && chkTestPidCompatibility.Checked)
             {
                 Logger("Not connected - adding pids without testing compatibility");
             }
@@ -2115,6 +2117,7 @@ namespace UniversalPatcher
             AppSettings.LoggerAutoDisconnect = chkAutoDisconnect.Checked;
             AppSettings.LoggerUseVPW = radioVPW.Checked;
             AppSettings.LoggerResetAfterMiss = (int)numResetAfter.Value;
+            chkTestPidCompatibility.Checked = chkTestPidCompatibility.Checked;
             if (HexToUshort(txtPcmAddress.Text, out ushort pcmaddr))
                 AppSettings.LoggerCanPcmAddress = pcmaddr;
             AppSettings.Save();
@@ -2522,7 +2525,10 @@ namespace UniversalPatcher
                 {
                     return;
                 }
-                datalogger.RemoveUnsupportedPids();
+                if (chkTestPidCompatibility.Checked)
+                {
+                    datalogger.RemoveUnsupportedPids();
+                }
                 if (datalogger.PidProfile.Count == 0)
                 {
                     LoggerBold("No compatible pids configured");
@@ -3020,11 +3026,11 @@ namespace UniversalPatcher
                 if (dataGridPidNames.SelectedRows.Count == 0)
                     return null;
 
-                if (!datalogger.Connected)
+/*                if (!datalogger.Connected)
                 {
                     Logger("Not connected - adding pids without testing compatibility");
                 }
-
+*/
                 for (int selRow = 0; selRow < dataGridPidNames.SelectedRows.Count; selRow++)
                 {
                     DataGridViewRow dgr = dataGridPidNames.SelectedRows[selRow];
@@ -3431,7 +3437,7 @@ namespace UniversalPatcher
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmPropertyEditor fpe = new frmPropertyEditor();
-            fpe.LoadObject(dataGridLogProfile.CurrentRow.DataBoundItem);
+            fpe.LoadObject(dataGridLogProfile.CurrentRow.DataBoundItem, "LogProfile");
             if (fpe.ShowDialog() == DialogResult.OK)
             {
                 bsLogProfile.DataSource = null;
@@ -5021,7 +5027,7 @@ namespace UniversalPatcher
             UpatcherSettings tmpSettings = AppSettings.ShallowCopy();
             fpe.resetToDefaultValueToolStripMenuItem.Enabled = true;
             fpe.txtFilter.Text = "timeout";
-            fpe.LoadObject(tmpSettings);
+            fpe.LoadObject(tmpSettings, "Timeouts");
             if (fpe.ShowDialog() == DialogResult.OK)
             {
                 AppSettings = tmpSettings;
@@ -5037,7 +5043,7 @@ namespace UniversalPatcher
             UpatcherSettings tmpSettings = AppSettings.ShallowCopy();
             fpe.resetToDefaultValueToolStripMenuItem.Enabled = true;
             fpe.txtFilter.Text = "loggerfilter";
-            fpe.LoadObject(tmpSettings);
+            fpe.LoadObject(tmpSettings, "LoggerFilters");
             if (fpe.ShowDialog() == DialogResult.OK)
             {
                 AppSettings = tmpSettings;
@@ -5255,41 +5261,53 @@ namespace UniversalPatcher
 
         private void timerJconsoleShowLogText_Tick(object sender, EventArgs e)
         {
-            if (chkJconsoleToScreen.Checked && chkJconsoleUsebuffer.Checked == false)
+            try
             {
-                while (jconsoleLogQueue.Count > 0)
+                if (chkJconsoleToScreen.Checked && chkJconsoleUsebuffer.Checked == false)
                 {
-                    LogText lt = jconsoleLogQueue.Dequeue();
-                    richJConsole.SelectionColor = lt.color;
-                    richJConsole.AppendText(lt.Txt);
+                    while (jconsoleLogQueue.Count > 0)
+                    {
+                        LogText lt = jconsoleLogQueue.Dequeue();
+                        richJConsole.SelectionColor = lt.color;
+                        richJConsole.AppendText(lt.Txt);
+                    }
+                    Application.DoEvents();
+                    return;
                 }
-                Application.DoEvents();
-                return;
-            }
 
-            if (jconsolelastLogRowCount == jconsolelogTexts.Count || chkJconsoleToScreen.Checked == false)
-            {
-                return;
+                if (jconsolelastLogRowCount == jconsolelogTexts.Count || chkJconsoleToScreen.Checked == false)
+                {
+                    return;
+                }
+                int displayableLines = GetRichBoxDisplayableLines(richJConsole);
+                int start = 0;
+                if (jconsolelogTexts.Count > displayableLines)
+                {
+                    start = jconsolelogTexts.Count - displayableLines;
+                }
+                richJConsole.Text = "";
+                for (int i = start; i < jconsolelogTexts.Count; i++)
+                {
+                    richJConsole.SelectionColor = jconsolelogTexts[i].color;
+                    richJConsole.AppendText(jconsolelogTexts[i].Txt);
+                }
+                if (jconsolelogTexts.Count > displayableLines)
+                {
+                    vScrollBarJConsole.Maximum = jconsolelogTexts.Count - displayableLines;
+                    vScrollBarJConsole.Value = jconsolelogTexts.Count - displayableLines;
+                }
+                jconsolelastLogRowCount = jconsolelogTexts.Count;
+                Application.DoEvents();
             }
-            int displayableLines = GetRichBoxDisplayableLines(richJConsole);
-            int start = 0;
-            if (jconsolelogTexts.Count > displayableLines)
+            catch (Exception ex)
             {
-                start = jconsolelogTexts.Count - displayableLines;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
-            richJConsole.Text = "";
-            for (int i = start; i < jconsolelogTexts.Count; i++)
-            {
-                richJConsole.SelectionColor = jconsolelogTexts[i].color;
-                richJConsole.AppendText(jconsolelogTexts[i].Txt);
-            }
-            if (jconsolelogTexts.Count > displayableLines)
-            {
-                vScrollBarJConsole.Maximum = jconsolelogTexts.Count - displayableLines;
-                vScrollBarJConsole.Value = jconsolelogTexts.Count - displayableLines;
-            }
-            jconsolelastLogRowCount = jconsolelogTexts.Count;
-            Application.DoEvents();
         }
 
         private void JConsoleScroll()
@@ -5810,5 +5828,16 @@ namespace UniversalPatcher
         {
             jConsoleDevTimestamps = chkJconsoleDevTimestamps.Checked;
         }
+
+        private void parseKline23LogfileToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select log file", RtfFTxtilter);
+            if (fName.Length == 0)
+                return;
+            LogToBinConverter cltb = new LogToBinConverter(LogToBinConverter.RMode.KLINE23);
+            cltb.ConvertFile(fName);
+
+        }
+
     }
 }

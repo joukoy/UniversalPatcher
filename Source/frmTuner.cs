@@ -15,6 +15,7 @@ using static Upatcher;
 using static Helpers;
 using static UniversalPatcher.TreeParts;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace UniversalPatcher
 {
@@ -140,6 +141,7 @@ namespace UniversalPatcher
         private string sessionname;
         private frmHistogram hstForm;
         public bool histogramTableSelectionEnabled;
+
         public String SessionName
         {
             get { return sessionname; }
@@ -245,6 +247,8 @@ namespace UniversalPatcher
             dataGridView1.EditingControlShowing += new DataGridViewEditingControlShowingEventHandler(dataGridView1_EditingControlShowing);
             dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
             dataGridView1.KeyUp += DataGridView1_KeyUp;
+            dataGridView1.UserAddedRow += DataGridView1_UserAddedRow;
+            dataGridView1.CellValidating += DataGridView1_CellValidating;
             revToolStripMenuItem.MouseHover += RevToolStripMenuItem_MouseHover;
             fwdToolStripMenuItem.MouseHover += RevToolStripMenuItem_MouseHover;
             revToolStripMenuItem.MouseDown += NaviMenuItem_MouseDown; 
@@ -257,6 +261,7 @@ namespace UniversalPatcher
                 histogramTableSelectionEnabled = true;
             }
         }
+
 
         private bool IsSessionModified()
         {
@@ -271,11 +276,12 @@ namespace UniversalPatcher
                 {
                     return true;
                 }
-                string tmpsession = sessionname + "-tmp-" + DateTime.Now.ToString("HH-MM-dd-HH-ss-ffff");
+                string originalSesname = SessionName;
+                string tmpsession = SessionName + "-tmp-" + DateTime.Now.ToString("HH-MM-dd-HH-ss-ffff");
                 string tmpFolder = Path.Combine(Application.StartupPath, "TunerSessions", tmpsession);
                 string sesFodler = Path.Combine(Application.StartupPath, "TunerSessions", SessionName);
-                Directory.Move(sesFodler, tmpFolder);
-                SaveSession(SessionName, false);
+                SaveSession(tmpsession, false);
+                SessionName = originalSesname; //Return original session name
                 DirectoryInfo d = new DirectoryInfo(sesFodler);
                 FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
                 DirectoryInfo d2 = new DirectoryInfo(tmpFolder);
@@ -303,12 +309,11 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                foreach (FileInfo f in Files)
+                foreach (FileInfo f in tmpFiles)
                 {
                     File.Delete(f.FullName);
                 }
-                Directory.Delete(sesFodler);
-                Directory.Move(tmpFolder, sesFodler);
+                Directory.Delete(tmpFolder);
             }
             catch (Exception ex)
             {
@@ -408,7 +413,7 @@ namespace UniversalPatcher
                     dataGridView1.EndEdit();
                     TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
                     ShowTableDescription(PCM, selTd);
-                    numExtraOffset.Value = selTd.ExtraOffset;
+                    numExtraOffset.Value = selTd.extraoffset;
                     e.Handled = true;
                 }
             }
@@ -429,7 +434,7 @@ namespace UniversalPatcher
                 if (mi.Name != sortItem.Name)
                     mi.Checked = false;
             }
-            FilterTables(true);
+            SortTables();
         }
 
         private void FrmTuner_DragDrop(object sender, DragEventArgs e)
@@ -798,13 +803,13 @@ namespace UniversalPatcher
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
                 RefreshCategories();
-
                 Application.DoEvents();
                 FilterTables(RestorePath);
                 treeView1.SelectedNodes.Clear();
                 treeView1.Nodes.Clear();
+                DrawingControl.SuspendDrawing(treeView1);
                 TreeParts.AddNodes(treeView1.Nodes, PCM, filteredTableDatas.ToList(), true);
-
+                DrawingControl.ResumeDrawing(treeView1);
             }
             catch (Exception ex)
             {
@@ -872,7 +877,10 @@ namespace UniversalPatcher
                         if (order > -1 && order < dataGridView1.Columns.Count)
                         {
                             dataGridView1.Columns[c].DisplayIndex = order;
-                            dataGridView1.Columns[c].Width = Convert.ToInt32(configWidth[c]);
+                            if (c < configWidth.Length)
+                            {
+                                dataGridView1.Columns[c].Width = Convert.ToInt32(configWidth[c]);
+                            }
                         }
                     }
                     else
@@ -887,7 +895,10 @@ namespace UniversalPatcher
                         else if (tunerColumns.Contains(dataGridView1.Columns[c].HeaderText.ToLower()))
                         {
                             dataGridView1.Columns[c].Visible = true;
-                            dataGridView1.Columns[c].Width = Convert.ToInt32(tunerWidth[c]);
+                            if (c < tunerWidth.Length)
+                            {
+                                dataGridView1.Columns[c].Width = Convert.ToInt32(tunerWidth[c]);
+                            }
                             int order = Array.IndexOf(tunerColumns, dataGridView1.Columns[c].HeaderText.ToLower());
                             if (order > -1 && order < dataGridView1.Columns.Count)
                                 dataGridView1.Columns[c].DisplayIndex = order;
@@ -905,7 +916,7 @@ namespace UniversalPatcher
                 {
                     dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
                 }
-
+                Debug.WriteLine("Reorder done");
             }
             catch (Exception ex)
             {
@@ -917,6 +928,24 @@ namespace UniversalPatcher
                 Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
             }
 
+        }
+        private void SortTables()
+        {
+            this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
+            DrawingControl.SuspendDrawing(dataGridView1);
+            List<TableData> results = filteredTableDatas.ToList();
+            if (strSortOrder == SortOrder.Ascending)
+                results = results.OrderBy(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+            else
+                results = results.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+
+            filteredTableDatas = new BindingList<TableData>(results.ToList());
+
+            dataGridView1.DataSource = filteredTableDatas;
+            this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
+            DrawingControl.ResumeDrawing(dataGridView1);
+            dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+            FilterTree(true);
         }
         private void FilterTables(bool RestorePath)
         {
@@ -932,18 +961,27 @@ namespace UniversalPatcher
                 SaveGridLayout();
 
                 List<TableData> compareList = PCM.tableDatas;
+                Debug.WriteLine("Total table count: " + compareList.Count.ToString());
+                if (showOnlyMappedTablesToolStripMenuItem.Checked)
+                {
+                    compareList = compareList.Where(X => X.ExtraOffset != "0" ).ToList();
+                    Debug.WriteLine("Tables with Extra offset: " + compareList.Count.ToString());
+                }
                 if (!AppSettings.TunerShowUnitsUndefined || !AppSettings.TunerShowUnitsMetric || !AppSettings.TunerShowUnitsImperial)
                 {
                     List<TableData> newTDList = new List<TableData>();
                     if (AppSettings.TunerShowUnitsUndefined)
-                        foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Undefined))
-                            newTDList.Add(tmpTd);
+                    {
+                        newTDList.AddRange(compareList.Where(x => x.DispUnits == DisplayUnits.Undefined).ToArray());
+                    }
                     if (AppSettings.TunerShowUnitsImperial)
-                        foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Imperial))
-                            newTDList.Add(tmpTd);
+                    {
+                        newTDList.AddRange(compareList.Where(x => x.DispUnits == DisplayUnits.Imperial).ToArray());
+                    }
                     if (AppSettings.TunerShowUnitsMetric)
-                        foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Metric))
-                            newTDList.Add(tmpTd);
+                    {
+                        newTDList.AddRange(compareList.Where(x => x.DispUnits == DisplayUnits.Metric).ToArray());
+                    }
                     compareList = newTDList;
                 }
 
@@ -1083,11 +1121,16 @@ namespace UniversalPatcher
                 }
 
                 if (!showTablesWithEmptyAddressToolStripMenuItem.Checked)
+                {
+                    Debug.WriteLine("Filtering tables with empty address");
                     results = results.Where(t => t.addrInt < uint.MaxValue);
+                    Debug.WriteLine("OK");
+                }
 
                 string cat = comboTableCategory.Text;
                 if (cat != "_All" && cat != "")
                 {
+                    Debug.WriteLine("Filtering tablesby category");
                     if (cat.StartsWith("Seg-"))
                     {
                         string seg = cat.Substring(4, cat.Length - 4);
@@ -1103,37 +1146,34 @@ namespace UniversalPatcher
                     {
                         results = results.Where(t => t.Category.ToLower() == comboTableCategory.Text.ToLower());
                     }
+                    Debug.WriteLine("OK");
                 }
 
-                if (DisplayMode == DispMode.List && !treeView1.Nodes["All"].IsSelected && !treeView1.Nodes["Patches"].IsSelected && treeView1.SelectedNodes.Count > 0)
+/*                if (DisplayMode == DispMode.List && !treeView1.Nodes["All"].IsSelected && !treeView1.Nodes["Patches"].IsSelected && treeView1.SelectedNodes.Count > 0)
                 {
+                    Debug.WriteLine("Filtering by tree");
                     List<TableData> newTDList = new List<TableData>();
                     foreach (TreeNode tn in treeView1.SelectedNodes)
                     {
                         TreeParts.Tnode tnode = (TreeParts.Tnode)tn.Tag;
-                        foreach(TableData td1 in results)
-                        {
-                            foreach (TableData td2 in tnode.filteredTds)
-                            {
-                                if (td1.guid == td2.guid)
-                                {
-                                    newTDList.Add(td1);
-                                    break;
-                                }
-                            }
-                        }
+                        newTDList.AddRange(tnode.filteredTds);
                     }
                     results = newTDList;
+                    Debug.WriteLine("OK");
+                    Debug.WriteLine("Total table count, filtered by selected tree node: " + compareList.Count.ToString());
                 }
-
+*/
                 filteredTableDatas = new BindingList<TableData>(results.ToList());
+
                 dataGridView1.DataSource = filteredTableDatas;
                 //bindingsource = filteredTableDatas;
                 ReorderColumns();
                 txtDescription.Text = "";
                 FilterTree(RestorePath);
                 this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
+                Debug.WriteLine("Enable drawings");
                 DrawingControl.ResumeDrawing(dataGridView1);
+                Debug.WriteLine("OK");
             }
             catch (Exception ex)
             {
@@ -1156,6 +1196,7 @@ namespace UniversalPatcher
                 Debug.WriteLine("Refresh cats");
                 RefreshCategories();
             }
+            this.Refresh();
         }
 
         private void FilterTree(bool RestorePath)
@@ -1164,9 +1205,12 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("Filter tree, RestorePath: " + RestorePath.ToString());
                 if (DisplayMode != DispMode.Tree)
+                {
                     return;
+                }
                 if (tabControl1.SelectedTab == null)
                     tabControl1.SelectedTab = tabMultiTree;
+                DrawingControl.SuspendDrawing(treeView1);
                 if (tabControl1.SelectedTab == tabDimensions)
                     LoadDimensions();
                 else if (tabControl1.SelectedTab == tabValueType)
@@ -1177,7 +1221,7 @@ namespace UniversalPatcher
                     LoadSegments();
                 else if (tabControl1.SelectedTab == tabMultiTree)
                     LoadMultiTree();
-
+                DrawingControl.ResumeDrawing(treeView1);
                 if (tabControl1.SelectedTab.Controls[0].GetType() != typeof(TreeViewMS))
                 {
                     Debug.WriteLine("control 0 is not TreeViewMS (" + tabControl1.SelectedTab.Controls[0].GetType().ToString() + ")");
@@ -1208,7 +1252,8 @@ namespace UniversalPatcher
         private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
             Debug.WriteLine("comboTableCategory_SelectedIndexChanged");
-            FilterTables(true);
+            //FilterTables(true);
+            RefreshTablelist(true);
         }
 
         private void btnSearchTableSeek_Click(object sender, EventArgs e)
@@ -1302,7 +1347,8 @@ namespace UniversalPatcher
                     tdTmp.ImportDTC(_PCM, ref _PCM.tableDatas,true);
                     tdTmp.ImportDTC(_PCM, ref _PCM.tableDatas, false);
                     Logger(" [OK]");
-                    FilterTables(true);
+                    //FilterTables(true);
+                    RefreshTablelist(true);
                 }
             }
             catch (Exception ex)
@@ -1710,7 +1756,8 @@ namespace UniversalPatcher
                 showTablesWithEmptyAddressToolStripMenuItem.Checked = false;
             else
                 showTablesWithEmptyAddressToolStripMenuItem.Checked = true;
-            FilterTables(true);
+            //FilterTables(true);
+            RefreshTablelist(true);
         }
 
         private void ShowFileInfo(PcmFile pcm, RichTextBox txtBox)
@@ -1825,7 +1872,8 @@ namespace UniversalPatcher
         {
             Debug.WriteLine("comboFilterBy_SelectedIndexChanged");
             if (!string.IsNullOrEmpty(txtFilter.Text))
-                FilterTables(true);
+                RefreshTablelist(true);
+            //FilterTables(true);
         }
 
         private void disableMultitableToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1845,7 +1893,7 @@ namespace UniversalPatcher
                 sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
                 sortIndex = e.ColumnIndex;
                 strSortOrder = GetSortOrder(sortIndex);
-                FilterTables(true);
+                SortTables();
             }
             else if (AppSettings.WorkingMode != 2)
             {
@@ -1907,6 +1955,25 @@ namespace UniversalPatcher
             RefreshTablelist(true);
         }
 
+        private void DataGridView1_UserAddedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            if (dataGridView1.CurrentCell != null)
+            {
+                TableData rTd = (TableData)dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+                AddToRedoLog(rTd, PCM.tableDatas,"TableData",rTd.TableName, "", ReDo.RedoAction.Add, "", "", dataGridView1.CurrentCell.RowIndex);
+            }
+        }
+
+        private void DataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            var oldValue = dataGridView1[e.ColumnIndex, e.RowIndex].Value;
+            var newValue = e.FormattedValue;
+            TableData rTd = (TableData)dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+            string prop = dataGridView1.Columns[e.ColumnIndex].HeaderText;
+            AddToRedoLog(rTd, PCM.tableDatas, "TableData", rTd.TableName, prop, ReDo.RedoAction.Edit, oldValue, newValue);
+        }
+
+
         private void DataGridView1_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             try
@@ -1919,11 +1986,12 @@ namespace UniversalPatcher
                 for (int r = 0; r < dataGridView1.SelectedRows.Count; r++)
                 {
                     TableData rTd = (TableData)dataGridView1.SelectedRows[r].DataBoundItem;
+                    AddToRedoLog(rTd, PCM.tableDatas, "TableData", rTd.TableName, "", ReDo.RedoAction.Delete, "", "", r);
                     PCM.tableDatas.Remove(rTd);
-                    dataGridView1.Update();
-                    dataGridView1.Refresh();
                     //FilterTables();
                 }
+                dataGridView1.Update();
+                dataGridView1.Refresh();
             }
             catch (Exception ex)
             {
@@ -2007,8 +2075,8 @@ namespace UniversalPatcher
                 }
                 if (shTd.Dimensions() == 1)
                 {
-                    double curVal = GetValue(peekPCM.buf, (uint)(shTd.addrInt + shTd.Offset + shTd.ExtraOffset), shTd, 0, peekPCM);
-                    UInt64 rawVal = (UInt64)GetRawValue(peekPCM.buf, (uint)(shTd.addrInt + shTd.Offset + shTd.ExtraOffset), shTd, 0, peekPCM.platformConfig.MSB);
+                    double curVal = GetValue(peekPCM.buf, (uint)(shTd.addrInt + shTd.Offset + shTd.extraoffset), shTd, 0, peekPCM);
+                    UInt64 rawVal = (UInt64)GetRawValue(peekPCM.buf, shTd.StartAddress(), shTd, 0, peekPCM.platformConfig.MSB);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + shTd.Units;
                     string maskTxt = "";
@@ -2100,7 +2168,7 @@ namespace UniversalPatcher
                 {
                     //string tblData = "Current values: " + minMax + Environment.NewLine;
                     StringBuilder tblData = new StringBuilder("Current values: " + minMax + Environment.NewLine);
-                    uint addr = (uint)(shTd.addrInt + shTd.Offset + shTd.ExtraOffset);
+                    uint addr = shTd.StartAddress();
                     double firstVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
                     uint elemSize = (uint)shTd.ElementSize();
                     if (shTd.RowMajor)
@@ -2163,6 +2231,19 @@ namespace UniversalPatcher
             }
         }
 
+        private int GetSelectionCount()
+        {
+            List<int> selectedRows = new List<int>();
+            foreach (DataGridViewCell dgc in dataGridView1.SelectedCells)
+            {
+                if (!selectedRows.Contains(dgc.RowIndex))
+                {
+                    selectedRows.Add(dgc.RowIndex);
+                }
+            }
+            //string message = "Selected " + selectedRows.Count.ToString() + " tables";
+            return selectedRows.Count;
+        }
         public void ShowTableDescription(PcmFile PCM, TableData shTd)
         {
             try
@@ -2171,8 +2252,13 @@ namespace UniversalPatcher
                     return;
                 txtDescription.Text = "";
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
-                txtDescription.AppendText(shTd.TableName + Environment.NewLine);
+                txtDescription.AppendText(shTd.TableName);
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
+                if (DisplayMode == DispMode.List)
+                {
+                    txtDescription.AppendText(" (" + GetSelectionCount().ToString() + " tables selected)");
+                }
+                txtDescription.AppendText(Environment.NewLine);
                 if (shTd.TableDescription != null)
                     txtDescription.AppendText(shTd.TableDescription + Environment.NewLine);
                 if (shTd.ExtraDescription != null)
@@ -2211,7 +2297,7 @@ namespace UniversalPatcher
                 }
                 TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
                 ShowTableDescription(PCM, selTd);
-                numExtraOffset.Value = selTd.ExtraOffset;
+                numExtraOffset.Value = selTd.extraoffset;
                 ExtraOffsetFirstTry = true;
                 if (histogramTableSelectionEnabled)
                 {
@@ -2228,21 +2314,6 @@ namespace UniversalPatcher
                 Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
             }
         }
-
-        private void tunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmData frmd = new frmData();
-            frmd.txtData.Text = AppSettings.TunerModeColumns;
-            frmd.Text = "Columns visible in tuner mode:";
-            if (frmd.ShowDialog() == DialogResult.OK)
-            {
-                AppSettings.TunerModeColumns = frmd.txtData.Text;
-            }
-            AppSettings.Save();
-            frmd.Dispose();
-            FilterTables(true);
-        }
-
         private void ExportXMLgeneratorCSV()
         {
             try
@@ -2774,8 +2845,8 @@ namespace UniversalPatcher
                 if (td1.BitMask != null && td1.BitMask.Length > 0)
                 {
                     //Check only bit
-                    double orgVal = GetValue(pcm1.buf, td1.addrInt, td1, (int)(td1.Offset + td1.ExtraOffset), pcm1);
-                    double compVal = GetValue(pcm2.buf, td2.addrInt, td2, (int)(td2.Offset + td2.ExtraOffset), pcm2);
+                    double orgVal = GetValue(pcm1.buf, td1.addrInt, td1, (int)(td1.Offset + td1.extraoffset), pcm1);
+                    double compVal = GetValue(pcm2.buf, td2.addrInt, td2, (int)(td2.Offset + td2.extraoffset), pcm2);
                     if (orgVal == compVal)
                         return null;
                     else
@@ -2783,8 +2854,8 @@ namespace UniversalPatcher
                 }
                 byte[] buff1 = new byte[tbSize];
                 byte[] buff2 = new byte[tbSize];
-                Array.Copy(pcm1.buf, td1.addrInt + td1.Offset + td1.ExtraOffset, buff1, 0, tbSize);
-                Array.Copy(pcm2.buf, td2.addrInt + td2.Offset + td2.ExtraOffset, buff2, 0, tbSize);
+                Array.Copy(pcm1.buf, td1.StartAddress(), buff1, 0, tbSize);
+                Array.Copy(pcm2.buf, td2.StartAddress(), buff2, 0, tbSize);
                 if (buff1.SequenceEqual(buff2))
                     return null;
                 else
@@ -2865,7 +2936,7 @@ namespace UniversalPatcher
                     {
                         TableData tData = PCM.tableDatas[t1];
                         uint start = tData.addrInt;
-                        uint end = (uint)(start + GetElementSize(tData.DataType) * tData.Rows * tData.Columns + tData.Offset + tData.ExtraOffset);
+                        uint end = (uint)(start + GetElementSize(tData.DataType) * tData.Rows * tData.Columns + tData.Offset + tData.extraoffset);
                         for (uint b = start; b < end; b++)
                             buf[b] = 1;
                     }
@@ -2960,7 +3031,8 @@ namespace UniversalPatcher
             ToolStripMenuItem mItem = (ToolStripMenuItem)sender;
             PCM.SelectTableDatas((int)mItem.Tag, mItem.Name);
             mItem.Checked = true;
-            FilterTables(false);
+            //FilterTables(false);
+            RefreshTablelist(false);
             Navigate(0);
         }
 
@@ -3058,7 +3130,8 @@ namespace UniversalPatcher
             mItem.Checked = true;
             tableListToolStripMenuItem.DropDownItems.Add(mItem);
             mItem.Click += tablelistSelect_Click;
-            FilterTables(true);
+            //FilterTables(true);
+            RefreshTablelist(true);
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3084,6 +3157,7 @@ namespace UniversalPatcher
                         if (PCM.tableDatas[id].guid == lastSelectTd.guid)
                         {
                             PCM.tableDatas.Insert(id, fte.td);
+                            AddToRedoLog(fte.td, PCM.tableDatas, "TableData", fte.td.TableName, "", ReDo.RedoAction.Add, "", "", id);
                             FilterTables(true);
                             dataGridView1.ClearSelection();
                             dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
@@ -3108,29 +3182,13 @@ namespace UniversalPatcher
         {
             try
             {
-                TableData newTd = lastSelectTd.ShallowCopy(false);
                 frmTdEditor fte = new frmTdEditor();
-                fte.td = newTd;
+                fte.td = (TableData)dataGridView1.CurrentCell.OwningRow.DataBoundItem;
                 fte.LoadTd();
-                int c = dataGridView1.CurrentCell.ColumnIndex;
-                int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
-                    lastSelectTd = fte.td;
-                    for (int id = 0; id < PCM.tableDatas.Count; id++)
-                    {
-                        if (PCM.tableDatas[id].guid == lastSelectTd.guid)
-                        {
-                            PCM.tableDatas[id] = fte.td;
-                            //PCM.tableDatas.RemoveAt(id);
-                            //PCM.tableDatas.Insert(id,fte.td);
-                            FilterTables(true);
-                            RefreshCategories();
-                            dataGridView1.ClearSelection();
-                            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
-                            break;
-                        }
-                    }
+                    dataGridView1.Update();
+                    this.Refresh();
                 }
                 fte.Dispose();
             }
@@ -3148,30 +3206,58 @@ namespace UniversalPatcher
 
         private void deleteRowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int c = dataGridView1.CurrentCell.ColumnIndex;
-            int r = dataGridView1.CurrentCell.RowIndex;
-            PCM.tableDatas.Remove(lastSelectTd);
-            FilterTables(true);
-            dataGridView1.ClearSelection();
-            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
-
+            try
+            {
+                int c = dataGridView1.CurrentCell.ColumnIndex;
+                int r = dataGridView1.CurrentCell.RowIndex;
+                AddToRedoLog(lastSelectTd, PCM.tableDatas, "TableData", lastSelectTd.TableName, "", ReDo.RedoAction.Delete, "", "", r);
+                PCM.tableDatas.Remove(lastSelectTd);
+                FilterTables(true);
+                dataGridView1.ClearSelection();
+                if (r < dataGridView1.Rows.Count)
+                {
+                    dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
         }
 
         private void duplicateTableConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TableData newTd = lastSelectTd.ShallowCopy(true);
-            int c = dataGridView1.CurrentCell.ColumnIndex;
-            int r = dataGridView1.CurrentCell.RowIndex;
-            for (int id = 0; id < PCM.tableDatas.Count; id++)
+            try
             {
-                if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                TableData newTd = lastSelectTd.ShallowCopy(true);
+                int c = dataGridView1.CurrentCell.ColumnIndex;
+                int r = dataGridView1.CurrentCell.RowIndex;
+                for (int id = 0; id < PCM.tableDatas.Count; id++)
                 {
-                    PCM.tableDatas.Insert(id, newTd);
-                    FilterTables(true);
-                    dataGridView1.ClearSelection();
-                    dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
-                    break;
+                    if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                    {
+                        PCM.tableDatas.Insert(id, newTd);
+                        AddToRedoLog(newTd, PCM.tableDatas, "TableData", newTd.TableName, "", ReDo.RedoAction.Add, "", "", id);
+                        FilterTables(true);
+                        dataGridView1.ClearSelection();
+                        dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
+                        break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
             }
         }
 
@@ -3422,7 +3508,8 @@ namespace UniversalPatcher
         {
             frmMoreSettings frmTS = new frmMoreSettings();
             frmTS.ShowDialog();
-            FilterTables(true);
+            //FilterTables(true);
+            RefreshTablelist(true);
         }
 
         private void timerFilter_Tick(object sender, EventArgs e)
@@ -3581,7 +3668,7 @@ namespace UniversalPatcher
                     frmTE.PrepareTable(PCM, pTd, null, "A");
                     frmTE.LoadTable();
                     uint step = (uint)GetElementSize(pTd.DataType);
-                    uint addr = (uint)(pTd.addrInt + pTd.Offset + pTd.ExtraOffset);
+                    uint addr = pTd.StartAddress();
                     if (pTd.RowMajor)
                     {
                         for (int r = 0; r < pTd.Rows; r++)
@@ -3654,7 +3741,7 @@ namespace UniversalPatcher
                     frmTE.PrepareTable(PCM, srcTd, null, "A");
                     frmTE.LoadTable();
                     uint step = (uint)GetElementSize(srcTd.DataType);
-                    uint addr = (uint)(srcTd.addrInt + srcTd.Offset + srcTd.ExtraOffset);
+                    uint addr = srcTd.StartAddress();
                     patchTd.Values = "TablePatch: ";
                     if (srcTd.RowMajor)
                     {
@@ -3848,7 +3935,7 @@ namespace UniversalPatcher
 
                     break;
             }
-
+            ReorderColumns();
         }
 
         private void SelectTreemode()
@@ -4135,6 +4222,28 @@ namespace UniversalPatcher
             }
         }
 
+        private void FilterByTreeview1()
+        {
+            if (!treeView1.Nodes["All"].IsSelected && !treeView1.Nodes["Patches"].IsSelected && treeView1.SelectedNodes.Count > 0)
+            {
+                Debug.WriteLine("Filtering by tree");
+                DrawingControl.SuspendDrawing(dataGridView1);
+                this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
+                List<TableData> newTDList = new List<TableData>();
+                foreach (TreeNode tn in treeView1.SelectedNodes)
+                {
+                    TreeParts.Tnode tnode = (TreeParts.Tnode)tn.Tag;
+                    newTDList.AddRange(tnode.filteredTds);
+                }
+                filteredTableDatas = new BindingList<TableData>(newTDList);
+                dataGridView1.DataSource = filteredTableDatas;
+                this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
+                DrawingControl.ResumeDrawing(dataGridView1);
+                Debug.WriteLine("OK");
+                Debug.WriteLine("Total table count, filtered by selected tree node: " + newTDList.Count.ToString());
+            }
+
+        }
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             try
@@ -4166,11 +4275,13 @@ namespace UniversalPatcher
                 if (e.Action == TreeViewAction.ByKeyboard || e.Action == TreeViewAction.ByMouse)
                 {
                     SaveCurrentPath(treeView1);
-                    FilterTables(true);
+                    //FilterTables(true);
+                    FilterByTreeview1();
                 }
                 else
                 {
-                    FilterTables(false);
+                    //FilterTables(false);
+                    FilterByTreeview1();
                 }
                 //if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
                 if (e.Node.Name != "All" && e.Node.Parent != null)
@@ -4649,7 +4760,8 @@ namespace UniversalPatcher
                     foreach (TreeNode node in treeDimensions.Nodes)
                     {
                         Tnode tnode = (Tnode)node.Tag;
-                        AddCategories(node.Nodes, tnode.filteredTds, true);
+                        if (!IncludesCollection(node, NType.Category, false))
+                            AddCategories(node.Nodes, tnode.filteredTds, true);
                     }
 
                 }
@@ -4719,7 +4831,8 @@ namespace UniversalPatcher
                     foreach (TreeNode node in treeValueType.Nodes)
                     {
                         Tnode tnode = (Tnode)node.Tag;
-                        AddCategories(node.Nodes,tnode.filteredTds,true);
+                        if (!IncludesCollection(node, NType.Category, false))
+                            AddCategories(node.Nodes,tnode.filteredTds,true);
                     }
                 }
                 else
@@ -4775,7 +4888,6 @@ namespace UniversalPatcher
                     treeCategory.NodeMouseClick += Tree_NodeMouseClick;
                     treeCategory.AfterExpand += Tree_AfterExpand;
                 }
-
                 AddCategories(treeCategory.Nodes, filteredTableDatas.ToList(),false);
                 Cursor.Current = Cursors.Default;
             }
@@ -4824,7 +4936,8 @@ namespace UniversalPatcher
                     foreach (TreeNode node in treeSegments.Nodes)
                     {
                         Tnode tnode = (Tnode)node.Tag;
-                        AddCategories(node.Nodes, tnode.filteredTds, true);
+                        if (!IncludesCollection(node, NType.Category, false))
+                            AddCategories(node.Nodes, tnode.filteredTds, true);
                     }
                 }
                 else
@@ -5561,10 +5674,10 @@ namespace UniversalPatcher
                     ColorCoding = false;
                 }
                 txtDescription.AppendText(Environment.NewLine);
-                int OrigEO = tdTmp.ExtraOffset;
+                int OrigEO = tdTmp.extraoffset;
                 for (int eo = Start; eo<=End; eo++)
                 {
-                    tdTmp.ExtraOffset = OrigEO + eo;
+                    tdTmp.extraoffset = OrigEO + eo;
                     uint addr = tdTmp.StartAddress();
                     Color color = Color.Blue;
                     //double val = GetValue(PCM.buf, addr, tdTmp, 0, PCM);
@@ -5573,7 +5686,7 @@ namespace UniversalPatcher
                     {
                         for (int o=0; o< tdTmp.Offset;o++)
                         {
-                            if (PCM.buf[tdTmp.addrInt + tdTmp.ExtraOffset + o] != targetBytes[o])
+                            if (PCM.buf[tdTmp.addrInt + tdTmp.extraoffset + o] != targetBytes[o])
                             {
                                 offRange = true;    //Display only matches
                                 break;
@@ -5621,7 +5734,7 @@ namespace UniversalPatcher
                     }
                     if (!offRange)
                     {
-                        txtDescription.AppendText("Extra Offset: " + tdTmp.ExtraOffset.ToString() + " [" + addr.ToString("X") + "]" + Environment.NewLine);
+                        txtDescription.AppendText("Extra Offset: " + tdTmp.extraoffset.ToString() + " [" + addr.ToString("X") + "]" + Environment.NewLine);
                         PeekTableValues(tdTmp, PCM, false, color);
                     }
 
@@ -5704,17 +5817,17 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    tdTmp.ExtraOffset += step;
+                    tdTmp.extraoffset += step;
                 }                
-                for (int eo = tdTmp.ExtraOffset; (tdTmp.addrInt + tdTmp.Offset + eo) < PCM.fsize && (tdTmp.addrInt + tdTmp.Offset + eo) > 0; eo += step)
+                for (int eo = tdTmp.extraoffset; (tdTmp.addrInt + tdTmp.Offset + eo) < PCM.fsize && (tdTmp.addrInt + tdTmp.Offset + eo) > 0; eo += step)
                 {
                     int hits = 0;
-                    if ((tdTmp.addrInt + tdTmp.Offset + tdTmp.ExtraOffset + tdTmp.Size()) > PCM.fsize)
+                    if ((tdTmp.addrInt + tdTmp.Offset + tdTmp.extraoffset + tdTmp.Size()) > PCM.fsize)
                     {
                         hits = 0;
                         break;
                     }
-                    tdTmp.ExtraOffset = eo;
+                    tdTmp.extraoffset = eo;
                     uint cmpAddr = (uint)(compTd.addrInt + compTd.Offset);
                     uint addr = (uint)(tdTmp.addrInt + tdTmp.Offset + eo);
                     for (int r=0; r<tdTmp.Elements(); r++)
@@ -5738,7 +5851,7 @@ namespace UniversalPatcher
                     }
                     if (hits == tdTmp.Elements())
                     {
-                        txtDescription.AppendText("Extra Offset: " + eo.ToString() + " [" + (tdTmp.addrInt + tdTmp.Offset + tdTmp.ExtraOffset).ToString("X") + "]" + Environment.NewLine);
+                        txtDescription.AppendText("Extra Offset: " + eo.ToString() + " [" + (tdTmp.addrInt + tdTmp.Offset + tdTmp.extraoffset).ToString("X") + "]" + Environment.NewLine);
                         PeekTableValues(tdTmp, PCM, false, Color.Red);
                         dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = eo;
                         numExtraOffset.Value = eo;
@@ -5782,8 +5895,8 @@ namespace UniversalPatcher
             try
             {
                 TableData tdTmp = (TableData)dataGridView1.CurrentRow.DataBoundItem;
-                tdTmp.ExtraOffset = (int)numExtraOffset.Value;
-                dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = tdTmp.ExtraOffset;
+                tdTmp.extraoffset = (int)numExtraOffset.Value;
+                dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = tdTmp.extraoffset;
                 //dataGridView1.EndEdit();
                 if (clearPreviewToolStripMenuItem.Checked)
                 {
@@ -5870,7 +5983,7 @@ namespace UniversalPatcher
             try
             {
                 TableData tdTmp = ((TableData)dataGridView1.CurrentRow.DataBoundItem).ShallowCopy(true);
-                tdTmp.ExtraOffset = (int)numExtraOffsetTest.Value;
+                tdTmp.extraoffset = (int)numExtraOffsetTest.Value;
                 ShowTableDescription(PCM, tdTmp);
             }
             catch (Exception ex)
@@ -5889,10 +6002,10 @@ namespace UniversalPatcher
             try
             {
                 TableData tdTmp = (TableData)dataGridView1.CurrentRow.DataBoundItem;
-                tdTmp.ExtraOffset = (int)numExtraOffsetTest.Value;
-                dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = tdTmp.ExtraOffset;
+                tdTmp.extraoffset = (int)numExtraOffsetTest.Value;
+                dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = tdTmp.extraoffset;
                 ShowTableDescription(PCM, tdTmp);
-                numExtraOffset.Value = tdTmp.ExtraOffset;
+                numExtraOffset.Value = tdTmp.extraoffset;
             }
             catch (Exception ex)
             {
@@ -5974,7 +6087,8 @@ namespace UniversalPatcher
 */
                 if (ftvd == null || !ftvd.Visible)
                 {
-                    Task.Factory.StartNew(() => StartVisualizer(PCM, selTd, peekPCM, compTd, 0));
+                    StartVisualizer(PCM, selTd, peekPCM, compTd, 0);
+                    //Task.Factory.StartNew(() => StartVisualizer(PCM, selTd, peekPCM, compTd, 0));
                     //ftvd = new frmTableVisDouble(PCM, selTd, peekPCM, compTd, 0);
                     //ftvd.tuner = this;
                 }
@@ -5990,13 +6104,14 @@ namespace UniversalPatcher
             }
 
         }
-        [STAThread]
+        //[STAThread]
         private void StartVisualizer(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
         {
             ftvd = new frmTableVisDouble(PCM1, PCM2,td1,td2);
             ftvd.tuner = this;
             ftvd.ShowTables(SelectedByte);
-            Application.Run(ftvd);
+            ftvd.Show();
+            //Application.Run(ftvd);
         }
         private void mirrorSegmentsFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -6915,6 +7030,124 @@ namespace UniversalPatcher
             {
                 SaveSession("",true);
             }
+        }
+
+        private void showOnlyMappedTablesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showOnlyMappedTablesToolStripMenuItem.Checked = !showOnlyMappedTablesToolStripMenuItem.Checked;
+            //FilterTables(false);
+            RefreshTablelist(false);
+        }
+
+        private void saveMappedTablesAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<TableData> extraOffsets = PCM.tableDatas.Where(X => X.ExtraOffset != "0").ToList();
+                List<TableData> savingTds = new List<TableData>();
+                foreach (TableData td in extraOffsets)
+                {
+                    TableData newTd = td.ShallowCopy(true); //Dont modify original
+                    newTd.addrInt = (uint)(td.addrInt + td.extraoffset);
+                    newTd.extraoffset = 0;
+                    savingTds.Add(newTd);
+                }
+                dataGridView1.EndEdit();
+                string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + "-mapped.xml");
+                string fName = SelectSaveFile(XmlFilter, defName);
+                if (string.IsNullOrEmpty(fName))
+                    return;
+                Logger("Saving file " + fName + "...", false);
+
+                using (FileStream stream = new FileStream(fName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                    writer.Serialize(stream, savingTds);
+                    stream.Close();
+                }
+                Logger(" [OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void copyToTableseekToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<TableData> tableTds = GetSelectedTableTds().OrderBy(X=>X.addrInt).ToList();
+                foreach (TableData td in tableTds)
+                {
+                    Logger("Adding to tableseek: " + td.TableName);
+                    TableSeek ts = new TableSeek();
+                    ts.ImportTableData(td);
+                    tableSeeks.Add(ts);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void editTableSeekToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmEditXML frmE = new frmEditXML();
+                string fName = PCM.TableSeekFile;
+                frmE.EditCurrentTableSeek(fName);
+                frmE.Show();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void sortColumnsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string cols = AppSettings.TunerModeColumns;
+            if (AppSettings.WorkingMode > 1)
+            {
+                cols = AppSettings.ConfigModeColumnOrder;
+            }
+            frmSortColumns frmsc = new frmSortColumns(cols);
+            if (frmsc.ShowDialog() == DialogResult.OK)
+            {
+                ReorderColumns();
+            }
+        }
+
+        private void undoRedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmRedo frmR = new frmRedo();
+            frmR.ShowDialog();
+            this.Refresh();
+        }
+
+        private void xDFnewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Logger("Generating xdf...");
+            XDF xdf = new XDF();
+            xdf.ExportXdf2(PCM, PCM.tableDatas);
         }
     }
 }

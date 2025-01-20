@@ -573,7 +573,7 @@ namespace UniversalPatcher
                     {
                         tData.DataType = InDataType.UBYTE;
                     }
-                    uint addr = (uint)(tData.addrInt + tData.Offset + tData.ExtraOffset);
+                    uint addr = tData.StartAddress();
                     int step = GetElementSize(tData.DataType);
                     byte mask = 1;
                     if (tData.RowMajor)
@@ -705,14 +705,14 @@ namespace UniversalPatcher
                 if (tableTds.Count > 1)
                 {
                     multiSelect = true;
-                    PrepareMultiTable(orgFile, td, tableTds, td.ExtraOffset);
+                    PrepareMultiTable(orgFile, td, tableTds, td.extraoffset);
                     return;
                 }
                 if (!disableMultiTable)
                 {
                     if (td.TableName.ToLower().EndsWith(".xval") || td.TableName.ToLower().EndsWith(".yval"))
                     {
-                        int ExtraOffset = td.ExtraOffset;
+                        int ExtraOffset = td.extraoffset;
                         for (int x = 0; x < pcm.tableDatas.Count; x++)
                         {
                             if (pcm.tableDatas[x].TableName.ToLower() == td.TableName.ToLower().Replace(".yval", ".data").Replace(".xval", ".data"))
@@ -742,7 +742,7 @@ namespace UniversalPatcher
                                 if (pcm.tableDatas[t].Category == td.Category && pcm.tableDatas[t].TableName.StartsWith(mtn.TableName) && pcm.tableDatas[t].TableName != td.TableName)
                                 {
                                     //It is multitable
-                                    PrepareMultiTable(orgFile, pcm.tableDatas[t], null, td.ExtraOffset);
+                                    PrepareMultiTable(orgFile, pcm.tableDatas[t], null, td.extraoffset);
                                     return;
                                 }
                             }
@@ -796,7 +796,7 @@ namespace UniversalPatcher
                     for (int i = 0; i < tableTds.Count; i++)
                     {
                         TableData mTd =tableTds[i];
-                        mTd.ExtraOffset = ExtraOffset;
+                        mTd.extraoffset = ExtraOffset;
                         if (tableNameList.Contains(mTd.TableName))
                         {
                             duplicateTableName = true;
@@ -835,7 +835,7 @@ namespace UniversalPatcher
                     {
                         tableTds.Add(cmpFile.filteredTables[i]);
                         cmpFile.tableIds.Add(tableTds[i].guid);
-                        tableTds[i].ExtraOffset = ExtraOffset;
+                        tableTds[i].extraoffset = ExtraOffset;
                     }
                 }
 
@@ -1934,7 +1934,7 @@ namespace UniversalPatcher
                     if (pcm.tableDatas[y].TableName == yTbName)
                     {
                         TableData ytb = pcm.tableDatas[y];
-                        uint xaddr = (uint)(ytb.addrInt + ytb.Offset + ytb.ExtraOffset);
+                        uint xaddr = ytb.StartAddress();
                         cols = (int)GetValue(pcm.buf, xaddr, ytb, 0, pcm);
                         break;
                     }
@@ -1962,7 +1962,7 @@ namespace UniversalPatcher
                 {
                     if (pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".Size") || pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".yVal"))
                     {
-                        uint addr = (uint)(pcm.tableDatas[x].addrInt + pcm.tableDatas[x].Offset + pcm.tableDatas[x].ExtraOffset);
+                        uint addr = pcm.tableDatas[x].StartAddress();
                         rows = (int)GetValue(pcm.buf, addr, pcm.tableDatas[x], 0, pcm);
                         break;
                     }
@@ -2788,7 +2788,7 @@ namespace UniversalPatcher
         private void saveOBD2DescriptionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dataGridView1.EndEdit();
-            SaveOBD2Codes();
+            SaveOBD2Codes(null);
         }
         private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -3180,7 +3180,8 @@ namespace UniversalPatcher
                 //ftvd.Show();
                 //ftvd.ShowTables(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr);
                 //ftv.DisplayData(addr, compareFiles[currentFile].buf);
-                Task.Factory.StartNew(() => StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr));
+                //Task.Factory.StartNew(() => StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr));
+                StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr);
             }
             catch (Exception ex)
             {
@@ -3188,12 +3189,13 @@ namespace UniversalPatcher
             }
         }
 
-        [STAThread]
+        //[STAThread]
         private void StartVisualizer(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
         {
             ftvd = new frmTableVisDouble(PCM1, PCM2,td1,td2);
             ftvd.ShowTables(SelectedByte);
-            Application.Run(ftvd);
+            ftvd.Show();
+            //Application.Run(ftvd);
         }
 
         private void showHistogramToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3227,7 +3229,8 @@ namespace UniversalPatcher
                     //ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr);
                     //ftvd.Show();
                     //ftvd.tuner = tuner;
-                    Task.Factory.StartNew(() => StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr));
+                    //Task.Factory.StartNew(() => StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr));
+                    StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr);
                 }
             }
             catch (Exception ex)

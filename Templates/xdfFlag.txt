@@ -1,7 +1,0 @@
-  <XDFFLAG uniqueid="0xREPLACE-TABLEID">
-    <title>REPLACE-TABLETITLE</title>
-	<description>REPLACE-TABLEDESCRIPTION</description>
-REPLACE-CATEGORIES
-    <EMBEDDEDDATA mmedaddress="0xREPLACE-TABLEADDRESS" mmedelementsizebits="REPLACE-BITS" mmedmajorstridebits="0" mmedminorstridebits="0" />
-    <mask>REPLACE-MASK</mask>
-  </XDFFLAG>
