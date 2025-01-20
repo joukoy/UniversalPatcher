@@ -748,7 +748,7 @@
 - Offset visualizer: Bug fixes & speed improvements
 - Swap segments: Cosmetic changes
 - Tuner & XML Editor/Configs: Added Undo/Redo
-- Logger: Fix to OBDXpro driver, more delay to rset function 
+- Logger: Fix to OBDXpro driver, more delay to reset function 
 - Tuner: Fixed compatibility problem in XDF export: If tabledescription is over 900 chars long, Tunerpro crash
 - Tuner: XDF import bugfixes, Export rewrite: No templates, better support for checksums.
 - Logger: Option to disable PID compatibility checking. Workaround for bug: In some cases all pids are incorrectly marked incompatible
