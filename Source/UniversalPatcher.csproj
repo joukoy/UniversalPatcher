@@ -903,8 +903,6 @@
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\
 
-copy $(TargetPath).config $(ProjectDir)..\
-
 copy $(TargetDir)$(TargetName).pdb $(ProjectDir)..\
 </PostBuildEvent>
   </PropertyGroup>
