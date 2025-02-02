@@ -756,5 +756,5 @@
 0.22.29
 - Set Launcher as default window
 - Launcher: Added selection "Open in startup"
-- Added: File -> "debug to file..."
+- Added: File -> "Create debug file..."
 
