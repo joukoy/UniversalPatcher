@@ -8,6 +8,26 @@ using System.IO;
 
 namespace UniversalPatcher
 {
+    class FileTraceListener : TraceListener
+    {
+        private StreamWriter writer;
+        public FileTraceListener(string FileName)
+        {
+            writer = new  StreamWriter(FileName);
+        }
+        ~FileTraceListener()
+        {
+            writer.Close();
+        }
+        public override void Write(string msg)
+        {
+            writer.Write(msg);
+        }
+        public override void WriteLine(string msg)
+        {
+            writer.WriteLine(msg);
+        }
+    }
 
     class RichTextBoxTraceListener : TraceListener
     {

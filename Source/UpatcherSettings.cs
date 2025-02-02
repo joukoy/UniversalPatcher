@@ -14,7 +14,7 @@ namespace UniversalPatcher
     {
         public UpatcherSettings()
         {
-
+            OpenInStartup = StartupUtil.Launcher;
             SuppressAfter = 10;
             AutorefreshCVNlist = true;
             AutorefreshFileinfo = true;
@@ -107,6 +107,15 @@ namespace UniversalPatcher
             DebugFont = new SerializableFont(new Font("Consolas", 8));
             LoggerConsoleFont = new SerializableFont(new Font("Consolas", 8));
         }
+        public enum StartupUtil
+        {
+            Launcher,
+            Tuner,
+            Logger,
+            Patcher
+        }
+
+        public StartupUtil OpenInStartup { get; set; }
         public string LastXMLfolder { get; set; }
         public string LastPATCHfolder { get; set; }
         public string LastBINfolder { get; set; }

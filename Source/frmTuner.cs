@@ -141,6 +141,7 @@ namespace UniversalPatcher
         private string sessionname;
         private frmHistogram hstForm;
         public bool histogramTableSelectionEnabled;
+        private FileTraceListener DebugFileListener;
 
         public String SessionName
         {
@@ -7148,6 +7149,29 @@ namespace UniversalPatcher
             Logger("Generating xdf...");
             XDF xdf = new XDF();
             xdf.ExportXdf2(PCM, PCM.tableDatas);
+        }
+
+        private void launcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmMain fMain = new FrmMain();
+            fMain.Show();
+
+        }
+
+        private void createDebugLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            createDebugLogToolStripMenuItem.Checked = !createDebugLogToolStripMenuItem.Checked;
+
+            if (createDebugLogToolStripMenuItem.Checked)
+            {
+                string fName = SelectSaveFile(TxtFilter);
+                DebugFileListener = new FileTraceListener(fName);
+                Debug.Listeners.Add(DebugFileListener);
+            }
+            else
+            {
+                Debug.Listeners.Remove(DebugFileListener);
+            }
         }
     }
 }

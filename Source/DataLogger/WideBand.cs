@@ -57,7 +57,7 @@ namespace UniversalPatcher
                         return (raw / 1000 + 0.5) * 14.7; 
                         break;
                     case WBType.Test:
-                        return raw;
+                        return 14.1;
                         break;
                     default:
                         return 0;

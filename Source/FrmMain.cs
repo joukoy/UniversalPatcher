@@ -70,7 +70,21 @@ namespace UniversalPatcher
                         radioTourist.Checked = true;
                         break;
                 }
-
+                switch(AppSettings.OpenInStartup)
+                {
+                    case UpatcherSettings.StartupUtil.Launcher:
+                        radioLauncher.Checked = true;
+                        break;
+                    case UpatcherSettings.StartupUtil.Tuner:
+                        radioTuner.Checked = true;
+                        break;
+                    case UpatcherSettings.StartupUtil.Logger:
+                        radioLogger.Checked = true;
+                        break;
+                    case UpatcherSettings.StartupUtil.Patcher:
+                        radioLogger.Checked = true;
+                        break;
+                }
                 ToolTip t1 = new ToolTip();
                 t1.SetToolTip(radioTourist, "Very limited funcionality, only basic Open/Save is available");
                 t1.SetToolTip(radioBasic, "Common functions available");
@@ -147,6 +161,44 @@ namespace UniversalPatcher
         private void btnLogger_Click(object sender, EventArgs e)
         {
             StartLogger(null);
+        }
+
+        private void radioLauncher_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioLauncher.Checked)
+            {
+                AppSettings.OpenInStartup = UpatcherSettings.StartupUtil.Launcher;
+                AppSettings.Save();
+            }
+        }
+
+        private void radioLogger_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioLogger.Checked)
+            {
+                AppSettings.OpenInStartup = UpatcherSettings.StartupUtil.Logger;
+                AppSettings.Save();
+            }
+        }
+
+        private void radioTuner_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioTuner.Checked)
+            {
+                AppSettings.OpenInStartup = UpatcherSettings.StartupUtil.Tuner;
+                AppSettings.Save();
+            }
+
+        }
+
+        private void radioPatcher_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioPatcher.Checked)
+            {
+                AppSettings.OpenInStartup = UpatcherSettings.StartupUtil.Patcher;
+                AppSettings.Save();
+            }
+
         }
     }
 }

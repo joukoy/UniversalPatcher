@@ -113,7 +113,7 @@ Set write timeout to "value" milliseconds
 
 loop:<cycles>
 endloop
-Run lines between loop: and endloop <cyles> times
+Run lines between loop: and endloop <cycles> times
 
 getseed
 eecvseed

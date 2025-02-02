@@ -54,6 +54,7 @@
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.tabDebug = new System.Windows.Forms.TabPage();
+            this.chkDebugToLogfile = new System.Windows.Forms.CheckBox();
             this.btnSaveDebug = new System.Windows.Forms.Button();
             this.btnDebugSearch = new System.Windows.Forms.Button();
             this.txtDebug = new System.Windows.Forms.RichTextBox();
@@ -143,6 +144,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnLauncher = new System.Windows.Forms.Button();
             this.btnHistogram = new System.Windows.Forms.Button();
             this.btnCsutilSelectSettings = new System.Windows.Forms.Button();
             this.btnByteSwap = new System.Windows.Forms.Button();
@@ -274,6 +276,7 @@
             this.functionNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cANModulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cVNDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xDFChecksumPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -284,7 +287,8 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
-            this.xDFChecksumPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.createDebugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -390,7 +394,6 @@
             // 
             // btnSaveBin
             // 
-            this.btnSaveBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveBin.Location = new System.Drawing.Point(760, 6);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(108, 25);
@@ -548,7 +551,7 @@
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(549, 1);
+            this.btnSearch.Location = new System.Drawing.Point(549, 2);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(75, 23);
             this.btnSearch.TabIndex = 205;
@@ -606,6 +609,7 @@
             // 
             // tabDebug
             // 
+            this.tabDebug.Controls.Add(this.chkDebugToLogfile);
             this.tabDebug.Controls.Add(this.btnSaveDebug);
             this.tabDebug.Controls.Add(this.btnDebugSearch);
             this.tabDebug.Controls.Add(this.txtDebug);
@@ -617,6 +621,17 @@
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
+            // 
+            // chkDebugToLogfile
+            // 
+            this.chkDebugToLogfile.AutoSize = true;
+            this.chkDebugToLogfile.Location = new System.Drawing.Point(116, 3);
+            this.chkDebugToLogfile.Name = "chkDebugToLogfile";
+            this.chkDebugToLogfile.Size = new System.Drawing.Size(95, 17);
+            this.chkDebugToLogfile.TabIndex = 215;
+            this.chkDebugToLogfile.Text = "Debug to file...";
+            this.chkDebugToLogfile.UseVisualStyleBackColor = true;
+            this.chkDebugToLogfile.CheckedChanged += new System.EventHandler(this.chkDebugToLogfile_CheckedChanged);
             // 
             // btnSaveDebug
             // 
@@ -631,7 +646,7 @@
             // 
             // btnDebugSearch
             // 
-            this.btnDebugSearch.Location = new System.Drawing.Point(181, 1);
+            this.btnDebugSearch.Location = new System.Drawing.Point(236, 1);
             this.btnDebugSearch.Name = "btnDebugSearch";
             this.btnDebugSearch.Size = new System.Drawing.Size(75, 23);
             this.btnDebugSearch.TabIndex = 213;
@@ -657,9 +672,9 @@
             this.chkDebug.AutoSize = true;
             this.chkDebug.Location = new System.Drawing.Point(5, 3);
             this.chkDebug.Name = "chkDebug";
-            this.chkDebug.Size = new System.Drawing.Size(73, 17);
+            this.chkDebug.Size = new System.Drawing.Size(105, 17);
             this.chkDebug.TabIndex = 211;
-            this.chkDebug.Text = "Debug on";
+            this.chkDebug.Text = "Debug to screen";
             this.chkDebug.UseVisualStyleBackColor = true;
             this.chkDebug.CheckedChanged += new System.EventHandler(this.chkDebug_CheckedChanged);
             // 
@@ -1635,6 +1650,7 @@
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnLauncher);
             this.tabApply.Controls.Add(this.btnHistogram);
             this.tabApply.Controls.Add(this.btnCsutilSelectSettings);
             this.tabApply.Controls.Add(this.btnByteSwap);
@@ -1654,6 +1670,16 @@
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // btnLauncher
+            // 
+            this.btnLauncher.Location = new System.Drawing.Point(349, 36);
+            this.btnLauncher.Name = "btnLauncher";
+            this.btnLauncher.Size = new System.Drawing.Size(107, 25);
+            this.btnLauncher.TabIndex = 194;
+            this.btnLauncher.Text = "Launcher";
+            this.btnLauncher.UseVisualStyleBackColor = true;
+            this.btnLauncher.Click += new System.EventHandler(this.btnLauncher_Click);
             // 
             // btnHistogram
             // 
@@ -1697,9 +1723,9 @@
             // 
             // btnLogger
             // 
-            this.btnLogger.Location = new System.Drawing.Point(462, 37);
+            this.btnLogger.Location = new System.Drawing.Point(574, 37);
             this.btnLogger.Name = "btnLogger";
-            this.btnLogger.Size = new System.Drawing.Size(106, 24);
+            this.btnLogger.Size = new System.Drawing.Size(85, 24);
             this.btnLogger.TabIndex = 190;
             this.btnLogger.Text = "Logger";
             this.btnLogger.UseVisualStyleBackColor = true;
@@ -1707,9 +1733,9 @@
             // 
             // btnTuner
             // 
-            this.btnTuner.Location = new System.Drawing.Point(349, 37);
+            this.btnTuner.Location = new System.Drawing.Point(462, 37);
             this.btnTuner.Name = "btnTuner";
-            this.btnTuner.Size = new System.Drawing.Size(107, 25);
+            this.btnTuner.Size = new System.Drawing.Size(106, 25);
             this.btnTuner.TabIndex = 189;
             this.btnTuner.Text = "Tuner";
             this.btnTuner.UseVisualStyleBackColor = true;
@@ -2795,7 +2821,9 @@
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.modeToolStripMenuItem,
-            this.createProgramShortcutsToolStripMenuItem});
+            this.createProgramShortcutsToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.createDebugLogToolStripMenuItem});
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
             this.toolStripMenuItem3.Size = new System.Drawing.Size(37, 20);
             this.toolStripMenuItem3.Text = "&File";
@@ -3015,6 +3043,13 @@
             this.cVNDatabaseToolStripMenuItem.Text = "CVN database";
             this.cVNDatabaseToolStripMenuItem.Click += new System.EventHandler(this.cVNDatabaseToolStripMenuItem_Click);
             // 
+            // xDFChecksumPluginsToolStripMenuItem
+            // 
+            this.xDFChecksumPluginsToolStripMenuItem.Name = "xDFChecksumPluginsToolStripMenuItem";
+            this.xDFChecksumPluginsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.xDFChecksumPluginsToolStripMenuItem.Text = "XDF Checksum Plugins";
+            this.xDFChecksumPluginsToolStripMenuItem.Click += new System.EventHandler(this.xDFChecksumPluginsToolStripMenuItem_Click);
+            // 
             // rememberWindowSizeToolStripMenuItem
             // 
             this.rememberWindowSizeToolStripMenuItem.Name = "rememberWindowSizeToolStripMenuItem";
@@ -3098,12 +3133,17 @@
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
             // 
-            // xDFChecksumPluginsToolStripMenuItem
+            // toolStripSeparator1
             // 
-            this.xDFChecksumPluginsToolStripMenuItem.Name = "xDFChecksumPluginsToolStripMenuItem";
-            this.xDFChecksumPluginsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.xDFChecksumPluginsToolStripMenuItem.Text = "XDF Checksum Plugins";
-            this.xDFChecksumPluginsToolStripMenuItem.Click += new System.EventHandler(this.xDFChecksumPluginsToolStripMenuItem_Click);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(206, 6);
+            // 
+            // createDebugLogToolStripMenuItem
+            // 
+            this.createDebugLogToolStripMenuItem.Name = "createDebugLogToolStripMenuItem";
+            this.createDebugLogToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.createDebugLogToolStripMenuItem.Text = "Create debug log";
+            this.createDebugLogToolStripMenuItem.Click += new System.EventHandler(this.createDebugLogToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -3462,5 +3502,9 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.DataGridView dataGridViewRenParts;
         private System.Windows.Forms.ToolStripMenuItem xDFChecksumPluginsToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkDebugToLogfile;
+        private System.Windows.Forms.Button btnLauncher;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem createDebugLogToolStripMenuItem;
     }
 }

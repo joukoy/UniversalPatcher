@@ -81,6 +81,7 @@ namespace UniversalPatcher
         private bool ConsoleDevTimestamps;
         private bool jConsoleVPW = false;
         private bool jConsoleCAN = false;
+        private FileTraceListener DebugFileListener;
 
         [DllImport("user32.dll")]
         public static extern bool LockWindowUpdate(IntPtr hWndLock);
@@ -5839,5 +5840,38 @@ namespace UniversalPatcher
 
         }
 
+        private void patcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmpatcher = new FrmPatcher();
+            frmpatcher.Show();
+        }
+
+        private void tunerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmTuner tuner = new FrmTuner(PCM);
+            tuner.Show();
+        }
+
+        private void launcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmMain fMain = new FrmMain();
+            fMain.Show();
+        }
+
+        private void createDebugLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            createDebugLogToolStripMenuItem.Checked = !createDebugLogToolStripMenuItem.Checked;
+
+            if (createDebugLogToolStripMenuItem.Checked)
+            {
+                string fName = SelectSaveFile(TxtFilter);
+                DebugFileListener = new FileTraceListener(fName);
+                Debug.Listeners.Add(DebugFileListener);
+            }
+            else
+            {
+                Debug.Listeners.Remove(DebugFileListener);
+            }
+        }
     }
 }

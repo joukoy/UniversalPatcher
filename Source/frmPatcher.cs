@@ -61,6 +61,7 @@ namespace UniversalPatcher
         private BindingSource categoryBindingSource = new BindingSource();
 
         private RichTextBoxTraceListener DebugListener;
+        private FileTraceListener DebugFileListener;
 
         private uint lastCustomSearchResult = 0;
         private bool stopCustomSearch;
@@ -1616,7 +1617,7 @@ namespace UniversalPatcher
             }
             else
             {
-                Debug.Listeners.Clear();
+                Debug.Listeners.Remove(DebugListener);
             }
         }
 
@@ -4684,6 +4685,33 @@ namespace UniversalPatcher
             frmEditXML frmEX = new frmEditXML();
             frmEX.LoadXdfPlugins();
             frmEX.Show();
+        }
+
+        private void chkDebugToLogfile_CheckedChanged(object sender, EventArgs e)
+        {
+            createDebugLogToolStripMenuItem.Checked = chkDebugToLogfile.Checked;
+            if (chkDebugToLogfile.Checked)
+            {
+                string fName = SelectSaveFile(TxtFilter);
+                DebugFileListener = new FileTraceListener(fName);
+                Debug.Listeners.Add(DebugFileListener);
+            }
+            else
+            {
+                Debug.Listeners.Remove(DebugFileListener);
+            }
+        }
+
+        private void btnLauncher_Click(object sender, EventArgs e)
+        {
+            FrmMain fMain = new FrmMain();
+            fMain.Show();
+        }
+
+        private void createDebugLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            chkDebugToLogfile.Checked = !chkDebugToLogfile.Checked;
+            createDebugLogToolStripMenuItem.Checked = chkDebugToLogfile.Checked;
         }
     }
 }

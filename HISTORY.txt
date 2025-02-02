@@ -753,4 +753,8 @@
 - Tuner: XDF import bugfixes, Export rewrite: No templates, better support for checksums.
 - Logger: Option to disable PID compatibility checking. Workaround for bug: In some cases all pids are incorrectly marked incompatible
 
+0.22.29
+- Set Launcher as default window
+- Launcher: Added selection "Open in startup"
+- Added: File -> "debug to file..."
 

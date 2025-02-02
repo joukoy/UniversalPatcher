@@ -759,14 +759,29 @@ public class Upatcher
             }
             else
             {
-                PcmFile pcm = new PcmFile();
-                if (AppSettings.TunerUseSessionTabs)
+                switch (AppSettings.OpenInStartup)
                 {
-                    Application.Run(new frmTunerMain(pcm));
-                }
-                else
-                {
-                    Application.Run(new FrmTuner(pcm));
+                    case UpatcherSettings.StartupUtil.Launcher:
+                        Application.Run(new FrmMain());
+                        break;
+                    case UpatcherSettings.StartupUtil.Logger:
+                        Application.Run(new frmLogger());
+                        break;
+                    case UpatcherSettings.StartupUtil.Patcher:
+                        Application.Run(new FrmPatcher());
+                        break;
+                    case UpatcherSettings.StartupUtil.Tuner:
+                        PcmFile pcm = new PcmFile();
+                        if (AppSettings.TunerUseSessionTabs)
+                        {
+                            Application.Run(new frmTunerMain(pcm));
+                        }
+                        else
+                        {
+                            Application.Run(new FrmTuner(pcm));
+                        }
+                        break;
+
                 }
             }
         }

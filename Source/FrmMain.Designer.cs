@@ -38,8 +38,14 @@
             this.radioBasic = new System.Windows.Forms.RadioButton();
             this.radioTourist = new System.Windows.Forms.RadioButton();
             this.btnLogger = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioPatcher = new System.Windows.Forms.RadioButton();
+            this.radioTuner = new System.Windows.Forms.RadioButton();
+            this.radioLogger = new System.Windows.Forms.RadioButton();
+            this.radioLauncher = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupMode.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnPatcher
@@ -55,9 +61,9 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::UniversalPatcher.Properties.Resources.UniversalPatcher;
-            this.pictureBox1.Location = new System.Drawing.Point(119, 8);
+            this.pictureBox1.Location = new System.Drawing.Point(115, 6);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(321, 217);
+            this.pictureBox1.Size = new System.Drawing.Size(320, 218);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             // 
@@ -66,7 +72,7 @@
             this.btnTuner.Location = new System.Drawing.Point(12, 93);
             this.btnTuner.Name = "btnTuner";
             this.btnTuner.Size = new System.Drawing.Size(96, 23);
-            this.btnTuner.TabIndex = 3;
+            this.btnTuner.TabIndex = 1;
             this.btnTuner.Text = "Tuner";
             this.btnTuner.UseVisualStyleBackColor = true;
             this.btnTuner.Click += new System.EventHandler(this.btnTuner_Click);
@@ -140,11 +146,74 @@
             this.btnLogger.UseVisualStyleBackColor = true;
             this.btnLogger.Click += new System.EventHandler(this.btnLogger_Click);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.radioPatcher);
+            this.groupBox1.Controls.Add(this.radioTuner);
+            this.groupBox1.Controls.Add(this.radioLogger);
+            this.groupBox1.Controls.Add(this.radioLauncher);
+            this.groupBox1.Location = new System.Drawing.Point(13, 230);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(422, 47);
+            this.groupBox1.TabIndex = 8;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Open at startup";
+            // 
+            // radioPatcher
+            // 
+            this.radioPatcher.AutoSize = true;
+            this.radioPatcher.Location = new System.Drawing.Point(292, 21);
+            this.radioPatcher.Name = "radioPatcher";
+            this.radioPatcher.Size = new System.Drawing.Size(62, 17);
+            this.radioPatcher.TabIndex = 3;
+            this.radioPatcher.TabStop = true;
+            this.radioPatcher.Text = "Patcher";
+            this.radioPatcher.UseVisualStyleBackColor = true;
+            this.radioPatcher.CheckedChanged += new System.EventHandler(this.radioPatcher_CheckedChanged);
+            // 
+            // radioTuner
+            // 
+            this.radioTuner.AutoSize = true;
+            this.radioTuner.Location = new System.Drawing.Point(211, 21);
+            this.radioTuner.Name = "radioTuner";
+            this.radioTuner.Size = new System.Drawing.Size(53, 17);
+            this.radioTuner.TabIndex = 2;
+            this.radioTuner.TabStop = true;
+            this.radioTuner.Text = "Tuner";
+            this.radioTuner.UseVisualStyleBackColor = true;
+            this.radioTuner.CheckedChanged += new System.EventHandler(this.radioTuner_CheckedChanged);
+            // 
+            // radioLogger
+            // 
+            this.radioLogger.AutoSize = true;
+            this.radioLogger.Location = new System.Drawing.Point(137, 21);
+            this.radioLogger.Name = "radioLogger";
+            this.radioLogger.Size = new System.Drawing.Size(58, 17);
+            this.radioLogger.TabIndex = 1;
+            this.radioLogger.TabStop = true;
+            this.radioLogger.Text = "Logger";
+            this.radioLogger.UseVisualStyleBackColor = true;
+            this.radioLogger.CheckedChanged += new System.EventHandler(this.radioLogger_CheckedChanged);
+            // 
+            // radioLauncher
+            // 
+            this.radioLauncher.AutoSize = true;
+            this.radioLauncher.Checked = true;
+            this.radioLauncher.Location = new System.Drawing.Point(14, 21);
+            this.radioLauncher.Name = "radioLauncher";
+            this.radioLauncher.Size = new System.Drawing.Size(95, 17);
+            this.radioLauncher.TabIndex = 0;
+            this.radioLauncher.TabStop = true;
+            this.radioLauncher.Text = "Launcher (this)";
+            this.radioLauncher.UseVisualStyleBackColor = true;
+            this.radioLauncher.CheckedChanged += new System.EventHandler(this.radioLauncher_CheckedChanged);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(443, 233);
+            this.ClientSize = new System.Drawing.Size(444, 288);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnLogger);
             this.Controls.Add(this.groupMode);
             this.Controls.Add(this.btnAbout);
@@ -159,6 +228,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupMode.ResumeLayout(false);
             this.groupMode.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -173,5 +244,10 @@
         private System.Windows.Forms.RadioButton radioBasic;
         private System.Windows.Forms.RadioButton radioTourist;
         private System.Windows.Forms.Button btnLogger;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton radioLauncher;
+        private System.Windows.Forms.RadioButton radioPatcher;
+        private System.Windows.Forms.RadioButton radioTuner;
+        private System.Windows.Forms.RadioButton radioLogger;
     }
 }
