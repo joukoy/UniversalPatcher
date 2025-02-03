@@ -1,11 +1,11 @@
 # UniversalPatcher
 Tuning tool
-- Make/apply patches for bin files
+- Modify calibrations (Tuner)
+- Log data from PCM
 - Get information of PCM binary files
 - Extract / swap segments
 - Generate XDF files for Tunerpro
-- Modify calibrations (Tuner)
-- Log data from PCM
+- Make/apply patches for bin files
 
 ZIP Package includes PCM Hammer for reading and writing calibrations. Please see:
 https://github.com/LegacyNsfw/PcmHacks
@@ -32,4 +32,4 @@ https://www.facebook.com/universalpatcher
 https://www.facebook.com/groups/universalpatcher.net
 
 # PCM Hammer github page
-https://github.com/LegacyNsfw/PcmHacks
+https://github.com/PcmHammer/PcmHammer
