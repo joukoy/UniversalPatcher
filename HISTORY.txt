@@ -758,3 +758,5 @@
 - Launcher: Added selection "Open in startup"
 - Added: File -> "Create debug file..."
 
+0.22.30
+- Debug log: add timestamps
