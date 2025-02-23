@@ -5,27 +5,80 @@ using System.Text;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.IO;
+using static Helpers;
 
 namespace UniversalPatcher
 {
     class FileTraceListener : TraceListener
     {
         private StreamWriter writer;
+        private string filename;
         public FileTraceListener(string FileName)
         {
-            writer = new  StreamWriter(FileName);
+            try
+            {
+                this.filename = FileName;
+                Logger("Creating debug logfile: " + FileName);
+                writer = new StreamWriter(FileName);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Debug.cs , line " + line + ": " + ex.Message);
+            }
         }
-        ~FileTraceListener()
+        public void CloseLog()
         {
-            writer.Close();
+            try
+            {
+                Logger("Closing debug logfile: " + filename);
+                writer.Close();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Debug.cs , line " + line + ": " + ex.Message);
+            }
         }
         public override void Write(string msg)
         {
-            writer.Write(msg);
+            try
+            {
+                writer.Write(msg);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Debug.cs , line " + line + ": " + ex.Message);
+            }
         }
         public override void WriteLine(string msg)
         {
-            writer.WriteLine(msg);
+            try
+            {
+                writer.WriteLine("[" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + msg);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Debug.cs , line " + line + ": " + ex.Message);
+            }
         }
     }
 

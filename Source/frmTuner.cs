@@ -7171,6 +7171,7 @@ namespace UniversalPatcher
             else
             {
                 Debug.Listeners.Remove(DebugFileListener);
+                DebugFileListener.CloseLog();
             }
         }
     }

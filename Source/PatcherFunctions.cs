@@ -704,6 +704,8 @@ public class Upatcher
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "ospids")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "ospids"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Dashboard")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Dashboard"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "ChecksumSearch")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "ChecksumSearch"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "TuneSessions")))

@@ -67,6 +67,8 @@ namespace UniversalPatcher
             LoggerTesterPresentInterval = 4000;
             LoggerCanPcmAddress = 0x07E0;
             LoggerTestPidCompatibility = true;
+            LoggerRetryAfterSeconds = 2;
+            LoggerRetryCount = 3;
             RetryWriteTimes = 3;
             RetryWriteDelay = 10;
             LoggerResetAfterMiss = 50;
@@ -81,6 +83,8 @@ namespace UniversalPatcher
             HistogramLastLogfileProfiles = new List<string>();
             LastScriptFile = "";
             LastJScriptFile = "";
+            DashboardRows = 2;
+            DashboardCols = 3;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
             TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
@@ -230,6 +234,8 @@ namespace UniversalPatcher
         //public bool LoggerEnableConsole { get; set; }
         public bool LoggerConsoleTimestamps { get; set; }
         public bool LoggerConsoleDevTimestamps { get; set; }
+        public int LoggerRetryCount { get; set; }
+        public int LoggerRetryAfterSeconds { get; set; }
         //public Font LoggerConsoleFont { get; set; }
         public int LoggerScriptDelay { get; set; }
         public string LoggerJ2534SettingsFile { get; set; }
@@ -291,6 +297,13 @@ namespace UniversalPatcher
         public List<string> HistogramLastLiveProfiles { get; set; }
         public string LastScriptFile { get; set; }
         public string LastJScriptFile { get; set; }
+        public int DashboardRows { get; set; }
+        public int DashboardCols { get; set; }
+
+        public Size DashboardWindowSize { get; set; }
+        public FormWindowState DashboardWindowState { get; set; }
+        public Point DashboardWindowLocation { get; set; }
+        public string DashboardLastFile { get; set; }
 
 
         public TimeoutScenario TimeoutLoggingActive { get; set; }

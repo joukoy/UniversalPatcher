@@ -61,8 +61,8 @@ namespace UniversalPatcher
         //private string jConsoleLogFile;
         StreamWriter jConsoleStream;
         StreamWriter vpwConsoleStream;
-        int prevSlotCount = 0;
-        int failCount = 0;
+        //int prevSlotCount = 0;
+        //int failCount = 0;
         //int CANqueryCounter;
         int canQuietResponses;
         int canDeviceResponses;
@@ -82,6 +82,7 @@ namespace UniversalPatcher
         private bool jConsoleVPW = false;
         private bool jConsoleCAN = false;
         private FileTraceListener DebugFileListener;
+        private frmDashboard dashboard;
 
         [DllImport("user32.dll")]
         public static extern bool LockWindowUpdate(IntPtr hWndLock);
@@ -1798,7 +1799,7 @@ namespace UniversalPatcher
             timerShowData.Enabled = false;
             StopLogging(true, false);
             StartLogging(true);
-            failCount = 0;
+            //failCount = 0;
             timerShowData.Enabled = true;
         }
 
@@ -1807,7 +1808,7 @@ namespace UniversalPatcher
             timerShowData.Enabled = false;
             StopLogging(false, false);
             StartLogging(false);
-            failCount = 0;
+            //failCount = 0;
             timerShowData.Enabled = true;
         }
 
@@ -1815,6 +1816,17 @@ namespace UniversalPatcher
         {
             try
             {
+                if (!datalogger.LogRunning)
+                {
+                    Debug.WriteLine("Logging stopped, clean up");
+                    StopLogging(false, true);
+                    return;
+                }
+                if (datalogger.stopLogLoop)
+                {
+                    Debug.WriteLine("Datalogging stop requested");
+                    return;
+                }
                 string[] LastCalcValues;
                 if (chkRawValues.Checked)
                 {
@@ -1828,9 +1840,17 @@ namespace UniversalPatcher
                 }
                 for (int row=0; row< LastCalcValues.Length;row++)
                 {
-                    dataGridLogData.Rows[row].Cells["Value"].Value = LastCalcValues[row];
+                    dataGridLogData.Rows[row].Cells["Value"].Value = LastCalcValues[row];                   
                 }
 
+                if (dashboard != null && dashboard.Visible)
+                {
+                    for (int row = 0; row < dataGridLogData.Rows.Count; row++)
+                    {
+                        dashboard.ShowValue(dataGridLogData.Rows[row].HeaderCell.Value.ToString(), Convert.ToDouble(dataGridLogData.Rows[row].Cells["Value"].Value));
+                    }
+
+                }
                 TimeSpan elapsed = DateTime.Now.Subtract(datalogger.LogStartTime);
                 int speed = (int)(datalogger.slothandler.ReceivedHPRows / elapsed.TotalSeconds);
                 int lpSpeed = (int)(datalogger.slothandler.ReceivedLPRows / elapsed.TotalSeconds);
@@ -1845,7 +1865,7 @@ namespace UniversalPatcher
                 {
                     labelProgress.Text = "Elapsed: " + elapsedStr + ", Received: " + datalogger.slothandler.ReceivedHPRows.ToString() + " rows (" + speed.ToString() + " /s)";
                 }
-                if (prevSlotCount == datalogger.slothandler.ReceivedHPRows)
+/*                if (prevSlotCount == datalogger.slothandler.ReceivedHPRows)
                 {
                     failCount++;  
                     if (failCount > numResetAfter.Value)
@@ -1857,8 +1877,9 @@ namespace UniversalPatcher
                 {
                     failCount = 0;
                 }
+
                 prevSlotCount = datalogger.slothandler.ReceivedHPRows;
-                //(" + ReceivedBytes.ToString() +")";
+*/
             }
             catch (Exception ex)
             {
@@ -5871,7 +5892,14 @@ namespace UniversalPatcher
             else
             {
                 Debug.Listeners.Remove(DebugFileListener);
+                DebugFileListener.CloseLog();
             }
+        }
+
+        private void dashboardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dashboard = new frmDashboard();
+            dashboard.Show();
         }
     }
 }

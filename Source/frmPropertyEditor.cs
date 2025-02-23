@@ -99,6 +99,17 @@ namespace UniversalPatcher
             }
             //dataGridView1.Columns[0].Width = 1000;
         }
+        public static PropertyInfo GetUnambiguousProperty(object component, string name, BindingFlags flags = BindingFlags.Public | BindingFlags.Instance) => GetUnambiguousProperty(component?.GetType(), name, flags);
+        public static PropertyInfo GetUnambiguousProperty(Type type, string name, BindingFlags flags = BindingFlags.Public | BindingFlags.Instance)
+        {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            return type.GetProperties(flags).Where(p => p.Name == name).FirstOrDefault();
+        }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
@@ -114,19 +125,26 @@ namespace UniversalPatcher
                     if (dataGridView1.Rows[i].HeaderCell.Value != null)
                     {
                         string propertyName = dataGridView1.Rows[i].HeaderCell.Value.ToString();
-                        var propertyInfo = myObj.GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Instance);
+                        //var propertyInfo = myObj.GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Instance);
+                        var propertyInfo = GetUnambiguousProperty(myObj, propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Instance);
                         if (propertyInfo != null && propertyInfo.CanWrite)
                         {
-                            Object oldVal = propertyInfo.GetValue(myObj, null);
-                            if (dataGridView1.Rows[i].Cells[0].GetType() == typeof(DataGridViewComboBoxCell))
-                                propertyInfo.SetValue(myObj, Enum.ToObject(propertyInfo.PropertyType, dataGridView1.Rows[i].Cells[0].Value), null);
-                            else if (propertyInfo.PropertyType == typeof(SerializableFont))
-                                propertyInfo.SetValue(myObj, new SerializableFont(dataGridView1.Rows[i].Cells[0].Value.ToString()), null);
-                            else
-                                propertyInfo.SetValue(myObj, Convert.ChangeType(dataGridView1.Rows[i].Cells[0].Value, propertyInfo.PropertyType), null);
-                            Object newVal = propertyInfo.GetValue(myObj, null);
-                            AddToRedoLog(myObj, null, Collection, itemName, propertyName, ReDo.RedoAction.Edit, oldVal, newVal);
-
+                            try
+                            {
+                                Object oldVal = propertyInfo.GetValue(myObj, null);
+                                if (dataGridView1.Rows[i].Cells[0].GetType() == typeof(DataGridViewComboBoxCell))
+                                    propertyInfo.SetValue(myObj, Enum.ToObject(propertyInfo.PropertyType, dataGridView1.Rows[i].Cells[0].Value), null);
+                                else if (propertyInfo.PropertyType == typeof(SerializableFont))
+                                    propertyInfo.SetValue(myObj, new SerializableFont(dataGridView1.Rows[i].Cells[0].Value.ToString()), null);
+                                else
+                                    propertyInfo.SetValue(myObj, Convert.ChangeType(dataGridView1.Rows[i].Cells[0].Value, propertyInfo.PropertyType), null);
+                                Object newVal = propertyInfo.GetValue(myObj, null);
+                                AddToRedoLog(myObj, null, Collection, itemName, propertyName, ReDo.RedoAction.Edit, oldVal, newVal);
+                            }
+                            catch( Exception ex1)
+                            {
+                                Debug.WriteLine(propertyName +", Error: " + ex1.Message);
+                            }
                         }
                     }
                 }

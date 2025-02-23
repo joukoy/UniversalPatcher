@@ -285,7 +285,7 @@ namespace UniversalPatcher
             // Convert to string, trim and return
             SerialString serialStr = new SerialString(builtString.ToString().Trim(), buffer.TimeStamp, Prompt);
             serialStr.TimeStamps = tStamps;
-            //Debug.WriteLine("Elm line: " + serialStr.Data);
+            Debug.WriteLine("Elm line: " + serialStr.Data);
             return serialStr;
         }
 

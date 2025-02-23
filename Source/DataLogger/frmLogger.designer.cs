@@ -316,13 +316,14 @@ namespace UniversalPatcher
             this.playbackLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveVPWConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveJConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.createDebugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.filterSupportedPidsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.connectDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.parseBinfileToScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.queryCANDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearVPWConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearJConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearVPWConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.connectDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filterSupportedPidsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseBinfileToScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseLogfileToBinToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.parseLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCANLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -330,6 +331,7 @@ namespace UniversalPatcher
             this.parseCAN23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCAN78LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseKline23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryCANDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphicsLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -355,8 +357,7 @@ namespace UniversalPatcher
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
             this.labelAFR = new System.Windows.Forms.Label();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.createDebugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dashboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -865,14 +866,14 @@ namespace UniversalPatcher
             this.groupBox10.Controls.Add(this.label34);
             this.groupBox10.Location = new System.Drawing.Point(375, 232);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(375, 50);
+            this.groupBox10.Size = new System.Drawing.Size(348, 50);
             this.groupBox10.TabIndex = 35;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Write retry";
             // 
             // numRetryDelay
             // 
-            this.numRetryDelay.Location = new System.Drawing.Point(288, 15);
+            this.numRetryDelay.Location = new System.Drawing.Point(261, 17);
             this.numRetryDelay.Name = "numRetryDelay";
             this.numRetryDelay.Size = new System.Drawing.Size(74, 20);
             this.numRetryDelay.TabIndex = 3;
@@ -1077,7 +1078,7 @@ namespace UniversalPatcher
             this.groupAdvanced.Controls.Add(this.comboResponseMode);
             this.groupAdvanced.Location = new System.Drawing.Point(375, 4);
             this.groupAdvanced.Name = "groupAdvanced";
-            this.groupAdvanced.Size = new System.Drawing.Size(375, 223);
+            this.groupAdvanced.Size = new System.Drawing.Size(348, 223);
             this.groupAdvanced.TabIndex = 34;
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced settings";
@@ -1131,6 +1132,7 @@ namespace UniversalPatcher
             // 
             // numResetAfter
             // 
+            this.numResetAfter.Enabled = false;
             this.numResetAfter.Location = new System.Drawing.Point(189, 166);
             this.numResetAfter.Maximum = new decimal(new int[] {
             1000000000,
@@ -1140,15 +1142,18 @@ namespace UniversalPatcher
             this.numResetAfter.Name = "numResetAfter";
             this.numResetAfter.Size = new System.Drawing.Size(115, 20);
             this.numResetAfter.TabIndex = 42;
+            this.numResetAfter.Visible = false;
             // 
             // label40
             // 
             this.label40.AutoSize = true;
+            this.label40.Enabled = false;
             this.label40.Location = new System.Drawing.Point(6, 168);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(177, 13);
             this.label40.TabIndex = 41;
             this.label40.Text = "Reset connection after missed data:";
+            this.label40.Visible = false;
             // 
             // btnTimeouts
             // 
@@ -3377,56 +3382,68 @@ namespace UniversalPatcher
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
             // newProfileToolStripMenuItem
             // 
             this.newProfileToolStripMenuItem.Name = "newProfileToolStripMenuItem";
-            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.newProfileToolStripMenuItem.Text = "New profile";
             this.newProfileToolStripMenuItem.Click += new System.EventHandler(this.newProfileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(171, 6);
             // 
             // playbackLogfileToolStripMenuItem
             // 
             this.playbackLogfileToolStripMenuItem.Name = "playbackLogfileToolStripMenuItem";
-            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.playbackLogfileToolStripMenuItem.Text = "Playback logfile";
             this.playbackLogfileToolStripMenuItem.Click += new System.EventHandler(this.playbackLogfileToolStripMenuItem_Click);
             // 
             // saveVPWConsoleToolStripMenuItem
             // 
             this.saveVPWConsoleToolStripMenuItem.Name = "saveVPWConsoleToolStripMenuItem";
-            this.saveVPWConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveVPWConsoleToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.saveVPWConsoleToolStripMenuItem.Text = "Save VPW Console";
             this.saveVPWConsoleToolStripMenuItem.Click += new System.EventHandler(this.saveVPWConsoleToolStripMenuItem_Click);
             // 
             // saveJConsoleToolStripMenuItem
             // 
             this.saveJConsoleToolStripMenuItem.Name = "saveJConsoleToolStripMenuItem";
-            this.saveJConsoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveJConsoleToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.saveJConsoleToolStripMenuItem.Text = "Save J-Console";
             this.saveJConsoleToolStripMenuItem.Click += new System.EventHandler(this.saveJConsoleToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(171, 6);
+            // 
+            // createDebugLogToolStripMenuItem
+            // 
+            this.createDebugLogToolStripMenuItem.Name = "createDebugLogToolStripMenuItem";
+            this.createDebugLogToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.createDebugLogToolStripMenuItem.Text = "Create debug log...";
+            this.createDebugLogToolStripMenuItem.Click += new System.EventHandler(this.createDebugLogToolStripMenuItem_Click);
             // 
             // actionToolStripMenuItem
             // 
@@ -3442,33 +3459,12 @@ namespace UniversalPatcher
             this.actionToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.actionToolStripMenuItem.Text = "Action";
             // 
-            // filterSupportedPidsToolStripMenuItem
+            // clearJConsoleDataToolStripMenuItem
             // 
-            this.filterSupportedPidsToolStripMenuItem.Name = "filterSupportedPidsToolStripMenuItem";
-            this.filterSupportedPidsToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.filterSupportedPidsToolStripMenuItem.Text = "Filter pids by BIN file";
-            this.filterSupportedPidsToolStripMenuItem.Click += new System.EventHandler(this.filterSupportedPidsToolStripMenuItem_Click);
-            // 
-            // connectDisconnectToolStripMenuItem
-            // 
-            this.connectDisconnectToolStripMenuItem.Name = "connectDisconnectToolStripMenuItem";
-            this.connectDisconnectToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.connectDisconnectToolStripMenuItem.Text = "Connect/Disconnect";
-            this.connectDisconnectToolStripMenuItem.Click += new System.EventHandler(this.connectDisconnectToolStripMenuItem_Click);
-            // 
-            // parseBinfileToScriptToolStripMenuItem
-            // 
-            this.parseBinfileToScriptToolStripMenuItem.Name = "parseBinfileToScriptToolStripMenuItem";
-            this.parseBinfileToScriptToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.parseBinfileToScriptToolStripMenuItem.Text = "Parse binfile to script";
-            this.parseBinfileToScriptToolStripMenuItem.Click += new System.EventHandler(this.parseBinfileToScriptToolStripMenuItem_Click);
-            // 
-            // queryCANDevicesToolStripMenuItem
-            // 
-            this.queryCANDevicesToolStripMenuItem.Name = "queryCANDevicesToolStripMenuItem";
-            this.queryCANDevicesToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.queryCANDevicesToolStripMenuItem.Text = "Query CAN Devices";
-            this.queryCANDevicesToolStripMenuItem.Click += new System.EventHandler(this.queryCANDevicesToolStripMenuItem_Click);
+            this.clearJConsoleDataToolStripMenuItem.Name = "clearJConsoleDataToolStripMenuItem";
+            this.clearJConsoleDataToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.clearJConsoleDataToolStripMenuItem.Text = "Clear J-Console data";
+            this.clearJConsoleDataToolStripMenuItem.Click += new System.EventHandler(this.clearJConsoleDataToolStripMenuItem_Click);
             // 
             // clearVPWConsoleDataToolStripMenuItem
             // 
@@ -3477,12 +3473,26 @@ namespace UniversalPatcher
             this.clearVPWConsoleDataToolStripMenuItem.Text = "Clear VPW-Console data";
             this.clearVPWConsoleDataToolStripMenuItem.Click += new System.EventHandler(this.clearVPWConsoleDataToolStripMenuItem_Click);
             // 
-            // clearJConsoleDataToolStripMenuItem
+            // connectDisconnectToolStripMenuItem
             // 
-            this.clearJConsoleDataToolStripMenuItem.Name = "clearJConsoleDataToolStripMenuItem";
-            this.clearJConsoleDataToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.clearJConsoleDataToolStripMenuItem.Text = "Clear J-Console data";
-            this.clearJConsoleDataToolStripMenuItem.Click += new System.EventHandler(this.clearJConsoleDataToolStripMenuItem_Click);
+            this.connectDisconnectToolStripMenuItem.Name = "connectDisconnectToolStripMenuItem";
+            this.connectDisconnectToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.connectDisconnectToolStripMenuItem.Text = "Connect/Disconnect";
+            this.connectDisconnectToolStripMenuItem.Click += new System.EventHandler(this.connectDisconnectToolStripMenuItem_Click);
+            // 
+            // filterSupportedPidsToolStripMenuItem
+            // 
+            this.filterSupportedPidsToolStripMenuItem.Name = "filterSupportedPidsToolStripMenuItem";
+            this.filterSupportedPidsToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.filterSupportedPidsToolStripMenuItem.Text = "Filter pids by BIN file";
+            this.filterSupportedPidsToolStripMenuItem.Click += new System.EventHandler(this.filterSupportedPidsToolStripMenuItem_Click);
+            // 
+            // parseBinfileToScriptToolStripMenuItem
+            // 
+            this.parseBinfileToScriptToolStripMenuItem.Name = "parseBinfileToScriptToolStripMenuItem";
+            this.parseBinfileToScriptToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.parseBinfileToScriptToolStripMenuItem.Text = "Parse binfile to script";
+            this.parseBinfileToScriptToolStripMenuItem.Click += new System.EventHandler(this.parseBinfileToScriptToolStripMenuItem_Click);
             // 
             // parseLogfileToBinToolStripMenuItem1
             // 
@@ -3540,9 +3550,17 @@ namespace UniversalPatcher
             this.parseKline23LogfileToBinToolStripMenuItem.Text = "Parse kline23 logfile to bin";
             this.parseKline23LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseKline23LogfileToBinToolStripMenuItem_Click);
             // 
+            // queryCANDevicesToolStripMenuItem
+            // 
+            this.queryCANDevicesToolStripMenuItem.Name = "queryCANDevicesToolStripMenuItem";
+            this.queryCANDevicesToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.queryCANDevicesToolStripMenuItem.Text = "Query CAN Devices";
+            this.queryCANDevicesToolStripMenuItem.Click += new System.EventHandler(this.queryCANDevicesToolStripMenuItem_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dashboardToolStripMenuItem,
             this.graphicsToolStripMenuItem,
             this.graphicsLogfileToolStripMenuItem,
             this.histogramLiveToolStripMenuItem,
@@ -3630,21 +3648,21 @@ namespace UniversalPatcher
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // creditsToolStripMenuItem
             // 
             this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
-            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.creditsToolStripMenuItem.Text = "Credits";
             this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
             // 
             // homepageToolStripMenuItem
             // 
             this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
-            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.homepageToolStripMenuItem.Text = "Homepage";
             this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
             // 
@@ -3732,17 +3750,12 @@ namespace UniversalPatcher
             this.labelAFR.TabIndex = 26;
             this.labelAFR.Text = "AFR";
             // 
-            // toolStripSeparator3
+            // dashboardToolStripMenuItem
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
-            // 
-            // createDebugLogToolStripMenuItem
-            // 
-            this.createDebugLogToolStripMenuItem.Name = "createDebugLogToolStripMenuItem";
-            this.createDebugLogToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.createDebugLogToolStripMenuItem.Text = "Create debug log...";
-            this.createDebugLogToolStripMenuItem.Click += new System.EventHandler(this.createDebugLogToolStripMenuItem_Click);
+            this.dashboardToolStripMenuItem.Name = "dashboardToolStripMenuItem";
+            this.dashboardToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.dashboardToolStripMenuItem.Text = "Dashboard";
+            this.dashboardToolStripMenuItem.Click += new System.EventHandler(this.dashboardToolStripMenuItem_Click);
             // 
             // frmLogger
             // 
@@ -4158,6 +4171,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem createDebugLogToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dashboardToolStripMenuItem;
     }
 }
 

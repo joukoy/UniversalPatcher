@@ -1235,18 +1235,20 @@ namespace UniversalPatcher
         {
             logTokenSource.Cancel();
             stopLogLoop = true;
-            Thread.Sleep(300);
+            Application.DoEvents();
             if (passive)
             {
                 if (LogDevice.LogDeviceType != LoggingDevType.J2534 )
                 {
                     //DateTime startWait = DateTime.Now;
                     //while (DateTime.Now.Subtract(lastPresent).TotalMilliseconds< 5000)
+                    Debug.WriteLine("Waiting for log loop to end");
                     while (LogRunning)
                     {
                         Thread.Sleep(100);
                         Application.DoEvents();
                     }
+                    Debug.WriteLine("Logging loop finished");
                 }
             }
         }
@@ -1269,59 +1271,12 @@ namespace UniversalPatcher
                 }
 
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
-                //LogDevice.SetReadTimeout(AppSettings.TimeoutLoggingReceive);
-
-                if (VPWProtocol)
-                {
-                    if (Responsetype == ResponseType.SendOnce)
-                    {
-                        passive = false;
-                        maxSlotsPerMessage = 6;
-                        maxSlotsPerRequest = 6;
-                    }
-                    else
-                    {
-                        passive = true;
-                        maxSlotsPerMessage = 4;
-                        maxSlotsPerRequest = 4;
-                    }
-                    if (Responsetype == ResponseType.SendFast)
-                    {
-                        Responsetype = ResponseType.SendMedium2;    //VPW Can't start with 0x24
-                    }
-                    if (QueryDevicesOnBus(false).Status != ResponseStatus.Success)
-                        return false;
-                    if (!SetBusQuiet())
-                        return false;
-                    if (!SetBusQuiet())
-                        return false;
-                }
-                else
-                { 
-                    if (Responsetype == ResponseType.SendOnce)
-                    {
-                        maxSlotsPerRequest = 5;
-                        maxSlotsPerMessage = 5;
-                        passive = false;
-                    }
-                    else
-                    {
-                        maxSlotsPerRequest = 16;
-                        maxSlotsPerMessage = 16;
-                        passive = true;
-                    }
-                }
-
 
                 if (AnalyzerRunning == false && UseVPW == true)
                 {
                     if (!LogDevice.SetLoggingFilter())
                         return false;
                 }
-                //if (!SetMode1())
-                //  return false;
-                //SetHighSpeedMode(); //Not for logging!
-                //Thread.Sleep(100);
                 Logger("Pid setup...");
                 Application.DoEvents();
                 if (!ReConnect)
@@ -1334,37 +1289,10 @@ namespace UniversalPatcher
                         return false;
                     }
                 }
-                Logger("Requesting pids...");
-                Application.DoEvents();
-
-                if (passive)
+                if (!RequestFirstSlots())
                 {
-                    lastPresent = DateTime.Now;
-                    //elmStopTreshold = 1000;
-                    LogDevice.SetTimeout(AppSettings.TimeoutLoggingPassive);
-                    LogDevice.ClearLogQueue();
-                    if (!RequestPassiveModeSlots())
-                    {
-                        LoggerBold("Error requesting Slots");
-                        return false;
-                    }
+                    return false;
                 }
-                else
-                {
-                    //elmStopTreshold = 50;
-                    if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
-                    {
-                        LogDevice.SetTimeout(AppSettings.TimeoutLoggingActiveObdlink);
-                    }
-                    else
-                    {
-                        LogDevice.SetTimeout(AppSettings.TimeoutLoggingActive);
-                    }
-                    LogDevice.ClearLogQueue();
-                    RequestNextSlots();
-                }
-                //Thread.Sleep(10);
-
                 stopLogLoop = false;
                 logTokenSource = new CancellationTokenSource();
                 logToken = logTokenSource.Token;
@@ -1387,6 +1315,82 @@ namespace UniversalPatcher
                 LoggerBold("Error, StartLogging line " + line + ": " + ex.Message);
                 return false;
             }
+        }
+
+        private bool RequestFirstSlots()
+        {
+            AllSlotsRequested = false;
+            if (VPWProtocol)
+            {
+                if (Responsetype == ResponseType.SendOnce)
+                {
+                    passive = false;
+                    maxSlotsPerMessage = 6;
+                    maxSlotsPerRequest = 6;
+                }
+                else
+                {
+                    passive = true;
+                    maxSlotsPerMessage = 4;
+                    maxSlotsPerRequest = 4;
+                }
+                if (Responsetype == ResponseType.SendFast)
+                {
+                    Responsetype = ResponseType.SendMedium2;    //VPW Can't start with 0x24
+                }
+                if (QueryDevicesOnBus(false).Status != ResponseStatus.Success)
+                    return false;
+                if (!SetBusQuiet())
+                    return false;
+                if (!SetBusQuiet())
+                    return false;
+            }
+            else
+            {
+                if (Responsetype == ResponseType.SendOnce)
+                {
+                    maxSlotsPerRequest = 5;
+                    maxSlotsPerMessage = 5;
+                    passive = false;
+                }
+                else
+                {
+                    maxSlotsPerRequest = 16;
+                    maxSlotsPerMessage = 16;
+                    passive = true;
+                }
+            }
+
+            Logger("Requesting pids...");
+            Application.DoEvents();
+
+            if (passive)
+            {
+                lastPresent = DateTime.Now;
+                //elmStopTreshold = 1000;
+                LogDevice.SetTimeout(AppSettings.TimeoutLoggingPassive);
+                LogDevice.ClearLogQueue();
+                if (!RequestPassiveModeSlots())
+                {
+                    LoggerBold("Error requesting Slots");
+                    return false;
+                }
+            }
+            else
+            {
+                //elmStopTreshold = 50;
+                if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
+                {
+                    LogDevice.SetTimeout(AppSettings.TimeoutLoggingActiveObdlink);
+                }
+                else
+                {
+                    LogDevice.SetTimeout(AppSettings.TimeoutLoggingActive);
+                }
+                LogDevice.ClearLogQueue();
+                RequestNextSlots();
+            }
+            return true;
         }
 
         public bool RequestNextSlots()
@@ -2250,35 +2254,62 @@ namespace UniversalPatcher
             return true;
         }
 
+        private void RequestMoreData()
+        {
+            if (passive)
+            {
+                if (maxSlotsPerRequest < maxPassiveSlotsPerRequest) //Started with fewer Slots
+                {
+                    if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
+                    {
+                        //Started with 4 Slots, now asking 50 more
+                        RequestNextSlots();
+                    }
+                    Debug.WriteLine("Set Slots per request to: " + maxPassiveSlotsPerRequest);
+                    maxSlotsPerRequest = maxPassiveSlotsPerRequest;
+                }
+                SendTesterPresent(false);
+            }
+            else //SendOnce
+            {
+                if (!RequestNextSlots())    // (??)Works with Obdlink, because we know how many Slots are coming
+                    throw new Exception("Error in Slot request");
+            }
+        }
+
         public void DataLoggingLoop()
         {
             Thread.CurrentThread.IsBackground = true;
             int totalSlots = 0;
             long prevSlotTime = 0;
-
+            DateTime LastRecvTime = DateTime.Now;
             AllSlotsRequested = false;
-
             Logger("Logging started");
-            //PcmDevice.ClearMessageBuffer();
-            //PcmDevice.ClearMessageQueue();
-            
-            //while (!stopLogLoop)
-            
+
             while (!logToken.IsCancellationRequested)
             {
                 try
                 {
                     int SlotCount = 0;
+                    int retryCount = 0; //Receiving ok?
                     while ( SlotCount < maxSlotsPerRequest) //Loop there until requested Slots are handled
                     {
                         if (LogDevice == null || !Connected)
                         {
                             break;
                         }
-                        if (stopLogLoop && LogDevice.LogDeviceType != LoggingDevType.Obdlink && LogDevice.LogDeviceType != LoggingDevType.Elm)
+                        if (stopLogLoop) 
                         {
-                            //Elm device can stop only when prompt received
-                            break;
+                            if (LogDevice.LogDeviceType == LoggingDevType.Obdlink || LogDevice.LogDeviceType == LoggingDevType.Elm)
+                            {
+                                //Elm device can stop only when prompt received
+                                Debug.WriteLine("Stopping soon, waiting elm prompt");
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Stopping...");
+                                break;
+                            }
                         }
                         if (passive)
                         {
@@ -2287,10 +2318,25 @@ namespace UniversalPatcher
 
                         OBDMessage oMsg;
                         oMsg= LogDevice.ReceiveLogMessage();
-
                         if (oMsg == null)
                         {
                             Debug.WriteLine("Received null message");
+                            if (DateTime.Now.Subtract(LastRecvTime) > TimeSpan.FromSeconds(AppSettings.LoggerRetryAfterSeconds))
+                            {
+                                if (retryCount < AppSettings.LoggerRetryCount)
+                                {
+                                    Logger("Data not received in "+AppSettings.LoggerRetryAfterSeconds.ToString()+" seconds, sending new request");
+                                    RequestFirstSlots();
+                                    LastRecvTime = DateTime.Now;
+                                    retryCount++;
+                                }
+                                else
+                                {
+                                    LoggerBold("No data after retries, giving up");
+                                    stopLogLoop = true;
+                                    break;
+                                }
+                            }
                             continue;
                         }
                         Debug.WriteLine("Received: " + oMsg.ToString() +", Elmprompt: " + oMsg.ElmPrompt + " Slot count: " +SlotCount.ToString());
@@ -2310,6 +2356,7 @@ namespace UniversalPatcher
                         //We really have received a Slot!
                         SlotCount++;
                         totalSlots++;
+                        LastRecvTime = DateTime.Now;
                         if (totalSlots == 10)
                         {
                             prevSlotTime = oMsg.TimeStamp;
@@ -2329,32 +2376,11 @@ namespace UniversalPatcher
                         break;
                     }
 
-                    //if (LogDevice.LogDeviceType != LoggingDevType.J2534 && LogDevice.LogDeviceType != LoggingDevType.Obdlink)
+                    if (!SendQueuedCommand())
                     {
-                        if (!SendQueuedCommand())
-                        {
-                            return;     //If receieved Stop-command, return
-                        }
+                        return;     //If receieved Stop-command, return
                     }
-                    if (passive)
-                    {
-                        if (maxSlotsPerRequest < maxPassiveSlotsPerRequest) //Started with fewer Slots
-                        {
-                            if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
-                            {
-                                //Started with 4 Slots, now asking 50 more
-                                RequestNextSlots();
-                            }
-                            Debug.WriteLine("Set Slots per request to: " + maxPassiveSlotsPerRequest);
-                            maxSlotsPerRequest = maxPassiveSlotsPerRequest;
-                        }
-                        SendTesterPresent(false);
-                    }
-                    else //SendOnce
-                    {
-                        if (!RequestNextSlots())    // (??)Works with Obdlink, because we know how many Slots are coming
-                            throw new Exception("Error in Slot request");
-                    }
+                    RequestMoreData();
                 }
                 catch (Exception ex)
                 {

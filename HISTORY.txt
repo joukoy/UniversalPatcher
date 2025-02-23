@@ -756,7 +756,9 @@
 0.22.29
 - Set Launcher as default window
 - Launcher: Added selection "Open in startup"
-- Added: File -> "Create debug file..."
+- Added: File -> "Create debug log..."
 
 0.22.30
 - Debug log: add timestamps
+- Logger: Request data again, if nothing received in 2 seconds 
+- Logger: Added Dashboard (show values in analog gauges)
