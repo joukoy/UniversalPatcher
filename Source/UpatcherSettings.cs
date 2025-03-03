@@ -225,7 +225,6 @@ namespace UniversalPatcher
         public bool LoggerShowAdvanced { get; set; }
         public string LoggerFTDIPort { get; set; }
         public int LoggerBaudRate { get; set; }
-        public bool LoggerUsePriority { get; set; }
         public bool LoggerUseFilters { get; set; }
         public bool LoggerUseVPW { get; set; }
         public Size LoggerWindowSize { get; set; }

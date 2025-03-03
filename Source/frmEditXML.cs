@@ -44,7 +44,8 @@ namespace UniversalPatcher
             OBD2Codes,
             CANmodules,
             RealtimeControl,
-            XdfPlugins
+            XdfPlugins,
+            OldPidProfile
         }
 
         private XMLTYPE xmlType = XMLTYPE.Autodetect;
@@ -192,6 +193,22 @@ namespace UniversalPatcher
             }
             bindingSource.DataSource = null;
             bindingSource.DataSource = sCVN;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            UseComboBoxForEnums(dataGridView1);
+            FillFilterBy();
+        }
+
+        public void LoadOldPidProfile(string fName)
+        {
+            xmlType = XMLTYPE.OldPidProfile;
+            this.Text = "Edit Old PID profile";
+            fileName = fName;
+            currentList = datalogger.PidProfile;
+            currentObj = new PidConfig();
+            currentType = typeof(PidConfig);
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = datalogger.PidProfile;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
@@ -924,6 +941,11 @@ namespace UniversalPatcher
                         Logger("Saving file " + fName, false);
                         PCM.Segments = segmentconfigs;
                         PCM.SaveConfigFile(fName);
+                        Logger(" [OK]");
+                        break;
+                    case XMLTYPE.OldPidProfile:
+                        Logger("Saving file " + fileName, false);
+                        datalogger.SaveOldProfile(fileName);
                         Logger(" [OK]");
                         break;
                     default:
@@ -1666,7 +1688,7 @@ namespace UniversalPatcher
                 dataGridView1.Columns.Add("Std", "Std");
             }
             frmLogger fl = new frmLogger();
-            fl.LoadStdParams();
+            fl.ReloadPidParams(true,true);
             for (int r=0;r<piddescriptions.Count;r++)
             {
                 PidInfo pi = piddescriptions[r];

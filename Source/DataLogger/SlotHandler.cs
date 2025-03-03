@@ -18,23 +18,15 @@ namespace UniversalPatcher
         {
             VPWProtocol = UseVPW;
         }
-        public int ReceivedHPRows = 0;
-        public int ReceivedLPRows = 0;
+        public int ReceivedRows = 0;
         public Dictionary<byte, int> SlotIndex = new Dictionary<byte, int>();
         public double[] LastPidValues;
         public List<int> ReceivingPids = new List<int>();
-        public List<int> HighPriorityPids = new List<int>();
-        public List<int> LowPriorityPids = new List<int>();
         public List<Slot> Slots;
-        private List<Slot> HighPrioritySlots;
-        private List<Slot> LowPrioritySlots;
         public int CurrentSlotIndex = 0;
         public int CurrentHPSlotIndex = 0;
         public int CurrentLPSlotIndex = 0;
         private double[] newPidValues;
-        private double[] newHighPriorityPidValues;
-        private double[] lowPriorityPidValues;
-        public List<PidVal> PidValues = new List<PidVal>();
 
         public bool VPWProtocol = true;
 
@@ -93,38 +85,31 @@ namespace UniversalPatcher
                 }
             }
         }
-        public void SetPidValue(int Pid, double Val)
-        {
-            PidVal pv = PidValues.Where(X => X.Pid == Pid).FirstOrDefault();
-            if (pv == null)
-            {
-                pv = new PidVal(Pid, Val);
-                PidValues.Add(pv);
-            }
-            else
-            {
-                pv.Val = Val;
-            }
-        }
 
-        public string[] CalculatePidValues(double[] rawPidValues)
+        public double GetLastPidValue(int pid)
         {
-            string[] calculatedvalues = new string[datalogger.PidProfile.Count];
+            int idx = ReceivingPids.IndexOf(pid);
+            if (idx < 0)
+                return double.MinValue;
+            return LastPidValues[idx];
+        }
+        public string[] CalculatePidValues(double[] pidValues)
+        {
+            //double[] calculatedDoubleValues = CalculatePidDoubleValues(pidValues);
+            string[] calculatedvalues = new string[datalogger.SelectedPids.Count];
             try
             {
-                for (int pp = 0; pp < datalogger.PidProfile.Count; pp++)
+                for (int pp=0;pp<datalogger.SelectedPids.Count;pp++)
                 {
-                    calculatedvalues[pp] = "";
-                    PidConfig pc = datalogger.PidProfile[pp];
-                    int ind = ReceivingPids.IndexOf(pc.addr);
-                    if (ind > -1)
+                    LogParam.PidSettings pidProfile = datalogger.SelectedPids[pp];
+                    LogParam.PidParameter parm = pidProfile.Parameter;
+                    double pidVal = double.MinValue;
+                    if (HexToInt(parm.Id, out int addr))
                     {
-                        if (rawPidValues[ind] > double.MinValue)
-                        {
-                            SetPidValue(pc.addr, rawPidValues[ind]);
-                        }
+                        int idx = ReceivingPids.IndexOf(addr);
+                        pidVal = pidValues[idx];
                     }
-                    calculatedvalues[pp] = pc.GetCalculatedValue(PidValues);
+                    calculatedvalues[pp] = parm.GetCalculatedStringValue(pidProfile, false);
                 }
             }
             catch (Exception ex)
@@ -141,22 +126,15 @@ namespace UniversalPatcher
 
         public double[] CalculatePidDoubleValues(double[] rawPidValues)
         {
-            double[] calculatedvalues = new double[datalogger.PidProfile.Count];
+            double[] calculatedDoubleValues = new double[datalogger.SelectedPids.Count];
             try
             {
-                for (int pp = 0; pp < datalogger.PidProfile.Count; pp++)
+                for (int pp = 0; pp < datalogger.SelectedPids.Count; pp++)
                 {
-                    calculatedvalues[pp] = double.MinValue;
-                    PidConfig pc = datalogger.PidProfile[pp];
-                    int ind = ReceivingPids.IndexOf(pc.addr);
-                    if (ind > -1)
-                    {
-                        if (rawPidValues[ind] > double.MinValue)
-                        {
-                            SetPidValue(pc.addr, rawPidValues[ind]);
-                        }
-                    }
-                    calculatedvalues[pp] = pc.GetCalculatedDoubleValue(PidValues);
+                    LogParam.PidSettings pidProfile = datalogger.SelectedPids[pp];
+                    LogParam.PidParameter parm = pidProfile.Parameter;
+                    
+                    calculatedDoubleValues[pp] = parm.GetCalculatedValue(pidProfile);
                 }
             }
             catch (Exception ex)
@@ -168,7 +146,7 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, Slothandler line " + line + ": " + ex.Message);
             }
-            return calculatedvalues;
+            return calculatedDoubleValues;
         }
 
         public bool CreatePidSetupMessages()
@@ -183,10 +161,6 @@ namespace UniversalPatcher
 
                 ReceivingPids = new List<int>();
                 Slots = new List<Slot>();
-                HighPriorityPids = new List<int>();
-                LowPriorityPids = new List<int>();
-                HighPrioritySlots = new List<Slot>();
-                LowPrioritySlots = new List<Slot>();
                 SlotIndex = new Dictionary<byte, int>();
                 List<ProfileDataType> pidDataTypes = new List<ProfileDataType>();
 
@@ -201,62 +175,58 @@ namespace UniversalPatcher
                     bytesPerSlot = 7;
                 }
                 //Generate unique list of pids, HighPriority first:
-                for (int p = 0; p < datalogger.PidProfile.Count; p++)
+                foreach (LogParam.PidSettings pidProfile in datalogger.SelectedPids)
                 {
-                    PidConfig pidC = datalogger.PidProfile[p];
-                    if (pidC.HighPriority && pidC.addr > 0 && !ReceivingPids.Contains(pidC.addr))
+                     
+                    LogParam.PidParameter parm = pidProfile.Parameter;
+                    if (parm == null)
                     {
-                        ReceivingPids.Add(pidC.addr);
-                        pidDataTypes.Add(pidC.DataType);
-                        HighPriorityPids.Add(pidC.addr);
+                        LoggerBold("Skipping unknown PID: " + parm.Name);
+                        continue;
                     }
-                    if (pidC.HighPriority && pidC.addr2 > 0 && !ReceivingPids.Contains((ushort)pidC.addr2))
+                    if (parm.Type == LogParam.DefineBy.Pid)
                     {
-                        ReceivingPids.Add((ushort)pidC.addr2);
-                        pidDataTypes.Add(pidC.DataType);
-                        HighPriorityPids.Add(pidC.addr2);
+                        if (HexToInt(parm.Id.Replace("0x", ""), out int addr) && !ReceivingPids.Contains(addr))
+                        {
+                            ReceivingPids.Add(addr);
+                            pidDataTypes.Add((ProfileDataType)parm.DataType);
+                        }
                     }
-                }
-                //Low priority pids:
-                for (int p = 0; p < datalogger.PidProfile.Count; p++)
-                {
-                    PidConfig pidC = datalogger.PidProfile[p];
-                    if (!pidC.HighPriority && pidC.addr > 0 && !ReceivingPids.Contains(pidC.addr))
+                    else if (parm.Type == LogParam.DefineBy.Address)
                     {
-                        ReceivingPids.Add(pidC.addr);
-                        pidDataTypes.Add(pidC.DataType);
-                        LowPriorityPids.Add(pidC.addr);
+                        int addr = pidProfile.Os.addr;
+                        if (addr >= 0 && !ReceivingPids.Contains(addr))
+                        {
+                            ReceivingPids.Add(addr);
+                            pidDataTypes.Add((ProfileDataType)parm.DataType);
+                        }
                     }
-                    if (!pidC.HighPriority && pidC.addr2 > 0 && !ReceivingPids.Contains((ushort)pidC.addr2))
+                    else if (parm.Type == LogParam.DefineBy.Math)
                     {
-                        ReceivingPids.Add((ushort)pidC.addr2);
-                        pidDataTypes.Add(pidC.DataType);
-                        LowPriorityPids.Add(pidC.addr2);
-                    }
-                }
+                        foreach (LogParam.LogPid lPid in parm.Pids)
+                        {
+                            LogParam.PidParameter mParm = lPid.Parameter;
+                            if (mParm != null)
+                            {
+                                if (HexToInt(mParm.Id.Replace("0x", ""), out int addr) && !ReceivingPids.Contains(addr))
+                                {
+                                    ReceivingPids.Add(addr);
+                                    pidDataTypes.Add((PidConfig.ProfileDataType)mParm.DataType);
+                                }
 
+                            }
+                        }
+                    }
+                }
                 //Add pids to Slots
                 while (pidIndex < ReceivingPids.Count)
                 {
                     Slot slot = new Slot(SlotNr);
-                    bool isHP = false;
                     while (pidIndex < ReceivingPids.Count && (slot.Bytes + GetElementSize((InDataType)pidDataTypes[pidIndex])) <= bytesPerSlot)
                     {
-                        if (HighPriorityPids.Contains(ReceivingPids[pidIndex]))
-                        {
-                            isHP = true;
-                        }
                         slot.Pids.Add(ReceivingPids[pidIndex]);
                         slot.DataTypes.Add(pidDataTypes[pidIndex]);
                         pidIndex++;
-                    }
-                    if (isHP)   //Slot contains at least one High Priority pid
-                    {
-                        HighPrioritySlots.Add(slot);
-                    }
-                    else
-                    {
-                        LowPrioritySlots.Add(slot);
                     }
                     Slots.Add(slot);
                     SlotIndex.Add(SlotNr, Slots.Count - 1);
@@ -351,8 +321,6 @@ namespace UniversalPatcher
                     }
                 }
                 newPidValues = new double[ReceivingPids.Count];
-                newHighPriorityPidValues = new double[HighPriorityPids.Count];
-                lowPriorityPidValues = new double[LowPriorityPids.Count]; //Only used for speed calculation
                 LastPidValues = new double[ReceivingPids.Count];
 
                 //Clear arrays with minimal values
@@ -360,14 +328,6 @@ namespace UniversalPatcher
                 {
                     LastPidValues[b] = double.MinValue;
                     newPidValues[b] = double.MinValue;
-                }
-                for (int b = 0; b < newHighPriorityPidValues.Length; b++)
-                {
-                    newHighPriorityPidValues[b] = double.MinValue;
-                }
-                for (int b = 0; b < lowPriorityPidValues.Length; b++)
-                {
-                    lowPriorityPidValues[b] = double.MinValue;
                 }
 
                 for (int i = 0; i < Slots.Count; i++)
@@ -425,137 +385,12 @@ namespace UniversalPatcher
             }
             try
             {
-                int addedHighPrioSlots = 0;
-
-                List<int> LPSlotPlaces = new List<int>();
-                switch (LowPrioritySlots.Count)
-                {
-                    case 1:
-                        LPSlotPlaces.Add(1);
-                        break;
-                    case 2:
-                        LPSlotPlaces.Add(1);
-                        break;
-                    case 3:
-                        LPSlotPlaces.Add(1);
-                        LPSlotPlaces.Add(3);
-                        break;
-                    case 4:
-                        LPSlotPlaces.Add(1);
-                        LPSlotPlaces.Add(3);
-                        break;
-                    case 5:
-                        LPSlotPlaces.Add(1);
-                        if (datalogger.maxSlotsPerMessage == 4)
-                        {
-                            LPSlotPlaces.Add(2);
-                            LPSlotPlaces.Add(3);
-                        }
-                        else
-                        {
-                            LPSlotPlaces.Add(3);
-                            LPSlotPlaces.Add(5);
-                        }
-                        break;
-                    case 6:
-                        LPSlotPlaces.Add(1);
-                        if (datalogger.maxSlotsPerMessage == 4)
-                        {
-                            LPSlotPlaces.Add(2);
-                            LPSlotPlaces.Add(3);
-                        }
-                        else
-                        {
-                            LPSlotPlaces.Add(3);
-                            LPSlotPlaces.Add(5);
-                        }
-                        break;
-                    case 7:
-                        if (datalogger.maxSlotsPerMessage == 4)
-                        {
-                            datalogger.HighPriority = false;
-                        }
-                        else
-                        {
-                            LPSlotPlaces.Add(0);
-                            LPSlotPlaces.Add(2);
-                            LPSlotPlaces.Add(4);
-                            LPSlotPlaces.Add(6);
-                        }
-                        break;
-                    case 8:
-                        if (datalogger.maxSlotsPerMessage == 4)
-                        {
-                            datalogger.HighPriority = false;
-                        }
-                        else
-                        {
-                            LPSlotPlaces.Add(0);
-                            LPSlotPlaces.Add(2);
-                            LPSlotPlaces.Add(4);
-                            LPSlotPlaces.Add(6);
-                        }
-                        break;
-                    case 9:
-                        if (datalogger.maxSlotsPerMessage == 4)
-                        {
-                            throw new Exception("Too many Slots");
-                        }
-                        else
-                        {
-                            LPSlotPlaces.Add(1);
-                            LPSlotPlaces.Add(2);
-                            LPSlotPlaces.Add(3);
-                            LPSlotPlaces.Add(4);
-                            LPSlotPlaces.Add(5);
-                        }
-                        break;
-                    case 10:
-                        if (datalogger.maxSlotsPerMessage == 4)
-                        {
-                            throw new Exception("Too many Slots");
-                        }
-                        else
-                        {
-                            LPSlotPlaces.Add(1);
-                            LPSlotPlaces.Add(2);
-                            LPSlotPlaces.Add(3);
-                            LPSlotPlaces.Add(4);
-                            LPSlotPlaces.Add(5);
-                        }
-                        break;
-                    default:
-                        datalogger.HighPriority = false;
-                        break;
-                }
-
                 for (int i = 0; i < datalogger.maxSlotsPerMessage; i++)
                 {
-                    if (datalogger.HighPriority)
-                    {
-                        if (HighPrioritySlots.Count > 0 && (!LPSlotPlaces.Contains(i) || LowPrioritySlots.Count == 0))
-                        {
-                            msg.Add(HighPrioritySlots[CurrentHPSlotIndex].Id);
-                            CurrentHPSlotIndex++;
-                            if (CurrentHPSlotIndex >= HighPrioritySlots.Count)
-                                CurrentHPSlotIndex = 0;
-                            addedHighPrioSlots++;
-                        }
-                        else
-                        {
-                            msg.Add(LowPrioritySlots[CurrentLPSlotIndex].Id);
-                            CurrentLPSlotIndex++;
-                            if (CurrentLPSlotIndex >= LowPrioritySlots.Count)
-                                CurrentLPSlotIndex = 0;
-                        }
-                    }
-                    else
-                    {
-                        msg.Add(Slots[CurrentSlotIndex].Id);
-                        CurrentSlotIndex++;
-                        if (CurrentSlotIndex >= Slots.Count)
-                            CurrentSlotIndex = 0;
-                    }
+                    msg.Add(Slots[CurrentSlotIndex].Id);
+                    CurrentSlotIndex++;
+                    if (CurrentSlotIndex >= Slots.Count)
+                        CurrentSlotIndex = 0;
                 }
             }
             catch (Exception ex)
@@ -568,7 +403,7 @@ namespace UniversalPatcher
                 LoggerBold("Error, Slothandler line " + line + ": " + ex.Message);
             }
 
-            Debug.WriteLine("Slot Request msg:" + BitConverter.ToString(msg.ToArray()) + " HighPriority: " + datalogger.HighPriority.ToString());
+            Debug.WriteLine("Slot Request msg:" + BitConverter.ToString(msg.ToArray()) );
             return msg.ToArray();
         }
         public List<ReadValue> ParseMessage(OBDMessage msg)
@@ -698,95 +533,31 @@ namespace UniversalPatcher
             try
             {
                 List<ReadValue> newReadValues = ParseMessage(oMsg);
-                if (datalogger.HighPriority && !LastPidValues.Contains(double.MinValue))
+                for (int r = 0; r < newReadValues.Count; r++)
                 {
-                    //All pids received at least once
-                    for (int r = 0; r < newReadValues.Count; r++)
-                    {
-                        ReadValue rv = newReadValues[r];
-                        int ind = ReceivingPids.IndexOf(rv.PidNr);
-                        if (ind > -1)
-                            LastPidValues[ind] = rv.PidValue;   //Update directly lastpidvalues, lowpriority pids already there from previous round
-                        int hpInd = HighPriorityPids.IndexOf(rv.PidNr);
-                        if (hpInd > -1)
-                        {
-                            //Debug.WriteLine("Received HP pid: " + rv.PidNr.ToString("X2"));
-                            newHighPriorityPidValues[hpInd] = rv.PidValue;
-                        }
-                        else
-                        {
-                            int lpInd = LowPriorityPids.IndexOf(rv.PidNr);
-                            if (lpInd > -1)
-                            {
-                                //Debug.WriteLine("Received LP pid: " + rv.PidNr.ToString("X2"));
-                                lowPriorityPidValues[lpInd] = rv.PidValue;
-                            }
-                        }
-                    }
-
-                    if (!newHighPriorityPidValues.Contains(double.MinValue))
-                    {
-                        //Debug.WriteLine("All HP pids received");
-                        //All High priority pids received
-                        //if (datalogger.writelog) //Always add data to logging queue, for graph & histogram
-                        {
-                            LogData ld = new LogData(LastPidValues.Length);
-                            //ld.TimeStamp = newReadValues[0].TimeStamp;
-                            ld.TimeStamp = oMsg.TimeStamp;
-                            Array.Copy(LastPidValues, ld.Values, ld.Values.Length);
-                            lock (datalogger.LogFileQueue)
-                            {
-                                datalogger.LogFileQueue.Enqueue(ld);
-                            }
-                        }
-                        //"Clear" array, so we know when all values are received
-                        for (int b = 0; b < newHighPriorityPidValues.Length; b++)
-                        {
-                            newHighPriorityPidValues[b] = double.MinValue;
-                        }
-                        ReceivedHPRows++;
-                    }
-
-                    if (!lowPriorityPidValues.Contains(double.MinValue))
-                    {
-                        for (int b = 0; b < lowPriorityPidValues.Length; b++)
-                        {
-                            lowPriorityPidValues[b] = double.MinValue;
-                        }
-                        ReceivedLPRows++;
-                    }
+                    ReadValue rv = newReadValues[r];
+                    int ind = ReceivingPids.IndexOf(rv.PidNr);
+                    if (ind > -1)
+                        newPidValues[ind] = rv.PidValue;
                 }
-                else //Not priority, or not all pids received yet.
+                if (!newPidValues.Contains(double.MinValue))
                 {
-                    for (int r = 0; r < newReadValues.Count; r++)
+                    Array.Copy(newPidValues, LastPidValues, LastPidValues.Length);
+                    Debug.WriteLine("All  pids received");
+                    LogData ld = new LogData(LastPidValues.Length);
+                    ld.TimeStamp = oMsg.TimeStamp;
+                    Array.Copy(newPidValues, ld.Values, ld.Values.Length);
+                    lock (datalogger.LogFileQueue)
                     {
-                        ReadValue rv = newReadValues[r];
-                        int ind = ReceivingPids.IndexOf(rv.PidNr);
-                        if (ind > -1)
-                            newPidValues[ind] = rv.PidValue;
+                        datalogger.LogFileQueue.Enqueue(ld);
                     }
-                    if (!newPidValues.Contains(double.MinValue))
+                    //"Clear" array, so we know when all values are received
+                    for (int b = 0; b < newPidValues.Length; b++)
                     {
-                        //All pids received
-                        //if (datalogger.writelog) //Always add data to logging queue, for graph & histogram
-                        {
-                            LogData ld = new LogData(newPidValues.Length);
-                            ld.TimeStamp = newReadValues[0].TimeStamp;
-                            ld.DevTimeStamp = newReadValues[0].DevTimeStamp;
-                            Array.Copy(newPidValues, ld.Values, ld.Values.Length);
-                            lock (datalogger.LogFileQueue)
-                            {
-                                datalogger.LogFileQueue.Enqueue(ld);
-                            }
-                        }
-                        Array.Copy(newPidValues, LastPidValues, LastPidValues.Length);
-                        //"Clear" array, so we know when all values are received
-                        for (int b = 0; b < newPidValues.Length; b++)
-                        {
-                            newPidValues[b] = double.MinValue;
-                        }
-                        ReceivedHPRows++;
+                        newPidValues[b] = double.MinValue;
                     }
+                    ReceivedRows++;
+
                 }
 
             }

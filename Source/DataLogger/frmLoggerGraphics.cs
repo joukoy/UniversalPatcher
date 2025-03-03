@@ -37,7 +37,7 @@ namespace UniversalPatcher
                 Scalar = 1;
                 Max = 1;
             }
-            public PidScalar(string pid, int pidId)
+            public PidScalar(string pid, string pidId)
             {
                 On = false;
                 Bar = false;
@@ -46,7 +46,7 @@ namespace UniversalPatcher
                 Max = 1;
                 PidId = pidId;
             }
-            public int PidId { get; set; }
+            public string PidId { get; set; }
             public bool On { get; set; }
             public string Pid { get; set; }
             public float Scalar { get; set; }
@@ -799,15 +799,17 @@ namespace UniversalPatcher
                 pidScalars = new List<PidScalar>();
                 chart1.Series.Clear();
                 chart2.Series.Clear();
-                for (int r = 0; r < datalogger.PidProfile.Count; r++)
+                for (int r = 0; r < datalogger.SelectedPids.Count; r++)
                 {
-                    PidScalar ps = new PidScalar(datalogger.PidProfile[r].PidName, datalogger.PidProfile[r].addr);
+                    LogParam.PidSettings pidProfile = datalogger.SelectedPids[r];
+                    LogParam.PidParameter parm = pidProfile.Parameter;
+                    PidScalar ps = new PidScalar(parm.Name, parm.Id);
                     pidScalars.Add(ps);
                     chart1.Series.Add(new Series());
                     chart1.Series[r].ChartType = ChartType;
                     chart1.Series[r].XValueType = ChartValueType.DateTime;
-                    if (datalogger.PidProfile[r].PidName != null)
-                        chart1.Series[r].Name = r.ToString() + "-" +  datalogger.PidProfile[r].PidName;
+                    if (parm.Name != null)
+                        chart1.Series[r].Name = r.ToString() + "-" +  parm.Name;
                     chart1.Series[r].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
                 }
                 dataGridSettings.DataSource = pidScalars;
@@ -1123,7 +1125,7 @@ namespace UniversalPatcher
                 ImportPidProfile();
                 DetectMinMax();
                 ImportLogDataBuffer();
-                if (datalogger.PidProfile.Count > 10)
+                if (datalogger.SelectedPids.Count > 10)
                 {
                     chkSelectAll.Checked = false;
                     Logger("More than 10 pids, all pids disabled by default. Select pids you want and click Apply");

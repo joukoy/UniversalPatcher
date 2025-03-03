@@ -431,9 +431,10 @@ namespace UniversalPatcher
             groupLogfile.Enabled = false;
             histogram = new Histogram(ColumnHeaders, RowHeaders);
             List<string> pids = new List<string>();
-            foreach (PidConfig p in datalogger.PidProfile)
+            foreach (LogParam.PidSettings p in datalogger.SelectedPids)
             {
-                pids.Add(p.PidName);
+                LogParam.PidParameter parm = p.Parameter;
+                pids.Add(parm.Name);
             }
             histogram.Parameters = pids.ToArray();
             SetupParameterLists();

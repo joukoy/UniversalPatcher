@@ -43,6 +43,7 @@ public static class LoggerUtils
         public int Interval { get; set; }
     }
 
+
     public class Parameter
     {
         public Parameter()
@@ -360,20 +361,27 @@ public static class LoggerUtils
 
     public class Conversion
     {
-        public string Units { get; private set; }
+        public string Units { get; set; }
 
-        public string Expression { get; private set; }
+        public string Expression { get; set; }
 
-        public string Format { get; private set; }
+        public string Format { get; set; }
 
-        public bool IsBitMapped { get; private set; }
+        public bool IsBitMapped { get; set; }
 
-        public int BitIndex { get; private set; }
+        public int BitIndex { get; set; }
 
-        public string TrueValue { get; private set; }
+        public string TrueValue { get; set; }
 
-        public string FalseValue { get; private set; }
+        public string FalseValue { get; set; }
 
+        public Conversion()
+        {
+            this.IsBitMapped = false;
+            this.BitIndex = -1;
+            this.TrueValue = null;
+            this.FalseValue = null;
+        }
         public Conversion(string units, string expression, string format)
         {
             this.Units = units;

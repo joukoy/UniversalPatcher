@@ -22,9 +22,10 @@ namespace UniversalPatcher
 
         private void frmGaugeSettings_Load(object sender, EventArgs e)
         {
-            foreach (PidConfig pc in datalogger.PidProfile)
+            foreach (LogParam.PidSettings pidProfile in datalogger.SelectedPids)
             {
-                comboPidName.Items.Add(pc.PidName);
+
+                comboPidName.Items.Add(pidProfile.Parameter.Name);
             }
            
             comboGaugetype.ValueMember = "Value";

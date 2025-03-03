@@ -762,3 +762,9 @@
 - Debug log: add timestamps
 - Logger: Request data again, if nothing received in 2 seconds 
 - Logger: Added Dashboard (show values in analog gauges)
+
+0.22.31
+- Fixed bug: OS not detected if OS is not first segment
+- Logger: Profile handling rewrite, other fixes & improvements
+
+

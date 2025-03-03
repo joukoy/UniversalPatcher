@@ -617,123 +617,160 @@ public class Upatcher
 
     public static void Startup(string[] args)
     {
-        try
-        {
-            AppSettings = new UpatcherSettings();
-            BadChkFileList = new List<StaticSegmentInfo>();
-            parser = new MathParser();
-            savingMath = new SavingMath();
-            LoadAppSettings();
+        AppSettings = new UpatcherSettings();
+        BadChkFileList = new List<StaticSegmentInfo>();
+        parser = new MathParser();
+        savingMath = new SavingMath();
+        LoadAppSettings();
 
-            ClipBrd = new List<object>();
-            if (args.Length > 0)
+        ClipBrd = new List<object>();
+        if (args.Length > 0)
+        {
+            if (args[0] == "-")
             {
-                if (args[0] == "-")
+                Debug.WriteLine("Remember previous settings");
+            }
+            else if (args[0].ToLower().Contains("j2534server"))
+            {
+                int DevNumber = -1;
+                if (!int.TryParse(args[1], out DevNumber))
                 {
-                    Debug.WriteLine("Remember previous settings");
+                    MessageBox.Show("Unknown devicenumber: " + args[1]);
+                    Environment.Exit(0);
                 }
-                else if (args[0].ToLower().Contains("j2534server"))
+                List<J2534DotNet.J2534Device> jDevList = J2534DotNet.J2534Detect.ListDevices();
+                J2534DotNet.J2534Device selectedDevice = jDevList[DevNumber];
+                if (AppSettings.LoggerStartJ2534ProcessDebug)
                 {
-                    int DevNumber = -1;
-                    if (!int.TryParse(args[1], out DevNumber))
-                    {
-                        MessageBox.Show("Unknown devicenumber: " + args[1]);
-                        Environment.Exit(0);
-                    }
-                    List<J2534DotNet.J2534Device> jDevList = J2534DotNet.J2534Detect.ListDevices();
-                    J2534DotNet.J2534Device selectedDevice = jDevList[DevNumber];
-                    if (AppSettings.LoggerStartJ2534ProcessDebug)
-                    {
-                        frmpatcher = new FrmPatcher();
-                        frmpatcher.Show();
-                    }
-                    if (Upatcher.AppSettings.LoggerJ2534ProcessVisible)
-                    {
-                        Application.Run(new frmJ2534Server(selectedDevice));
-                    }
-                    else
-                    {
-                        J2534Server server = new J2534Server(selectedDevice);
-                        server.ServerLoop();
-                    }
-                    return;
+                    frmpatcher = new FrmPatcher();
+                    frmpatcher.Show();
                 }
-                else if (args[0].ToLower().Contains("tourist"))
-                    AppSettings.WorkingMode = 0;
-                else if (args[0].ToLower().Contains("basic"))
-                    AppSettings.WorkingMode = 1;
-                else if (args[0].ToLower().Contains("advanced"))
-                    AppSettings.WorkingMode = 2;
+                if (Upatcher.AppSettings.LoggerJ2534ProcessVisible)
+                {
+                    Application.Run(new frmJ2534Server(selectedDevice));
+                }
                 else
                 {
-                    throw new Exception("Usage: " + Path.GetFileName(Application.ExecutablePath) + " [tourist | basic | advanced] [launcher | tuner]");
+                    J2534Server server = new J2534Server(selectedDevice);
+                    server.ServerLoop();
                 }
-                AppSettings.Save();
-            }
-
-            LogReceivers = new List<RichTextBox>();
-            tableSeeks = new List<TableSeek>();
-            segmentSeeks = new List<SegmentSeek>();
-            RedoLog = new List<ReDo>();
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
-            {
-                MessageBox.Show("Incomplete installation, Universalpatcher files missing" + Environment.NewLine +
-                    "Please extract all files from ZIP package", "Incomplete installation", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            //Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Histogram")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Histogram"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Log")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Profiles")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Profiles"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "ospids")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "ospids"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Dashboard")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Dashboard"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "ChecksumSearch")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "ChecksumSearch"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "TuneSessions")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "TunerSessions"));
-            if (AppSettings.LastXMLfolder == "")
-                AppSettings.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
-            if (AppSettings.LastPATCHfolder == "")
-                AppSettings.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
-
-            frmSplash = new frmSplashScreen();
-            if (AppSettings.SplashShowTime > 0)
-                frmSplash.Show();
-            //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
-            Screen myScreen = Screen.FromPoint(Control.MousePosition);
-            System.Drawing.Rectangle area = myScreen.WorkingArea;
-            Point xy = new Point(area.Width / 2 - 115, area.Height / 2 - 130);
-            frmSplash.moveMe(xy);
-            frmSplash.labelProgress.Text = "";
-            LoadSettingFiles();
-
-            if (args.Length > 1)
+            else if (args[0].ToLower().Contains("tourist"))
+                AppSettings.WorkingMode = 0;
+            else if (args[0].ToLower().Contains("basic"))
+                AppSettings.WorkingMode = 1;
+            else if (args[0].ToLower().Contains("advanced"))
+                AppSettings.WorkingMode = 2;
+            else
             {
-                if (args[1].ToLower().Contains("launcher"))
+                throw new Exception("Usage: " + Path.GetFileName(Application.ExecutablePath) + " [tourist | basic | advanced] [launcher | tuner]");
+            }
+            AppSettings.Save();
+        }
+
+        LogReceivers = new List<RichTextBox>();
+        tableSeeks = new List<TableSeek>();
+        segmentSeeks = new List<SegmentSeek>();
+        RedoLog = new List<ReDo>();
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
+        {
+            MessageBox.Show("Incomplete installation, Universalpatcher files missing" + Environment.NewLine +
+                "Please extract all files from ZIP package", "Incomplete installation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+        //Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Histogram")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Histogram"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Log")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Profiles")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Profiles"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "ospids")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "ospids"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Dashboard")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Dashboard"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "ChecksumSearch")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "ChecksumSearch"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "TuneSessions")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "TunerSessions"));
+        if (AppSettings.LastXMLfolder == "")
+            AppSettings.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
+        if (AppSettings.LastPATCHfolder == "")
+            AppSettings.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
+
+        frmSplash = new frmSplashScreen();
+        if (AppSettings.SplashShowTime > 0)
+            frmSplash.Show();
+        //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
+        Screen myScreen = Screen.FromPoint(Control.MousePosition);
+        System.Drawing.Rectangle area = myScreen.WorkingArea;
+        Point xy = new Point(area.Width / 2 - 115, area.Height / 2 - 130);
+        frmSplash.moveMe(xy);
+        frmSplash.labelProgress.Text = "";
+        LoadSettingFiles();
+
+        if (args.Length > 1)
+        {
+            if (args[1].ToLower().Contains("launcher"))
+            {
+                Application.Run(new FrmMain());
+            }
+            else if (args[1].ToLower().Contains("tuner"))
+            {
+                PcmFile pcm = new PcmFile();
+                if (AppSettings.TunerUseSessionTabs)
                 {
-                    Application.Run(new FrmMain());
+                    Application.Run(new frmTunerMain(pcm));
                 }
-                else if (args[1].ToLower().Contains("tuner"))
+                else
                 {
+                    Application.Run(new FrmTuner(pcm));
+                }
+            }
+            else if (args[1].ToLower().Contains("patcher"))
+            {
+                Application.Run(new FrmPatcher());
+            }
+            else if (args[1].ToLower().Contains("logger"))
+            {
+                Application.Run(new frmLogger());
+            }
+            else
+            {
+                //Application.Run(new FrmPatcher());
+                PcmFile pcm = new PcmFile();
+                Application.Run(new FrmTuner(pcm));
+            }
+        }
+        else
+        {
+            switch (AppSettings.OpenInStartup)
+            {
+                case UpatcherSettings.StartupUtil.Launcher:
+                    Application.Run(new FrmMain());
+                    break;
+                case UpatcherSettings.StartupUtil.Logger:
+                    Application.Run(new frmLogger());
+                    break;
+                case UpatcherSettings.StartupUtil.Patcher:
+                    Application.Run(new FrmPatcher());
+                    break;
+                case UpatcherSettings.StartupUtil.Tuner:
                     PcmFile pcm = new PcmFile();
                     if (AppSettings.TunerUseSessionTabs)
                     {
@@ -743,58 +780,9 @@ public class Upatcher
                     {
                         Application.Run(new FrmTuner(pcm));
                     }
-                }
-                else if (args[1].ToLower().Contains("patcher"))
-                {
-                    Application.Run(new FrmPatcher());
-                }
-                else if (args[1].ToLower().Contains("logger"))
-                {
-                    Application.Run(new frmLogger());
-                }
-                else
-                {
-                    //Application.Run(new FrmPatcher());
-                    PcmFile pcm = new PcmFile();
-                    Application.Run(new FrmTuner(pcm));
-                }
-            }
-            else
-            {
-                switch (AppSettings.OpenInStartup)
-                {
-                    case UpatcherSettings.StartupUtil.Launcher:
-                        Application.Run(new FrmMain());
-                        break;
-                    case UpatcherSettings.StartupUtil.Logger:
-                        Application.Run(new frmLogger());
-                        break;
-                    case UpatcherSettings.StartupUtil.Patcher:
-                        Application.Run(new FrmPatcher());
-                        break;
-                    case UpatcherSettings.StartupUtil.Tuner:
-                        PcmFile pcm = new PcmFile();
-                        if (AppSettings.TunerUseSessionTabs)
-                        {
-                            Application.Run(new frmTunerMain(pcm));
-                        }
-                        else
-                        {
-                            Application.Run(new FrmTuner(pcm));
-                        }
-                        break;
+                    break;
 
-                }
             }
-        }
-        catch (Exception ex)
-        {
-            var st = new StackTrace(ex, true);
-            // Get the top stack frame
-            var frame = st.GetFrame(st.FrameCount - 1);
-            // Get the line number from the stack frame
-            var line = frame.GetFileLineNumber();
-            Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
         }
     }
 

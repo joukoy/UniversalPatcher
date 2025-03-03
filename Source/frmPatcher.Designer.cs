@@ -228,6 +228,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.comboExtrainfoSegment = new System.Windows.Forms.ComboBox();
             this.tabSorter = new System.Windows.Forms.TabPage();
+            this.chkSortSkipUnknownOS = new System.Windows.Forms.CheckBox();
             this.txtSeparRenParts = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.btnRemoveRenParts = new System.Windows.Forms.Button();
@@ -257,6 +258,8 @@
             this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createProgramShortcutsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.createDebugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -287,8 +290,6 @@
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.timerDebug = new System.Windows.Forms.Timer(this.components);
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.createDebugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -2585,6 +2586,7 @@
             // 
             // tabSorter
             // 
+            this.tabSorter.Controls.Add(this.chkSortSkipUnknownOS);
             this.tabSorter.Controls.Add(this.txtSeparRenParts);
             this.tabSorter.Controls.Add(this.label18);
             this.tabSorter.Controls.Add(this.btnRemoveRenParts);
@@ -2602,6 +2604,16 @@
             this.tabSorter.TabIndex = 8;
             this.tabSorter.Text = "Sort files";
             this.tabSorter.UseVisualStyleBackColor = true;
+            // 
+            // chkSortSkipUnknownOS
+            // 
+            this.chkSortSkipUnknownOS.AutoSize = true;
+            this.chkSortSkipUnknownOS.Location = new System.Drawing.Point(27, 106);
+            this.chkSortSkipUnknownOS.Name = "chkSortSkipUnknownOS";
+            this.chkSortSkipUnknownOS.Size = new System.Drawing.Size(120, 17);
+            this.chkSortSkipUnknownOS.TabIndex = 11;
+            this.chkSortSkipUnknownOS.Text = "Skip if OS unknown";
+            this.chkSortSkipUnknownOS.UseVisualStyleBackColor = true;
             // 
             // txtSeparRenParts
             // 
@@ -2887,6 +2899,18 @@
             this.createProgramShortcutsToolStripMenuItem.Text = "Create program shortcuts";
             this.createProgramShortcutsToolStripMenuItem.Click += new System.EventHandler(this.createProgramShortcutsToolStripMenuItem_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(206, 6);
+            // 
+            // createDebugLogToolStripMenuItem
+            // 
+            this.createDebugLogToolStripMenuItem.Name = "createDebugLogToolStripMenuItem";
+            this.createDebugLogToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.createDebugLogToolStripMenuItem.Text = "Create debug log";
+            this.createDebugLogToolStripMenuItem.Click += new System.EventHandler(this.createDebugLogToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -3132,18 +3156,6 @@
             // timerDebug
             // 
             this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(206, 6);
-            // 
-            // createDebugLogToolStripMenuItem
-            // 
-            this.createDebugLogToolStripMenuItem.Name = "createDebugLogToolStripMenuItem";
-            this.createDebugLogToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.createDebugLogToolStripMenuItem.Text = "Create debug log";
-            this.createDebugLogToolStripMenuItem.Click += new System.EventHandler(this.createDebugLogToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -3506,5 +3518,6 @@
         private System.Windows.Forms.Button btnLauncher;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem createDebugLogToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkSortSkipUnknownOS;
     }
 }

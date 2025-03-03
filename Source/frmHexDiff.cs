@@ -135,6 +135,7 @@ namespace UniversalPatcher
                 FilterTables();
                 tree1.SelectedNodes.Clear();
                 TreeParts.AddNodes(tree1.Nodes, pcm1,filteredTableDatas.ToList(),false);
+                //TreeParts.AddNodes(tree1.Nodes, pcm1, filteredTableDatas.ToList(), false);
                 tree1.AfterSelect += Tree1_AfterSelect;
                 tree1.ContextMenuStrip = contextMenuStrip1;
             }
@@ -175,44 +176,47 @@ namespace UniversalPatcher
                     List<string> selectedDimensions = new List<string>();
                     foreach (TreeNode tn in tree1.SelectedNodes)
                     {
-                        if (tn.Parent == null)
+                        if (tn.Tag == null)
                             continue;
-                        switch (tn.Parent.Name)
+                        TreeParts.Tnode nod = (TreeParts.Tnode)tn.Tag;
+                        switch (nod.NodeType)
                         {
-                            case "Segments":
+                            case TreeParts.NType.Segment:
                                 selectedSegs.Add(tn.Name);
                                 break;
-                            case "Categories":
+                            case TreeParts.NType.Category:
                                 selectedCats.Add(tn.Name);
                                 break;
-                            case "Dimensions":
+                            case TreeParts.NType.Dimensions:
                                 selectedDimensions.Add(tn.Name);
                                 break;
-                            case "ValueTypes":
+                            case TreeParts.NType.Valuetype:
                                 selectedValTypes.Add(tn.Name);
                                 break;
                         }
-                        TreeNode tnParent = tn.Parent;
-                        while (tnParent.Parent != null)
+                        if (tn.Parent != null)
                         {
-                            switch (tnParent.Parent.Name)
+                            TreeNode tnParent = tn.Parent;
+                            while (tnParent.Parent != null)
                             {
-                                case "Segments":
-                                    selectedSegs.Add(tnParent.Name);
-                                    break;
-                                case "Categories":
-                                    selectedCats.Add(tnParent.Name);
-                                    break;
-                                case "Dimensions":
-                                    selectedDimensions.Add(tnParent.Name);
-                                    break;
-                                case "ValueTypes":
-                                    selectedValTypes.Add(tnParent.Name);
-                                    break;
+                                switch (tnParent.Parent.Name)
+                                {
+                                    case "Segments":
+                                        selectedSegs.Add(tnParent.Name);
+                                        break;
+                                    case "Categories":
+                                        selectedCats.Add(tnParent.Name);
+                                        break;
+                                    case "Dimensions":
+                                        selectedDimensions.Add(tnParent.Name);
+                                        break;
+                                    case "ValueTypes":
+                                        selectedValTypes.Add(tnParent.Name);
+                                        break;
+                                }
+                                tnParent = tnParent.Parent;
                             }
-                            tnParent = tnParent.Parent;
                         }
-
                     }
 
                     if (selectedSegs.Count > 0)

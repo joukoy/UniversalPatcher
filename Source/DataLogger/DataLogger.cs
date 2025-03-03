@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using static UniversalPatcher.PidConfig;
+using System.Xml.Linq;
 
 namespace UniversalPatcher
 {
@@ -24,6 +25,7 @@ namespace UniversalPatcher
             Receiver = new MessageReceiver();
             VPWProtocol = UseVPW;
             RealTimeControls = LoadRealTimeControls();
+            slothandler = new SlotHandler(UseVPW);
         }
         private CancellationTokenSource logTokenSource = new CancellationTokenSource();
         private CancellationTokenSource logWriterTokenSource = new CancellationTokenSource();
@@ -57,7 +59,6 @@ namespace UniversalPatcher
         private Queue<QueuedCommand> queuedCommands = new Queue<QueuedCommand>();
 
         public List<LogData> LogDataBuffer;
-        public List<int> TestedPids;
 
         //Set these values before StartLogging()
         public DateTime LogStartTime;
@@ -68,12 +69,16 @@ namespace UniversalPatcher
         public  byte Responsetype;
         public  int maxSlotsPerRequest = 4;   //How many Slots before asking more
         public  int maxSlotsPerMessage = 4;   //How many Slots in one Slot request message
-        public  bool HighPriority = false;
         public bool VPWProtocol = true;
         public ushort CanPcmAddr;
         public byte CanPcmAddrByte1;
         public byte CanPcmAddrByte2;
 
+        public double[] LastCalculatedValues;
+        public string[] LastCalculatedStringValues;
+
+        public List<LogParam.PidParameter> PidParams = new List<LogParam.PidParameter>();
+        public List<LogParam.PidSettings> SelectedPids = new List<LogParam.PidSettings>();
         public enum QueueCmd
         {
             Getdtc,
@@ -238,12 +243,9 @@ namespace UniversalPatcher
                     if (useRawValues)
                     {
                         List<string> pids = new List<string>();
-                        for (int c = 0; c < PidProfile.Count; c++)
+                        for (int c = 0; c < slothandler.ReceivingPids.Count; c++)
                         {
-                            if (!pids.Contains(PidProfile[c].Address))
-                            {
-                                pids.Add(PidProfile[c].Address);
-                            }
+                           pids.Add(slothandler.ReceivingPids[c].ToString("X4"));
                         }
                         for (int c=0; c < pids.Count; c++)
                         {
@@ -255,10 +257,10 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        for (int c = 0; c < PidProfile.Count; c++)
+                        for (int c = 0; c < SelectedPids.Count; c++)
                         {
-                            sb.Append(PidProfile[c].PidName);
-                            if (c < PidProfile.Count - 1)
+                            sb.Append(SelectedPids[c].Parameter.Name);
+                            if (c < SelectedPids.Count - 1)
                                 sb.Append(logseparator);
                         }
                     }
@@ -329,7 +331,7 @@ namespace UniversalPatcher
                 {
                     ld = LogFileQueue.Dequeue();
                 }
-                ld.CalculatedValues = slothandler.CalculatePidDoubleValues(ld.Values);
+                LastCalculatedStringValues = slothandler.CalculatePidValues(ld.Values);
                 if (useRawValues)
                 {
                     string[] ldvalues = new string[ld.Values.Length];
@@ -342,26 +344,211 @@ namespace UniversalPatcher
                 {
                     string tStamp = new DateTime((long)ld.TimeStamp).ToString(AppSettings.LoggerTimestampFormat);
                     //tStamp += " [" + ld.TimeStamp.ToString() + "]";
-                    WriteLog(slothandler.CalculatePidValues(ld.Values), tStamp );
+                    WriteLog(LastCalculatedStringValues, tStamp );
                 }
                 //Data for Histogram & Graphics:
+                ld.CalculatedValues = slothandler.CalculatePidDoubleValues(ld.Values);
+                Array.Copy(ld.CalculatedValues, LastCalculatedValues, LastCalculatedValues.Length);
                 LoggerDataEvents.Add(ld);
                 LogDataBuffer.Add(ld);
             }
             logwriter.Close();
             logwriter = null;
         }
+        public void SaveOldProfile(string FileName)
+        {
+            try
+            {
+                using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidConfig>));
+                    writer.Serialize(stream, PidProfile);
+                    stream.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, DataLogger line " + line + ": " + ex.Message + ", inner exception: " + ex.InnerException);
+            }
+        }
 
-        public void LoadProfile(string FileName)
-        {            
+        public void ImportOldProfile(string FileName)
+        {
             try
             {
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidConfig>));
                 System.IO.StreamReader file = new System.IO.StreamReader(FileName);
                 PidProfile = (List<PidConfig>)reader.Deserialize(file);
                 file.Close();
+                foreach(PidConfig pc in PidProfile)
+                {
+                    LogParam.PidSettings newProfile = new LogParam.PidSettings();
+                    LogParam.PidParameter parm = PidParams.Where(X => X.Name == pc.PidName).FirstOrDefault();
+                    if (parm == null)
+                    {
+                        Logger("Can't import PID: " + pc.PidName);
+                    }
+                    else
+                    {
+                        newProfile.Parameter = parm;
+                        parm.Settings = newProfile;
+                        newProfile.Units = parm.Conversions.Where(X => X.Units == pc.Units).FirstOrDefault();
+                        if (newProfile.Units == null)
+                        {
+                            newProfile.Units = parm.Conversions[0];
+                        }
+                        if (pc.Type == DefineBy.Address)
+                        {
+                            newProfile.Os = parm.Locations.Where(X => X.Address.Contains(pc.Address)).FirstOrDefault();
+                        }
+                        SelectedPids.Add(newProfile);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void ImportPcmhammerProfile(string fName)
+        {
+            try
+            {
+                Logger("Importing PCM Hammer profile");
+                XDocument xml = XDocument.Load(fName);
+                foreach (XElement parameterElement in xml.Elements("LogProfile").Elements("PidParameters").Elements("PidParameter"))
+                {
+                    string id = parameterElement.Attribute("id").Value;
+                    LogParam.PidParameter parm = PidParams.Where(X => X.Name.Replace(" ","").Replace("/","") == id).FirstOrDefault();
+                    if (parm != null)
+                    {
+                        if (parameterElement.Attribute("units") != null)
+                        {
+                            parm.Settings.Units = parm.Conversions.Where(X => X.Units == parameterElement.Attribute("units").Value).FirstOrDefault();
+                        }
+                        SelectedPids.Add(parm.Settings);
+                    }
+                    else
+                    {
+                        LoggerBold("Skipping unknown PID: " + id);
+                    }
+
+                }
+                foreach (XElement parameterElement in xml.Elements("LogProfile").Elements("RamParameters").Elements("RamParameter"))
+                {
+                    string id = parameterElement.Attribute("id").Value;
+                    LogParam.PidParameter parm = PidParams.Where(X => X.Id.Replace(" ", "").Replace("/", "") == id).FirstOrDefault();
+                    if (parm != null)
+                    {
+                        if (parameterElement.Attribute("units") != null)
+                        {
+                            parm.Settings.Units = parm.Conversions.Where(X => X.Units == parameterElement.Attribute("units").Value).FirstOrDefault();
+                        }
+                        SelectedPids.Add(parm.Settings);
+                    }
+                    else
+                    {
+                        LoggerBold("Skipping unknown PID: " + id);
+                    }
+
+                }
+                foreach (XElement parameterElement in xml.Elements("LogProfile").Elements("MathParameters").Elements("MathParameter"))
+                {
+                    string id = parameterElement.Attribute("id").Value;
+                    LogParam.PidParameter parm = PidParams.Where(X => X.Id.Replace(" ", "").Replace("/", "") == id).FirstOrDefault();
+                    if (parm != null)
+                    {
+                        if (parameterElement.Attribute("units") != null)
+                        {
+                            parm.Settings.Units = parm.Conversions.Where(X => X.Units == parameterElement.Attribute("units").Value).FirstOrDefault();
+                        }
+                        SelectedPids.Add(parm.Settings);
+                    }
+                    else
+                    {
+                        LoggerBold("Skipping unknown PID: " + id);
+                    }
+
+                }
+                Logger("OK");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        public void LoadProfile(string FileName)
+        {            
+            try
+            {
+                SelectedPids.Clear();
+                if (FileName.ToLower().EndsWith(".logprofile"))
+                {
+                    ImportPcmhammerProfile(FileName);
+                    AppSettings.LoggerLastProfile = "";
+                    AppSettings.Save();
+                    return;
+                }
+                Logger("Loading profile: " + FileName);
+                List<LogParam.PidProfile> xmlprofiles = new List<LogParam.PidProfile>();
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<LogParam.PidProfile>));
+                System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+                try
+                {
+                    xmlprofiles = (List<LogParam.PidProfile>)reader.Deserialize(file);
+                    file.Close();
+
+                    foreach (LogParam.PidProfile xmlp in xmlprofiles)
+                    {
+                        LogParam.PidParameter parm = PidParams.Where(X => X.Name == xmlp.Id).FirstOrDefault();
+                        if (parm != null)
+                        {
+/*                            if (xmlp.Os != null)
+                            {
+                                parm.Settings.Os = parm.Locations.Where(X => X.Os == xmlp.Os).FirstOrDefault();
+                            }
+*/
+                            if (xmlp.Conversion != null)
+                            {
+                                parm.Settings.Units = parm.Conversions.Where(X => X.Units == xmlp.Conversion).FirstOrDefault();
+                            }
+                            SelectedPids.Add(parm.Settings);
+                        }
+                        else
+                        {
+                            LoggerBold("Skipping unknown PID: " + xmlp.Id);
+
+                        }
+                    }
+                }
+                catch
+                {
+                    file.Close();
+                    SelectedPids.Clear();
+                    Logger("Old style profile? Trying to import");
+                    ImportOldProfile(FileName);
+                }
                 AppSettings.LoggerLastProfile = FileName;
                 AppSettings.Save();
+                Logger("OK");
             }
             catch (Exception ex)
             {
@@ -394,8 +581,46 @@ namespace UniversalPatcher
                         break;
                     }
                 }
+                Logger("Creating new profile from CSV...");
+                SelectedPids = new List<LogParam.PidSettings>();
+                foreach (LogParam.PidParameter parmX in PidParams)
+                {
+                    parmX.Enabled = false;
+                }
+                for (int p = tStamps; p < hdrArray.Length; p++)
+                {
+                    LogParam.PidParameter parm = PidParams.Where(X => X.Name.ToLower() == hdrArray[p].ToLower()).FirstOrDefault();
+                    if (parm == null)
+                    {
+                        Logger("Unknown PID: " + hdrArray[p] + ", Adding temporary PID configuration");
+                        parm = new LogParam.PidParameter();
+                        parm.Name = hdrArray[p];
+                        parm.Type = LogParam.DefineBy.Math;
+                        parm.AddPid("0003", "Raw");
+                        parm.Id = "Math" + parm.Name;
+                        parm.Conversions.Add(new Conversion("Raw", "x", "0.00"));
+                        PidParams.Add(parm);
+                    }
+                    parm.Settings = new LogParam.PidSettings();
+                    if (parm.Conversions[0].IsBitMapped)
+                    {
+                        parm.Settings.Units = parm.Conversions[0];
+                    }
+                    else
+                    {
+                        parm.Settings.Units = parm.Conversions.Where(X => X.Units == "Raw").FirstOrDefault();
+                    }
+                    if (parm.Settings.Units == null)
+                    {
+                        parm.Settings.Units = parm.Conversions[0];
+                    }
+                    parm.Settings.Parameter = parm;
+                    parm.Enabled = true;
+                    SelectedPids.Add(parm.Settings);
+                }
+                Logger("OK");
 
-                PidProfile = new List<PidConfig>();
+/*                PidProfile = new List<PidConfig>();
                 for (int p=tStamps; p< hdrArray.Length;p++)
                 {
                     PidConfig pc = new PidConfig();
@@ -404,6 +629,7 @@ namespace UniversalPatcher
                     pc.Math = "X";
                     PidProfile.Add(pc);
                 }
+*/
                 slothandler = new SlotHandler(true);
             }
             catch (Exception ex)
@@ -422,14 +648,29 @@ namespace UniversalPatcher
         {
             try
             {
+                Logger("Saving profile: " + FileName);
+                List<LogParam.PidProfile> pidprofiles = new List<LogParam.PidProfile>();
+                foreach(LogParam.PidSettings pidSettings in SelectedPids)
+                {
+                    LogParam.PidProfile pidProfile = new LogParam.PidProfile();
+                    pidProfile.Conversion = pidSettings.Units.Units;
+                    pidProfile.Id = pidSettings.Parameter.Name;
+/*                    if (pidSettings.Os != null)
+                    {
+                        pidProfile.Os = pidSettings.Os.Os;
+                    }
+*/
+                    pidprofiles.Add(pidProfile);
+                }
                 using (FileStream stream = new FileStream(FileName, FileMode.Create))
                 {
-                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidConfig>));
-                    writer.Serialize(stream, PidProfile);
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<LogParam.PidProfile>));
+                    writer.Serialize(stream, pidprofiles);
                     stream.Close();
                 }
                 AppSettings.LoggerLastProfile = FileName;
                 AppSettings.Save();
+                Logger("OK");
             }
             catch (Exception ex)
             {
@@ -442,62 +683,81 @@ namespace UniversalPatcher
             }
         }
 
+        public string QueryPid(LogParam.PidSettings pidProfile, bool Verbose)
+        {
+            string retVal = null;
+            try
+            {
+
+                LogParam.PidParameter parm = pidProfile.Parameter;
+                if (parm.Type == LogParam.DefineBy.Address)
+                {
+                    if (Verbose)
+                    {
+                        Logger("Setting address by OS " + OS);
+                    }
+                    LogParam.Location location = parm.Locations.Where(X => X.Os == OS).FirstOrDefault();
+                    if (location == null)
+                    {
+                        if (Verbose)
+                        {
+                            Logger("Address not available");
+                        }
+                        return null;
+                    }
+                    parm.Settings.Os = location;
+                }
+                else if (parm.Type == LogParam.DefineBy.Math)
+                {
+                    foreach(LogParam.LogPid lPid in parm.Pids)
+                    {
+                        if (lPid.Parameter.Type == LogParam.DefineBy.Address)
+                        {
+                            LogParam.Location location = lPid.Parameter.Locations.Where(X => X.Os == OS).FirstOrDefault();
+                            if (location == null)
+                            {
+                                if (Verbose)
+                                {
+                                    Logger("Address not available");
+                                }
+                                return null;
+                            }
+                            lPid.Parameter.Settings.Os = location;
+                        }
+                    }
+                }
+                retVal =  parm.GetCalculatedStringValue(pidProfile, true);
+                if (Verbose)
+                {
+                    Logger("PID: " + parm.Name + ", Value: " + retVal);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+            return retVal;
+        }
+
         public void RemoveUnsupportedPids()
         {
             try
             {
                 Logger("Checking pid compatibility... ", false);
                 Receiver.StopReceiveLoop();
-                if (TestedPids == null)
+                for (int p = SelectedPids.Count - 1; p >= 0; p--)
                 {
-                    TestedPids = new List<int>();
-                }
-                for (int p = PidProfile.Count - 1; p >= 0; p--)
-                {
-                    //if (PidProfile[p].Math.ToUpper().StartsWith("WB"))
-                    if (PidProfile[p].addr <= 0 || PidProfile[p].Type == DefineBy.Math)    //Dont test math pids
-                    {
-                        continue;   
-                    }
-                    if (TestedPids.Contains(PidProfile[p].addr))
-                    {
-                        if (PidProfile[p].addr2 < 0)
-                        {
-                            continue;   //Math, pid2 tested and compatible
-                        }
-                        else
-                        {
-                            if (TestedPids.Contains(PidProfile[p].addr2))
-                            {
-                                continue; //Pid tested and compatible
-                            }
-                        }
-                    }
+                    LogParam.PidSettings pidProfile = SelectedPids[p];
                     bool compatible = false;
-                    Logger(PidProfile[p].addr.ToString("X4") + " ", false);
-                    ReadValue rv = datalogger.QuerySinglePidValue(PidProfile[p].addr, datalogger.PidProfile[p].DataType);
-                    if (rv.PidValue > double.MinValue && rv.FailureCode == 0)
+                    string pidVal = QueryPid(pidProfile,true);
+                    if (pidVal != null)
                     {
                         compatible = true;
-                        TestedPids.Add(PidProfile[p].addr);
-                        if (PidProfile[p].addr2 > -1)
-                        {
-                            Logger(PidProfile[p].addr2.ToString("X4") + " ", false);
-                            ReadValue rv2 = datalogger.QuerySinglePidValue(PidProfile[p].addr2, datalogger.PidProfile[p].Pid2DataType);
-                            if (rv2.PidValue == double.MinValue || rv2.FailureCode != 0)
-                            {
-                                compatible = false;
-                            }
-                            else
-                            {
-                                TestedPids.Add(PidProfile[p].addr2);
-                            }
-                        }
                     }
                     if (!compatible)
                     {
-                        Logger("Removing incompatible pid: " + PidProfile[p].PidName);
-                        PidProfile.RemoveAt(p);
+                        Logger("Removing incompatible pid: " + pidProfile.Parameter.Name);
+                        SelectedPids.Remove(pidProfile);
                     }
                 }
                 Logger("Done");
@@ -1281,7 +1541,6 @@ namespace UniversalPatcher
                 Application.DoEvents();
                 if (!ReConnect)
                 {
-                    slothandler = new SlotHandler(UseVPW);
                     bool resp = slothandler.CreatePidSetupMessages();
 
                     if (!resp)
@@ -1293,6 +1552,8 @@ namespace UniversalPatcher
                 {
                     return false;
                 }
+                LastCalculatedValues = new double[SelectedPids.Count];
+                LastCalculatedStringValues = new string[SelectedPids.Count];
                 stopLogLoop = false;
                 logTokenSource = new CancellationTokenSource();
                 logToken = logTokenSource.Token;

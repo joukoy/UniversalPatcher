@@ -46,6 +46,7 @@ namespace UniversalPatcher
             this.searchCodeFromGoogleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyTableFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.smoothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +92,6 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
-            this.smoothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -111,6 +111,7 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView1.Location = new System.Drawing.Point(2, 72);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
@@ -118,7 +119,6 @@ namespace UniversalPatcher
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
-            this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
@@ -162,7 +162,7 @@ namespace UniversalPatcher
             this.copyTableFromCompareToolStripMenuItem,
             this.smoothToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 224);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 202);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // cutToolStripMenuItem
@@ -221,6 +221,13 @@ namespace UniversalPatcher
             this.copyTableFromCompareToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.copyTableFromCompareToolStripMenuItem.Text = "Copy table from compare";
             this.copyTableFromCompareToolStripMenuItem.Click += new System.EventHandler(this.copyTableFromCompareToolStripMenuItem_Click);
+            // 
+            // smoothToolStripMenuItem
+            // 
+            this.smoothToolStripMenuItem.Name = "smoothToolStripMenuItem";
+            this.smoothToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.smoothToolStripMenuItem.Text = "Smooth";
+            this.smoothToolStripMenuItem.Click += new System.EventHandler(this.smoothToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -689,13 +696,6 @@ namespace UniversalPatcher
             this.chkRawHex.Text = "HEX";
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
-            // 
-            // smoothToolStripMenuItem
-            // 
-            this.smoothToolStripMenuItem.Name = "smoothToolStripMenuItem";
-            this.smoothToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.smoothToolStripMenuItem.Text = "Smooth";
-            this.smoothToolStripMenuItem.Click += new System.EventHandler(this.smoothToolStripMenuItem_Click);
             // 
             // frmTableEditor
             // 

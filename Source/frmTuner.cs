@@ -29,11 +29,17 @@ namespace UniversalPatcher
 
             PCM = PCM1;
             //tableDataList = PCM.tableDatas;
-            if (PCM == null || PCM1.fsize == 0) return; //No file selected
-            AddtoCurrentFileMenu(PCM);
-            if (loadTableList)
-                LoadConfigforPCM(ref PCM);
-            SelectPCM();
+            if (PCM == null || PCM1.fsize == 0)
+            {
+                PCM = new PcmFile();
+            }
+            else
+            {
+                AddtoCurrentFileMenu(PCM);
+                if (loadTableList)
+                    LoadConfigforPCM(ref PCM);
+                SelectPCM();
+            }
         }
 
         public FrmTuner(PcmFile PCM1, frmHistogram frmH)
@@ -45,10 +51,16 @@ namespace UniversalPatcher
 
             PCM = PCM1;
             //tableDataList = PCM.tableDatas;
-            if (PCM == null || PCM1.fsize == 0) return; //No file selected
-            AddtoCurrentFileMenu(PCM);
-            LoadConfigforPCM(ref PCM);
-            SelectPCM();
+            if (PCM == null || PCM1.fsize == 0)
+            {
+                PCM = new PcmFile();
+            }
+            else
+            {
+                AddtoCurrentFileMenu(PCM);
+                LoadConfigforPCM(ref PCM);
+                SelectPCM();
+            }
         }
 
         public enum DispMode

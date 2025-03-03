@@ -38,7 +38,7 @@ namespace UniversalPatcher
             DrawingControl.SetDoubleBuffered(richJConsole);
         }
 
-        private BindingSource bsLogProfile = new BindingSource();
+        //private BindingSource bsLogProfile = new BindingSource();
         private BindingSource bsParams = new BindingSource();
         //private BindingSource bsPidNames = new BindingSource();
         private List<Parameter> stdParameters = new List<Parameter>();
@@ -48,8 +48,8 @@ namespace UniversalPatcher
         private string logfilename;
         private bool ProfileDirty = false;
         //private BindingSource AnalyzeBS = new BindingSource();
-        private List<ushort> SupportedPids;
-        private PidConfig ClipBrd;
+        private List<int> SupportedPids;
+        //private PidConfig ClipBrd;
         private int keyDelayCounter = 0;
         public List<J2534DotNet.J2534Device> jDevList;
         //private SelectedTab selectedtab = SelectedTab.Logger;
@@ -67,7 +67,7 @@ namespace UniversalPatcher
         int canQuietResponses;
         int canDeviceResponses;
         DateTime lastResponseTime;
-        List <CANDevice> canDevs;
+        List<CANDevice> canDevs;
         private frmLoggerGraphics GraphicsForm;
         private frmHistogram HstForm;
         private ToolTip ScrollTip = new ToolTip();
@@ -83,6 +83,9 @@ namespace UniversalPatcher
         private bool jConsoleCAN = false;
         private FileTraceListener DebugFileListener;
         private frmDashboard dashboard;
+        private BindingList<LogParam.PidParameter> pidparams;
+        private string PidParamFile;
+        private bool DisableConversionChanges = false;
 
         [DllImport("user32.dll")]
         public static extern bool LockWindowUpdate(IntPtr hWndLock);
@@ -127,7 +130,7 @@ namespace UniversalPatcher
         public class LogText
         {
             public LogText() { }
-            public LogText(Color Color, string LogTxt, long TimeStamp) 
+            public LogText(Color Color, string LogTxt, long TimeStamp)
             {
                 this.color = Color;
                 this.Txt = LogTxt;
@@ -156,14 +159,35 @@ namespace UniversalPatcher
             {
                 labelConnected.Text = "Disconnected - OS: " + datalogger.OS;
             }
+            dataGridLogData.Columns.Add("Value", "Value");
+            dataGridLogData.Columns.Add("Units", "Units");
+            dataGridSelectedPids.Columns.Add("Value", "Value");
+            dataGridSelectedPids.Columns.Add("Units", "Units");
 
             //LogReceivers.Add(txtResult);
             Application.DoEvents();
             comboBaudRate.DataSource = SupportedBaudRates;
             LoadSettings();
-            LoadStdParams();
-            LoadProfileList();
             initPcmResponses();
+            SetupPidEditor();
+
+            if (!string.IsNullOrEmpty(AppSettings.LoggerLastProfile) && File.Exists(AppSettings.LoggerLastProfile))
+            {
+                profileFile = AppSettings.LoggerLastProfile;
+                datalogger.LoadProfile(profileFile);
+                this.Text = "Logger - " + profileFile;
+                CheckMaxPids();
+                SetupLogDataGrid();
+            }
+            LoadProfileList();
+            ReloadPidParams(true, true);
+
+
+            dataGridViewPidEditor.SelectionChanged += DataGridViewPidEditor_SelectionChanged;
+            dataGridViewPidEditor.DataError += DataGridViewPidEditor_DataError;
+            dataGridViewPidEditor.DataBindingComplete += DataGridViewPidEditor_DataBindingComplete;
+            dataGridViewPidEditorConversions.SelectionChanged += DataGridViewPidEditorConversions_SelectionChanged;
+
             this.FormClosing += frmLogger_FormClosing;
             tabLog.Enter += TabLog_Enter;
             tabAnalyzer.Enter += TabAnalyzer_Enter;
@@ -174,19 +198,21 @@ namespace UniversalPatcher
             tabVPWConsole.Enter += TabAdvanced_Enter;
 
             dataGridLogData.DataError += DataGridLogData_DataError;
-            dataGridPidNames.CellContentDoubleClick += DataGridPidNames_CellContentDoubleClick;
-            dataGridLogProfile.CellContentDoubleClick += DataGridLogProfile_CellContentDoubleClick;
-            dataGridLogProfile.CellEndEdit += DataGridLogProfile_CellEndEdit;
+            dataGridProfile.DataBindingComplete += dataGridProfile_DataBindingComplete;
+            dataGridProfile.CellMouseUp += DataGridProfile_CellMouseUp;
+            dataGridProfile.EditingControlShowing += DataGridProfile_EditingControlShowing;
+            dataGridViewPidEditorPids.DataError += DataGridViewPidEditorPids_DataError;
+            dataGridViewPidEditorConversions.DataError += DataGridViewPidEditorConversions_DataError;
+
             SerialPortService.PortsChanged += SerialPortService_PortsChanged;
             listProfiles.MouseClick += ListProfiles_MouseClick;
-            dataGridLogProfile.DataError += DataGridLogProfile_DataError;
-            dataGridLogProfile.DataBindingComplete += DataGridLogProfile_DataBindingComplete;
-            dataGridPidNames.DataError += DataGridPidNames_DataError;
+            treeProfiles.AfterSelect += TreeProfiles_AfterSelect;
+            dataGridProfile.DataError += dataGridProfile_DataError;
             dataGridAnalyzer.DataError += DataGridAnalyzer_DataError;
             comboBaudRate.KeyPress += ComboBaudRate_KeyPress;
-            txtParamSearch.Enter += TxtParamSearch_Enter;
-            txtParamSearch.Leave += TxtParamSearch_Leave;
-            txtParamSearch.KeyPress += TxtParamSearch_KeyPress;
+            //txtParamSearch.Enter += TxtParamSearch_Enter;
+            //txtParamSearch.Leave += TxtParamSearch_Leave;
+            //txtParamSearch.KeyPress += TxtParamSearch_KeyPress;
             txtSendBus.KeyPress += TxtSendBus_KeyPress;
             richVPWmessages.EnableContextMenu();
             richJConsole.EnableContextMenu();
@@ -202,19 +228,6 @@ namespace UniversalPatcher
             this.comboWBType.SelectedIndexChanged += new System.EventHandler(this.comboWBType_SelectedIndexChanged);
             this.comboWBport.SelectedIndexChanged += new System.EventHandler(this.comboWBport_SelectedIndexChanged);
 
-            LoadOsPidFiles();
-            if (PCM != null && !string.IsNullOrEmpty(PCM.OS))
-            {
-                FilterPidsByBin(PCM);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(AppSettings.LoggerLastFilterOS))
-                {
-                    comboFilterByOS.Text = AppSettings.LoggerLastFilterOS;
-                    FilterPidsByOS();
-                }
-            }
             comboFilterByOS.SelectedIndexChanged += new System.EventHandler(comboFilterByOS_SelectedIndexChanged);
             for (int r = 0; r < RealTimeControls.Count; r++)
             {
@@ -223,6 +236,444 @@ namespace UniversalPatcher
                 mi.Tag = RealTimeControls[r].CommandSet;
                 mi.Click += rtcMenu_Click;
                 rtcMenu.Items.Add(mi);
+            }
+        }
+
+        private void TreeProfiles_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (datalogger.LogRunning || timerPlayback.Enabled)
+            {
+                return;
+            }
+            string fName = (string)e.Node.Tag;
+            if (File.Exists(fName))
+            {
+                if (ProfileDirty)
+                {
+                    DialogResult dialogResult = MessageBox.Show("Save profile modifications?", "Save profile", MessageBoxButtons.YesNoCancel);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        SelectSaveProfile();
+                    }
+                    else if (dialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                }
+                SelectProfile(Path.Combine(Application.StartupPath, "Logger", "Profiles", fName));
+            }
+        }
+
+        private void DataGridProfile_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            ComboBox combo = e.Control as ComboBox;
+            if (combo != null)
+            {               
+                // Remove an existing event-handler, if present, to avoid 
+                // adding multiple handlers when the editing control is reused.
+                combo.SelectedIndexChanged -=
+                    new EventHandler(ComboBox_SelectedIndexChanged);
+
+                // Add the event handler. 
+                combo.SelectedIndexChanged +=
+                    new EventHandler(ComboBox_SelectedIndexChanged);
+            }
+        }
+        private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                ComboBox combo = (ComboBox)sender;
+                if (combo.SelectedItem == null)
+                {
+                    Debug.WriteLine("Null selection");
+                    return;
+                }
+
+                if (dataGridProfile.SelectedCells.Count == 0)
+                {
+                    return;
+                }
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridProfile.Rows[dataGridProfile.SelectedCells[0].RowIndex].DataBoundItem;
+
+                if (combo.SelectedItem.GetType() == typeof(Conversion))
+                {
+                    Conversion conversion = (Conversion)((ComboBox)sender).SelectedItem;
+                    Debug.WriteLine("Conversion: " + conversion.Units);
+                    parm.Settings.Units = conversion;
+                }
+/*                else if (combo.SelectedItem.GetType() == typeof(LogParam.Location))
+                {
+                    LogParam.Location location = (LogParam.Location)((ComboBox)sender).SelectedItem;
+                    Debug.WriteLine("Location: " + location.Os);
+                    parm.Settings.Os = location;
+                }
+*/
+                GetPidSelections();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+        private void DataGridProfile_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            try
+            {
+                int enableCol = dataGridProfile.Columns["Enabled"].Index;
+                if (e.ColumnIndex == enableCol && e.RowIndex != -1)
+                {
+                    dataGridProfile.EndEdit();
+                    LogParam.PidParameter parm = (LogParam.PidParameter)dataGridProfile.Rows[e.RowIndex].DataBoundItem;
+                    if (Convert.ToBoolean(dataGridProfile.Rows[e.RowIndex].Cells[e.ColumnIndex].Value) == true)
+                    {
+                        if (parm.Settings.Units == null)
+                        {
+                            parm.Settings.Units = parm.Conversions[0];
+                        }
+                        datalogger.SelectedPids.Add(parm.Settings);
+                    }
+                    else
+                    {
+                        datalogger.SelectedPids.Remove(parm.Settings);
+                    }
+                    GetPidSelections();
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void dataGridProfile_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            try
+            {
+                if (!dataGridProfile.Columns.Contains("Units"))
+                {
+                    DataGridViewColumn dgc = new DataGridViewColumn()
+                    {
+                        Name = "Units",
+                        HeaderText = "Units",
+                        CellTemplate = new DataGridViewTextBoxCell()
+                    };
+                    dataGridProfile.Columns.Insert(1, dgc);
+                }
+/*                if (!dataGridProfile.Columns.Contains("Os"))
+                {
+                    DataGridViewColumn dgc = new DataGridViewColumn()
+                    {
+                        Name = "Os",
+                        HeaderText = "Os",
+                        CellTemplate = new DataGridViewTextBoxCell()
+                    };
+                    dataGridProfile.Columns.Insert(2, dgc);
+                }
+*/
+                dataGridProfile.Columns["DataType"].Visible = false;
+                dataGridProfile.Columns["Type"].Visible = false;
+
+                for (int row = 0; row < dataGridProfile.Rows.Count; row++)
+                {
+                    LogParam.PidParameter parm = (LogParam.PidParameter)dataGridProfile.Rows[row].DataBoundItem;
+                    DataGridViewComboBoxCell dgcC = new DataGridViewComboBoxCell();
+                    if (parm == null)
+                    {
+                        continue;
+                    }
+                    dgcC.DataSource = parm.Conversions;
+                    dgcC.ValueMember = "Units";
+                    dgcC.DisplayMember = "Units";
+                    dataGridProfile.Rows[row].Cells["Units"] = dgcC;
+                    if (parm.Settings.Units != null && !string.IsNullOrEmpty(parm.Settings.Units.Units))
+                    {
+                        dataGridProfile.Rows[row].Cells["Units"].Value = parm.Settings.Units.Units;
+                    }
+                    else
+                    {
+                        dataGridProfile.Rows[row].Cells["Units"].Value = parm.Conversions[0].Units;
+                    }
+/*                    if (parm.Type == LogParam.DefineBy.Address)
+                    {
+                        DataGridViewComboBoxCell dgcL = new DataGridViewComboBoxCell();
+                        dgcL.DataSource = parm.Locations;
+                        dgcL.ValueMember = "Os";
+                        dgcL.DisplayMember = "Os";
+                        dataGridProfile.Rows[row].Cells["OS"] = dgcL;
+                        if (parm.Settings.Os != null)
+                        {
+                            dataGridProfile.Rows[row].Cells["OS"].Value = parm.Settings.Os.Os;
+                        }
+                        else
+                        {
+                            //dataGridProfile.Rows[row].Cells["OS"].Value = parm.Locations[0].Os;
+                        }
+                    }
+*/
+                }
+                Application.DoEvents();
+                dataGridProfile.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+                //dataGridProfile.Columns["Os"].Width = 100;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void DataGridViewPidEditorConversions_SelectionChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                DisableConversionChanges = true;
+                if (dataGridViewPidEditorConversions.SelectedCells.Count == 0)
+                {
+                    return;
+                }
+                Conversion conversion = (Conversion)dataGridViewPidEditorConversions.Rows[dataGridViewPidEditorConversions.SelectedCells[0].RowIndex].DataBoundItem;
+                chkConversionBitMapped.Checked = conversion.IsBitMapped;
+                numConversionBitIndex.Value = conversion.BitIndex;
+                txtConversionFalseValue.Text = conversion.FalseValue;
+                txtConversionTrueValue.Text = conversion.TrueValue;
+                txtConversionFormat.Text = conversion.Format;
+                txtConversionExpression.Text = conversion.Expression;
+                txtConversionUnits.Text = conversion.Units;
+                DisableConversionChanges = false;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void ShowEnabledPidsValues()
+        {
+            try
+            {
+                if (datalogger.Connected)
+                {
+                    datalogger.Receiver.SetReceiverPaused(true);
+                    foreach (LogParam.PidSettings pidProfile in datalogger.SelectedPids)
+                    {
+                        QueryPid(pidProfile, false);
+                    }
+                    datalogger.Receiver.SetReceiverPaused(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+        private void GetPidSelections()
+        {
+            try
+            {
+                if (!dataGridProfile.Columns.Contains("Units"))
+                {
+                    return;
+                }
+                Debug.WriteLine("Profile size: " + datalogger.SelectedPids.Count());
+                SetupLogDataGrid();
+                ShowEnabledPidsValues();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+        private void SetupPidEditor()
+        {
+            try
+            {
+                if (radioCAN.Checked)
+                    PidParamFile = Path.Combine(Application.StartupPath, "Logger", "PidParameters-CAN.XML");
+                else
+                    PidParamFile = Path.Combine(Application.StartupPath, "Logger", "PidParameters-VPW.XML");
+                if (File.Exists(PidParamFile))
+                {
+                    LogParam.LoadParamfile(PidParamFile);
+                    ReloadPidParams(true, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+        private void DataGridViewPidEditorConversions_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            Debug.WriteLine("DataGridViewPidEditorConversions_DataError: " + e.Exception.Message);
+        }
+
+        private void DataGridViewPidEditorPids_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+        }
+
+        private void DataGridViewPidEditor_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            try
+            {
+                UseComboBoxForEnums(dataGridViewPidEditor);
+                dataGridViewPidEditor.Columns["Enabled"].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void DataGridViewPidEditor_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+        }
+
+        private void ShowParmPids(LogParam.PidParameter parm)
+        {
+            try
+            {
+                dataGridViewPidEditorPids.Rows.Clear();
+                dataGridViewPidEditorPids.Columns.Clear();
+                dataGridViewPidEditorPids.Columns.Add("Id", "Id");
+                dataGridViewPidEditorPids.Columns.Add("Variable", "Variable");
+                dataGridViewPidEditorPids.Columns.Add("Units", "Units");
+                for (int r = 0; r < parm.Pids.Count; r++)
+                {
+                    dataGridViewPidEditorPids.Rows.Add();
+                    LogParam.LogPid lPid = parm.Pids[r];
+                    dataGridViewPidEditorPids.Rows[r].Tag = lPid;
+                    LogParam.PidParameter pParm = lPid.Parameter;
+                    dataGridViewPidEditorPids.Rows[r].Cells["Id"].Value = pParm.Name;
+                    dataGridViewPidEditorPids.Rows[r].Cells["Variable"].Value = lPid.Variable;
+                    DataGridViewComboBoxCell dgcUnits = new DataGridViewComboBoxCell();
+                    dgcUnits.DataSource = pParm.Conversions;
+                    dgcUnits.ValueMember = "Units";
+                    dgcUnits.DisplayMember = "Units";
+                    dataGridViewPidEditorPids.Rows[r].Cells["Units"] = dgcUnits;
+                    dataGridViewPidEditorPids.Rows[r].Cells["Units"].Value = lPid.Units.Units;
+                    if (lPid.Parameter.Type == LogParam.DefineBy.Address)
+                    {
+                        dataGridViewPidEditorPids.Columns.Add("Os", "Os");
+                        DataGridViewComboBoxCell dgcOs = new DataGridViewComboBoxCell();
+                        dgcOs.DataSource = lPid.Parameter.Locations;
+                        dgcOs.ValueMember = "Os";
+                        dgcOs.DisplayMember = "Os";
+                        dataGridViewPidEditorPids.Rows[r].Cells["Os"] = dgcOs;
+                        if (lPid.Os != null)
+                        {
+                            dataGridViewPidEditorPids.Rows[r].Cells["Os"].Value = lPid.Os.Os;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+        private void DataGridViewPidEditor_SelectionChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewPidEditor.SelectedCells.Count == 0)
+                {
+                    return;
+                }
+                dataGridViewPidEditorPids.DataSource = null;
+                dataGridViewPidEditorConversions.DataSource = null;
+                Application.DoEvents();
+                int row = dataGridViewPidEditor.SelectedCells[0].RowIndex;
+                if (row < 0)
+                {
+                    Debug.WriteLine("Row " + row.ToString() + " selected, exit");
+                    return;
+                }
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridViewPidEditor.Rows[row].DataBoundItem;
+                if (parm == null)
+                {
+                    dataGridViewPidEditorPids.Visible = false;
+                    labelProfilePids.Visible = false;
+                    dataGridViewPidEditorConversions.Rows.Clear();
+                    return;
+                }
+                if (parm.Type == LogParam.DefineBy.Pid)
+                {
+                    dataGridViewPidEditorPids.Visible = false;
+                    labelProfilePids.Visible = false;
+                }
+                else
+                {
+                    dataGridViewPidEditorPids.Visible = true;
+                    labelProfilePids.Visible = true;
+                    if (parm.Type == LogParam.DefineBy.Address)
+                    {
+                        labelProfilePids.Text = "Locations:";
+                        BindingList<LogParam.Location> locations = new BindingList<LogParam.Location>(parm.Locations);
+                        //dataGridViewPidEditorPids.ContextMenuStrip = null;
+                        dataGridViewPidEditorPids.DataSource = locations;
+                    }
+                    else if (parm.Type == LogParam.DefineBy.Math)
+                    {
+                        labelProfilePids.Text = "Pids:";
+                        ShowParmPids(parm);
+                    }
+                }
+                BindingList<Conversion> conversions = new BindingList<Conversion>(parm.Conversions);
+                dataGridViewPidEditorConversions.DataSource = conversions;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -263,15 +714,27 @@ namespace UniversalPatcher
 
         private void LoadOsPidFiles()
         {
-            comboFilterByOS.Items.Clear();
-            string folder =  Path.Combine(Application.StartupPath, "Logger", "ospids");
-            DirectoryInfo d = new DirectoryInfo(folder);
-            FileInfo[] Files = d.GetFiles("*.txt", SearchOption.AllDirectories);
-            comboFilterByOS.Items.Add("-");
-            foreach (FileInfo file in Files)
+            try
             {
-                string os = file.Name.Replace(".txt", "");
-                comboFilterByOS.Items.Add(os);
+                comboFilterByOS.Items.Clear();
+                string folder = Path.Combine(Application.StartupPath, "Logger", "ospids");
+                DirectoryInfo d = new DirectoryInfo(folder);
+                FileInfo[] Files = d.GetFiles("*.txt", SearchOption.AllDirectories);
+                comboFilterByOS.Items.Add("-");
+                foreach (FileInfo file in Files)
+                {
+                    string os = file.Name.Replace(".txt", "");
+                    comboFilterByOS.Items.Add(os);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -887,16 +1350,65 @@ namespace UniversalPatcher
             SelectProfile(Path.Combine(Application.StartupPath,"Logger", "Profiles", listProfiles.Text));            
         }
 
+        private void AddSubNodes(DirectoryInfo[] dInfo, TreeNode tn)
+        {
+            string path = (string)tn.Tag;
+            DirectoryInfo d = new DirectoryInfo(path);
+            FileInfo[] Files;
+            Files = d.GetFiles("*.*");
+            foreach (FileInfo file in Files)
+            {
+                TreeNode fTn = tn.Nodes.Add(file.Name);
+                fTn.Tag = file.FullName;
+                fTn.ImageKey = "modify.ico";
+                fTn.SelectedImageKey = "modify.ico";
+                if (file.FullName == profileFile)
+                {
+                    treeProfiles.SelectedNode = fTn;
+                }
+            }
+
+            foreach (DirectoryInfo di in dInfo.Where(X=>X.Parent.FullName == path))
+            {
+                TreeNode tnNew = tn.Nodes.Add(di.Name);
+                tnNew.ImageKey = "category.ico";
+                tnNew.SelectedImageKey = "explorer.ico";
+                tnNew.Tag = di.FullName;
+                AddSubNodes(dInfo, tnNew);
+            }
+
+        }
         private void LoadProfileList()
         {
-            listProfiles.Items.Clear();
             string ProfilePath = Path.Combine(Application.StartupPath, "Logger", "Profiles");
+
+            treeProfiles.Nodes.Clear();
+            DirectoryInfo dirs = new DirectoryInfo(ProfilePath);
+            DirectoryInfo[] dInfo = dirs.GetDirectories("*.*", SearchOption.AllDirectories);
+            foreach (DirectoryInfo di in dInfo.Where(X=>X.Parent.FullName == ProfilePath))
+            {
+                TreeNode tn = treeProfiles.Nodes.Add(di.Name);
+                tn.Tag = di.FullName;
+                tn.SelectedImageKey = "explorer.ico";
+                tn.ImageKey = "category.ico";
+                AddSubNodes(dInfo, tn);
+            }
+
+            listProfiles.Items.Clear();
             DirectoryInfo d = new DirectoryInfo(ProfilePath);
             FileInfo[] Files;
             Files = d.GetFiles("*.*");
             foreach (FileInfo file in Files)
             {
                 listProfiles.Items.Add(file.Name);
+                TreeNode fTn = treeProfiles.Nodes.Add(file.Name);
+                fTn.Tag = file.FullName;
+                fTn.ImageKey = "modify.ico";
+                fTn.SelectedImageKey = "modify.ico";
+                if (file.FullName == profileFile)
+                {
+                    treeProfiles.SelectedNode = fTn;
+                }
             }
             if (!string.IsNullOrEmpty(profileFile) && listProfiles.Items.Contains(profileFile))
             {
@@ -933,21 +1445,8 @@ namespace UniversalPatcher
             }
         }
 
-
-        private void DataGridLogProfile_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void dataGridProfile_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            ProfileDirty = true;
-            Debug.WriteLine("Dirt");
-        }
-
-        private void DataGridLogProfile_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            RemoveFromProfile();
-        }
-
-        private void DataGridPidNames_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            AddSelectedPidsToProfile();
         }
 
         private void DataGridLogData_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -1301,27 +1800,27 @@ namespace UniversalPatcher
                 {
                     comboResponseMode.Text = AppSettings.LoggerResponseMode;
                 }
-                chkPriority.Checked = AppSettings.LoggerUsePriority;
                 comboBaudRate.Text = AppSettings.LoggerBaudRate.ToString();
-
-                datalogger.PidProfile = new List<PidConfig>();
-                if (!string.IsNullOrEmpty(AppSettings.LoggerLastProfile) && File.Exists(AppSettings.LoggerLastProfile))
-                {
-                    profileFile = AppSettings.LoggerLastProfile;
-                    datalogger.LoadProfile(profileFile);
-                    this.Text = "Logger - " + profileFile;
-                    CheckMaxPids();
-                }
-                bsLogProfile.DataSource = datalogger.PidProfile;
-                dataGridLogProfile.DataSource = bsLogProfile;
-
                 LoadModuleList();
-
                 dataGridAnalyzer.Columns.Clear();
                 Analyzer.AnalyzerData ad = new Analyzer.AnalyzerData();
                 foreach (var prop in ad.GetType().GetProperties())
                 {
                     dataGridAnalyzer.Columns.Add(prop.Name, prop.Name);
+                }
+                datalogger.PidProfile = new List<PidConfig>();  //OLD profile
+                LoadOsPidFiles();
+                if (PCM != null && !string.IsNullOrEmpty(PCM.OS))
+                {
+                    FilterPidsByBin(PCM);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(AppSettings.LoggerLastFilterOS))
+                    {
+                        comboFilterByOS.Text = AppSettings.LoggerLastFilterOS;
+                        FilterPidsByOS();
+                    }
                 }
 
             }
@@ -1366,237 +1865,80 @@ namespace UniversalPatcher
             }
         }
 
-        private void DataGridPidNames_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        private void dataGridProfile_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             //Debug.WriteLine(e.Exception);
         }
 
-        public void LoadStdParams()
+        public void ReloadPidParams( bool LoadEditor, bool LoadProfile)
         {
             try
             {
-                if (chkFilterParamsByOS.Checked && comboFilterByOS.Text != "-" && SupportedPids != null && SupportedPids.Count > 0)
+                if (LoadEditor)
                 {
-                    Logger("Filtering parameters by OS: " + comboFilterByOS.Text);
-                }
-                if (stdParameters == null || stdParameters.Count == 0)
-                {
-                    string fName = Path.Combine(Application.StartupPath, "Logger", "Parameters.Standard.xml");
-                    XDocument xml = XDocument.Load(fName);
-                    stdParameters = new List<Parameter>();
-                    int indx = 0;
-                    foreach (XElement parameterElement in xml.Root.Elements("Parameter"))
+                    dataGridViewPidEditor.DataSource = null;
+                    List<LogParam.PidParameter> parmlist = datalogger.PidParams;
+                    if (!string.IsNullOrEmpty(txtPidEditorFilter.Text))
                     {
-                        Parameter p = new Parameter();
-                        p.Id = parameterElement.Attribute("id").Value;
-                        p.Name = parameterElement.Attribute("name").Value;
-                        p.Description = parameterElement.Attribute("description").Value;
-                        p.DataType = parameterElement.Attribute("storageType").Value;
-                        p.index = indx;
-                        foreach (XElement conversion in parameterElement.Elements("Conversion"))
-                        {
-                            string units = conversion.Attribute("units").Value;
-                            string expression = conversion.Attribute("expression").Value;
-                            string format = conversion.Attribute("format").Value;
-                            if (parameterElement.Attribute("bitMapped").Value.ToLower() == "true")
-                            {
-                                int bitindex = Convert.ToInt32(parameterElement.Attribute("bitIndex").Value);
-                                string[] truefalse = expression.Split(',');
-                                p.Conversions.Add(new Conversion(units, bitindex, truefalse[0], truefalse[1]));
-                            }
-                            else
-                            {
-                                p.Conversions.Add(new Conversion(units, expression, format));
-                            }
-                        }
-                        stdParameters.Add(p);
-                        indx++;
+                        string searchStr = txtPidEditorFilter.Text.ToLower();
+                        parmlist = parmlist.Where(X => X.Name.ToLower().Contains(searchStr)).ToList();
                     }
+                    pidparams = new BindingList<LogParam.PidParameter>(parmlist);
+                    dataGridViewPidEditor.DataSource = pidparams;
                 }
-
-                //dataGridPidNames.DataSource = bsParams;
-                //bsParams.DataSource = stdParameters;
-
-                dataGridPidNames.Columns.Clear();
-                Parameter tmpPar = new Parameter();
-                foreach (var prop in tmpPar.GetType().GetProperties())
+                if (LoadProfile)
                 {
-                    dataGridPidNames.Columns.Add(prop.Name, prop.Name);
-                }
-
-                List<Parameter> results = new List<Parameter>();
-                if (txtParamSearch.Text.Length > 0 && txtParamSearch.Text != "Search...")
-                    results = stdParameters.Where(x => x.Name.ToLower().Contains(txtParamSearch.Text.ToLower())).ToList();
-                else
-                    results = stdParameters;
-
-                dataGridPidNames.Columns["index"].Visible = false;
-                for (int p = 0; p < results.Count; p++)
-                {
-                    ushort pid;
-                    HexToUshort(results[p].Id.Replace("0x", ""), out pid);
-                    if (!chkFilterParamsByOS.Checked || SupportedPids == null || SupportedPids.Contains(pid))
+                    dataGridProfile.Columns.Clear();
+                    SetProfileSelections();
+                    dataGridProfile.DataSource = null;
+                    List<LogParam.PidParameter> parmlist2 = datalogger.PidParams;
+                    if (chkFilterParamsByOS.Checked)
                     {
-                        int row = dataGridPidNames.Rows.Add();
-                        foreach (var prop in tmpPar.GetType().GetProperties())
+                        List<LogParam.PidParameter> parmlist3 = new List<LogParam.PidParameter>();
+                        foreach (LogParam.PidParameter prm in parmlist2)
                         {
-                            if (prop.Name == "Conversions")
+                            if (prm.Type == LogParam.DefineBy.Pid && SupportedPids.Contains(prm.Address))
                             {
-                                DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
-                                dataGridPidNames.Rows[row].Cells["Conversions"].Tag = results[p].Conversions;
-                                dgc.DataSource = results[p].Conversions;
-                                dgc.ValueMember = "expression";
-                                dgc.DisplayMember = "units";
-                                dataGridPidNames.Rows[row].Cells[prop.Name] = dgc;
-                                Application.DoEvents();
-                                dataGridPidNames.Rows[row].Cells[prop.Name].Value = results[p].Conversions[0].Expression;
+                                parmlist3.Add(prm);
                             }
-                            else
+                            else if (prm.Type == LogParam.DefineBy.Address)
                             {
-                                dataGridPidNames.Rows[row].Cells[prop.Name].Value = prop.GetValue(results[p], null);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
-            }
-
-        }
-        private void LoadRamParams()
-        {
-            try
-            {
-                if (chkFilterParamsByOS.Checked && comboFilterByOS.Text != "-")
-                {
-                    Logger("Filtering parameters by OS: " + comboFilterByOS.Text);
-                }
-                else
-                {
-                    Logger("Tip: Connect PCM or load BIN; RAM parameters will be filtered by OS");
-                }
-
-
-                if (ramParameters == null || ramParameters.Count == 0)
-                {
-                    string fName = Path.Combine(Application.StartupPath, "Logger", "Parameters.Ram.xml");
-                    XDocument xml = XDocument.Load(fName);
-                    ramParameters = new List<RamParameter>();
-                    int indx = 0;
-                    foreach (XElement parameterElement in xml.Root.Elements("RamParameter"))
-                    {
-                        RamParameter ramP = new RamParameter();
-                        ramP.Id = parameterElement.Attribute("id").Value;
-                        ramP.Name = parameterElement.Attribute("name").Value;
-                        ramP.Description = parameterElement.Attribute("description").Value;
-                        ramP.DataType = parameterElement.Attribute("storageType").Value;
-                        ramP.index = indx;
-                        foreach (XElement conversion in parameterElement.Elements("Conversion"))
-                        {
-                            string units = conversion.Attribute("units").Value;
-                            string expression = conversion.Attribute("expression").Value;
-                            string format = conversion.Attribute("format").Value;
-                            if (parameterElement.Attribute("bitMapped").Value.ToLower() == "true")
-                            {
-                                int bitindex = Convert.ToInt32(parameterElement.Attribute("bitIndex").Value);
-                                string[] truefalse = expression.Split(',');
-                                ramP.Conversions.Add(new Conversion(units, bitindex, truefalse[0], truefalse[1]));
-                            }
-                            else
-                            {
-                                ramP.Conversions.Add(new Conversion(units, expression, format));
-                            }
-                        }
-                        foreach (XElement location in parameterElement.Elements("Location"))
-                        {
-                            Location l = new Location();
-                            l.os = location.Attribute("os").Value;
-                            l.address = location.Attribute("address").Value;
-                            ramP.Locations.Add(l);
-                        }
-                        ramParameters.Add(ramP);
-                        indx++;
-                    }
-                }
-
-                List<RamParameter> results = new List<RamParameter>();
-                if (txtParamSearch.Text.Length > 0 && txtParamSearch.Text != "Search...")
-                    results = ramParameters.Where(x => x.Name.ToLower().Contains(txtParamSearch.Text.ToLower())).ToList();
-                else
-                    results = ramParameters;
-
-
-                dataGridPidNames.Columns.Clear();
-                RamParameter tmpPar = new RamParameter();
-                foreach (var prop in tmpPar.GetType().GetProperties())
-                {
-                    dataGridPidNames.Columns.Add(prop.Name, prop.Name);
-                }
-                dataGridPidNames.Columns["index"].Visible = false;
-                for (int p = 0; p < results.Count; p++)
-                {
-                    if (chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(datalogger.OS))
-                    {
-                        bool supported = false;
-                        for (int l=0;l< results[p].Locations.Count;l++)
-                        {
-                            if (results[p].Locations[l].os == datalogger.OS)
-                            {
-                                supported = true;
-                                break;
-                            }
-                        }
-                        if (!supported)
-                        {
-                            continue;
-                        }
-                    }
-
-                    int row = dataGridPidNames.Rows.Add();
-                    foreach (var prop in tmpPar.GetType().GetProperties())
-                    {
-                        if (prop.Name == "Conversions")
-                        {
-                            DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
-                            dataGridPidNames.Rows[row].Cells["Conversions"].Tag = results[p].Conversions;
-                            dgc.DataSource = results[p].Conversions;
-                            dgc.ValueMember = "expression";
-                            dgc.DisplayMember = "units";
-                            dataGridPidNames.Rows[row].Cells[prop.Name] = dgc;
-                            Application.DoEvents();
-                            dataGridPidNames.Rows[row].Cells[prop.Name].Value = results[p].Conversions[0].Expression;
-                        }
-                        else if (prop.Name == "Locations")
-                        {
-                            DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
-                            dataGridPidNames.Rows[row].Cells[prop.Name].Tag = results[p].Locations;
-                            dgc.DataSource = results[p].Locations;
-                            dgc.ValueMember = "address";
-                            dgc.DisplayMember = "os";
-                            dataGridPidNames.Rows[row].Cells[prop.Name] = dgc;
-                            Application.DoEvents();
-                            if (!string.IsNullOrWhiteSpace(datalogger.OS))
-                            {
-                                Location l = results[p].Locations.Where(x => x.os == datalogger.OS).FirstOrDefault();
-                                if (l != null)
+                                LogParam.Location loc = prm.Locations.Where(X => X.Os == comboFilterByOS.Text).FirstOrDefault();
+                                if (loc != null)
                                 {
-                                    dataGridPidNames.Rows[row].Cells[prop.Name].Value = l.address;
+                                    parmlist3.Add(prm);
+                                }
+                            }
+                            else if(prm.Type == LogParam.DefineBy.Math)
+                            {
+                                bool pidsOk = true;
+                                foreach(LogParam.LogPid logPid in prm.Pids)
+                                {
+                                    if (!parmlist3.Contains(logPid.Parameter))
+                                    {
+                                        pidsOk = false;
+                                        break;
+                                    }
+                                }
+                                if (pidsOk)
+                                {
+                                    parmlist3.Add(prm);
                                 }
                             }
                         }
-                        else
-                        {
-                            dataGridPidNames.Rows[row].Cells[prop.Name].Value = prop.GetValue(results[p], null);
-                        }
+                        parmlist2 = parmlist3;
                     }
+                    if (!string.IsNullOrEmpty(txtParamSearch.Text))
+                    {
+                        string searchStr = txtParamSearch.Text.ToLower();
+                        parmlist2 = parmlist2.Where(X => X.Name.ToLower().Contains(searchStr)).ToList();
+                    }
+                    BindingList<LogParam.PidParameter> profilebl = new BindingList<LogParam.PidParameter>(parmlist2);
+                    dataGridProfile.DataSource = profilebl;
+                    Application.DoEvents();
+                    Debug.WriteLine("Loading profile, params: " + parmlist2.Count.ToString());
                 }
+                
             }
             catch (Exception ex)
             {
@@ -1605,134 +1947,12 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+                datalogger.Receiver.SetReceiverPaused(false);
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
             }
-
+            DrawingControl.ResumeDrawing(dataGridProfile);
         }
-
-        private void LoadMathParams()
-        {
-            try
-            {
-                if (mathParameters == null || mathParameters.Count == 0)
-                {
-                    string fName = Path.Combine(Application.StartupPath, "Logger", "Parameters.Math.xml");
-                    XDocument xml = XDocument.Load(fName);
-                    mathParameters = new List<MathParameter>();
-                    int indx = 0;
-                    foreach (XElement parameterElement in xml.Root.Elements("MathParameter"))
-                    {
-                        MathParameter mathP = new MathParameter();
-                        mathP.Id = parameterElement.Attribute("id").Value;
-                        mathP.Name = parameterElement.Attribute("name").Value;
-                        mathP.Description = parameterElement.Attribute("description").Value;
-                        mathP.xParameterId = parameterElement.Attribute("xParameterId").Value;
-                        mathP.yParameterId = parameterElement.Attribute("yParameterId").Value;
-                        mathP.xDataType = stdParameters.Where(x => x.Id == mathP.xParameterId).FirstOrDefault().DataType;
-                        mathP.yDataType = stdParameters.Where(y => y.Id == mathP.yParameterId).FirstOrDefault().DataType;
-                        mathP.index = indx;
-                        foreach (XElement conversion in parameterElement.Elements("Conversion"))
-                        {
-                            string units = conversion.Attribute("units").Value;
-                            string expression = conversion.Attribute("expression").Value;
-                            string format = conversion.Attribute("format").Value;
-                            mathP.Conversions.Add(new Conversion(units, expression, format));
-                        }
-                        mathParameters.Add(mathP);
-                        indx++;
-                    }
-                }
-
-                List<MathParameter> results = new List<MathParameter>();
-                if (txtParamSearch.Text.Length > 0 && txtParamSearch.Text != "Search...")
-                    results = mathParameters.Where(x => x.Name.ToLower().Contains(txtParamSearch.Text.ToLower())).ToList();
-                else
-                    results = mathParameters;
-
-                dataGridPidNames.Columns.Clear();
-                MathParameter tmpPar = new MathParameter();
-                foreach (var prop in tmpPar.GetType().GetProperties())
-                {
-                    dataGridPidNames.Columns.Add(prop.Name, prop.Name);
-                }
-                dataGridPidNames.Columns["index"].Visible = false;
-                for (int p = 0; p < results.Count; p++)
-                {
-                    ushort pid;
-                    HexToUshort(results[p].xParameterId.Replace("0x", ""), out pid);
-                    ushort pid2;
-                    HexToUshort(results[p].yParameterId.Replace("0x", ""), out pid2);
-                    if (SupportedPids == null || (SupportedPids.Contains(pid) && SupportedPids.Contains(pid2)))
-                    {
-                        int row = dataGridPidNames.Rows.Add();
-                        foreach (var prop in tmpPar.GetType().GetProperties())
-                        {
-                            if (prop.Name == "Conversions")
-                            {
-                                DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
-                                dataGridPidNames.Rows[row].Cells["Conversions"].Tag = results[p].Conversions;
-                                dgc.DataSource = results[p].Conversions;
-                                dgc.ValueMember = "expression";
-                                dgc.DisplayMember = "units";
-                                dataGridPidNames.Rows[row].Cells[prop.Name] = dgc;
-                                Application.DoEvents();
-                                dataGridPidNames.Rows[row].Cells[prop.Name].Value = results[p].Conversions[0].Expression;
-                            }
-                            else
-                            {
-                                dataGridPidNames.Rows[row].Cells[prop.Name].Value = prop.GetValue(results[p], null);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
-            }
-
-        }
-
-        private void DataGridPidNames_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
-        {
-            try
-            {
-                dataGridPidNames.Columns[0].Width = 70;
-                dataGridPidNames.Columns[1].Width = 150;
-                //dataGridPidNames.Columns[0].DefaultCellStyle.Format = "X4";
-                //UseComboBoxForEnums(dataGridPidNames);
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
-
-        private void DataGridLogProfile_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
-        {
-            try
-            {
-                dataGridLogProfile.Columns[0].Width = 180;
-                for (int c=1;c < dataGridLogProfile.Columns.Count; c++)
-                    dataGridLogProfile.Columns[c].Width = 70;
-                UseComboBoxForEnums(dataGridLogProfile);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
-
-        private void DataGridLogProfile_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            //Debug.WriteLine(e.Exception);
-        }
+       
 
         private void frmLogger_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -1836,50 +2056,18 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    LastCalcValues = datalogger.slothandler.CalculatePidValues(datalogger.slothandler.LastPidValues);
+                    LastCalcValues = datalogger.LastCalculatedStringValues;
                 }
                 for (int row=0; row< LastCalcValues.Length;row++)
                 {
-                    dataGridLogData.Rows[row].Cells["Value"].Value = LastCalcValues[row];                   
+                    dataGridLogData.Rows[row].Cells["Value"].Value = LastCalcValues[row];
+                    dataGridSelectedPids.Rows[row].Cells["Value"].Value = LastCalcValues[row];
                 }
 
-                if (dashboard != null && dashboard.Visible)
-                {
-                    for (int row = 0; row < dataGridLogData.Rows.Count; row++)
-                    {
-                        dashboard.ShowValue(dataGridLogData.Rows[row].HeaderCell.Value.ToString(), Convert.ToDouble(dataGridLogData.Rows[row].Cells["Value"].Value));
-                    }
-
-                }
                 TimeSpan elapsed = DateTime.Now.Subtract(datalogger.LogStartTime);
-                int speed = (int)(datalogger.slothandler.ReceivedHPRows / elapsed.TotalSeconds);
-                int lpSpeed = (int)(datalogger.slothandler.ReceivedLPRows / elapsed.TotalSeconds);
+                int speed = (int)(datalogger.slothandler.ReceivedRows / elapsed.TotalSeconds);
                 string elapsedStr = elapsed.Hours.ToString() + ":" + elapsed.Minutes.ToString() + ":" + elapsed.Seconds.ToString();
-                if (chkPriority.Checked)
-                {
-                    labelProgress.Text = "Elapsed: " + elapsedStr + ", Received:" +Environment.NewLine +  
-                        "High Priority: " + datalogger.slothandler.ReceivedHPRows.ToString() + " rows (" + speed.ToString() + " /s)" + Environment.NewLine +
-                        "Low priority: " + datalogger.slothandler.ReceivedLPRows.ToString() +" rows (" + lpSpeed.ToString() + " /s)";
-                }
-                else
-                {
-                    labelProgress.Text = "Elapsed: " + elapsedStr + ", Received: " + datalogger.slothandler.ReceivedHPRows.ToString() + " rows (" + speed.ToString() + " /s)";
-                }
-/*                if (prevSlotCount == datalogger.slothandler.ReceivedHPRows)
-                {
-                    failCount++;  
-                    if (failCount > numResetAfter.Value)
-                    {
-                        RestartLogging();
-                    }
-                }
-                else
-                {
-                    failCount = 0;
-                }
-
-                prevSlotCount = datalogger.slothandler.ReceivedHPRows;
-*/
+                labelProgress.Text = "Elapsed: " + elapsedStr + ", Received: " + datalogger.slothandler.ReceivedRows.ToString() + " rows (" + speed.ToString() + " /s)";
             }
             catch (Exception ex)
             {
@@ -1892,30 +2080,58 @@ namespace UniversalPatcher
             }
         }
 
+        private void SetProfileSelections()
+        {
+            try
+            {
+                foreach (LogParam.PidParameter parm in datalogger.PidParams)
+                {
+                    parm.Enabled = false;
+                }
+                foreach (LogParam.PidSettings pidProfile in datalogger.SelectedPids)
+                {
+                    pidProfile.Parameter.Enabled = true;
+                }
+                //ShowSelectedPids();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
         private void SelectProfile(string fname)
         {
             try
             {
                 string defname = Path.Combine(Application.StartupPath, "Logger", "Profiles", "profile1.xml");
                 if (!string.IsNullOrEmpty(profileFile) && File.Exists(profileFile))
+                {
                     defname = profileFile;
+                }
                 if (string.IsNullOrEmpty(fname))
                 {
-                    fname = SelectFile("Select profile file", XmlFilter, defname);
+                    fname = SelectFile("Select profile file", ProfileFilter, defname);
                 }
                 if (fname.Length == 0)
+                {
                     return;
+                }
                 profileFile = fname;
                 this.Text = "Logger - " + profileFile;
                 datalogger.LoadProfile(fname);
+                ReloadPidParams(false,true);
                 if (GraphicsForm != null && GraphicsForm.Visible)
                 {
                     GraphicsForm.SetupLiveGraphics();
                 }
-                bsLogProfile.DataSource = datalogger.PidProfile;
-                dataGridLogProfile.DataSource = bsLogProfile;
                 dataGridLogData.Rows.Clear();
                 SetupLogDataGrid();
+                ShowEnabledPidsValues();
                 ProfileDirty = false;
                 CheckMaxPids();
                 UpdateProfile();
@@ -1935,7 +2151,8 @@ namespace UniversalPatcher
         {
             try
             {
-                dataGridLogProfile.EndEdit();
+                dataGridProfile.EndEdit();
+                //GetPidSelections();
                 string defname = Path.Combine(Application.StartupPath, "Logger", "Profiles", "profile1.xml");
                 if (!string.IsNullOrEmpty(profileFile))
                     defname = profileFile;
@@ -1970,47 +2187,49 @@ namespace UniversalPatcher
             SelectSaveProfile(profileFile);
         }
 
-        private void CheckMaxPids()
-        {
-            List<int> pids = new List<int>();
-            int bytesTotal = 0;
-            int maxBytes = 48;
-            for (int i=0; i< datalogger.PidProfile.Count; i++)
-            {
-                if (!pids.Contains(datalogger.PidProfile[i].addr))
-                {
-                    pids.Add(datalogger.PidProfile[i].addr);
-                    bytesTotal += GetElementSize((InDataType)datalogger.PidProfile[i].DataType);
-                }
-            }
-            if (radioCAN.Checked)
-            {
-                maxBytes = 128;
-            }
-            labelProgress.Text = "Profile size: " + bytesTotal.ToString() + " bytes, Maximum: " + maxBytes.ToString();
-            if (bytesTotal > maxBytes)
-            {
-                LoggerBold("Profile have total: " + bytesTotal.ToString() + " bytes, maximum is "+maxBytes.ToString()+" bytes");
-            }
-        }
-
-        private void AddToProfile(PidConfig pc)
+        private bool CheckMaxPids()
         {
             try
             {
-                if (datalogger.Connected && datalogger.LogRunning == false && chkTestPidCompatibility.Checked)
+                List<int> pids = new List<int>();
+                int bytesTotal = 0;
+                int maxBytes = 48;
+                for (int i = 0; i < datalogger.SelectedPids.Count; i++)
                 {
-                    QueryPid(pc);
+                    LogParam.PidSettings pidProfile = datalogger.SelectedPids[i];
+                    LogParam.PidParameter parm = pidProfile.Parameter;
+                    if (parm.Type == LogParam.DefineBy.Pid || parm.Type == LogParam.DefineBy.Address)
+                    {
+                        if (!pids.Contains(parm.Address))
+                        {
+                            pids.Add(parm.Address);
+                            bytesTotal += GetElementSize((InDataType)parm.DataType);
+                        }
+                    }
+                    else if (parm.Type == LogParam.DefineBy.Math)
+                    {
+                        foreach(LogParam.LogPid lPid in parm.Pids)
+                        {
+                            LogParam.PidParameter pParm = lPid.Parameter;
+                            if (!pids.Contains(pParm.Address))
+                            {
+                                pids.Add(pParm.Address);
+                                bytesTotal += GetElementSize((InDataType)pParm.DataType);
+                            }
+
+                        }
+                    }
                 }
-                datalogger.PidProfile.Add(pc);
-                CheckMaxPids();
-                ProfileDirty = true;
-                //bsLogProfile.DataSource = null;
-                //bsLogProfile.DataSource = datalogger.PidProfile;
-                bsLogProfile.ResetBindings(false);
-                dataGridLogProfile.Update();
-                this.Refresh();
-                UpdateProfile();
+                if (radioCAN.Checked)
+                {
+                    maxBytes = 128;
+                }
+                labelProgress.Text = "Profile size: " + bytesTotal.ToString() + " bytes, Maximum: " + maxBytes.ToString();
+                if (bytesTotal > maxBytes)
+                {
+                    LoggerBold("Profile have total: " + bytesTotal.ToString() + " bytes, maximum is " + maxBytes.ToString() + " bytes");
+                }
+                return true;
             }
             catch (Exception ex)
             {
@@ -2019,10 +2238,11 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+                LoggerBold("Connection failed. Check settings");
+                return false;
             }
         }
-
         private void UpdateProfile()
         {
             if (HstForm != null && HstForm.Visible)
@@ -2035,72 +2255,67 @@ namespace UniversalPatcher
             }
 
         }
-        private void AddSelectedPidsToProfile()
-        {
-            if (!datalogger.Connected && chkTestPidCompatibility.Checked)
-            {
-                Logger("Not connected - adding pids without testing compatibility");
-            }
-            List<PidConfig> pds = ConvertSelectedPidConfigs();
-            datalogger.Receiver.SetReceiverPaused(true);
-            foreach (PidConfig pc in pds)
-            {
-                AddToProfile(pc);
-                Application.DoEvents();
-            }
-            if (datalogger.LogRunning)
-            {
-                ResetProfile();
-            }
-            else
-            {
-                datalogger.Receiver.SetReceiverPaused(false);
-            }
-        }
-
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
-            AddSelectedPidsToProfile();
-        }
 
         private void SetupLogDataGrid()
         {
-            if (datalogger.LogRunning || timerPlayback.Enabled)
-                return; //Dont change settings while logging or playback
-            dataGridLogData.Columns.Clear();
-            dataGridLogData.Columns.Add("Value", "Value");
-            if (!chkRawValues.Checked)
-                dataGridLogData.Columns.Add("Units", "Units");
-            dataGridLogData.Columns[0].ReadOnly = true;
-            for (int r=0;r< datalogger.PidProfile.Count; r++)
+            try
             {
-                if (chkRawValues.Checked)
+                if (datalogger.LogRunning || timerPlayback.Enabled)
+                    return; //Dont change settings while logging or playback
+                //dataGridLogData.Columns["Units"].Visible = !chkRawValues.Checked;
+                dataGridLogData.Columns[0].ReadOnly = true;
+                dataGridSelectedPids.Columns[0].ReadOnly = true;
+                for (int r = 0; r < datalogger.SelectedPids.Count; r++)
                 {
-                    bool exist = false;
-                    for (int row = 0; row < dataGridLogData.Rows.Count - 1; row++)
+                    LogParam.PidSettings pidProfile = datalogger.SelectedPids[r];
+                    LogParam.PidParameter parm = pidProfile.Parameter;
+/*                    if (chkRawValues.Checked)
                     {
-                        if (dataGridLogData.Rows[row].HeaderCell.Value.ToString() == datalogger.PidProfile[r].Address)
+                        bool exist = false;
+                        for (int row = 0; row < dataGridLogData.Rows.Count - 1; row++)
                         {
-                            exist = true;
-                            break;
+                            if (dataGridLogData.Rows[row].HeaderCell.Value.ToString() == parm.Name)
+                            {
+                                exist = true;
+                                break;
+                            }
+                        }
+                        if (!exist)
+                        {
+                            int ind = dataGridLogData.Rows.Add();
+                            dataGridLogData.Rows[ind].HeaderCell.Value = parm.Name;
                         }
                     }
-                    if (!exist)
+                    else
+*/
                     {
                         int ind = dataGridLogData.Rows.Add();
-                        dataGridLogData.Rows[ind].HeaderCell.Value = datalogger.PidProfile[r].Address;
+                        dataGridSelectedPids.Rows.Add();
+                        dataGridLogData.Rows[ind].HeaderCell.Value = parm.Name;
+                        dataGridSelectedPids.Rows[ind].HeaderCell.Value = parm.Name;
+                        if (pidProfile.Units != null)
+                        {
+                            dataGridLogData.Rows[ind].Cells["Units"].Value = pidProfile.Units.Units;
+                            dataGridSelectedPids.Rows[ind].Cells["Units"].Value = pidProfile.Units.Units;
+                        }
                     }
                 }
-                else
-                {
-                    int ind = dataGridLogData.Rows.Add();
-                    dataGridLogData.Rows[ind].HeaderCell.Value = datalogger.PidProfile[r].PidName;
-                    dataGridLogData.Rows[ind].Cells["Units"].Value = datalogger.PidProfile[r].Units;
-                }
-            }
-            dataGridLogData.AutoResizeColumns();
-            dataGridLogData.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+                Application.DoEvents();
+                dataGridLogData.AutoResizeColumns();
+                dataGridLogData.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+                dataGridSelectedPids.AutoResizeColumns();
+                dataGridSelectedPids.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
 
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
         private void SaveSettings()
         {
@@ -2122,7 +2337,6 @@ namespace UniversalPatcher
             AppSettings.LoggerResponseMode = comboResponseMode.Text;
             AppSettings.LoggerUseFTDI = chkFTDI.Checked;
             //AppSettings.LoggerShowAdvanced = chkAdvanced.Checked;
-            AppSettings.LoggerUsePriority = chkPriority.Checked;
             AppSettings.LoggerUseFilters = chkVPWFilters.Checked;
             //AppSettings.LoggerEnableConsole = chkEnableConsole.Checked;
             AppSettings.LoggerConsoleTimestamps = chkConsoleTimestamps.Checked;
@@ -2267,7 +2481,6 @@ namespace UniversalPatcher
                     oscript.device = datalogger.LogDevice;
                 }
                 datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
-                datalogger.TestedPids = new List<int>();
 
                 if (serialRadioButton.Checked)
                 {
@@ -2314,10 +2527,6 @@ namespace UniversalPatcher
                 btnConnect.Text = "Disconnect";
                 datalogger.Connected = true;
                 SaveSettings();
-                if (radioParamRam.Checked)
-                {
-                    LoadParameters();
-                }
                 if (StartReceiver)
                 {
                     datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false,datalogger.AnalyzerRunning);
@@ -2328,6 +2537,7 @@ namespace UniversalPatcher
                 j2534OptionsGroupBox.Enabled = false;
                 timerDeviceStatus.Enabled = true;
                 timerShowLogTxt.Interval = AppSettings.LoggerConsoleDisplayInterval;
+                ShowEnabledPidsValues();
                 return true;
             }
             catch (Exception ex)
@@ -2538,7 +2748,7 @@ namespace UniversalPatcher
                 AppSettings.Save();
                 labelProgress.Text = "";
                 labelTimeStamp.Text = "-";
-                if (datalogger.PidProfile.Count == 0 || datalogger.PidProfile[0].addr == 0xffffff)
+                if (datalogger.SelectedPids.Count == 0 )
                 {
                     Logger("No profile configured");
                     return;
@@ -2551,7 +2761,7 @@ namespace UniversalPatcher
                 {
                     datalogger.RemoveUnsupportedPids();
                 }
-                if (datalogger.PidProfile.Count == 0)
+                if (datalogger.SelectedPids.Count == 0)
                 {
                     LoggerBold("No compatible pids configured");
                     return;
@@ -2565,7 +2775,6 @@ namespace UniversalPatcher
                 datalogger.writelog = chkWriteLog.Checked;
                 datalogger.useRawValues = chkRawValues.Checked;
                 datalogger.reverseSlotNumbers = chkReverseSlotNumbers.Checked;
-                datalogger.HighPriority = chkPriority.Checked;
                 //PcmLogger.HighPriorityWeight = (int)numHighPriorityWeight.Value;
                 if (chkWriteLog.Checked)
                 {
@@ -2632,39 +2841,7 @@ namespace UniversalPatcher
         {
             try
             {
-                List<int> removeInd = new List<int>();
-                if (dataGridLogProfile.SelectedRows.Count > 0)
-                {
-                    for (int r = 0; r < dataGridLogProfile.SelectedRows.Count; r++)
-                    {
-                        removeInd.Add(dataGridLogProfile.SelectedRows[r].Index);
-                    }
-                }
-                else
-                {
-                    if (dataGridLogProfile.SelectedCells.Count == 0)
-                    {
-                        return;
-                    }
-                    for (int c = 0; c < dataGridLogProfile.SelectedCells.Count; c++)
-                    {
-                        int row = dataGridLogProfile.SelectedCells[c].RowIndex;
-                        if (!removeInd.Contains(row))
-                        {
-                            removeInd.Add(row);
-                        }
-                    }
-                }
-
-                removeInd.Sort();
-                removeInd.Reverse();
-                for (int i = 0; i < removeInd.Count; i++)
-                {
-                    datalogger.PidProfile.RemoveAt(removeInd[i]);
-                }
-                ProfileDirty = true;
-                bsLogProfile.DataSource = null;
-                bsLogProfile.DataSource = datalogger.PidProfile;
+                //Remove pids....
                 CheckMaxPids();
                 if (datalogger.LogRunning)
                 {
@@ -2758,22 +2935,7 @@ namespace UniversalPatcher
             LoadPorts(true);
         }
 
-/*        private void chkAdvanced_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkAdvanced.Checked)
-            {
-                groupAdvanced.Visible = true;
-                txtLogSeparator.Visible = true;
-                labelSeparator.Visible = true;
-            }
-            else
-            {
-                groupAdvanced.Visible = false;
-                txtLogSeparator.Visible = false;
-                labelSeparator.Visible = false;
-            }
-        }
-*/
+
         private void j2534DeviceList_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
@@ -2857,26 +3019,38 @@ namespace UniversalPatcher
 
         public void FilterPidsByBin(PcmFile PCM)
         {
-            datalogger.OS = PCM.OS;
-            PidSearch pidSearch = new PidSearch(PCM);
-            if (pidSearch.pidList != null && pidSearch.pidList.Count > 0)
+            try
             {
-                SupportedPids = new List<ushort>();
-                for (int s = 0; s < pidSearch.pidList.Count; s++)
+                datalogger.OS = PCM.OS;
+                PidSearch pidSearch = new PidSearch(PCM);
+                if (pidSearch.pidList != null && pidSearch.pidList.Count > 0)
                 {
-                    SupportedPids.Add(pidSearch.pidList[s].pidNumberInt);
+                    SupportedPids = new List<int>();
+                    for (int s = 0; s < pidSearch.pidList.Count; s++)
+                    {
+                        SupportedPids.Add(pidSearch.pidList[s].pidNumberInt);
+                    }
+                    LoadOsPidFiles();
+                    ReloadPidParams(false, true);
+                    comboFilterByOS.Text = PCM.OS;
                 }
-                LoadOsPidFiles();
-                LoadParameters();
-                comboFilterByOS.Text = PCM.OS;
+                if (datalogger.Connected)
+                {
+                    labelConnected.Text = "Connected - OS: " + PCM.OS;
+                }
+                else
+                {
+                    labelConnected.Text = "Disconnected - OS: " + PCM.OS;
+                }
             }
-            if (datalogger.Connected)
+            catch (Exception ex)
             {
-                labelConnected.Text = "Connected - OS: " + PCM.OS;
-            }
-            else
-            {
-                labelConnected.Text = "Disconnected - OS: " + PCM.OS;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
         private void filterSupportedPidsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3040,146 +3214,55 @@ namespace UniversalPatcher
             }
         }
 
-        private List<PidConfig> ConvertSelectedPidConfigs()
+
+        private string QueryPid(LogParam.PidSettings pidProfile, bool Verbose)
         {
-            List<PidConfig> retVal = new List<PidConfig>();
             try
             {
-                if (dataGridPidNames.SelectedRows.Count == 0)
-                    return null;
-
-/*                if (!datalogger.Connected)
+                Connect(radioVPW.Checked,true,true, null);
+                string pidVal = datalogger.QueryPid(pidProfile, Verbose);
+                if (pidVal != null && pidProfile.Parameter.Enabled)
                 {
-                    Logger("Not connected - adding pids without testing compatibility");
+                    for (int row = 0; row < dataGridSelectedPids.Rows.Count; row++)
+                    {
+                        if (dataGridSelectedPids.Rows[row].HeaderCell.Value.ToString() == pidProfile.Parameter.Name)
+                        {
+                            dataGridSelectedPids.Rows[row].Cells["Value"].Value = pidVal;
+                            dataGridLogData.Rows[row].Cells["Value"].Value = pidVal;
+                            break;
+                        }
+                    }
                 }
-*/
-                for (int selRow = 0; selRow < dataGridPidNames.SelectedRows.Count; selRow++)
-                {
-                    DataGridViewRow dgr = dataGridPidNames.SelectedRows[selRow];
-                    int idx = Convert.ToInt32(dgr.Cells["index"].Value);
-                    PidConfig pc = new PidConfig();
-                    pc.PidName = dgr.Cells["Name"].Value.ToString();
-                    ushort pidNr;
-                    ushort pid2Nr;
-                    if (radioParamMath.Checked)
-                    {
-                        MathParameter mp = mathParameters[idx];
-                        pc.Type = DefineBy.Math;
-                        pc.Math = dgr.Cells["Conversions"].Value.ToString();
-                        if (HexToUshort(mp.xParameterId, out pidNr))
-                            pc.addr = pidNr;
-                        if (HexToUshort(mp.yParameterId, out pid2Nr))
-                            pc.addr2 = pid2Nr;
-                        PidDataType xpd = (PidDataType)Enum.Parse(typeof(PidDataType), mp.xDataType);
-                        pc.DataType = ConvertToDataType(xpd);
-                        PidDataType ypd = (PidDataType)Enum.Parse(typeof(PidDataType), mp.yDataType);
-                        pc.Pid2DataType = ConvertToDataType(ypd);
-                    }
-                    else if (radioParamRam.Checked)
-                    {
-                        RamParameter rp = ramParameters[idx];
-                        pc.addr = -1;
-                        pc.Type = DefineBy.Address;
-                        pc.Math = dgr.Cells["Conversions"].Value.ToString();
-                        PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), rp.DataType);
-                        pc.DataType = ConvertToDataType(pd);
-                        if (string.IsNullOrEmpty(dgr.Cells["Locations"].FormattedValue.ToString()))
-                        {
-                            if (datalogger.Connected && !string.IsNullOrEmpty(datalogger.OS))
-                            {
-                                List<Location> locations = rp.Locations;
-                                if (locations != null)
-                                {
-                                    Location l = locations.Where(x => x.os == datalogger.OS).FirstOrDefault();
-                                    if (l != null)
-                                    {
-                                        pc.Address = l.address;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            pc.Address = dgr.Cells["Locations"].Value.ToString();
-                        }
-                    }
-                    else if (radioParamStd.Checked)
-                    {
-                        Parameter sp = stdParameters[idx];
-                        pc.Type = DefineBy.Pid;
-                        if (HexToUshort(sp.Id, out pidNr))
-                            pc.addr = pidNr;
-                        PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), sp.DataType);
-                        pc.DataType = ConvertToDataType(pd);
-                        List<Conversion> conversions = sp.Conversions;
-                        pc.IsBitMapped = conversions[0].IsBitMapped;
-                        pc.BitIndex = conversions[0].BitIndex;
-                        if (pc.IsBitMapped)
-                        {
-                            pc.Math = conversions[0].TrueValue + "," + conversions[0].FalseValue;
-                        }
-                        else
-                        {
-                            pc.Math = dgr.Cells["Conversions"].Value.ToString();
-                        }
-                    }
-                    pc.Units = dgr.Cells["Conversions"].FormattedValue.ToString();
-
-                    retVal.Add(pc);
-                }
+                return pidVal;
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
+                return null;
             }
-            return retVal;
         }
 
-        private string ReplaceMathVariables(string PcMath, ref List<SlotHandler.PidVal> PidValues)
+        LogParam.PidParameter GetSelectedParamFromDataGird()
         {
-            string newMath = null;
             try
             {
-                newMath = PcMath.ToUpper();
-                if (!newMath.Contains("[PID"))
+                if (dataGridProfile.SelectedCells.Count == 0)
                 {
                     return null;
                 }
-                while (newMath.Contains("[PID"))
+                int row = dataGridProfile.SelectedCells[0].RowIndex;
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridProfile.Rows[row].DataBoundItem;
+/*                if (dataGridProfile.Rows[row].Cells["Os"].Value != null)
                 {
-                    int start = newMath.IndexOf("[PID");
-                    int end = newMath.IndexOf("]", start);
-                    string pidStr = newMath.Substring(start, (end - start) + 1);
-                    string pidNrStr = pidStr.Substring(4, pidStr.Length - 5);
-                    if (HexToInt(pidNrStr, out int pidNr))
-                    {
-                        Parameter sp = stdParameters.Where(X => Convert.ToInt32(X.Id,16) == pidNr).FirstOrDefault();
-                        if (sp == null)
-                        {
-                            LoggerBold("Can't convert from hex: " + pidNrStr);
-                            return null;
-                        }
-                        else
-                        {
-                            PidConfig pc = new PidConfig();
-                            pc.Type = DefineBy.Pid;
-                            pc.addr = pidNr;
-                            PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), sp.DataType);
-                            pc.DataType = ConvertToDataType(pd);
-                            ReadValue rv = datalogger.QuerySinglePidValue(pc.addr, pc.DataType);
-                            if (rv.PidValue > double.MinValue)
-                            { 
-                               newMath = newMath.Replace(pidStr, rv.PidValue.ToString());
-                            }
-                            else
-                            {
-                                newMath = newMath.Replace(pidStr, "0");
-                            }
-                            SlotHandler.PidVal pv = new SlotHandler.PidVal(pidNr, rv.PidValue);
-                            PidValues.Add(pv);
-                        }
-                    }
+                    parm.Settings.Os = parm.Locations.Where(X => X.Os == dataGridProfile.Rows[row].Cells["Os"].Value.ToString()).FirstOrDefault();
                 }
+*/
+                if (dataGridProfile.Rows[row].Cells["Units"].Value != null)
+                {
+                    parm.Settings.Units = parm.Conversions.Where(X => X.Units == dataGridProfile.Rows[row].Cells["Units"].Value.ToString()).FirstOrDefault();
+                }
+
+                return parm;
             }
             catch (Exception ex)
             {
@@ -3188,70 +3271,20 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, SlotHandler line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+                return null;
             }
-            return newMath;
         }
-
-        private bool QueryPid(PidConfig pc)
-        {
-            try
-            {
-                Connect(radioVPW.Checked,true,true, null);
-                List<SlotHandler.PidVal> PidValues = new List<SlotHandler.PidVal>();
-
-                if (pc.Type == DefineBy.Math && pc.Math.ToUpper().Contains("[PID"))
-                {
-                    string newMath =  ReplaceMathVariables(pc.Math,ref PidValues);
-                    //double calcVal = parser.Parse(newMath);
-                    string calcVal = pc.GetCalculatedValue(PidValues);
-                    Logger(pc.PidName + ": " + calcVal + " " + pc.Units);
-                    Application.DoEvents();
-                    return true;
-                }
-                else
-                {
-                    ReadValue rv;
-                    ReadValue rv2 = new ReadValue();
-                    //rv = QueryRAM(pc.addr, pc.DataType);
-                    rv = datalogger.QuerySinglePidValue(pc.addr, pc.DataType);
-                    if (rv.FailureCode != 0)
-                    {
-                        return false;
-                    }
-                    SlotHandler.PidVal pv1 = new SlotHandler.PidVal(pc.addr, rv.PidValue);
-                    PidValues.Add(pv1);
-                    if (pc.addr2 > 0)
-                    {
-                        rv2 = datalogger.QuerySinglePidValue(pc.addr2, pc.Pid2DataType);
-                        SlotHandler.PidVal pv2 = new SlotHandler.PidVal(pc.addr2, rv2.PidValue);
-                        PidValues.Add(pv2);
-                    }
-                    if (rv.PidValue > double.MinValue)
-                    {
-                        string calcVal = pc.GetCalculatedValue(PidValues);
-                        Logger(pc.PidName + ": " + calcVal + " " + pc.Units);
-                        Application.DoEvents();
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
-            return false;
-        }
-
         private void btnQueryPid_Click(object sender, EventArgs e)
         {
-            Connect(radioVPW.Checked, true,true, null);
-            List<PidConfig> pds = ConvertSelectedPidConfigs();
-            datalogger.Receiver.SetReceiverPaused(true);
-            foreach (PidConfig pc in pds)
+            if (dataGridProfile.SelectedCells.Count == 0)
             {
-                QueryPid(pc);
+                return;
             }
+            Connect(radioVPW.Checked, true,true, null);
+            LogParam.PidParameter parm = GetSelectedParamFromDataGird();
+            datalogger.Receiver.SetReceiverPaused(true);
+            QueryPid(parm.Settings, true);
             datalogger.Receiver.SetReceiverPaused(false);
         }
 
@@ -3414,31 +3447,6 @@ namespace UniversalPatcher
             }
         }
 
-        private void radioParamStd_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioParamStd.Checked)
-            {
-                LoadStdParams();
-            }
-        }
-
-        private void radioParamRam_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioParamRam.Checked)
-            {
-                LoadRamParams();
-                btnTestPids.Enabled = false;
-            }
-        }
-
-        private void radioParamMath_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioParamMath.Checked)
-            {
-                LoadMathParams();
-                btnTestPids.Enabled = false;
-            }
-        }
 
         private void chkBusFilters_CheckedChanged(object sender, EventArgs e)
         {
@@ -3456,57 +3464,10 @@ namespace UniversalPatcher
             }
         }
 
-        private void editToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmPropertyEditor fpe = new frmPropertyEditor();
-            fpe.LoadObject(dataGridLogProfile.CurrentRow.DataBoundItem, "LogProfile");
-            if (fpe.ShowDialog() == DialogResult.OK)
-            {
-                bsLogProfile.DataSource = null;
-                bsLogProfile.DataSource = datalogger.PidProfile;
-            }
-        }
 
         private void saveProfileAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SelectSaveProfile();
-        }
-
-        private void cutRowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int i = dataGridLogProfile.CurrentRow.Index;
-            ClipBrd = datalogger.PidProfile[i];
-            datalogger.PidProfile.RemoveAt(i);
-            bsLogProfile.DataSource = null;
-            bsLogProfile.DataSource = datalogger.PidProfile;
-            ProfileDirty = true;
-        }
-
-        private void pasteRowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (ClipBrd == null)
-                return;
-            int i = dataGridLogProfile.CurrentRow.Index;
-            datalogger.PidProfile.Insert(i, ClipBrd);
-            bsLogProfile.DataSource = null;
-            bsLogProfile.DataSource = datalogger.PidProfile;
-            ProfileDirty = true;
-        }
-
-        private void copyRowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int i = dataGridLogProfile.CurrentRow.Index;
-            ClipBrd = datalogger.PidProfile[i];
-        }
-
-        private void LoadParameters()
-        {
-            if (radioParamStd.Checked)
-                LoadStdParams();
-            else if (radioParamRam.Checked)
-                LoadRamParams();
-            else
-                LoadMathParams();
         }
 
         private void timerSearchParams_Tick(object sender, EventArgs e)
@@ -3515,40 +3476,22 @@ namespace UniversalPatcher
             if (keyDelayCounter > AppSettings.keyPressWait100ms)
             {
                 timerSearchParams.Enabled = false;
-                LoadParameters();
+                ReloadPidParams(false,true);
             }
         }
 
         private void newProfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            datalogger.PidProfile = new List<PidConfig>();
-            bsLogProfile.DataSource = null;
-            bsLogProfile.DataSource = datalogger.PidProfile;
+            datalogger.SelectedPids.Clear();
+            for (int row=0;row < dataGridProfile.Rows.Count; row++)
+            {
+                dataGridProfile.Rows[row].Cells["Show"].Value = false;
+            }
+            ReloadPidParams(false,true);
             profileFile = "";
             this.Text = "Logger";
         }
 
-        private void chkEnableConsole_CheckedChanged(object sender, EventArgs e)
-        {
-/*            if (datalogger.Connected)
-            {
-                if (chkEnableConsole.Checked)
-                {
-                    //if (chkConsoleAutorefresh.Checked)
-                    {
-                        //datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
-                    }
-                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
-                    datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
-                }
-                else
-                {
-                    datalogger.Receiver.StopReceiveLoop();
-                    datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
-                    datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
-                }
-            }
-*/        }
 
         private void homepageToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3779,30 +3722,54 @@ namespace UniversalPatcher
 
         private void btnJ2534SettingsSaveAs_Click(object sender, EventArgs e)
         {
-            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles","profile.xml");
-            string FileName = SelectSaveFile(XmlFilter,defName);
-            if (FileName.Length == 0)
-                return;
-            Logger("Saving file: " + FileName);
-            J2534InitParameters JSettings = CreateJ2534InitParameters();
-            LoggerUtils.SaveJ2534Settings(FileName, JSettings);
-            AppSettings.LoggerJ2534SettingsFile = FileName;
-            AppSettings.Save();
-            Logger("[OK]");
+            try
+            {
+                string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xml");
+                string FileName = SelectSaveFile(XmlFilter, defName);
+                if (FileName.Length == 0)
+                    return;
+                Logger("Saving file: " + FileName);
+                J2534InitParameters JSettings = CreateJ2534InitParameters();
+                LoggerUtils.SaveJ2534Settings(FileName, JSettings);
+                AppSettings.LoggerJ2534SettingsFile = FileName;
+                AppSettings.Save();
+                Logger("[OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void btnJ2534SettingsLoad_Click(object sender, EventArgs e)
         {
-            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xml");
-            string FileName = SelectFile("Select J2534 settings", XmlFilter,defName);
-            if (FileName.Length == 0)
-                return;
-            //Logger("Loading file: " + FileName);
-            J2534InitParameters JSettings = LoadJ2534Settings(FileName);
-            LoadJ2534InitParameters(JSettings);
-            AppSettings.LoggerJ2534SettingsFile = FileName;
-            AppSettings.Save();
-            Logger("[OK]");
+            try
+            {
+                string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xml");
+                string FileName = SelectFile("Select J2534 settings", XmlFilter, defName);
+                if (FileName.Length == 0)
+                    return;
+                //Logger("Loading file: " + FileName);
+                J2534InitParameters JSettings = LoadJ2534Settings(FileName);
+                LoadJ2534InitParameters(JSettings);
+                AppSettings.LoggerJ2534SettingsFile = FileName;
+                AppSettings.Save();
+                Logger("[OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void chkConsoleUseJ2534Timestamps_CheckedChanged(object sender, EventArgs e)
@@ -3829,94 +3796,106 @@ namespace UniversalPatcher
 
         private void btnJConsoleUploadScript_Click(object sender, EventArgs e)
         {
-            string fName = SelectFile("Select script file", TxtFilter, AppSettings.LastJScriptFile);
-            if (fName.Length == 0)
-                return;
-            AppSettings.LastJScriptFile = fName;
-            J2534InitParameters initParameters = null;
-            J2534InitParameters initParameters2 = null;
-            StreamReader sr = new StreamReader(fName);
-            string Line;
-            while ((Line = sr.ReadLine()) != null)
+            try
             {
-                if (!Line.StartsWith("#"))
+                string fName = SelectFile("Select script file", TxtFilter, AppSettings.LastJScriptFile);
+                if (fName.Length == 0)
+                    return;
+                AppSettings.LastJScriptFile = fName;
+                J2534InitParameters initParameters = null;
+                J2534InitParameters initParameters2 = null;
+                StreamReader sr = new StreamReader(fName);
+                string Line;
+                while ((Line = sr.ReadLine()) != null)
                 {
-                    break;
-                }
-            }
-            sr.Close();
-            if (Line != null && Line.StartsWith("connect"))
-            {
-                string ProfileFileName = null;
-                string[] jParts = Line.Split(':');
-                if (jParts.Length > 1)
-                {
-                    ProfileFileName = jParts[1];
-                }
-                if (ProfileFileName != null)
-                {
-                    string profileFile = Path.Combine(Path.GetDirectoryName(fName), ProfileFileName);
-                    if (!File.Exists(profileFile))
+                    if (!Line.StartsWith("#"))
                     {
-                        profileFile = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", ProfileFileName);
-                    }
-                    if (!File.Exists(profileFile))
-                    {
-                        LoggerBold("File not found: " + ProfileFileName);
-                        return;
-                    }
-                    if (ProfileFileName.EndsWith("xmlx"))
-                    {
-                        List<J2534InitParameters> JSettings = LoadJ2534SettingsList(profileFile);
-                        initParameters = JSettings[0];
-                        initParameters2 = JSettings[1];
-                    }
-                    else
-                    {
-                        initParameters = LoadJ2534Settings(profileFile);
+                        break;
                     }
                 }
-            }
+                sr.Close();
+                if (Line != null && Line.StartsWith("connect"))
+                {
+                    string ProfileFileName = null;
+                    string[] jParts = Line.Split(':');
+                    if (jParts.Length > 1)
+                    {
+                        ProfileFileName = jParts[1];
+                    }
+                    if (ProfileFileName != null)
+                    {
+                        string profileFile = Path.Combine(Path.GetDirectoryName(fName), ProfileFileName);
+                        if (!File.Exists(profileFile))
+                        {
+                            profileFile = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", ProfileFileName);
+                        }
+                        if (!File.Exists(profileFile))
+                        {
+                            LoggerBold("File not found: " + ProfileFileName);
+                            return;
+                        }
+                        if (ProfileFileName.EndsWith("xmlx"))
+                        {
+                            List<J2534InitParameters> JSettings = LoadJ2534SettingsList(profileFile);
+                            initParameters = JSettings[0];
+                            initParameters2 = JSettings[1];
+                        }
+                        else
+                        {
+                            initParameters = LoadJ2534Settings(profileFile);
+                        }
+                    }
+                }
 
-            if (!ConnectJConsole(null, initParameters))
-            {
-                return;
-            }
-            if (initParameters2 != null)
-            {
-                ConnectJConsole2(initParameters2);
-            }
-
-            Logger("Sending file: " + fName);
-            joscript = new OBDScript(jConsole.JDevice, jConsole);
-            joscript.SecondaryProtocol = radioJConsoleProto2.Checked;
-            //jConsole.JDevice.ClearMessageBuffer();
-            if (radioJConsoleProto2.Checked)
-            {
-                jConsole.Receiver2.SetReceiverPaused(true);
-            }
-            else
-            {
-                jConsole.Receiver.SetReceiverPaused(true);
-            }
-            Task.Factory.StartNew(() =>
-            {
-                this.Invoke((MethodInvoker)delegate ()
+                if (!ConnectJConsole(null, initParameters))
                 {
-                    btnJconsoleStopScript.Enabled = true;
-                    joscript.UploadScript(fName);
-                    btnJconsoleStopScript.Enabled = false;
-                    Logger("Done");
-                    if (radioJConsoleProto2.Checked)
+                    return;
+                }
+                if (initParameters2 != null)
+                {
+                    ConnectJConsole2(initParameters2);
+                }
+
+                Logger("Sending file: " + fName);
+                joscript = new OBDScript(jConsole.JDevice, jConsole);
+                joscript.SecondaryProtocol = radioJConsoleProto2.Checked;
+                //jConsole.JDevice.ClearMessageBuffer();
+                if (radioJConsoleProto2.Checked)
+                {
+                    jConsole.Receiver2.SetReceiverPaused(true);
+                }
+                else
+                {
+                    jConsole.Receiver.SetReceiverPaused(true);
+                }
+                Task.Factory.StartNew(() =>
+                {
+                    this.Invoke((MethodInvoker)delegate ()
                     {
-                        jConsole.Receiver2.SetReceiverPaused(false);
-                    }
-                    else
-                    {
-                        jConsole.Receiver.SetReceiverPaused(false);
-                    }
+                        btnJconsoleStopScript.Enabled = true;
+                        joscript.UploadScript(fName);
+                        btnJconsoleStopScript.Enabled = false;
+                        Logger("Done");
+                        if (radioJConsoleProto2.Checked)
+                        {
+                            jConsole.Receiver2.SetReceiverPaused(false);
+                        }
+                        else
+                        {
+                            jConsole.Receiver.SetReceiverPaused(false);
+                        }
+                    });
                 });
-            });
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void numJConsoleScriptDelay_ValueChanged(object sender, EventArgs e)
@@ -4001,101 +3980,113 @@ namespace UniversalPatcher
         }
         private void btnAlgoTest_Click(object sender, EventArgs e)
         {
-            int algo;
-            ushort seed = 0;
-            bool found = false;
-            int algoFrom = 0;
-            int algoTo = 0x300;
+            try
+            {
+                int algo;
+                ushort seed = 0;
+                bool found = false;
+                int algoFrom = 0;
+                int algoTo = 0x300;
 
-            if (radioEecv.Checked)
-            {
-                txtAlgoTest.AppendText("Seed: " + txtSeed.Text + ", Seedbyte: " + txtAlgo.Text + ", Key: " + EecvAlgoTest().ToString("X4"));
-                return;
-            }
-            if (radioFindNgc4.Checked)
-            {
-                NgcKeys nk = new NgcKeys();
-                int ngcSeed;
-                int key;
-                if (HexToInt(txtSeed.Text, out ngcSeed))
+                if (radioEecv.Checked)
                 {
-                    key = nk.unlockengine(ngcSeed);
-                    txtAlgoTest.AppendText("Seed: " + ngcSeed.ToString("X8") + ", Key: " + key.ToString("X8") + Environment.NewLine);
-                }
-                return;
-            }
-            if (radioFindSbec.Checked)
-            {
-                SBEC sb = new SBEC();
-                uint sbSeed;
-                uint key;
-                if (HexToUint(txtSeed.Text, out sbSeed))
-                {
-                    key = sb.calculateKey(sbSeed);
-                    txtAlgoTest.AppendText("Seed: " + sbSeed.ToString("X8") + ", Key (calculateKey): " + key.ToString("X8") + Environment.NewLine);
-                    key = sb.unlock(sbSeed);
-                    txtAlgoTest.AppendText("Seed: " + sbSeed.ToString("X8") + ", Key (unlock): " + key.ToString("X8") + Environment.NewLine);
-                }
-                return;
-            }
-            if (txtAlgoRange.Text.Contains("-"))
-            {
-                string[] parts = txtAlgoRange.Text.Split('-');
-                HexToInt(parts[0].Trim(), out algoFrom);
-                HexToInt(parts[1].Trim(), out algoTo);
-            }
-
-            if (!HexToUshort(txtSeed.Text, out seed))
-            {
-                Logger("Hex to int? " + txtSeed.Text);
-                return;
-            }
-            txtAlgoTest.AppendText("Calculating..." + Environment.NewLine);
-            if (radioFindKey.Checked)
-            {
-                if (!HexToInt(txtAlgo.Text, out algo))
-                {
-                    Logger("Hex to int? " + txtAlgo.Text);
+                    txtAlgoTest.AppendText("Seed: " + txtSeed.Text + ", Seedbyte: " + txtAlgo.Text + ", Key: " + EecvAlgoTest().ToString("X4"));
                     return;
                 }
-                ushort key = KeyAlgorithm.GetKey(algo, seed);
-                txtAlgoTest.AppendText("Algo: " + algo.ToString("X4") + ", seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + Environment.NewLine);
-                found = true;
-            }
-            else if (radioFindAllKeys.Checked)
-            {
-                for (algo = algoFrom; algo < algoTo; algo++)
+                if (radioFindNgc4.Checked)
                 {
+                    NgcKeys nk = new NgcKeys();
+                    int ngcSeed;
+                    int key;
+                    if (HexToInt(txtSeed.Text, out ngcSeed))
+                    {
+                        key = nk.unlockengine(ngcSeed);
+                        txtAlgoTest.AppendText("Seed: " + ngcSeed.ToString("X8") + ", Key: " + key.ToString("X8") + Environment.NewLine);
+                    }
+                    return;
+                }
+                if (radioFindSbec.Checked)
+                {
+                    SBEC sb = new SBEC();
+                    uint sbSeed;
+                    uint key;
+                    if (HexToUint(txtSeed.Text, out sbSeed))
+                    {
+                        key = sb.calculateKey(sbSeed);
+                        txtAlgoTest.AppendText("Seed: " + sbSeed.ToString("X8") + ", Key (calculateKey): " + key.ToString("X8") + Environment.NewLine);
+                        key = sb.unlock(sbSeed);
+                        txtAlgoTest.AppendText("Seed: " + sbSeed.ToString("X8") + ", Key (unlock): " + key.ToString("X8") + Environment.NewLine);
+                    }
+                    return;
+                }
+                if (txtAlgoRange.Text.Contains("-"))
+                {
+                    string[] parts = txtAlgoRange.Text.Split('-');
+                    HexToInt(parts[0].Trim(), out algoFrom);
+                    HexToInt(parts[1].Trim(), out algoTo);
+                }
+
+                if (!HexToUshort(txtSeed.Text, out seed))
+                {
+                    Logger("Hex to int? " + txtSeed.Text);
+                    return;
+                }
+                txtAlgoTest.AppendText("Calculating..." + Environment.NewLine);
+                if (radioFindKey.Checked)
+                {
+                    if (!HexToInt(txtAlgo.Text, out algo))
+                    {
+                        Logger("Hex to int? " + txtAlgo.Text);
+                        return;
+                    }
                     ushort key = KeyAlgorithm.GetKey(algo, seed);
                     txtAlgoTest.AppendText("Algo: " + algo.ToString("X4") + ", seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + Environment.NewLine);
+                    found = true;
                 }
-                found = true;
-            }
-            else
-            {
-                ushort targetKey;
-                if (!HexToUshort(txtAlgo.Text, out targetKey))
+                else if (radioFindAllKeys.Checked)
                 {
-                    Logger("Hex to ushort? " + txtAlgo.Text);
-                    return;
-                }
-                for (algo = algoFrom; algo < algoTo; algo++)
-                {
-                    ushort key = KeyAlgorithm.GetKey(algo, seed);
-                    if (key == targetKey)
+                    for (algo = algoFrom; algo < algoTo; algo++)
                     {
-                        found = true;
-                        txtAlgoTest.AppendText("seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + ", algo: " + algo.ToString("X4") + Environment.NewLine);
+                        ushort key = KeyAlgorithm.GetKey(algo, seed);
+                        txtAlgoTest.AppendText("Algo: " + algo.ToString("X4") + ", seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + Environment.NewLine);
+                    }
+                    found = true;
+                }
+                else
+                {
+                    ushort targetKey;
+                    if (!HexToUshort(txtAlgo.Text, out targetKey))
+                    {
+                        Logger("Hex to ushort? " + txtAlgo.Text);
+                        return;
+                    }
+                    for (algo = algoFrom; algo < algoTo; algo++)
+                    {
+                        ushort key = KeyAlgorithm.GetKey(algo, seed);
+                        if (key == targetKey)
+                        {
+                            found = true;
+                            txtAlgoTest.AppendText("seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + ", algo: " + algo.ToString("X4") + Environment.NewLine);
+                        }
                     }
                 }
+                if (found)
+                {
+                    txtAlgoTest.AppendText("[OK]" + Environment.NewLine);
+                }
+                else
+                {
+                    txtAlgoTest.AppendText("Not found" + Environment.NewLine);
+                }
             }
-            if (found)
+            catch (Exception ex)
             {
-                txtAlgoTest.AppendText("[OK]" + Environment.NewLine);
-            }
-            else
-            {
-                txtAlgoTest.AppendText("Not found" + Environment.NewLine);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -4202,30 +4193,54 @@ namespace UniversalPatcher
 
         private void btnJ2534SettingsSaveAs2_Click(object sender, EventArgs e)
         {
-            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile2.xml");
-            string FileName = SelectSaveFile(XmlFilter, defName);
-            if (FileName.Length == 0)
-                return;
-            Logger("Saving file: " + FileName);
-            J2534InitParameters JSettings = CreateJ2534InitParameters2();
-            LoggerUtils.SaveJ2534Settings(FileName, JSettings);
-            AppSettings.LoggerJ2534SettingsFile2 = FileName;
-            AppSettings.Save();
-            Logger("[OK]");
+            try
+            {
+                string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile2.xml");
+                string FileName = SelectSaveFile(XmlFilter, defName);
+                if (FileName.Length == 0)
+                    return;
+                Logger("Saving file: " + FileName);
+                J2534InitParameters JSettings = CreateJ2534InitParameters2();
+                LoggerUtils.SaveJ2534Settings(FileName, JSettings);
+                AppSettings.LoggerJ2534SettingsFile2 = FileName;
+                AppSettings.Save();
+                Logger("[OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void btnJ2534SettingsLoad2_Click(object sender, EventArgs e)
         {
-            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile2.xml");
-            string FileName = SelectFile("Select J2534 settings", XmlFilter, defName);
-            if (FileName.Length == 0)
-                return;
-            Logger("Loading file: " + FileName);
-            J2534InitParameters JSettings = LoadJ2534Settings(FileName);
-            LoadJ2534InitParameters2(JSettings);
-            AppSettings.LoggerJ2534SettingsFile2 = FileName;
-            AppSettings.Save();
-            Logger("[OK]");
+            try
+            {
+                string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile2.xml");
+                string FileName = SelectFile("Select J2534 settings", XmlFilter, defName);
+                if (FileName.Length == 0)
+                    return;
+                Logger("Loading file: " + FileName);
+                J2534InitParameters JSettings = LoadJ2534Settings(FileName);
+                LoadJ2534InitParameters2(JSettings);
+                AppSettings.LoggerJ2534SettingsFile2 = FileName;
+                AppSettings.Save();
+                Logger("[OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void comboJ2534Protocol2_SelectedIndexChanged(object sender, EventArgs e)
@@ -4465,6 +4480,7 @@ namespace UniversalPatcher
                     AppSettings.LoggerDecimalSeparator = txtDecimalSeparator.Text;
                     AppSettings.LoggerLogSeparator = txtLogSeparator.Text;
                     AppSettings.Save();
+                    profileFile = "";
                     datalogger.LoadLogFile(fName);
                     SetupLogDataGrid();
                     hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
@@ -4557,25 +4573,31 @@ namespace UniversalPatcher
 
         private void PlayBack()
         {
-            if (hScrollPlayback.Value >= datalogger.LogDataBuffer.Count)
+            try
             {
-                return;
+                if (hScrollPlayback.Value >= datalogger.LogDataBuffer.Count)
+                {
+                    return;
+                }
+                LogData ld = datalogger.LogDataBuffer[hScrollPlayback.Value];
+                LoggerDataEvents.Add(ld);
+                //LastCalcValues = datalogger.slothandler.CalculatePidValues(datalogger.slothandler.LastPidValues);
+                for (int row = 0; row < ld.Values.Length && row < dataGridLogData.Rows.Count; row++)
+                {
+                    dataGridLogData.Rows[row].Cells["Value"].Value = ld.CalculatedValues[row].ToString();
+                }
+                DateTime dt = new DateTime((long)ld.TimeStamp);
+                labelTimeStamp.Text = dt.ToString("HH.mm.ss.ffff");
             }
-            LogData ld = datalogger.LogDataBuffer[hScrollPlayback.Value];
-            LoggerDataEvents.Add(ld);
-            //LastCalcValues = datalogger.slothandler.CalculatePidValues(datalogger.slothandler.LastPidValues);
-            for (int row=0; row<ld.Values.Length && row < dataGridLogData.Rows.Count; row++)
+            catch (Exception ex)
             {
-                dataGridLogData.Rows[row].Cells["Value"].Value = ld.CalculatedValues[row].ToString();
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
             }
-            DateTime dt = new DateTime((long)ld.TimeStamp);
-            labelTimeStamp.Text = dt.ToString("HH.mm.ss.ffff");
-/*
-            if (GraphicsForm != null && GraphicsForm.Visible)
-            {
-                GraphicsForm.PlayBackStep(hScrollPlayback.Value);
-            }
-*/
         }
 
         private void hScrollPlayback_Scroll(object sender, ScrollEventArgs e)
@@ -5010,37 +5032,6 @@ namespace UniversalPatcher
                 timerDeviceStatus.Enabled = false;
                 DisconnectJConsole(false);
             }
-        }
-
-        private void btnQueyPid2_Click(object sender, EventArgs e)
-        {
-            Connect(radioVPW.Checked, true, true, null);
-            List<int> selectedRows = new List<int>();
-            foreach (DataGridViewCell cell in dataGridLogProfile.SelectedCells)
-            {
-                if (!selectedRows.Contains(cell.RowIndex))
-                {
-                    selectedRows.Add(cell.RowIndex);
-                }
-            }
-            datalogger.Receiver.SetReceiverPaused(true);
-            for (int r=0;r<selectedRows.Count;r++)
-            {
-                PidConfig pc = (PidConfig)dataGridLogProfile.Rows[selectedRows[r]].DataBoundItem;
-                QueryPid(pc);
-            }
-            datalogger.Receiver.SetReceiverPaused(false);
-        }
-
-
-        private void label44_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtJConsolePassFilters_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void btnTimeouts_Click(object sender, EventArgs e)
@@ -5560,7 +5551,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    SupportedPids = new List<ushort>();
+                    SupportedPids = new List<int>();
                     string ospidfile = Path.Combine(Application.StartupPath, "Logger", "ospids", comboFilterByOS.Text + ".txt");
                     StreamReader sr = new StreamReader(ospidfile);
                     string line;
@@ -5572,7 +5563,10 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                LoadParameters();
+                if (chkFilterParamsByOS.Checked)
+                {
+                    ReloadPidParams(false, true);
+                }
                 AppSettings.LoggerLastFilterOS = comboFilterByOS.Text;
                 AppSettings.Save();
             }
@@ -5595,48 +5589,51 @@ namespace UniversalPatcher
 
         private void btnTestPids_Click(object sender, EventArgs e)
         {
-            if (!Connect(radioVPW.Checked, false, true, null))
+            try
             {
-                return;
-            }
-            SupportedPids = new List<ushort>();
-            Application.DoEvents();
-            datalogger.Receiver.SetReceiverPaused(true);
-            for (int r = 0; r < stdParameters.Count; r++)
-            {
-                Parameter sp = stdParameters[r];
-                PidConfig pc = new PidConfig();
-                pc.Type = DefineBy.Pid;
-                ushort pidNr;
-                if (HexToUshort(sp.Id, out pidNr))
-                    pc.addr = pidNr;
-                PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), sp.DataType);
-                pc.DataType = ConvertToDataType(pd);
-
-                if (!SupportedPids.Contains(pidNr))
+                if (!Connect(radioVPW.Checked, false, true, null))
                 {
-                    ReadValue rv = datalogger.QuerySinglePidValue(pidNr, pc.DataType);
-                    if (rv.PidNr == pidNr && rv.FailureCode == 0 && rv.PidValue > double.MinValue)
-                    {
-                        SupportedPids.Add(pidNr);
-                    }
+                    return;
                 }
+                SupportedPids = new List<int>();
                 Application.DoEvents();
-                Thread.Sleep(10);
-            }
-            string ospidfile = Path.Combine(Application.StartupPath, "Logger", "ospids", datalogger.OS + ".txt");
-            if (!File.Exists(ospidfile))
-            {
-                StringBuilder sb = new StringBuilder();
-                for (int p = 0; p < SupportedPids.Count; p++)
+                datalogger.Receiver.SetReceiverPaused(true);
+                foreach (LogParam.PidParameter parm in datalogger.PidParams.Where(X=>X.Type == LogParam.DefineBy.Pid))
                 {
-                    sb.AppendLine(SupportedPids[p].ToString("X4"));
+                    if (!SupportedPids.Contains(parm.Address))
+                    {
+                        ReadValue rv = datalogger.QuerySinglePidValue(parm.Address,(PidConfig.ProfileDataType)parm.DataType);
+                        if (rv.PidNr == parm.Address && rv.FailureCode == 0 && rv.PidValue > double.MinValue)
+                        {
+                            SupportedPids.Add(parm.Address);
+                        }
+                    }
+                    Application.DoEvents();
+                    Thread.Sleep(10);
                 }
-                WriteTextFile(ospidfile, sb.ToString());
+                string ospidfile = Path.Combine(Application.StartupPath, "Logger", "ospids", datalogger.OS + ".txt");
+                if (!File.Exists(ospidfile))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int p = 0; p < SupportedPids.Count; p++)
+                    {
+                        sb.AppendLine(SupportedPids[p].ToString("X4"));
+                    }
+                    WriteTextFile(ospidfile, sb.ToString());
+                }
+                ReloadPidParams(false, true);
+                comboFilterByOS.Text = datalogger.OS;
+                datalogger.Receiver.SetReceiverPaused(false);
             }
-            comboFilterByOS.Text = datalogger.OS;
-            datalogger.Receiver.SetReceiverPaused(false);
-            LoadParameters();
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void btnTestModulePids_Click(object sender, EventArgs e)
@@ -5706,6 +5703,7 @@ namespace UniversalPatcher
                 txtPcmAddress.Enabled = true;
             else
                 txtPcmAddress.Enabled = false;
+            SetupPidEditor();
         }
 
         private void radioVPW_CheckedChanged(object sender, EventArgs e)
@@ -5901,5 +5899,295 @@ namespace UniversalPatcher
             dashboard = new frmDashboard();
             dashboard.Show();
         }
+
+
+        private void addToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewPidEditor.SelectedCells.Count == 0)
+                {
+                    return;
+                }
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridViewPidEditor.Rows[dataGridViewPidEditor.SelectedCells[0].RowIndex].DataBoundItem;
+                if (parm.Type == LogParam.DefineBy.Math)
+                {
+                    frmPidSelector fps = new frmPidSelector();
+                    if (fps.ShowDialog() == DialogResult.OK)
+                    {
+                        parm.AddPid(fps.Id, fps.Conversion);
+                        ShowParmPids(parm);
+                    }
+                }
+                else if (parm.Type == LogParam.DefineBy.Address)
+                {
+                    parm.Locations.Add(new LogParam.Location());
+                    dataGridViewPidEditorPids.DataSource = null;
+                    dataGridViewPidEditorPids.DataSource = parm.Locations;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewPidEditorPids.SelectedCells.Count == 0 || dataGridViewPidEditor.SelectedCells.Count == 0)
+                {
+                    return;
+                }
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridViewPidEditor.Rows[dataGridViewPidEditor.SelectedCells[0].RowIndex].DataBoundItem;
+                if (parm.Type == LogParam.DefineBy.Math)
+                {
+                    LogParam.LogPid pid = (LogParam.LogPid)dataGridViewPidEditorPids.Rows[dataGridViewPidEditorPids.SelectedCells[0].RowIndex].Tag;
+                    parm.Pids.Remove(pid);
+                    ShowParmPids(parm);
+                }
+                else if (parm.Type == LogParam.DefineBy.Address)
+                {
+                    LogParam.Location location = (LogParam.Location)dataGridViewPidEditorPids.Rows[dataGridViewPidEditorPids.SelectedCells[0].RowIndex].DataBoundItem;
+                    parm.Locations.Remove(location);
+
+                    dataGridViewPidEditorPids.DataSource = null;
+                    BindingList<LogParam.Location> locations = new BindingList<LogParam.Location>(parm.Locations);
+                    dataGridViewPidEditorPids.DataSource = locations;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string defname;
+            if (radioCAN.Checked)
+            {
+                defname = Path.Combine(Application.StartupPath, "Logger", "PidPrameters-CAN.XML");
+            }
+            else
+            {
+                defname = Path.Combine(Application.StartupPath, "Logger", "PidPrameters-VPW.XML");
+            }
+            string fName = SelectFile("Select PID file", XmlFilter, defname);
+            if (fName.Length == 0)
+            {
+                return;
+            }
+            LogParam.LoadParamfile(fName);
+            ReloadPidParams(true,true);
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LogParam.SaveParamfile(PidParamFile); 
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectSaveFile(XmlFilter, PidParamFile);
+            LogParam.SaveParamfile(fName);
+        }
+
+        private void importPCMHammerFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LogParam.ImportPCMHammerFiles();
+            ReloadPidParams(true,true);
+        }
+
+        private void addToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewPidEditor.SelectedCells.Count == 0)
+                {
+                    return;
+                }
+                Conversion conversion = new Conversion("", "", "");
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridViewPidEditor.Rows[dataGridViewPidEditor.SelectedCells[0].RowIndex].DataBoundItem;
+                parm.Conversions.Add(conversion);
+                dataGridViewPidEditorConversions.DataSource = null;
+                dataGridViewPidEditorConversions.DataSource = parm.Conversions;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void removeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewPidEditorConversions.SelectedCells.Count == 0)
+                {
+                    return;
+                }
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridViewPidEditor.Rows[dataGridViewPidEditor.SelectedCells[0].RowIndex].DataBoundItem;
+                Conversion conversion = (Conversion)dataGridViewPidEditorConversions.Rows[dataGridViewPidEditorConversions.SelectedCells[0].RowIndex].DataBoundItem;
+                parm.Conversions.Remove(conversion);
+                dataGridViewPidEditorConversions.DataSource = null;
+                dataGridViewPidEditorConversions.DataSource = parm.Conversions;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void removeToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewPidEditor.SelectedCells.Count == 0)
+                {
+                    return;
+                }
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridViewPidEditor.Rows[dataGridViewPidEditor.SelectedCells[0].RowIndex].DataBoundItem;
+                if (MessageBox.Show("Remove pid: " + parm.Name + "?", "Remove pid?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    datalogger.PidParams.Remove(parm);
+                    pidparams.ResetBindings();
+                    dataGridViewPidEditor.Update();
+                    dataGridViewPidEditor.Refresh();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void addToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LogParam.PidParameter parm = new LogParam.PidParameter();
+                datalogger.PidParams.Add(parm);
+                pidparams.ResetBindings();
+                dataGridViewPidEditor.Update();
+                dataGridViewPidEditor.Refresh();
+                dataGridViewPidEditor.CurrentCell = dataGridViewPidEditor.Rows[dataGridViewPidEditor.Rows.Count - 2].Cells[1];
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void showOldPIDProfileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string defname = Path.Combine(Application.StartupPath, "Logger","Profiles", "profile1.xml");
+            string fName = SelectFile("Select PID profile", XmlFilter, defname);
+            if (fName.Length == 0)
+            {
+                return;
+            }
+            datalogger.ImportOldProfile(fName);
+            frmEditXML fex = new frmEditXML();
+            fex.LoadOldPidProfile(fName);
+            fex.Show();
+        }
+
+        private void SetConversionValues()
+        {
+            try
+            {
+                if (dataGridViewPidEditorConversions.SelectedCells.Count == 0 || DisableConversionChanges)
+                {
+                    return;
+                }
+                DisableConversionChanges = true;
+                Conversion conversion = (Conversion)dataGridViewPidEditorConversions.Rows[dataGridViewPidEditorConversions.SelectedCells[0].RowIndex].DataBoundItem;
+                conversion.IsBitMapped = chkConversionBitMapped.Checked;
+                conversion.BitIndex = (int)numConversionBitIndex.Value;
+                conversion.TrueValue = txtConversionTrueValue.Text;
+                conversion.FalseValue = txtConversionFalseValue.Text;
+                conversion.Expression = txtConversionExpression.Text;
+                conversion.Units = txtConversionUnits.Text;
+                conversion.Format = txtConversionFormat.Text;
+                LogParam.PidParameter parm = (LogParam.PidParameter)dataGridViewPidEditor.Rows[dataGridViewPidEditor.SelectedCells[0].RowIndex].DataBoundItem;
+                dataGridViewPidEditorConversions.DataSource = null;
+                dataGridViewPidEditorConversions.DataSource = parm.Conversions;
+                DisableConversionChanges = false;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+        private void chkConversionBitMapped_CheckedChanged(object sender, EventArgs e)
+        {
+            txtConversionFalseValue.Enabled = chkConversionBitMapped.Checked;
+            txtConversionTrueValue.Enabled = chkConversionBitMapped.Checked;
+            numConversionBitIndex.Enabled = chkConversionBitMapped.Checked;
+            SetConversionValues();
+        }
+
+        private void numConversionBitIndex_ValueChanged(object sender, EventArgs e)
+        {
+            SetConversionValues();
+        }
+
+        private void txtConversionTrueValue_TextChanged(object sender, EventArgs e)
+        {
+            SetConversionValues();
+        }
+
+        private void txtConversionFalseValue_TextChanged(object sender, EventArgs e)
+        {
+            SetConversionValues();
+        }
+
+        private void txtConversionUnits_TextChanged(object sender, EventArgs e)
+        {
+            SetConversionValues();
+        }
+
+        private void txtConversionFormat_TextChanged(object sender, EventArgs e)
+        {
+            SetConversionValues();
+        }
+
+        private void txtConversionExpression_TextChanged(object sender, EventArgs e)
+        {
+            SetConversionValues();
+        }
+
+        private void txtParamSearch_TextChanged(object sender, EventArgs e)
+        {
+            ReloadPidParams(false,true);
+        }
+
+        private void txtPidEditorFilter_TextChanged(object sender, EventArgs e)
+        {
+            ReloadPidParams(true,false);
+        }
+
+        private void chkFilterParamsByOS_CheckedChanged(object sender, EventArgs e)
+        {
+            ReloadPidParams(false, true);
+        }
+
     }
 }

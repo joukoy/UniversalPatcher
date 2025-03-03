@@ -179,9 +179,16 @@
     <Compile Include="DataLogger\frmLoggerGraphics.Designer.cs">
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataLogger\frmPidSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmPidSelector.Designer.cs">
+      <DependentUpon>frmPidSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataLogger\GDISpeedometer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DataLogger\LogParam.cs" />
     <Compile Include="DataLogger\UpGauge.cs" />
     <Compile Include="DataLogger\GmKeys.cs" />
     <Compile Include="DataLogger\GraphSettings.cs" />
@@ -626,7 +633,6 @@
     <Compile Include="SGM.cs" />
     <Compile Include="SRecord.cs" />
     <Compile Include="StaticSegmentInfo.cs" />
-    <Compile Include="T.cs" />
     <Compile Include="TableInfo.cs" />
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
@@ -669,6 +675,9 @@
     <EmbeddedResource Include="DataLogger\frmLoggerGraphics.resx">
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmPidSelector.resx">
+      <DependentUpon>frmPidSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmByteSwap.resx">
       <DependentUpon>frmByteSwap.cs</DependentUpon>

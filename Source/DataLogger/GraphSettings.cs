@@ -149,7 +149,7 @@ namespace UniversalPatcher
     }
     class PointData
     {
-        public PointData(int pidId, string Pid, long TStamp, double Val, double ScaledVal, int row)
+        public PointData(string pidId, string Pid, long TStamp, double Val, double ScaledVal, int row)
         {
             PidId = pidId;
             PidName = Pid;
@@ -158,7 +158,7 @@ namespace UniversalPatcher
             ScaledValue = ScaledVal;
             Row = row;
         }
-        public int PidId { get; set; }
+        public string PidId { get; set; }
         public string PidName { get; set; }
         public long TimeStamp { get; set; }
         public double Value { get; set; }

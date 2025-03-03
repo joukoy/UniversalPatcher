@@ -280,33 +280,28 @@ namespace UniversalPatcher
             LoadSettings();
         }
 
-        public void ShowValue(string PidName, double value)
+        public void ShowValue(LogParam.PidSettings pidProfile)
         {
-            List<UpGauge> gauges = Gauges.Where(X => X.PidName == PidName).ToList();
+            List<UpGauge> gauges = Gauges.Where(X => X.PidName == pidProfile.Parameter.Name).ToList();
             if (gauges == null)
             {
                 return;
             }
+            LogParam.PidParameter parm = pidProfile.Parameter;
             foreach (UpGauge gauge in gauges)
             {
                 if (gauge.Type == UpGauge.GaugeType.Analog)
                 {
-                    gauge.Gauge.Speed = value;
-                }
-                else if (gauge.Type == UpGauge.GaugeType.Digital)
-                {
-                    gauge.TxtBox.Text = gauge.CapText.PadLeft(8) + Environment.NewLine + value.ToString().PadLeft(9);
+                    double val = parm.GetCalculatedValue(pidProfile);
+                    if (val > int.MinValue)
+                    {
+                        gauge.Gauge.Speed = val;
+                    }
                 }
                 else
                 {
-                    if (value == 0)
-                    {
-                        gauge.TxtBox.Text = gauge.CapText.PadLeft(8) + Environment.NewLine + "OFF".PadLeft(8);
-                    }
-                    else
-                    {
-                        gauge.TxtBox.Text = gauge.CapText.PadLeft(8) + Environment.NewLine + "ON".PadLeft(8);
-                    }
+                    string result = parm.GetCalculatedStringValue(pidProfile, false);
+                    gauge.TxtBox.Text = Environment.NewLine + gauge.CapText + Environment.NewLine + result;
                 }
             }
         }
@@ -333,6 +328,22 @@ namespace UniversalPatcher
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveGauges(null);
+        }
+
+        private void timerDisplay_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (datalogger.slothandler == null || datalogger.slothandler.LastPidValues == null)
+                {
+                    return;
+                }
+                foreach (LogParam.PidSettings pidProfile in datalogger.SelectedPids)
+                {
+                    ShowValue(pidProfile);
+                }
+            }
+            catch { };
         }
     }
 }

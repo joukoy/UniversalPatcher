@@ -2444,12 +2444,6 @@ namespace UniversalPatcher
             return copyValues;
         }
 
-        private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (dataGridView1.SelectedCells.Count > 0)
-                dataGridView1.ContextMenuStrip = contextMenuStrip1;
-        }
-
         private void ExportCsv()
         {
             try

@@ -28,6 +28,7 @@ public static class Helpers
     public static string XdfFilter = "XDF files (*.xdf)|*.xdf|All files (*.*)|*.*";
     public static string RtfFilter = "RTF files (*.rtf)|*.rtf|All files (*.*)|*.*";
     public static string RtfFTxtilter = "RTF or TXT (*.rtf;*.txt)|*.rtf;*.txt|All files (*.*)|*.*";
+    public static string ProfileFilter = "XML files (*.xml)|*.xml|LogProfile files (*.logprofile)|*.logprofile|All files (*.*)|*.*";
 
     public static string[] OnStrings = { "on", "enabled", "enable", "reduced","low", "active", "set", "open", "yes", "good", "presed", "pressed", "true"};
     public static string[] OffStrings = { "off", "disabled", "disable", "normal", "inactive", "not set", "closed", "no", "bad", "released", "false"};
@@ -215,12 +216,12 @@ public static class Helpers
     public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
     {
         OpenFileDialog fdlg = new OpenFileDialog();
-        if (Filter.Contains("BIN"))
+        if (Filter.StartsWith("BIN"))
         {
             fdlg.InitialDirectory = AppSettings.LastBINfolder;
             Filter = GenerateFilter();
         }
-        else if (Filter.ToLower().Contains("xdf"))
+        else if (Filter.ToLower().StartsWith("xdf"))
         {
             fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
         }

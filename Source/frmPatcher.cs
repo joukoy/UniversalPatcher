@@ -4260,6 +4260,11 @@ namespace UniversalPatcher
                         string fName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                         PcmFile PCM = new PcmFile(fName, true, "");
                         Logger("File: " + fName + ", Platform: " + PCM.configFile + ", OS: " + PCM.OS);
+                        if (chkSortSkipUnknownOS.Checked && PCM.OS == "Unknown")
+                        {
+                            Logger("Skip unknown OS");
+                            continue;
+                        }
                         string dstFile;
                         string dstFname = "";
                         for (int r=0;r<dataGridViewRenParts.Rows.Count;r++)

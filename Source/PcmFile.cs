@@ -40,7 +40,12 @@ namespace UniversalPatcher
                 {
                     _configFileFullName = cnfFile;
                 }
-                if (segmentFile.Length > 0)
+                if (string.IsNullOrEmpty(_configFileFullName))
+                {
+                    _configFileFullName = "Unknown";
+                }
+                //if (segmentFile.Length > 0)
+                else
                 {
                     LoadPlatformConfig(PlatformConfigFile);
                     LoadConfigFile(segmentFile);
@@ -175,13 +180,16 @@ namespace UniversalPatcher
                     for (int s = 0; s < Segments.Count; s++)
                     {
                         if (Segments[s].Name == "OS")
+                        {
                             os = segmentinfos[s].PN;
-                        break;
+                            break;
+                        }
                     }
                 }
-                if (string.IsNullOrEmpty(os) && !string.IsNullOrEmpty(configFile))
+                //if (string.IsNullOrEmpty(os) && !string.IsNullOrEmpty(configFile))
+                if (string.IsNullOrEmpty(os) )
                 {
-                    os = configFile;
+                    os = "Unknown";
                 }
                 return os;
             }
@@ -679,6 +687,12 @@ namespace UniversalPatcher
             try
             {
                 Segments.Clear();
+              
+                if (!File.Exists(fileName))
+                {
+                    Logger("File not found: " + fileName);
+                    return;
+                }
                 Logger("Loading file: " + Path.GetFileName(fileName), false);
                 long conFileSize = new FileInfo(fileName).Length;
                 if (conFileSize < 255)
