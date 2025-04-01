@@ -358,7 +358,7 @@
         storageType="uint8"
         bitMapped="True"
         bitIndex="0">
-        <Conversion units="Boolean" expression="Open,Closed" format="0" />
+        <Conversion units="Boolean" expression="Closed,Open" format="0" />
     </Parameter>
     <Parameter
         id="1105"
