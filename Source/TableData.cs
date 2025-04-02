@@ -382,6 +382,11 @@ namespace UniversalPatcher
             ExtraDescription = tSeek.ExtraDescription;
             ExtraTableName = tSeek.ExtraTableName;
 
+            if (AppSettings.ShowExtraTableName && tSeek.ExtraTableName != null)
+            {
+                TableName = tSeek.ExtraTableName;
+                ExtraTableName = ft.Name;
+            }            
             //if (!PCM.tableCategories.Contains(Category))
               //  PCM.tableCategories.Add(Category);
         }

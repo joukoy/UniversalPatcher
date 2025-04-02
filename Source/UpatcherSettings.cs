@@ -85,6 +85,7 @@ namespace UniversalPatcher
             LastJScriptFile = "";
             DashboardRows = 2;
             DashboardCols = 3;
+            ShowExtraTableName = false;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
             TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
@@ -299,7 +300,7 @@ namespace UniversalPatcher
         public string LastJScriptFile { get; set; }
         public int DashboardRows { get; set; }
         public int DashboardCols { get; set; }
-
+        public bool ShowExtraTableName { get; set; }
         public Size DashboardWindowSize { get; set; }
         public FormWindowState DashboardWindowState { get; set; }
         public Point DashboardWindowLocation { get; set; }

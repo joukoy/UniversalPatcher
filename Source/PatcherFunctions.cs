@@ -2846,6 +2846,17 @@ public class Upatcher
             //Found exact match
             return xTd;
         }
+
+        if(AppSettings.ShowExtraTableName)
+        {
+            xTd = tdList.Where(X => X.ExtraTableName != null && X.ExtraTableName.ToLower() == refTd.TableName.ToLower()).FirstOrDefault();
+            if (xTd != null)
+            {
+                //Found exact match
+                return xTd;
+            }
+        }
+
         int pos1 = refTd.TableName.IndexOf("*");
         if (pos1 < 0)
             pos1 = refTd.TableName.Length;
