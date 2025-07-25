@@ -1,0 +1,827 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PidParams>
+  <Parameter id="0003" Type="Pid" name="Fueling Mode" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0004" Type="Pid" name="Engine Load" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x/2.55)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0005" Type="Pid" name="ECT Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="°C" expression="(x-40)" format="0.00" />
+    <Conversion units="°F" expression="(x-40) * 1.8 + 32.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0006" Type="Pid" name="Short Term FT Left Bank" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x-128)/1.28" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0007" Type="Pid" name="Long Term FT Left Bank" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x-128)/1.28" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0008" Type="Pid" name="Short Term FT Right Bank" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x-128)/1.28" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0009" Type="Pid" name="Long Term FT Right Bank" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x-128)/1.28" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="000B" Type="Pid" name="MAP Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="kPa" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="000C" Type="Pid" name="Engine Speed" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="RPM" expression="x*0.25" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="000D" Type="Pid" name="Vehicle Speed Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="kph" expression="x" format="0.00" />
+    <Conversion units="mph" expression="(x*0.60934)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="000E" Type="Pid" name="Ignition Timing" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="°" expression="(x/2)-64" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="000F" Type="Pid" name="IAT Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="°C" expression="(x-40)" format="0.00" />
+    <Conversion units="°F" expression="((x-40) * 1.8 + 32.0)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0010" Type="Pid" name="MAF Sensor" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="g/s" expression="(x/100)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0011" Type="Pid" name="Throttle Position" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x*100)/255" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0012" Type="Pid" name="Commanded Secondary Air" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="TBD" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0013" Type="Pid" name="O2 Sensor Configuration" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Type #" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0014" Type="Pid" name="O2 Left Upstream" description="" DataType="SWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0015" Type="Pid" name="O2 Left Downstream" description="" DataType="SWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0016" Type="Pid" name="Secondary Position" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Degrees" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0017" Type="Pid" name="Secondary Velocity" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Deg/Sec" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0018" Type="Pid" name="O2 Right Upstream" description="" DataType="SWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="0019" Type="Pid" name="O2 Right Downstream" description="" DataType="SWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1100" Type="Pid" name="A/C Relay Command" description="" DataType="UBYTE" bitmapped="True" bitIndex="3">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1100" Type="Pid" name="A/C Request Signal" description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1100" Type="Pid" name="A/C Clutch Feedback Signal" description="" DataType="UBYTE" bitmapped="True" bitIndex="1">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1100" Type="Pid" name="PCM Reset" description="" DataType="UBYTE" bitmapped="True" bitIndex="2">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1100" Type="Pid" name="GEN L-Terminal Signal Command" description="" DataType="UBYTE" bitmapped="True" bitIndex="7">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1101" Type="Pid" name="EVAP Vent Solenoid Command" description="" DataType="UBYTE" bitmapped="True" bitIndex="1">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1102" Type="Pid" name="VTD Fuel Disable" description="" DataType="UBYTE" bitmapped="True" bitIndex="1">
+    <Conversion units="Boolean" expression="Enable,Disable" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1102" Type="Pid" name="TCC Enable Solenoid Command" description="" DataType="UBYTE" bitmapped="True" bitIndex="2">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1102" Type="Pid" name="Traction Control Status" description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="Active,Inactive" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1102" Type="Pid" name="Powertrain Induced Chassis Pitch Command" description="" DataType="UBYTE" bitmapped="True" bitIndex="5">
+    <Conversion units="Boolean" expression="Active,Inactive" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1102" Type="Pid" name="Extended Travel Brake Pedal Switch" description="" DataType="UBYTE" bitmapped="True" bitIndex="6">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1102" Type="Pid" name="TCC/Cruise Brake Pedal Switch" description="" DataType="UBYTE" bitmapped="True" bitIndex="3">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1103" Type="Pid" name="Reduced Engine Power" description="" DataType="UBYTE" bitmapped="True" bitIndex="7">
+    <Conversion units="Boolean" expression="Reduced,Normal" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1103" Type="Pid" name="Engine Oil Level Switch" description="" DataType="UBYTE" bitmapped="True" bitIndex="5">
+    <Conversion units="Boolean" expression="Low,Normal" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1103" Type="Pid" name="MIL Command" description="" DataType="UBYTE" bitmapped="True" bitIndex="1">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1104" Type="Pid" name="Cruise Control Active" description="" DataType="UBYTE" bitmapped="True" bitIndex="4">
+    <Conversion units="Boolean" expression="Active,Inactive" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1104" Type="Pid" name="DTC Set This Ignition" description="" DataType="UBYTE" bitmapped="True" bitIndex="2">
+    <Conversion units="Boolean" expression="Set,Not Set" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1104" Type="Pid" name="AIR Solenoid Command " description="" DataType="UBYTE" bitmapped="True" bitIndex="1">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1104" Type="Pid" name="AIR Pump Relay Command " description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1105" Type="Pid" name="Loop Status" description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="Closed,Open" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1105" Type="Pid" name="Decel" description="" DataType="UBYTE" bitmapped="True" bitIndex="7">
+    <Conversion units="Boolean" expression="Active,Inactive" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1105" Type="Pid" name="Fuel Trim Learn" description="" DataType="UBYTE" bitmapped="True" bitIndex="5">
+    <Conversion units="Boolean" expression="Active,Inactive" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1105" Type="Pid" name="Cold Startup" description="" DataType="UBYTE" bitmapped="True" bitIndex="6">
+    <Conversion units="Boolean" expression="Yes,No" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1106" Type="Pid" name="FC Relay 1 Command" description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1106" Type="Pid" name="FC Relay 2 and 3 Command" description="" DataType="UBYTE" bitmapped="True" bitIndex="1">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1107" Type="Pid" name="Throttle Status" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Bitmap" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1108" Type="Pid" name="Pending 1" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1109" Type="Pid" name="Pending 2" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="110A" Type="Pid" name="Pending 3" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="110B" Type="Pid" name="TBD" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="110C" Type="Pid" name="QDASR 0" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="110D" Type="Pid" name="QDASR 1" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="110E" Type="Pid" name="QDASR 2" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="110F" Type="Pid" name="MWSPIN2" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1110" Type="Pid" name="1110 Undefined" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1111" Type="Pid" name="TBD Sw" description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1112" Type="Pid" name="TFP Sw" description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1113" Type="Pid" name="TR Sw" description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1115" Type="Pid" name="TAC/PCM Communication Signal" description="" DataType="UBYTE" bitmapped="True" bitIndex="7">
+    <Conversion units="Boolean" expression="Good,Bad" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1116" Type="Pid" name="Cruise Resume/Accel" description="" DataType="UBYTE" bitmapped="True" bitIndex="6">
+    <Conversion units="Boolean" expression="Presed,Relased" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1116" Type="Pid" name="Cruise Set/Coast Switch" description="" DataType="UBYTE" bitmapped="True" bitIndex="5">
+    <Conversion units="Boolean" expression="Pressed,Released" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1116" Type="Pid" name="Cruise On/Off Switch" description="" DataType="UBYTE" bitmapped="True" bitIndex="4">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1116" Type="Pid" name="APP Sensor 1 and 2" description="" DataType="UBYTE" bitmapped="True" bitIndex="0">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1116" Type="Pid" name="Stoplamp Pedal Switch" description="" DataType="UBYTE" bitmapped="True" bitIndex="7">
+    <Conversion units="Boolean" expression="On,Off" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1116" Type="Pid" name="TP Sensors 1 and 2" description="" DataType="UBYTE" bitmapped="True" bitIndex="3">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1116" Type="Pid" name="APP Sensor 1 and 3" description="" DataType="UBYTE" bitmapped="True" bitIndex="1">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1116" Type="Pid" name="APP Sensor 2 and 3" description="" DataType="UBYTE" bitmapped="True" bitIndex="2">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1140" Type="Pid" name="MAF (high precision)" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="g/sec" expression="x*(512/65536)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1141" Type="Pid" name="Ignition 1 Signal" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="(x/10)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1142" Type="Pid" name="MAP Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1143" Type="Pid" name="TP Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1144" Type="Pid" name="A/C Wideband A/F Ratio" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units=":1" expression="((x/51.00) /.5) +9.58" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1144" Type="Pid" name="A/C High Side Pressure Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="(x/51)" format="0.00" />
+    <Conversion units="Kpa" expression="((x*1.833)-14.95)*6.895" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1145" Type="Pid" name="O2 Left Front" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="mV" expression="(x/0.2304)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1146" Type="Pid" name="O2 Left Rear" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="mV" expression="(x/0.2304)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1148" Type="Pid" name="O2 Right Front" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="mV" expression="(x/0.2304)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1149" Type="Pid" name="O2 Right Rear" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="mV" expression="(x/0.2304)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="114B" Type="Pid" name="EGR Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts?" expression="x/51" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="114B" Type="Pid" name="EGR Wideband A/F Ratio" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units=":1" expression="((x/51.00) /.5) +9.58" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="114D" Type="Pid" name="GEN F-Terminal Signal" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x/2.55)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="114E" Type="Pid" name="Fuel Tank Pressure Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1151" Type="Pid" name="Accelerator Pedal" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Percent" expression="(x * (100 / 256))" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1155" Type="Pid" name="Fuel Level Sensor Left Tank" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="115C" Type="Pid" name="Engine Oil Pressure" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="(x/51)" format="0.00" />
+    <Conversion units="kpa" expression="(x * 4.326) - 110.313" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="115C" Type="Pid" name="Engine Oil Pressure Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Kpa" expression="((x*4.34)-104.2)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="115E" Type="Pid" name="Cam Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="116F" Type="Pid" name="Start Up ECT" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="°C" expression="(x-40)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1170" Type="Pid" name="EVAP Purge Solenoid Command" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x/2.55)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1171" Type="Pid" name="EGR Duty Cycle" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x/2.55)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1176" Type="Pid" name="Learned IAC Position" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Steps" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1179" Type="Pid" name="Current IAC Position" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Steps" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1190" Type="Pid" name="Fuel Trim Cell" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1192" Type="Pid" name="Desired Idle Speed" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="RPM" expression="(x*12.5)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="119D" Type="Pid" name="Barometric Pressure (sampled)" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="kPa" expression="(x+28)/2.71" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="119E" Type="Pid" name="Target A/F Ratio" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units=":1" expression="(x/10)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="119F" Type="Pid" name="Engine Oil Life Remaining" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x/2.55+0.5)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="11A1" Type="Pid" name="Engine Run Time" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Minutes" expression="x/60" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="11A3" Type="Pid" name="Calculated Cat Temp" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="C" expression="x * 2050/256" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="11A6" Type="Pid" name="Knock Retard" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="°" expression="(x*0.0879)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="11BD" Type="Pid" name="EGR Test Count" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="11EA" Type="Pid" name="Misfire Current Cyl 5" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="11EB" Type="Pid" name="Misfire Current Cyl 6" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="11EC" Type="Pid" name="Misfire Current Cyl 7" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="11ED" Type="Pid" name="Misfire Current Cyl 8" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="11F8" Type="Pid" name="Misfire History Cyl 5" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="11F9" Type="Pid" name="Misfire History Cyl 6" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="11FA" Type="Pid" name="Misfire History Cyl 7" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="11FB" Type="Pid" name="Misfire History Cyl 8" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1200" Type="Pid" name="Misfire Total count" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1201" Type="Pid" name="Misfire History Cyl 1" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1202" Type="Pid" name="Misfire History Cyl 2" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1203" Type="Pid" name="Misfire History Cyl 3" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1204" Type="Pid" name="Misfire History Cyl 4" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1205" Type="Pid" name="Misfire Current Cyl 1" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1206" Type="Pid" name="Misfire Current Cyl 2" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1207" Type="Pid" name="Misfire Current Cyl 3" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1208" Type="Pid" name="Misfire Current Cyl 4" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="120A" Type="Pid" name="Short Term FT Avg" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x-128)/1.28" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="120B" Type="Pid" name="Long Term FT Avg" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x-128)/1.28" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="120C" Type="Pid" name="Short Term FT Avg" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x-128)/1.28" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1227" Type="Pid" name="Total Misfire Fail" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1228" Type="Pid" name="Total Misfire Pass" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="122A" Type="Pid" name="Cycles of Misfire Data" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1232" Type="Pid" name="Warm-ups w/o Emission Faults" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1233" Type="Pid" name="Warm-ups w/o Non-Emission Faults" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1234" Type="Pid" name="Mileage Since DTC Cleared" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="km" expression="(x*5)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="123A" Type="Pid" name="Long Term FT Avg" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x-128)/1.28" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1250" Type="Pid" name="MAF Sensor Frequency" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Hz" expression="(x/2.048)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="125A" Type="Pid" name="Injector PWM Left Bank Average" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="ms" expression="(x/65.535)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="125B" Type="Pid" name="Injector PWM Right Bank Average" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="ms" expression="(x/65.535)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="125D" Type="Pid" name="Knock Retard" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x-128" format="0" />
+  </Parameter>
+  <Parameter id="125E" Type="Pid" name="Knock Count" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="125F" Type="Pid" name="Delta Bearing" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="125B" Type="Pid" name="Injector PWM Bank 2 Average" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="ms" expression="(x/65.535)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12B0" Type="Pid" name="Accelerator Pedal Position" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x / 1.11" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12B1" Type="Pid" name="TP Indicated Angle" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x*5/256)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12B4" Type="Pid" name="APP Sensor 1" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12B5" Type="Pid" name="APP Sensor 2" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12B6" Type="Pid" name="APP Sensor 3" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12B7" Type="Pid" name="TP Sensor 1" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12B8" Type="Pid" name="TP Sensor 2" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12B9" Type="Pid" name="TP Sensor 2" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volt" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12BA" Type="Pid" name="TP Sensor 1" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volt" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12BB" Type="Pid" name="APP Sensor 3" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volt" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12BC" Type="Pid" name="APP Sensor 2" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volt" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12BD" Type="Pid" name="APP Sensor 1" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volt" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12C5" Type="Pid" name="Fuel Level" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x / 2.55" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12E3" Type="Pid" name="Fuel Tank Pressure Sensor" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="mmHg" expression="-((x/5.46)-13.995)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12EE" Type="Pid" name="VTD Fuel Disable Until Ign" description="" DataType="UBYTE" bitmapped="True" bitIndex="2">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="12EE" Type="Pid" name="VTD Auto" description="" DataType="UBYTE" bitmapped="True" bitIndex="3">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="12EE" Type="Pid" name="PCM/VCM in VTD Fail Enable" description="" DataType="UBYTE" bitmapped="True" bitIndex="4">
+    <Conversion units="Boolean" expression="True,False" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="12F3" Type="Pid" name="Ethanol Content" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x/2.55" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="12F7" Type="Pid" name="Desired IAC Position" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Counts" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1315" Type="Pid" name="Cruise Disengage 1 History" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1316" Type="Pid" name="Cruise Disengage 2 History" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1317" Type="Pid" name="Cruise Disengage 3 History" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1318" Type="Pid" name="Cruise Disengage 4 History" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1319" Type="Pid" name="Cruise Disengage 5 History" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="131A" Type="Pid" name="Cruise Disengage 6 History" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="131B" Type="Pid" name="Cruise Disengage 7 History" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="131C" Type="Pid" name="Cruise Disengage 8 History" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="131D" Type="Pid" name="Fuel Tank Rated Capacity" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Liters" expression="(x/64)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="131E" Type="Pid" name="TP Desired Angle" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x*5/256)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="131F" Type="Pid" name="APP Indicated Angle" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="(x*5/256)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="132A" Type="Pid" name="Fuel Tank Level Remaining (Unsupported)" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x/100" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="132A" Type="Pid" name="Fuel Tank Level Remaining" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Liters" expression="(x/64)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="132B" Type="Pid" name="CMP Sensor - High to Low" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="132C" Type="Pid" name="CMP Sensor - Low to High" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1336" Type="Pid" name="Torque Request Signal" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="N-m" expression="(x*0.02646484375)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1337" Type="Pid" name="Torque Delivered Signal" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="N-m" expression="(x*0.02646484375)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1338" Type="Pid" name="Fuel Level Sensor Right Tank" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Volts" expression="(x/51)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="139C" Type="Pid" name="Ethanol Content Sensor Frequency" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Hz" expression="x" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1481" Type="Pid" name="HO2S Heater Bn 1 Sen" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="amps" expression="x/50" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1482" Type="Pid" name="HO2S Heater Bn 1 Sen" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="amps" expression="x/50" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1484" Type="Pid" name="HO2S Heater Bn 2 Sen" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="amps" expression="x/50" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1485" Type="Pid" name="HO2S Heater Bn 1 Sen" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="amps" expression="x/50" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1617" Type="Pid" name="Desired IAC Airflow" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="g/s" expression="x/1024" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1922" Type="Pid" name="Power Enrichment" description="" DataType="UBYTE" bitmapped="True" bitIndex="2">
+    <Conversion units="Boolean" expression="Active,Inactive" format="" />
+    <Conversion units="Raw" expression="," format="" />
+  </Parameter>
+  <Parameter id="1926" Type="Pid" name="TCC Mode" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="192B" Type="Pid" name="TCC Offrsns" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="192C" Type="Pid" name="Trans Range" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1940" Type="Pid" name="Transmissinon Fluid Temperature" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="C" expression="x - 40" format="0" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="1941" Type="Pid" name="Input Shaft Speed" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1942" Type="Pid" name="Output Shaft Speed" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="1991" Type="Pid" name="AT TCC Slip" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="199D" Type="Pid" name="VBS Pressure" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="19A0" Type="Pid" name="AT Shift Delay" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="19AD" Type="Pid" name="Transmission Temperature (Raw)" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="19F3" Type="Pid" name="Transmission Oil Temperature" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="19F4" Type="Pid" name="Transmission Ratio" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="19F5" Type="Pid" name="Transmission Gear" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="Raw" expression="x" format="0" />
+  </Parameter>
+  <Parameter id="199A" Type="Pid" name="Current Gear" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="Boolean" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="FC05" Type="Pid" name="EGR PWM Duty Cycle" description="" DataType="UBYTE" bitmapped="False" bitIndex="-1">
+    <Conversion units="%" expression="x*(100/256)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="FC05" Type="Pid" name="Target Equivalence Ratio" description="" DataType="UWORD" bitmapped="False" bitIndex="-1">
+    <Conversion units="EQR" expression="x / 1024" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamLoad" Type="Address" name="Load" description="" DataType="UWORD">
+    <Location os="12593358" address="FFAAEA" />
+    <Conversion units="g/cyl" expression="x/2048.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamOnTime" Type="Address" name="On Time" description="" DataType="UWORD">
+    <Location os="12593358" address="FFB04C" />
+    <Location os="12587603" address="FFB544" />
+    <Conversion units="Seconds" expression="x/160.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamThrottleCrackerAirflow" Type="Address" name="Throttle Cracker Airflow" description="" DataType="UWORD">
+    <Location os="12593358" address="FF97F0" />
+    <Conversion units="g/s" expression="x/1024.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamThrottleFollowerAirflow" Type="Address" name="Throttle Follower Airflow" description="" DataType="UWORD">
+    <Location os="12593358" address="FF980A" />
+    <Conversion units="g/s" expression="x/1024.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamIdleProportional" Type="Address" name="Idle Proportional Term" description="" DataType="UWORD">
+    <Location os="12593358" address="FFA2A2" />
+    <Conversion units="g/s" expression="x/16.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamIdleIntegral" Type="Address" name="Idle Integral Term" description="" DataType="UWORD">
+    <Location os="12593358" address="FFA296" />
+    <Conversion units="g/s" expression="x/16.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamIdleDerivative" Type="Address" name="Idle Derivative Term" description="" DataType="UWORD">
+    <Location os="12593358" address="FFA28C" />
+    <Conversion units="g/s" expression="x/16.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamIgnitionAdvanceMultiplier" Type="Address" name="Ignition Advance Multiplier?" description="Unconfirmed." DataType="UWORD">
+    <Location os="12593358" address="FF8250" />
+    <Conversion units="Factor" expression="x/4096.0" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="RamManifoldAbsolutePressure" Type="Address" name="Manifold Absolute Pressure" description="2-Byte Manifold Pressure" DataType="UWORD">
+    <Location os="12587603" address="FFB292" />
+    <Location os="76030002" address="FFB292" />
+    <Location os="12216125" address="FFAFF4" />
+    <Location os="61250002" address="FFAFF4" />
+    <Location os="12212156" address="FFADAE" />
+    <Location os="21560002" address="FFADAE" />
+    <Conversion units="kPa" expression="x/51.2" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="MathLoadFromPids" Type="Math" name="Load (from RPM and MAF)" description="" DataType="UBYTE">
+    <Pid id="0010" variable="x" conversion="g/s" />
+    <Pid id="000C" variable="y" conversion="RPM" />
+    <Conversion units="g/cyl" expression="x*15.0/(y*2)" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="MathIdcBank1" Type="Math" name="IDC Bank 1" description="" DataType="UBYTE">
+    <Pid id="000C" variable="x" conversion="RPM" />
+    <Pid id="125A" variable="y" conversion="ms" />
+    <Conversion units="%" expression="(x*y)/1200" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="MathIdcBank2" Type="Math" name="IDC Bank 2" description="" DataType="UBYTE">
+    <Pid id="000C" variable="x" conversion="RPM" />
+    <Pid id="125B" variable="y" conversion="ms" />
+    <Conversion units="%" expression="(x*y)/1200" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="SerialWbAfr" Type="WB_Afr" name="Serial WB AFR" DataType="UBYTE">
+    <Conversion units="AFR" expression="x" format="0.00" />
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+  <Parameter id="SerialWbRaw" Type="WB_Raw" name="Serial WB Raw" DataType="UBYTE">
+    <Conversion units="Raw" expression="x" format="0.00" />
+  </Parameter>
+</PidParams>

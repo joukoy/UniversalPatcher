@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>BootBlock</Name>
+    <Version>1</Version>
+    <Addresses>@2c13d&lt;8fc0000</Addresses>
+    <SwapAddress>@2c13d&lt;8fc0000</SwapAddress>
+    <CS1Address>#14020:2:hex</CS1Address>
+    <CS2Address>#14000:2:hex</CS2Address>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
+    <CS1Blocks>@2c145*3&lt;8fc0000</CS1Blocks>
+    <CS2Blocks>@2c15d*2&lt;8fc0000</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#14005:4:int</PNAddr>
+    <VerAddr>#14009:2:text</VerAddr>
+    <SegNrAddr>#14003:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version>1</Version>
+    <Addresses>@290046&lt;8fc0000</Addresses>
+    <SwapAddress>@290046&lt;8fc0000</SwapAddress>
+    <CS1Address>#50040:2:hex</CS1Address>
+    <CS2Address>#50020:2:hex</CS2Address>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
+    <CS1Blocks>@29004e*3&lt;8fc0000</CS1Blocks>
+    <CS2Blocks>@290066*2&lt;8fc0000</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#50025:4:int</PNAddr>
+    <VerAddr>#50029:2:text</VerAddr>
+    <SegNrAddr>#50023:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>TransCal</Name>
+    <Version />
+    <Addresses>@29007a&lt;8fc0000</Addresses>
+    <SwapAddress>@29007a&lt;8fc0000</SwapAddress>
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
+    <CS1Blocks>@290082*2&lt;8fc0000</CS1Blocks>
+    <CS2Blocks>@290092&lt;8fc0000</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

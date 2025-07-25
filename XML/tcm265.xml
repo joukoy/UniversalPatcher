@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>Boot Block</Name>
+    <Version>1</Version>
+    <Addresses>0-13fff</Addresses>
+    <SwapAddress>0-13fff</SwapAddress>
+    <CS1Address>13fbc:4:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>crc32</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks>0-13fbb</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>2</CS1Method>
+    <CS2Method>0</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Cal data</Name>
+    <Version />
+    <Addresses>a0000-bffff</Addresses>
+    <SwapAddress>a0000-bffff</SwapAddress>
+    <CS1Address>bffbc:4:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>crc32</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks>a0000-bffbb</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo>Cal1:a0004:9:text,Cal2:a0010:9:text</ExtraInfo>
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>2</CS1Method>
+    <CS2Method>0</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version />
+    <Addresses>c0000-27ffff</Addresses>
+    <SwapAddress>c0000-27ffff</SwapAddress>
+    <CS1Address>27ffbc:4:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>crc32</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks>c0000-27ffbb</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>1c05b:8:text</PNAddr>
+    <VerAddr>1c064:2:text</VerAddr>
+    <SegNrAddr />
+    <ExtraInfo>pcm1:1c037:8:text,pcm2:1c043:8:text</ExtraInfo>
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>2</CS1Method>
+    <CS2Method>0</CS2Method>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>
