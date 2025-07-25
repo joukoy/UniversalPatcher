@@ -47,6 +47,7 @@ namespace UniversalPatcher
         public override bool Initialize(int Baudrate, J2534InitParameters j2534Init)
         {
             this.Connected = true;
+            this.Protocol = j2534Init.Protocol;
             return true;
         }
         public override bool SetProgramminVoltage(PinNumber pinNumber, uint voltage)
@@ -117,25 +118,15 @@ namespace UniversalPatcher
 
         public override void ReceiveBufferedMessages()
         {
-            Receive(false);
+            return;
         }
 
         /// <summary>
         /// Try to read an incoming message from the device.
         /// </summary>
         /// <returns></returns>
-        public override void Receive(bool WaitForTimeout)
+        public override void Receive(int NumMessages, bool WaitForTimeout)
         {
-            //List<byte> incoming = new List<byte>(5000);
-            SerialByte incoming = new SerialByte(5000);
-            int count = this.port.Receive(incoming, 0, incoming.Data.Length);
-            if(count > 0)
-            {
-                byte[] sized = new byte[count];
-                Buffer.BlockCopy(incoming.Data, 0, sized, 0, count);
-                base.Enqueue(new OBDMessage(sized), true);
-            }
-
             return;
         }
 
@@ -176,6 +167,10 @@ namespace UniversalPatcher
             return true;
         }
         public override bool RemoveFilters(int[] filterIds)
+        {
+            return true;
+        }
+        public override bool RemoveFilters2(int[] filterIds)
         {
             return true;
         }

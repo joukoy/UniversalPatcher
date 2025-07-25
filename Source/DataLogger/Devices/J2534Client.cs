@@ -320,6 +320,7 @@ namespace UniversalPatcher
             {
                 Logger("J2534 client initializing...");
                 Application.DoEvents();
+                this.Protocol = j2534Init.Protocol;
                 string initparms = Helpers.SerializeObjectToXML(j2534Init);
                 byte[] param = Encoding.ASCII.GetBytes(initparms);
                 byte[] readBuf = PipeSendAndReceive(j2534Command.Initialize, param);
@@ -571,13 +572,15 @@ namespace UniversalPatcher
         /// <summary>
         /// Read an network packet from the interface, and return a Response/Message
         /// </summary>
-        public override void Receive(bool WaitForTimeout)
+        public override void Receive(int NumMessages, bool WaitForTimeout)
         {
             //Debug.WriteLine("Trace: Read Network Packet");
             try
             {
-                byte[] param = new byte[1];
+                byte[] param = new byte[5];
                 param[0] = Convert.ToByte(WaitForTimeout);
+                byte[] tmp = BitConverter.GetBytes(NumMessages);
+                Array.Copy(tmp,0, param, 1,4);
                 byte[] resp = PipeSendAndReceive(j2534Command.Receive, param);
                 if (resp.Length == 1)
                 {
@@ -589,8 +592,11 @@ namespace UniversalPatcher
                 }
                 //OBDMessage oMsg = new OBDMessage(null);
                 //oMsg.FromPipeMessage(resp);
-                OBDMessage oMsg = Helpers.XmlDeserializeFromString<OBDMessage>(Encoding.ASCII.GetString(resp));
-                this.Enqueue(oMsg, false);
+                List< OBDMessage> oMsgs = Helpers.XmlDeserializeFromString<List<OBDMessage>>(Encoding.ASCII.GetString(resp));
+                foreach (OBDMessage oMsg in oMsgs)
+                {
+                    this.Enqueue(oMsg, false);
+                }
                 //Application.DoEvents();
             }
             catch (Exception ex)
@@ -645,7 +651,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Read an network packet from the interface, and return a Response/Message
         /// </summary>
-        public override void Receive2()
+        public override void Receive2(int NumMessages)
         {
             //Debug.WriteLine("Trace: Read Network Packet");
             try
@@ -711,7 +717,7 @@ namespace UniversalPatcher
         public override int[] SetupFilters(string Filters, bool Secondary, bool ClearOld)
         {
             try
-            {                 
+            {
                 byte[] param = Encoding.ASCII.GetBytes(Filters);
                 byte[] sendBuf = new byte[param.Length + 2];
                 sendBuf[0] = Convert.ToByte(Secondary);
@@ -876,7 +882,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, j2534Client line " + line + ": " + ex.Message);
             }
             return false;
         }
@@ -911,6 +917,29 @@ namespace UniversalPatcher
                 Buffer.BlockCopy(filterIds, 0, fIds, 0, fIds.Length);
 
                 byte[] readBuf = PipeSendAndReceive(j2534Command.RemoveFilters, fIds);
+                return Convert.ToBoolean(readBuf[0]);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+            }
+            return false;
+        }
+        public override bool RemoveFilters2(int[] filterIds)
+        {
+            try
+            {
+                Debug.WriteLine("Removing filters");
+                byte[] fIds;
+                fIds = new byte[filterIds.Length * 4];
+                Buffer.BlockCopy(filterIds, 0, fIds, 0, fIds.Length);
+
+                byte[] readBuf = PipeSendAndReceive(j2534Command.RemoveFilters2, fIds);
                 return Convert.ToBoolean(readBuf[0]);
             }
             catch (Exception ex)

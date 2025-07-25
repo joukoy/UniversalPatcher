@@ -27,6 +27,7 @@ namespace UniversalPatcher
         {
             try
             {
+
                 this.device = device;
                 this.port = port;
                 this.secondaryProtocol = secondary;
@@ -46,7 +47,7 @@ namespace UniversalPatcher
                     else
                         device.SetReadTimeout(AppSettings.TimeoutConsoleReceive);
                 }
-                if (device.LogDeviceType != DataLogger.LoggingDevType.J2534)
+                if (device.LogDeviceType != DataLogger.LoggingDevType.J2534 && device.LogDeviceType != DataLogger.LoggingDevType.UPX_OBD )
                 {
                     device.SetTimeout(TimeoutScenario.DataLogging3);
                     device.SetAnalyzerFilter();
@@ -162,7 +163,7 @@ namespace UniversalPatcher
                 Debug.WriteLine("Starting receive loop");
             }
             //while (Connected && ReceiveLoopRunning)
-            OBDMessage msg = null;
+            List<OBDMessage> messages = new List<OBDMessage>();
             while (!receiverToken.IsCancellationRequested)
             {
                 try
@@ -173,24 +174,31 @@ namespace UniversalPatcher
                         device.Dispose();
                         return;
                     }
-                    if (msg != null && msg.ElmPrompt)
-                    {
-                        Debug.WriteLine("Resetting analyzer filter");
-                        device.SetAnalyzerFilter();
-                        do
-                        {
-                            msg = device.ReceiveMessage(true);
-                        } while (msg != null);
-                    }
                     if (secondaryProtocol)
                     {
-                        device.Receive2();
+                        messages = device.ReceiveMultipleMessage2(AppSettings.AnalyzerNumMessages);
                     }
                     else
                     {
-                        msg = device.ReceiveMessage(true);
+                        messages = device.ReceiveMultipleMessages(AppSettings.AnalyzerNumMessages, true);
+                        for (int m = 0; m < messages.Count; m++)
+                        {
+                            OBDMessage msg = messages[m];
+                            if (msg != null && msg.ElmPrompt)
+                            {
+                                Debug.WriteLine("Resetting analyzer filter");
+                                device.SetAnalyzerFilter();
+                                do
+                                {
+                                    msg = device.ReceiveMessage(true);
+                                } while (msg != null);
+                            }
+                        }
                     }
-                    //Thread.Sleep(500);
+                    if (messages.Count == 0)
+                    {
+                        Thread.Sleep(100);
+                    }
                 }
                 catch (Exception ex)
                 {

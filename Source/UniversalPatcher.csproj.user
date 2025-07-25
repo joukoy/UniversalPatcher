@@ -15,6 +15,8 @@
     <StartArguments>
     </StartArguments>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <StartAction>Program</StartAction>
+    <StartProgram>Y:\Visualstudio\UniversalPatcher\Source\bin\Debug\UniversalPatcher.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug DPS|AnyCPU'">
     <StartArguments>advanced patcher</StartArguments>

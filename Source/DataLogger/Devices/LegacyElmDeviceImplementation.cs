@@ -278,15 +278,22 @@ namespace UniversalPatcher
         /// Try to read an incoming message from the device.
         /// </summary>
         /// <returns></returns>
-        public override void Receive(bool WaitForTimeout)
+        public override void Receive(int NumMessages, bool WaitForTimeout)
         {
             try
             {
-                if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+                for (int m = 0; m < NumMessages; m++)
                 {
-                    SerialString response = this.ReadELMLine(false);
-                    Debug.WriteLine("Elm line: " + response.Data);
-                    this.ProcessResponse(response, "receive");
+                    if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+                    {
+                        SerialString response = this.ReadELMLine(false);
+                        Debug.WriteLine("Elm line: " + response.Data);
+                        this.ProcessResponse(response, "receive");
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
             }
             catch (TimeoutException)

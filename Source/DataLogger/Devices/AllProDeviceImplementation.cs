@@ -41,7 +41,7 @@ namespace UniversalPatcher
             this.MaxSendSize = 1024 + 12;
             this.MaxReceiveSize = 1024 + 12;
             this.Supports4X = true;
-            this.LogDeviceType = DataLogger.LoggingDevType.Elm;  
+            this.LogDeviceType = DataLogger.LoggingDevType.Elm;             
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace UniversalPatcher
             // the app to forget what header the interface was told to use - that will
             // cause the app to send another set-header command later on.
             this.currentHeader = "header not yet set";
-
+            
             try
             {
                 string apID = this.SendRequest("AT #1").Data;                // Identify (AllPro)
@@ -266,14 +266,21 @@ namespace UniversalPatcher
         /// Try to read an incoming message from the device.
         /// </summary>
         /// <returns></returns>
-        public override void Receive(bool WaitForTimeout)
+        public override void Receive(int NumMessages, bool WaitForTimeout)
         {
             try
             {
-                if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+                for (int m = 0; m < NumMessages; m++)
                 {
-                    SerialString response = this.ReadELMLine(false);
-                    this.ProcessResponse(response, "receive");
+                    if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+                    {
+                        SerialString response = this.ReadELMLine(false);
+                        this.ProcessResponse(response, "receive");
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
             }
             catch (TimeoutException)

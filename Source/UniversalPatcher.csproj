@@ -137,6 +137,7 @@
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="DataLogger\CANQuery.cs" />
+    <Compile Include="DataLogger\Devices\Elm327Device.cs" />
     <Compile Include="DataLogger\Devices\ElmDeviceImplementation.cs" />
     <Compile Include="DataLogger\Devices\frmJ2534Server.cs">
       <SubType>Form</SubType>
@@ -148,6 +149,8 @@
     <Compile Include="DataLogger\Devices\J2534InitParameters.cs" />
     <Compile Include="DataLogger\Devices\J2534Server.cs" />
     <Compile Include="DataLogger\Devices\JetDevice.cs" />
+    <Compile Include="DataLogger\Devices\TcpIpPort.cs" />
+    <Compile Include="DataLogger\Devices\UPX-OBD.cs" />
     <Compile Include="DataLogger\EECV.cs" />
     <Compile Include="DataLogger\frmBinToScript.cs">
       <SubType>Form</SubType>
@@ -179,16 +182,44 @@
     <Compile Include="DataLogger\frmLoggerGraphics.Designer.cs">
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataLogger\frmPidMismatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmPidMismatch.Designer.cs">
+      <DependentUpon>frmPidMismatch.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataLogger\frmPidSelector.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DataLogger\frmPidSelector.Designer.cs">
       <DependentUpon>frmPidSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataLogger\frmSelectDBC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmSelectDBC.Designer.cs">
+      <DependentUpon>frmSelectDBC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogger\frmSerialPortServer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmSerialPortServer.Designer.cs">
+      <DependentUpon>frmSerialPortServer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogger\frmSignalView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmSignalView.Designer.cs">
+      <DependentUpon>frmSignalView.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataLogger\GDISpeedometer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DataLogger\Hertz.cs" />
+    <Compile Include="DataLogger\isotphandler.cs" />
+    <Compile Include="DataLogger\isotphandlerdefs.cs" />
     <Compile Include="DataLogger\LogParam.cs" />
+    <Compile Include="DataLogger\LogParamFile.cs" />
     <Compile Include="DataLogger\UpGauge.cs" />
     <Compile Include="DataLogger\GmKeys.cs" />
     <Compile Include="DataLogger\GraphSettings.cs" />
@@ -205,6 +236,7 @@
     </Compile>
     <Compile Include="DataLogger\SBEC.cs" />
     <Compile Include="DataLogger\WideBand.cs" />
+    <Compile Include="DBC.cs" />
     <Compile Include="frmByteSwap.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -676,8 +708,20 @@
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmPidMismatch.resx">
+      <DependentUpon>frmPidMismatch.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DataLogger\frmPidSelector.resx">
       <DependentUpon>frmPidSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmSelectDBC.resx">
+      <DependentUpon>frmSelectDBC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmSerialPortServer.resx">
+      <DependentUpon>frmSerialPortServer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmSignalView.resx">
+      <DependentUpon>frmSignalView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmByteSwap.resx">
       <DependentUpon>frmByteSwap.cs</DependentUpon>

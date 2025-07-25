@@ -112,7 +112,7 @@ namespace UniversalPatcher
         private void btnLoadXML_Click(object sender, EventArgs e)
         {
             string defFile = Path.Combine(Application.StartupPath, "Tuner","*.xml");
-            string fName = SelectFile("Select tablelist XML", XmlFilter,defFile);
+            string fName = SelectFile("Select tablelist XML", TablelistFilter, defFile);
             if (fName == "")
                 return;
 

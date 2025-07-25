@@ -4,10 +4,11 @@
     <Name>Boot Block</Name>
     <Version>1</Version>
     <Addresses>@23025</Addresses>
+    <SwapAddress>@23025</SwapAddress>
     <CS1Address>23020:2:hex</CS1Address>
     <CS2Address>23000:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@2302d*3</CS1Blocks>
     <CS2Blocks>@23045*2</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -22,15 +23,20 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>OS</Name>
     <Version>1</Version>
     <Addresses>@140026</Addresses>
+    <SwapAddress>@140026</SwapAddress>
     <CS1Address>#40020:2:hex</CS1Address>
     <CS2Address>#40000:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@14002e*3</CS1Blocks>
     <CS2Blocks>@140046*2</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -45,14 +51,20 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Trans</Name>
+    <Version />
     <Addresses>@14005a</Addresses>
+    <SwapAddress>@14005a</SwapAddress>
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@140062*2</CS1Blocks>
     <CS2Blocks>@140072</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -67,14 +79,20 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>TransDiag</Name>
+    <Version />
     <Addresses>@14007e</Addresses>
+    <SwapAddress>@14007e</SwapAddress>
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@140086*2</CS1Blocks>
     <CS2Blocks>@140096</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -89,14 +107,20 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>System</Name>
+    <Version />
     <Addresses>@1400a2</Addresses>
+    <SwapAddress>@1400a2</SwapAddress>
     <CS1Address>#20:2:hex</CS1Address>
     <CS2Address>#0:2:hex</CS2Address>
-    <CS1Method>1</CS1Method>
-    <CS2Method>4</CS2Method>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
     <CS1Blocks>@1400aa*2</CS1Blocks>
     <CS2Blocks>@1400ba</CS2Blocks>
     <CS1Complement>0</CS1Complement>
@@ -111,5 +135,9 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
   </SegmentConfig>
 </ArrayOfSegmentConfig>

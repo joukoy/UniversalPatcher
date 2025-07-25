@@ -81,7 +81,7 @@ namespace UniversalPatcher
         //List of loaded files (for compare) File 0 is always "master" or A
         public List<CompareFile> compareFiles = new List<CompareFile>();
         //List of selected tables in tuner (current node in tree)
-        public List<TableData> tunerSelectedTables;
+        public List<TableData> tunerSelectedTables = new List<TableData>();
         int currentTunerTd = -1;
         public string tableName = "";
         Font dataFont;

@@ -236,7 +236,12 @@ namespace UniversalPatcher
             try
             {
                 //get first byte for command
-                this.Port.Receive(rx, 0, 1);
+                if (this.Port.Receive(rx, 0, 1) == 0)
+                {
+                    Debug.WriteLine("No Data");
+                    return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
+
+                }
             }
             catch (Exception) // timeout exception - log no data, return error.
             {
@@ -414,16 +419,22 @@ namespace UniversalPatcher
         {
         }
 
-        public override void Receive(bool WaitForTimeout)
+        public override void Receive(int NumMessages, bool WaitForTimeout)
         {
             Debug.WriteLine("Port have " + Port.GetReceiveQueueSize().ToString() + " bytes in queue");
-            if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+            for (int m = 0; m < NumMessages; m++)
             {
-                Response<OBDMessage> response = ReadAVTPacket();
-                if (response.Status == ResponseStatus.Success)
+                if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
                 {
-                    Debug.WriteLine("RX: " + response.Value.GetBytes().ToHex());
-                    this.Enqueue(response.Value, true);
+                    Response<OBDMessage> response = ReadAVTPacket();
+                    if (response.Status == ResponseStatus.Success)
+                    {
+                        Debug.WriteLine("RX: " + response.Value.GetBytes().ToHex());
+                        this.Enqueue(response.Value, true);
+                    }
+                }
+                else
+                {
                     return;
                 }
             }
@@ -500,6 +511,11 @@ namespace UniversalPatcher
             byte[] msg = new byte[] { 0x52, 0x5b, 0x00 };
             Port.Send(msg); //Clear filter, listen for all devices
             this.CurrentFilter = FilterMode.None;
+            return true;
+        }
+        public override bool RemoveFilters2(int[] filterIds)
+        {
+            Debug.WriteLine("RemoveFilters2 not implemented");
             return true;
         }
 

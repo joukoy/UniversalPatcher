@@ -1099,6 +1099,10 @@ namespace UniversalPatcher
 
         private void DataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
+            if (e.ColumnIndex < 0)
+            {
+                return;
+            }
             vis1.mouseDownCell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
             Debug.WriteLine("Mouse down in " + vis1.mouseDownCell.RowIndex.ToString() + ", " + vis1.mouseDownCell.ColumnIndex.ToString());
         }

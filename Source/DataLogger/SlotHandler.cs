@@ -7,8 +7,9 @@ using static Helpers;
 using static LoggerUtils;
 using static UniversalPatcher.DataLogger;
 using System.Diagnostics;
-using static UniversalPatcher.PidConfig;
-using static Upatcher;
+using System.Windows.Forms;
+using System.Threading;
+//using static UniversalPatcher.PidConfig;
 
 namespace UniversalPatcher
 {
@@ -24,12 +25,41 @@ namespace UniversalPatcher
         public List<int> ReceivingPids = new List<int>();
         public List<Slot> Slots;
         public int CurrentSlotIndex = 0;
-        public int CurrentHPSlotIndex = 0;
-        public int CurrentLPSlotIndex = 0;
         private double[] newPidValues;
-
+        public List<int> PassiveSources;
         public bool VPWProtocol = true;
-
+        //public PidValSetTime[] pidValSetTimes;
+        public Hertz[] pidHertz;
+        public class PidValSetTime
+        {
+            public PidValSetTime()
+            {
+                SetTimes = new List<DateTime>();
+            }
+            public List<DateTime> SetTimes { get; set; }
+            public double Herz()
+            {
+                if (SetTimes.Count == 0)
+                {
+                    return -1;
+                }
+                if (DateTime.Now.Subtract(SetTimes.LastOrDefault()) > TimeSpan.FromMilliseconds(1000))
+                {
+                    return -1;
+                }
+                int last = SetTimes.Count - 1;
+                for (int i = last; i >= 0; i--)
+                {
+                    TimeSpan tSpan = SetTimes[last].Subtract(SetTimes[i]);
+                    if (tSpan > TimeSpan.FromMilliseconds(1000) && i < last - 3)
+                    {
+                        int count = last - i;
+                        return count / tSpan.TotalSeconds;
+                    }
+                }
+                return -1;
+            }
+        }
         public class PidVal
         {
             public PidVal(int Pid, double Val)
@@ -47,11 +77,11 @@ namespace UniversalPatcher
             {
                 this.Id = Id;
                 Pids = new List<int>();
-                DataTypes = new List<PidConfig.ProfileDataType>();
+                DataTypes = new List<LogParam.ProfileDataType>();
             }
             public byte Id { get; set; }
             public List<int> Pids { get; set; }
-            public List<PidConfig.ProfileDataType> DataTypes { get; set; }
+            public List<LogParam.ProfileDataType> DataTypes { get; set; }
             public byte Bytes
             {
                 get
@@ -66,24 +96,32 @@ namespace UniversalPatcher
             {
                 switch (DataTypes[pidindex])
                 {
-                    case PidConfig.ProfileDataType.UBYTE:
+                    case LogParam.ProfileDataType.UBYTE:
                         return 1;
-                    case PidConfig.ProfileDataType.SBYTE:
+                    case LogParam.ProfileDataType.SBYTE:
                         return 1;
-                    case PidConfig.ProfileDataType.UWORD:
+                    case LogParam.ProfileDataType.UWORD:
                         return 2;
-                    case PidConfig.ProfileDataType.SWORD:
+                    case LogParam.ProfileDataType.SWORD:
                         return 2;
                     //case ProfileDataType.THREEBYTES:
                       //  return 3;
-                    case PidConfig.ProfileDataType.UINT32:
+                    case LogParam.ProfileDataType.UINT32:
                         return 4;
-                    case PidConfig.ProfileDataType.INT32:
+                    case LogParam.ProfileDataType.INT32:
                         return 4;
                     default:
                         return 1;
                 }
             }
+        }
+
+        public double GetPidHerz(int pid)
+        {
+            int idx = ReceivingPids.IndexOf(pid);
+            if (idx < 0)
+                return -1;
+            return pidHertz[idx].GetHertz();
         }
 
         public double GetLastPidValue(int pid)
@@ -102,14 +140,7 @@ namespace UniversalPatcher
                 for (int pp=0;pp<datalogger.SelectedPids.Count;pp++)
                 {
                     LogParam.PidSettings pidProfile = datalogger.SelectedPids[pp];
-                    LogParam.PidParameter parm = pidProfile.Parameter;
-                    double pidVal = double.MinValue;
-                    if (HexToInt(parm.Id, out int addr))
-                    {
-                        int idx = ReceivingPids.IndexOf(addr);
-                        pidVal = pidValues[idx];
-                    }
-                    calculatedvalues[pp] = parm.GetCalculatedStringValue(pidProfile, false);
+                    calculatedvalues[pp] = pidProfile.Parameter.GetCalculatedStringValue(pidProfile, false);
                 }
             }
             catch (Exception ex)
@@ -134,7 +165,7 @@ namespace UniversalPatcher
                     LogParam.PidSettings pidProfile = datalogger.SelectedPids[pp];
                     LogParam.PidParameter parm = pidProfile.Parameter;
                     
-                    calculatedDoubleValues[pp] = parm.GetCalculatedValue(pidProfile);
+                    calculatedDoubleValues[pp] = parm.GetCalculatedValue(pidProfile,false);
                 }
             }
             catch (Exception ex)
@@ -144,12 +175,38 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, Slothandler line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, Slothandler line " + line + ": " + ex.Message);
             }
             return calculatedDoubleValues;
         }
+        public void SetupPassivePidFilters()
+        {
+            for (int d=0;d<PassiveSources.Count;d++)
+            {
+                string PassFilters = "Type: PASS_FILTER,Name: CANloggerPass" + d.ToString() + Environment.NewLine;
+                PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                PassFilters += "Pattern: " + PassiveSources[d].ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                datalogger.LogDevice.SetupFilters(PassFilters, true, false);
 
-        public bool CreatePidSetupMessages()
+            }
+        }
+        public void ResetFilters()
+        {
+            Debug.WriteLine("Slothandler reset filters");
+            string FlowFilters = "Type: FLOW_CONTROL_FILTER,Name: CANloggerFlow" + Environment.NewLine;
+            FlowFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+            FlowFilters += "Pattern: " + datalogger.CanDevice.ResID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+            FlowFilters += "FlowControl: " + datalogger.CanDevice.RequestID.ToString("X8") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
+            datalogger.LogDevice.SetupFilters(FlowFilters, false, true);
+
+            string PassFilters = "Type: PASS_FILTER,Name: CANloggerPass" + Environment.NewLine;
+            PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+            PassFilters += "Pattern: " + datalogger.CanDevice.DiagID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+            datalogger.LogDevice.SetupFilters(PassFilters, true, true);
+            
+        }
+
+        public bool CreatePidSetupMessages(List<LogParam.PidSettings> SelectedPids)
         {
             try
             {
@@ -162,7 +219,8 @@ namespace UniversalPatcher
                 ReceivingPids = new List<int>();
                 Slots = new List<Slot>();
                 SlotIndex = new Dictionary<byte, int>();
-                List<ProfileDataType> pidDataTypes = new List<ProfileDataType>();
+                List<LogParam.ProfileDataType> pidDataTypes = new List<LogParam.ProfileDataType>();
+                PassiveSources = new List<int>();
 
                 if (datalogger.reverseSlotNumbers)
                 {
@@ -173,9 +231,10 @@ namespace UniversalPatcher
                 if (!VPWProtocol)
                 {
                     bytesPerSlot = 7;
+                    //ResetFilters();
                 }
-                //Generate unique list of pids, HighPriority first:
-                foreach (LogParam.PidSettings pidProfile in datalogger.SelectedPids)
+                //Generate unique list of pids:
+                foreach (LogParam.PidSettings pidProfile in SelectedPids)
                 {
                      
                     LogParam.PidParameter parm = pidProfile.Parameter;
@@ -184,12 +243,19 @@ namespace UniversalPatcher
                         LoggerBold("Skipping unknown PID: " + parm.Name);
                         continue;
                     }
+                    if (parm.Conversions.Count == 0 || (parm.Conversions.Count > 0 && string.IsNullOrEmpty(parm.Conversions[0].Units)))
+                    {
+                        Debug.WriteLine("No conversion, adding Raw");
+                        parm.Conversions.Add(new Conversion("Raw", "x", "0.00"));
+                        pidProfile.Units = parm.Conversions[0];
+                    }
                     if (parm.Type == LogParam.DefineBy.Pid)
                     {
-                        if (HexToInt(parm.Id.Replace("0x", ""), out int addr) && !ReceivingPids.Contains(addr))
+                        if (!ReceivingPids.Contains(parm.Address))
                         {
-                            ReceivingPids.Add(addr);
-                            pidDataTypes.Add((ProfileDataType)parm.DataType);
+                            Debug.WriteLine("Adding pid: " + parm.Id + ", Datatype: " + parm.DataType.ToString());
+                            ReceivingPids.Add(parm.Address);
+                            pidDataTypes.Add((LogParam.ProfileDataType)parm.DataType);
                         }
                     }
                     else if (parm.Type == LogParam.DefineBy.Address)
@@ -198,23 +264,26 @@ namespace UniversalPatcher
                         if (addr >= 0 && !ReceivingPids.Contains(addr))
                         {
                             ReceivingPids.Add(addr);
-                            pidDataTypes.Add((ProfileDataType)parm.DataType);
+                            pidDataTypes.Add((LogParam.ProfileDataType)parm.DataType);
                         }
                     }
                     else if (parm.Type == LogParam.DefineBy.Math)
                     {
-                        foreach (LogParam.LogPid lPid in parm.Pids)
+                        List<LogParam.PidParameter> mParms = parm.GetLinkedPids();
+                        foreach (LogParam.PidParameter mParm in mParms)
                         {
-                            LogParam.PidParameter mParm = lPid.Parameter;
-                            if (mParm != null)
+                            if (mParm.Type == LogParam.DefineBy.Pid && !ReceivingPids.Contains(mParm.Address))
                             {
-                                if (HexToInt(mParm.Id.Replace("0x", ""), out int addr) && !ReceivingPids.Contains(addr))
-                                {
-                                    ReceivingPids.Add(addr);
-                                    pidDataTypes.Add((PidConfig.ProfileDataType)mParm.DataType);
-                                }
-
+                                ReceivingPids.Add(mParm.Address);
+                                pidDataTypes.Add((LogParam.ProfileDataType)mParm.DataType);
                             }
+                        }
+                    }
+                    else if (parm.Type == LogParam.DefineBy.Passive)
+                    {
+                        if (!PassiveSources.Contains(parm.Address))
+                        {
+                            PassiveSources.Add(parm.Address);
                         }
                     }
                 }
@@ -251,7 +320,7 @@ namespace UniversalPatcher
                                 msg[7] = (byte)(Slots[s].Pids[pidIndex] >> 8);
                                 msg[8] = (byte)(Slots[s].Pids[pidIndex]);
                                 bytes = Slots[s].PidSize(pidIndex);
-                                byte cfgByte = CreateConfigByte(position, bytes, (byte)DefineBy.Address);
+                                byte cfgByte = CreateConfigByte(position, bytes, (byte)LogParam.DefineBy.Address);
                                 msg[5] = cfgByte;
                             }
                             else
@@ -259,7 +328,7 @@ namespace UniversalPatcher
                                 msg[6] = (byte)(Slots[s].Pids[pidIndex] >> 8);
                                 msg[7] = (byte)(Slots[s].Pids[pidIndex]);
                                 bytes = Slots[s].PidSize(pidIndex);
-                                byte cfgByte = CreateConfigByte(position, bytes, (byte)DefineBy.Pid);
+                                byte cfgByte = CreateConfigByte(position, bytes, (byte)LogParam.DefineBy.Pid);
                                 msg[5] = cfgByte;
                                 //Debug.WriteLine("ConfigByte: " + cfgByte.ToString("X"));
                             }
@@ -271,9 +340,10 @@ namespace UniversalPatcher
                                 return false;
                             }
                             OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage(true);
-                            while (rMsg != null)
+                            DateTime starttime = DateTime.Now;
+                            while (true)
                             {
-                                if (rMsg.Length > 4)
+                                if (rMsg != null && rMsg.Length > 4)
                                 {
                                     Debug.WriteLine("Response: " + rMsg.ToString());
                                     if (rMsg[3] == 0x7f)
@@ -281,10 +351,16 @@ namespace UniversalPatcher
                                         LoggerBold("Pid " + Slots[s].Pids[pidIndex].ToString("X4") + " Error: " + PcmResponses[rMsg.GetBytes().Last()]);
                                         return false;
                                     }
-                                    if (rMsg[3] == 0x6C)
+                                    if (rMsg[3] == 0x6C && rMsg[4] == SlotNr)
                                     {
+                                        Debug.WriteLine("Received positive response, pid ok");
                                         break;
                                     }
+                                }
+                                if (DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(1500))
+                                {
+                                    LoggerBold("Timeout in pid setup");
+                                    return false;
                                 }
                                 rMsg = datalogger.LogDevice.ReceiveMessage(true);
                             }
@@ -301,7 +377,7 @@ namespace UniversalPatcher
                         position = 1;
                         byte bytes = 0;
                         SlotNr = Slots[s].Id;
-                        List<byte> msg = new List<byte> { 0x00, 0x00, datalogger.CanPcmAddrByte1, datalogger.CanPcmAddrByte2, 0x2C, SlotNr };
+                        List<byte> msg = new List<byte> { 0x00, 0x00, datalogger.CanDevice.RequestByte1, datalogger.CanDevice.RequestByte2, 0x2C, SlotNr };
                         while (pidIndex < Slots[s].Pids.Count)
                         {
                             msg.Add((byte)(Slots[s].Pids[pidIndex] >> 8));
@@ -315,13 +391,44 @@ namespace UniversalPatcher
                             LoggerBold("Error, Pid setup failed");
                             return false;
                         }
-                        datalogger.LogDevice.ReceiveBufferedMessages();
+                        OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage(true);
+                        DateTime starttime = DateTime.Now;
+                        while (true)
+                        {
+                            if (rMsg != null && rMsg.Length > 5)
+                            {
+                                Debug.WriteLine("Response: " + rMsg.ToString());
+                                if (rMsg[4] == 0x7f)
+                                {
+                                    LoggerBold("Pid " + Slots[s].Pids[pidIndex-1].ToString("X4") + " Error: " + PcmResponses[rMsg.GetBytes().Last()]);
+                                    return false;
+                                }
+                                if (rMsg[4] == 0x6C && rMsg[5] == SlotNr)
+                                {
+                                    Debug.WriteLine("Positive response, pid is supported");
+                                    break;
+                                }
+                            }
+                            if (DateTime.Now.Subtract(starttime) > TimeSpan.FromMilliseconds(1000))
+                            {
+                                LoggerBold("Timeout in pid setup");
+                                return false;
+                            }
+                            rMsg = datalogger.LogDevice.ReceiveMessage(true);
+                        }
+
+                        //datalogger.LogDevice.ReceiveBufferedMessages();
                         pidIndex++;
                         position += bytes;
                     }
                 }
                 newPidValues = new double[ReceivingPids.Count];
                 LastPidValues = new double[ReceivingPids.Count];
+                pidHertz = new Hertz[ReceivingPids.Count];
+                for (int v=0;v<pidHertz.Length;v++)
+                {
+                    pidHertz[v] = new Hertz();
+                }
 
                 //Clear arrays with minimal values
                 for (int b = 0; b < LastPidValues.Length; b++)
@@ -353,7 +460,7 @@ namespace UniversalPatcher
             return true;
         }
 
-        public byte[] CreateNextSlotRequestMessage()
+        public byte[] CreateNextSlotRequestMessage(bool FirstRequest)
         {
             List<byte> msg;
             if (VPWProtocol)
@@ -381,10 +488,14 @@ namespace UniversalPatcher
                         mode = 4;
                         break;
                 }
-                msg = new List<byte> { 0x00, 0x00, datalogger.CanPcmAddrByte1, datalogger.CanPcmAddrByte2, 0xAA, mode };
+                msg = new List<byte> { 0x00, 0x00, datalogger.CanDevice.RequestByte1, datalogger.CanDevice.RequestByte2, 0xAA, mode };
             }
             try
             {
+                if (Slots.Count == 0)
+                {
+                    return null;
+                }
                 for (int i = 0; i < datalogger.maxSlotsPerMessage; i++)
                 {
                     msg.Add(Slots[CurrentSlotIndex].Id);
@@ -406,6 +517,81 @@ namespace UniversalPatcher
             Debug.WriteLine("Slot Request msg:" + BitConverter.ToString(msg.ToArray()) );
             return msg.ToArray();
         }
+
+        public static UInt64 ExtractPassivePidData(byte[] data, int startBit, int bitCount, bool MSB)
+        {
+            if (data == null || bitCount <= 0 || bitCount > 64)
+            {
+                Logger("Invalid input parameters.");
+                return UInt64.MaxValue;
+            }
+
+            int byteIndex = startBit / 8;  // Start byte index
+            int bitOffset = startBit % 8;  // Offset within the byte
+            if (MSB)
+            {
+                bitOffset = 7 - bitOffset;
+            }
+            int totalBits = bitOffset + bitCount;  // Total bits including offset
+            int bytesNeeded = (totalBits + 7) / 8; // Number of bytes required
+            if (!MSB)
+            {
+                byteIndex = data.Length -byteIndex - bytesNeeded;
+            }
+            if (byteIndex + bytesNeeded > data.Length)
+            {
+                Logger("Not enough data bytes to extract the requested bits.");
+                return UInt64.MaxValue;
+            }
+            UInt64 extractedValue = 0;
+            for (int i = 0; i < bytesNeeded; i++)
+            {
+                extractedValue |= (UInt64)((UInt64)data[byteIndex + i] << ((bytesNeeded - i - 1) * 8));
+            }
+            if (MSB)
+            {
+                int lastbit = bitOffset + bitCount;
+                int leadingbits = (7 - lastbit + 1) % 8;
+                extractedValue >>= leadingbits;  // Shift right to remove unwanted leading bits
+            }
+            else
+            {
+                extractedValue >>= bitOffset;  // Shift right to remove unwanted leading bits
+            }
+            extractedValue &= (UInt64)((1 << bitCount) - 1);  // Mask only required bits
+
+            return extractedValue;
+        }
+
+        public static string ExtractPassivePidText(byte[] data, int startBit, int bitCount, bool MSB)
+        {
+            if (data == null || bitCount <= 0)
+                throw new ArgumentException("Invalid input parameters.");
+
+            int byteIndex = startBit / 8;  // Start byte index
+            int bitOffset = startBit % 8;  // Offset within the byte
+            if (MSB)
+            {
+                bitOffset = 7 - bitOffset; //Bits: 76543210 76543210 ....
+            }
+            int totalBits = bitOffset + bitCount;  // Total bits including offset
+            int bytesNeeded = (totalBits + 7) / 8; // Number of bytes required
+            if (!MSB)
+            {
+                byteIndex = data.Length - byteIndex - bytesNeeded;
+            }
+
+            if (byteIndex + bytesNeeded > data.Length)
+                throw new ArgumentException("Not enough data bytes to extract the requested bits.");
+
+            byte[] extractedBytes = new byte[bytesNeeded];
+            for (int i = 0; i < bytesNeeded; i++)
+            {
+                extractedBytes[i] = (byte)(data[byteIndex + i]);
+            }
+            return Encoding.ASCII.GetString(extractedBytes).TrimEnd('\0');
+        }
+
         public List<ReadValue> ParseMessage(OBDMessage msg)
         {
             List<ReadValue> retVal = new List<ReadValue>();
@@ -422,8 +608,36 @@ namespace UniversalPatcher
                             return retVal;
                         }
                     }
-                    else
-                    {
+                    else //CAN
+                    { 
+                       
+                        int src = ReadInt32(msg.Data, 0, true);
+                        if (PassiveSources.Contains(src))
+                        {
+                            Debug.WriteLine("CANID match, possible passive pid: CanID: " + src.ToString("X8") + ", MsgLength: " + (msg.Length -4).ToString());
+                            List<LogParam.PidSettings> pids = datalogger.SelectedPids.Where(X => X.Parameter.Type == LogParam.DefineBy.Passive && 
+                                X.Parameter.Address == src && X.Parameter.PassivePid.MsgLength == (msg.Length - 4)).ToList();
+                            if (pids.Count > 0)
+                            {
+                                Debug.WriteLine("Found " + pids.Count.ToString() + " matching passive pids");
+                                foreach (LogParam.PidSettings ps in pids)
+                                {
+                                    Debug.WriteLine("Match with " + ps.Parameter.Name);
+                                    if (ps.Parameter.PassivePid.NumBits > 32)
+                                    {
+                                        ps.LastPassiveTextValue = ExtractPassivePidText(msg.Data, ps.Parameter.PassivePid.BitStartPos + 32,
+                                            ps.Parameter.PassivePid.NumBits, ps.Parameter.PassivePid.MSB);
+                                    }
+                                    else
+                                    {
+                                        UInt64 val = ExtractPassivePidData(msg.Data, ps.Parameter.PassivePid.BitStartPos + 32,
+                                            ps.Parameter.PassivePid.NumBits, ps.Parameter.PassivePid.MSB);
+                                        ps.LastPassiveRawValue = val;
+                                    }
+                                }
+                                return retVal;
+                            }
+                        }                            
                         if (msg[0] != 0x00 || msg[3] != 0xE8)
                         {
                             Debug.WriteLine("This message is not for us?");
@@ -455,29 +669,29 @@ namespace UniversalPatcher
                             double val = 0;
                             switch (slot.DataTypes[p])
                             {
-                                case ProfileDataType.UBYTE:
+                                case LogParam.ProfileDataType.UBYTE:
                                     val = (byte)msg[pos];
                                     pos++;
                                     break;
-                                case ProfileDataType.SBYTE:
+                                case LogParam.ProfileDataType.SBYTE:
                                     val = (sbyte)msg[pos];
                                     pos++;
                                     break;
-                                case ProfileDataType.UWORD:
+                                case LogParam.ProfileDataType.UWORD:
                                     //val = BitConverter.ToUInt16(msg.GetBytes(), pos);
                                     UInt16 tmp = (UInt16)(msg.GetBytes()[pos] << 8);
                                     tmp += (byte)msg.GetBytes()[pos + 1];
                                     val = tmp;
                                     pos += 2;
                                     break;
-                                case ProfileDataType.SWORD:
+                                case LogParam.ProfileDataType.SWORD:
                                     //val = BitConverter.ToInt16(msg.GetBytes(), pos);
                                     Int16 itmp = (Int16)(msg.GetBytes()[pos] << 8);
                                     itmp += (byte)msg.GetBytes()[pos + 1];
                                     val = itmp;
                                     pos += 2;
                                     break;
-                                case ProfileDataType.UINT32:
+                                case LogParam.ProfileDataType.UINT32:
                                     if (dataLen == 4)
                                     {
                                         val = BitConverter.ToUInt32(msg.GetBytes(), pos);
@@ -492,7 +706,7 @@ namespace UniversalPatcher
                                         pos += 3;
                                     }
                                     break;
-                                case ProfileDataType.INT32:
+                                case LogParam.ProfileDataType.INT32:
                                     val = BitConverter.ToInt32  (msg.GetBytes(), pos);
                                     pos += 4;
                                     break;
@@ -538,7 +752,10 @@ namespace UniversalPatcher
                     ReadValue rv = newReadValues[r];
                     int ind = ReceivingPids.IndexOf(rv.PidNr);
                     if (ind > -1)
+                    {
                         newPidValues[ind] = rv.PidValue;
+                        pidHertz[ind].AddTime();
+                    }
                 }
                 if (!newPidValues.Contains(double.MinValue))
                 {

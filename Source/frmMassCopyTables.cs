@@ -222,9 +222,10 @@ namespace UniversalPatcher
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "Select files";
                 frmF.Text = "Select target for tables";
-                frmF.LoadFiles(AppSettings.LastBINfolder);
+                frmF.LoadFiles(GetLastFolder(BinFilter));
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
+                    SetLastFolder(BinFilter, frmF.txtFolder.Text);
                     pcmList = new List<SelectPCM>();
                     for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                     {

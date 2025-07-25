@@ -91,9 +91,21 @@ namespace UniversalPatcher
 
     }
 
+
     public class SerialPortConfiguration : PortConfiguration
     {
+        public SerialPortConfiguration()
+        {
+            RtsEnable = true;
+            DtrEnable = false;
+        }
         public int BaudRate { get; set; }
         public int Timeout { get; set; }
+        public bool RtsEnable { get; set; }
+        public bool DtrEnable { get; set; }
     }
+    public class TcpIpConfiguration : PortConfiguration
+    {
+    }
+
 }

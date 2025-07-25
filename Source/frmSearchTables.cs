@@ -65,7 +65,7 @@ namespace UniversalPatcher
         }
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("Select XML file", XmlFilter);
+            string FileName = SelectFile("Select XML file", TableSearchFilter);
             if (FileName.Length == 0)
                 return;
             LoadFile(FileName);
@@ -73,7 +73,7 @@ namespace UniversalPatcher
 
         private void btnSaveAs_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile(XmlFilter);
+            string FileName = SelectSaveFile(TableSearchFilter);
             if (FileName.Length == 0)
                 return;
             SaveFile(FileName);

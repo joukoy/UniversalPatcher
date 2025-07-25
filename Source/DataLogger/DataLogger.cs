@@ -22,10 +22,7 @@ namespace UniversalPatcher
     {
         public DataLogger(bool UseVPW)
         {
-            Receiver = new MessageReceiver();
-            VPWProtocol = UseVPW;
-            RealTimeControls = LoadRealTimeControls();
-            slothandler = new SlotHandler(UseVPW);
+            SetProtocol(UseVPW);
         }
         private CancellationTokenSource logTokenSource = new CancellationTokenSource();
         private CancellationTokenSource logWriterTokenSource = new CancellationTokenSource();
@@ -49,7 +46,7 @@ namespace UniversalPatcher
         private  bool AllSlotsRequested = false;
         private  bool passive;
         public int maxPassiveSlotsPerRequest = 50;
-        public  bool stopLogLoop;
+        //public  bool stopLogLoop;
         public  byte priority = Priority.Physical0;
         private  DateTime lastPresent = DateTime.Now;
         private  DateTime lastElmStop = DateTime.Now;
@@ -63,35 +60,41 @@ namespace UniversalPatcher
         //Set these values before StartLogging()
         public DateTime LogStartTime;
         public bool writelog;
-        public  bool useRawValues;
         public  bool useVPWFilters;
         public  bool reverseSlotNumbers;
         public  byte Responsetype;
         public  int maxSlotsPerRequest = 4;   //How many Slots before asking more
         public  int maxSlotsPerMessage = 4;   //How many Slots in one Slot request message
-        public bool VPWProtocol = true;
-        public ushort CanPcmAddr;
-        public byte CanPcmAddrByte1;
-        public byte CanPcmAddrByte2;
+        private bool VPWProtocol = true;
+        public CANDevice CanDevice;
+
+        //public ushort CanPcmAddr;
+        //public byte CanPcmAddrByte1;
+        //public byte CanPcmAddrByte2;
 
         public double[] LastCalculatedValues;
         public string[] LastCalculatedStringValues;
 
         public List<LogParam.PidParameter> PidParams = new List<LogParam.PidParameter>();
         public List<LogParam.PidSettings> SelectedPids = new List<LogParam.PidSettings>();
+
+        public List<DBC.DBCMsg> dbcMessages;
+
         public enum QueueCmd
         {
             Getdtc,
             GetVin,
+            QueryPid,
             Custom
         }
         public class QueuedCommand
         {
             public QueueCmd Cmd { get; set; }
-            public byte param1 { get; set; }
-            public byte param2 { get; set; }
+            public ushort module { get; set; }
+            public byte mode { get; set; }
             public OBDMessage CustomMsg { get; set; }
             public string Description { get; set; }
+            public LogParam.PidSettings PidSettings { get; set; }
         }
 
         public enum LoggingDevType
@@ -101,7 +104,8 @@ namespace UniversalPatcher
             Avt,
             Jet,
             OBDX,
-            J2534
+            J2534,
+            UPX_OBD
         }
 
         public class LogData
@@ -174,14 +178,16 @@ namespace UniversalPatcher
 
         }
 
-        public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
+        public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, iPortType portType)
         {
             try
             {
-                if (ftdi)
+                if (portType == iPortType.FTDI)
                     port = new FTDIPort(serialPortName);
-                else
+                else if (portType == iPortType.Serial)
                     port = new Rs232Port(serialPortName);
+                else if (portType == iPortType.TcpIP)
+                    port = new TcpIpPort(serialPortName);
 
                 Device device;
                 switch (serialPortDeviceType)
@@ -197,11 +203,15 @@ namespace UniversalPatcher
                     case JetDevice.DeviceType:
                         device = new JetDevice(port);
                         break;
-
                     case ElmDevice.DeviceType:
                         device = new ElmDevice(port);
                         break;
-
+                    case Elm327Device.DeviceType:
+                        device = new Elm327Device(port);
+                        break;
+                    case UPX_OBD.DeviceType:
+                        device = new UPX_OBD(port);
+                        break;
                     default:
                         device = null;
                         break;
@@ -222,6 +232,19 @@ namespace UniversalPatcher
             }
         }
 
+        public void SetProtocol(bool UseVPW)
+        {
+            VPWProtocol = UseVPW;
+            Receiver = new MessageReceiver();
+            VPWProtocol = UseVPW;
+            RealTimeControls = LoadRealTimeControls();
+            slothandler = new SlotHandler(UseVPW);
+
+        }
+        public bool UseVPW()
+        {
+            return VPWProtocol;
+        }
         public  bool CreateLog(string path)
         {
             try
@@ -240,29 +263,11 @@ namespace UniversalPatcher
                 else
                 {
                     StringBuilder sb = new StringBuilder("Time" + logseparator + "Elapsed time" + logseparator);
-                    if (useRawValues)
+                    for (int c = 0; c < SelectedPids.Count; c++)
                     {
-                        List<string> pids = new List<string>();
-                        for (int c = 0; c < slothandler.ReceivingPids.Count; c++)
-                        {
-                           pids.Add(slothandler.ReceivingPids[c].ToString("X4"));
-                        }
-                        for (int c=0; c < pids.Count; c++)
-                        {
-                            string s = pids[c];
-                            sb.Append(s);
-                            if (c<pids.Count-1)
-                                 sb.Append(logseparator);
-                        }
-                    }
-                    else
-                    {
-                        for (int c = 0; c < SelectedPids.Count; c++)
-                        {
-                            sb.Append(SelectedPids[c].Parameter.Name);
-                            if (c < SelectedPids.Count - 1)
-                                sb.Append(logseparator);
-                        }
+                        sb.Append(SelectedPids[c].Parameter.Name);
+                        if (c < SelectedPids.Count - 1)
+                            sb.Append(logseparator);
                     }
                     string header = sb.ToString();
                     logwriter = new StreamWriter(path);
@@ -302,7 +307,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, WriteLog line " + line + ": " + ex.Message);
+                LoggerBold("Error, DataLogger line " + line + ": " + ex.Message);
             }
         }
 
@@ -313,44 +318,39 @@ namespace UniversalPatcher
             //while (!stopLogLoop)
             while (!logWriterToken.IsCancellationRequested)
             {
-                while (LogFileQueue.Count == 0)
+                try
                 {
-                    Thread.Sleep(100);
-                    if (stopLogLoop)
+                    while (LogFileQueue.Count == 0)
                     {
-                        if (logwriter != null && logwriter.BaseStream != null)
+                        Thread.Sleep(100);
+                        if (logWriterToken.IsCancellationRequested)
                         {
-                            logwriter.Close();
+                            if (logwriter != null && logwriter.BaseStream != null)
+                            {
+                                logwriter.Close();
+                            }
+                            logwriter = null;
+                            return;
                         }
-                        logwriter = null;
-                        return;
                     }
-                }
-                LogData ld;
-                lock (LogFileQueue)
-                {
-                    ld = LogFileQueue.Dequeue();
-                }
-                LastCalculatedStringValues = slothandler.CalculatePidValues(ld.Values);
-                if (useRawValues)
-                {
-                    string[] ldvalues = new string[ld.Values.Length];
-                    for (int l = 0; l < ld.Values.Length; l++)
-                        ldvalues[l] = ld.Values[l].ToString();
-                    WriteLog(ldvalues, ld.TimeStamp.ToString());
-
-                }
-                else
-                {
+                    LogData ld;
+                    lock (LogFileQueue)
+                    {
+                        ld = LogFileQueue.Dequeue();
+                    }
+                    LastCalculatedStringValues = slothandler.CalculatePidValues(ld.Values);
                     string tStamp = new DateTime((long)ld.TimeStamp).ToString(AppSettings.LoggerTimestampFormat);
-                    //tStamp += " [" + ld.TimeStamp.ToString() + "]";
-                    WriteLog(LastCalculatedStringValues, tStamp );
+                    WriteLog(LastCalculatedStringValues, tStamp);
+                    //Data for Histogram & Graphics:
+                    ld.CalculatedValues = slothandler.CalculatePidDoubleValues(ld.Values);
+                    Array.Copy(ld.CalculatedValues, LastCalculatedValues, LastCalculatedValues.Length);
+                    LoggerDataEvents.Add(ld);
+                    LogDataBuffer.Add(ld);
                 }
-                //Data for Histogram & Graphics:
-                ld.CalculatedValues = slothandler.CalculatePidDoubleValues(ld.Values);
-                Array.Copy(ld.CalculatedValues, LastCalculatedValues, LastCalculatedValues.Length);
-                LoggerDataEvents.Add(ld);
-                LogDataBuffer.Add(ld);
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("LogWriterLoop error: " + ex.Message);
+                }
             }
             logwriter.Close();
             logwriter = null;
@@ -377,189 +377,6 @@ namespace UniversalPatcher
             }
         }
 
-        public void ImportOldProfile(string FileName)
-        {
-            try
-            {
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidConfig>));
-                System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-                PidProfile = (List<PidConfig>)reader.Deserialize(file);
-                file.Close();
-                foreach(PidConfig pc in PidProfile)
-                {
-                    LogParam.PidSettings newProfile = new LogParam.PidSettings();
-                    LogParam.PidParameter parm = PidParams.Where(X => X.Name == pc.PidName).FirstOrDefault();
-                    if (parm == null)
-                    {
-                        Logger("Can't import PID: " + pc.PidName);
-                    }
-                    else
-                    {
-                        newProfile.Parameter = parm;
-                        parm.Settings = newProfile;
-                        newProfile.Units = parm.Conversions.Where(X => X.Units == pc.Units).FirstOrDefault();
-                        if (newProfile.Units == null)
-                        {
-                            newProfile.Units = parm.Conversions[0];
-                        }
-                        if (pc.Type == DefineBy.Address)
-                        {
-                            newProfile.Os = parm.Locations.Where(X => X.Address.Contains(pc.Address)).FirstOrDefault();
-                        }
-                        SelectedPids.Add(newProfile);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
-            }
-
-        }
-
-        private void ImportPcmhammerProfile(string fName)
-        {
-            try
-            {
-                Logger("Importing PCM Hammer profile");
-                XDocument xml = XDocument.Load(fName);
-                foreach (XElement parameterElement in xml.Elements("LogProfile").Elements("PidParameters").Elements("PidParameter"))
-                {
-                    string id = parameterElement.Attribute("id").Value;
-                    LogParam.PidParameter parm = PidParams.Where(X => X.Name.Replace(" ","").Replace("/","") == id).FirstOrDefault();
-                    if (parm != null)
-                    {
-                        if (parameterElement.Attribute("units") != null)
-                        {
-                            parm.Settings.Units = parm.Conversions.Where(X => X.Units == parameterElement.Attribute("units").Value).FirstOrDefault();
-                        }
-                        SelectedPids.Add(parm.Settings);
-                    }
-                    else
-                    {
-                        LoggerBold("Skipping unknown PID: " + id);
-                    }
-
-                }
-                foreach (XElement parameterElement in xml.Elements("LogProfile").Elements("RamParameters").Elements("RamParameter"))
-                {
-                    string id = parameterElement.Attribute("id").Value;
-                    LogParam.PidParameter parm = PidParams.Where(X => X.Id.Replace(" ", "").Replace("/", "") == id).FirstOrDefault();
-                    if (parm != null)
-                    {
-                        if (parameterElement.Attribute("units") != null)
-                        {
-                            parm.Settings.Units = parm.Conversions.Where(X => X.Units == parameterElement.Attribute("units").Value).FirstOrDefault();
-                        }
-                        SelectedPids.Add(parm.Settings);
-                    }
-                    else
-                    {
-                        LoggerBold("Skipping unknown PID: " + id);
-                    }
-
-                }
-                foreach (XElement parameterElement in xml.Elements("LogProfile").Elements("MathParameters").Elements("MathParameter"))
-                {
-                    string id = parameterElement.Attribute("id").Value;
-                    LogParam.PidParameter parm = PidParams.Where(X => X.Id.Replace(" ", "").Replace("/", "") == id).FirstOrDefault();
-                    if (parm != null)
-                    {
-                        if (parameterElement.Attribute("units") != null)
-                        {
-                            parm.Settings.Units = parm.Conversions.Where(X => X.Units == parameterElement.Attribute("units").Value).FirstOrDefault();
-                        }
-                        SelectedPids.Add(parm.Settings);
-                    }
-                    else
-                    {
-                        LoggerBold("Skipping unknown PID: " + id);
-                    }
-
-                }
-                Logger("OK");
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
-            }
-        }
-
-        public void LoadProfile(string FileName)
-        {            
-            try
-            {
-                SelectedPids.Clear();
-                if (FileName.ToLower().EndsWith(".logprofile"))
-                {
-                    ImportPcmhammerProfile(FileName);
-                    AppSettings.LoggerLastProfile = "";
-                    AppSettings.Save();
-                    return;
-                }
-                Logger("Loading profile: " + FileName);
-                List<LogParam.PidProfile> xmlprofiles = new List<LogParam.PidProfile>();
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<LogParam.PidProfile>));
-                System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-                try
-                {
-                    xmlprofiles = (List<LogParam.PidProfile>)reader.Deserialize(file);
-                    file.Close();
-
-                    foreach (LogParam.PidProfile xmlp in xmlprofiles)
-                    {
-                        LogParam.PidParameter parm = PidParams.Where(X => X.Name == xmlp.Id).FirstOrDefault();
-                        if (parm != null)
-                        {
-/*                            if (xmlp.Os != null)
-                            {
-                                parm.Settings.Os = parm.Locations.Where(X => X.Os == xmlp.Os).FirstOrDefault();
-                            }
-*/
-                            if (xmlp.Conversion != null)
-                            {
-                                parm.Settings.Units = parm.Conversions.Where(X => X.Units == xmlp.Conversion).FirstOrDefault();
-                            }
-                            SelectedPids.Add(parm.Settings);
-                        }
-                        else
-                        {
-                            LoggerBold("Skipping unknown PID: " + xmlp.Id);
-
-                        }
-                    }
-                }
-                catch
-                {
-                    file.Close();
-                    SelectedPids.Clear();
-                    Logger("Old style profile? Trying to import");
-                    ImportOldProfile(FileName);
-                }
-                AppSettings.LoggerLastProfile = FileName;
-                AppSettings.Save();
-                Logger("OK");
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, Datalogger line " + line + ": " + ex.Message);
-            }            
-        }
 
         public int LoadProfileFromCsv(string FileName)
         {
@@ -583,40 +400,34 @@ namespace UniversalPatcher
                 }
                 Logger("Creating new profile from CSV...");
                 SelectedPids = new List<LogParam.PidSettings>();
-                foreach (LogParam.PidParameter parmX in PidParams)
-                {
-                    parmX.Enabled = false;
-                }
                 for (int p = tStamps; p < hdrArray.Length; p++)
                 {
                     LogParam.PidParameter parm = PidParams.Where(X => X.Name.ToLower() == hdrArray[p].ToLower()).FirstOrDefault();
                     if (parm == null)
                     {
-                        Logger("Unknown PID: " + hdrArray[p] + ", Adding temporary PID configuration");
+                        //Logger("Unknown PID: " + hdrArray[p] + ", Adding temporary PID configuration");
                         parm = new LogParam.PidParameter();
                         parm.Name = hdrArray[p];
                         parm.Type = LogParam.DefineBy.Math;
                         parm.AddPid("0003", "Raw");
                         parm.Id = "Math" + parm.Name;
                         parm.Conversions.Add(new Conversion("Raw", "x", "0.00"));
-                        PidParams.Add(parm);
+                        //PidParams.Add(parm);
                     }
-                    parm.Settings = new LogParam.PidSettings();
+                    LogParam.PidSettings pidSettings = new LogParam.PidSettings(parm);
                     if (parm.Conversions[0].IsBitMapped)
                     {
-                        parm.Settings.Units = parm.Conversions[0];
+                        pidSettings.Units = parm.Conversions[0];
                     }
                     else
                     {
-                        parm.Settings.Units = parm.Conversions.Where(X => X.Units == "Raw").FirstOrDefault();
+                        pidSettings.Units = parm.Conversions.Where(X => X.Units == "Raw").FirstOrDefault();
                     }
-                    if (parm.Settings.Units == null)
+                    if (pidSettings.Units == null)
                     {
-                        parm.Settings.Units = parm.Conversions[0];
+                        pidSettings.Units = parm.Conversions[0];
                     }
-                    parm.Settings.Parameter = parm;
-                    parm.Enabled = true;
-                    SelectedPids.Add(parm.Settings);
+                    SelectedPids.Add(pidSettings);
                 }
                 Logger("OK");
 
@@ -644,45 +455,65 @@ namespace UniversalPatcher
             return tStamps;
         }
 
-        public void SaveProfile(string FileName)
+        public static uint GetPidAddressbySearchstring(LogParam.PidSettings pidProfile)
         {
-            try
+            List<LogParam.Location> locations = new List<LogParam.Location>();
+            LogParam.Location location = pidProfile.Parameter.Locations.Where(X => X.Os.Contains("search")).FirstOrDefault();
+            if (location == null)
             {
-                Logger("Saving profile: " + FileName);
-                List<LogParam.PidProfile> pidprofiles = new List<LogParam.PidProfile>();
-                foreach(LogParam.PidSettings pidSettings in SelectedPids)
-                {
-                    LogParam.PidProfile pidProfile = new LogParam.PidProfile();
-                    pidProfile.Conversion = pidSettings.Units.Units;
-                    pidProfile.Id = pidSettings.Parameter.Name;
-/*                    if (pidSettings.Os != null)
-                    {
-                        pidProfile.Os = pidSettings.Os.Os;
-                    }
-*/
-                    pidprofiles.Add(pidProfile);
-                }
-                using (FileStream stream = new FileStream(FileName, FileMode.Create))
-                {
-                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<LogParam.PidProfile>));
-                    writer.Serialize(stream, pidprofiles);
-                    stream.Close();
-                }
-                AppSettings.LoggerLastProfile = FileName;
-                AppSettings.Save();
-                Logger("OK");
+                return uint.MaxValue; //No search strings defined
             }
-            catch (Exception ex)
+            if (frmlogger.PCM == null || frmlogger.PCM.buf.Length == 0)
             {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, DataLogger line " + line + ": " + ex.Message +", inner exception: " + ex.InnerException);
+                Logger("Select bin file to search PID address for " + pidProfile.Parameter.Name);
+                string fName = SelectFile("Select BIN file");
+                if (fName.Length == 0)
+                    return uint.MaxValue;
+                frmlogger.PCM = new PcmFile(fName, true, "");
             }
+            if (frmlogger.PCM != null && !string.IsNullOrEmpty(frmlogger.PCM.configFile))
+            {
+                string platformStr = "search:" + frmlogger.PCM.configFile.ToLower();
+                locations = pidProfile.Parameter.Locations.Where(X => X.Os == platformStr).ToList();
+            }
+            uint addr = uint.MaxValue;
+            foreach (LogParam.Location loc in locations)
+            {
+                string searchStr = loc.Os;
+                uint startAddr = 0;
+                addr = GetAddrbySearchString(frmlogger.PCM, searchStr.Replace("search:", ""), ref startAddr, frmlogger.PCM.fsize).Addr;
+                if (addr < uint.MaxValue)
+                {
+                    addr = 0xFF0000 + addr;
+                    break;
+                }
+            }
+            return addr;
         }
 
+        public bool SetPidAddressByOS(LogParam.PidSettings pidSettings, bool Verbose)
+        {
+            LogParam.Location location = pidSettings.Parameter.Locations.Where(X => X.Os == OS).FirstOrDefault();
+            if (location == null)
+            {
+                uint addr = GetPidAddressbySearchstring(pidSettings);
+                if (addr == uint.MaxValue)
+                {
+                    if (Verbose)
+                    {
+                        Logger("Address not available");
+                    }
+                    return false;
+                }
+                location = new LogParam.Location();
+                location.addr = (int)addr;
+                location.Os = frmlogger.PCM.OS;
+                pidSettings.Parameter.Locations.Add(location);
+                pidSettings.Os = location;
+            }
+            pidSettings.Os = location;
+            return true;
+        }
         public string QueryPid(LogParam.PidSettings pidProfile, bool Verbose)
         {
             string retVal = null;
@@ -696,16 +527,10 @@ namespace UniversalPatcher
                     {
                         Logger("Setting address by OS " + OS);
                     }
-                    LogParam.Location location = parm.Locations.Where(X => X.Os == OS).FirstOrDefault();
-                    if (location == null)
+                    if (!SetPidAddressByOS(pidProfile, Verbose))
                     {
-                        if (Verbose)
-                        {
-                            Logger("Address not available");
-                        }
-                        return null;
+                        return "";
                     }
-                    parm.Settings.Os = location;
                 }
                 else if (parm.Type == LogParam.DefineBy.Math)
                 {
@@ -722,44 +547,110 @@ namespace UniversalPatcher
                                 }
                                 return null;
                             }
-                            lPid.Parameter.Settings.Os = location;
+                            pidProfile.Os = location;
                         }
                     }
                 }
                 retVal =  parm.GetCalculatedStringValue(pidProfile, true);
                 if (Verbose)
                 {
-                    Logger("PID: " + parm.Name + ", Value: " + retVal);
+                    if (string.IsNullOrEmpty(retVal))
+                    {
+                        Logger("Error, or not supported pid: " + pidProfile.Parameter.Name);
+                    }
+                    else
+                    {
+                        if (pidProfile.Units.Units == "Raw")
+                        {
+                            Logger("PID: " + parm.Name + ", Value: " + retVal + " (" + pidProfile.Units.ToString() + ")");
+
+                        }
+                        else
+                        {
+                            Logger("PID: " + parm.Name + ", Value: " + retVal + " " + pidProfile.Units.ToString());
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, datalogger line " + line + ": " + ex.Message);
             }
             return retVal;
         }
 
+        private bool TestPid(LogParam.PidSettings pidSettings)
+        {
+            ReadValue rv = QuerySinglePidValue(pidSettings.Parameter);
+            if (rv.FailureCode == 0)
+            {
+                Debug.WriteLine("Pid ok: " + pidSettings.Parameter.Name);
+                return true;
+            }
+            else
+            {
+                Debug.WriteLine("Pid failed, error: " + rv.ErrorText + ", run second test with 2C");
+                List<LogParam.PidSettings> tmpdPids = new List<LogParam.PidSettings>();
+                tmpdPids.Add(pidSettings);
+                slothandler = new SlotHandler(VPWProtocol);
+                if (!slothandler.CreatePidSetupMessages(tmpdPids))
+                {
+                    Debug.WriteLine("Incompatible pid: " + pidSettings.Parameter.Name);
+                    return false;
+                }
+                else
+                {
+                    Debug.WriteLine("Secondary pid test succesful, pid: " + pidSettings.Parameter.Name);
+                    return true;
+                }
+            }
+
+        }
         public void RemoveUnsupportedPids()
         {
             try
             {
-                Logger("Checking pid compatibility... ", false);
+                Logger("Checking pid compatibility... ");
                 Receiver.StopReceiveLoop();
+
                 for (int p = SelectedPids.Count - 1; p >= 0; p--)
                 {
-                    LogParam.PidSettings pidProfile = SelectedPids[p];
-                    bool compatible = false;
-                    string pidVal = QueryPid(pidProfile,true);
-                    if (pidVal != null)
+                    LogParam.PidSettings pidSettings = SelectedPids[p];
+                    if (pidSettings.Parameter.Type == LogParam.DefineBy.Math)
                     {
-                        compatible = true;
+                        foreach (LogParam.PidParameter pidParameter in pidSettings.Parameter.GetLinkedPids())
+                        {
+                            LogParam.PidSettings tmpSettings = new LogParam.PidSettings(pidParameter);
+                            if (TestPid(tmpSettings) == false)
+                            {
+                                Logger("Removing incompatible pid: " + pidSettings.Parameter.Name);
+                                SelectedPids.Remove(pidSettings);
+                                break;  //Don't test other pids of this parameter
+                            }
+                        }
                     }
-                    if (!compatible)
+                    else if (pidSettings.Parameter.Type == LogParam.DefineBy.Pid)
                     {
-                        Logger("Removing incompatible pid: " + pidProfile.Parameter.Name);
-                        SelectedPids.Remove(pidProfile);
+                        if (TestPid(pidSettings) == false)
+                        {
+                            Logger("Removing incompatible pid: " + pidSettings.Parameter.Name);
+                            SelectedPids.Remove(pidSettings);
+                        }
                     }
-                }
+                    else if (pidSettings.Parameter.Type == LogParam.DefineBy.Address)
+                    {
+                        if (pidSettings.Os == null || TestPid(pidSettings) == false)
+                        {
+                            Logger("Removing incompatible pid: " + pidSettings.Parameter.Name);
+                            SelectedPids.Remove(pidSettings);
+                        }
+                    }
+                }            
                 Logger("Done");
             }
             catch (Exception ex)
@@ -773,18 +664,19 @@ namespace UniversalPatcher
             }
         }
 
-        public ReadValue QuerySinglePidValue(int addr, PidConfig.ProfileDataType dataType)
+        public ReadValue QuerySinglePidValue(LogParam.PidParameter parm)
         {
             //Receiver.SetReceiverPaused(true);
             ReadValue rv = new ReadValue();
             try
             {
-                OBDMessage request = null;
                 ushort expectedSrc;
+                OBDMessage request = null;
+                int addr = parm.Address;
                 if (VPWProtocol)
                 {
                     expectedSrc = (ushort)(DeviceId.Tool << 8 | DeviceId.Pcm);
-                    if (addr > ushort.MaxValue) //RAM
+                    if (parm.Address > ushort.MaxValue) //RAM
                     {
                         request = new OBDMessage(new byte[] { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, 0x23, (byte)(addr >> 16), (byte)(addr >> 8), (byte)addr, 0x01 });
                     }
@@ -795,14 +687,14 @@ namespace UniversalPatcher
                 }
                 else //CAN
                 {
-                    expectedSrc = CanPcmAddr;
-                    if (addr > ushort.MaxValue) //RAM
+                    expectedSrc = (ushort)CanDevice.ResID;
+                    if (parm.Address > ushort.MaxValue) //RAM
                     {
-                        request = new OBDMessage(new byte[] { 0x00, 0x00, CanPcmAddrByte1, CanPcmAddrByte2, 0x23, (byte)(addr >> 16), (byte)(addr >> 8), (byte)addr, 0x01 });
+                        request = new OBDMessage(new byte[] { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x23, (byte)(addr >> 16), (byte)(addr >> 8), (byte)addr, 0x01 });
                     }
                     else
                     {
-                        request = new OBDMessage(new byte[] { 0x00, 0x00, CanPcmAddrByte1, CanPcmAddrByte2, 0x22, (byte)(addr >> 8), (byte)addr });
+                        request = new OBDMessage(new byte[] { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x22, (byte)(addr >> 8), (byte)addr });
                     }
                 }
                 LogDevice.ReceiveBufferedMessages();
@@ -820,7 +712,7 @@ namespace UniversalPatcher
                         //if (resp != null && resp.Length > 3)
                         if (ValidateQueryResponse(resp,expectedSrc))
                         {
-                            rv = ParseSinglePidMessage(resp, dataType);
+                            rv = ParseSinglePidMessage(resp, parm);
                             if (rv.FailureCode == 0x23)
                             {
                                 LogDevice.SendMessage(request, 1);
@@ -849,9 +741,10 @@ namespace UniversalPatcher
                             }
                         }
                         Application.DoEvents();
-                        if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(1000))
+                        if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(2000))
                         {
                             LoggerBold("Timeout requesting pid: " + addr.ToString("X4"));
+                            rv.FailureCode = 0x21; //Busy
                             //Receiver.SetReceiverPaused(false);
                             return rv;
                         }
@@ -1179,18 +1072,18 @@ namespace UniversalPatcher
         {
             try
             {
-                if (module == CanPcmAddr)
+                if (module == CanDevice.ResID)
                 {
                     return null;    //Filter already set for CPM
                 }
                 CANDevice cd = CANQuery.GetDeviceAddresses(module);
-                string filterTxt = "Type:FLOW_CONTROL_FILTER,Name:CANtmpFlowFilter" + Environment.NewLine;
+                string filterTxt = "Type: FLOW_CONTROL_FILTER,Name: CANtmpFlowFilter" + Environment.NewLine;
                 filterTxt += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                filterTxt += "Pattern: 0000" + cd.ResID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                filterTxt += "FlowControl: 0000" + cd.RequestID.ToString("X4") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
-                filterTxt += "Type:PASS_FILTER,Name:CANtmpPassFilter" + Environment.NewLine;
+                filterTxt += "Pattern: " + cd.ResID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                filterTxt += "FlowControl: " + cd.RequestID.ToString("X8") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
+                filterTxt += "Type: PASS_FILTER,Name: CANtmpPassFilter" + Environment.NewLine;
                 filterTxt += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                filterTxt += "Pattern:0000" + cd.DiagID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                filterTxt += "Pattern: " + cd.DiagID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                 Application.DoEvents();
                 return LogDevice.SetupFilters(filterTxt, false, false);
 
@@ -1493,8 +1386,8 @@ namespace UniversalPatcher
         */
         public void StopLogging()
         {
+            logWriterTokenSource.Cancel();
             logTokenSource.Cancel();
-            stopLogLoop = true;
             Application.DoEvents();
             if (passive)
             {
@@ -1511,15 +1404,18 @@ namespace UniversalPatcher
                     Debug.WriteLine("Logging loop finished");
                 }
             }
+            if (!VPWProtocol)
+            {
+                slothandler.ResetFilters();
+            }
         }
 
-        public bool StartLogging(bool UseVPW, bool ReConnect)
+        public bool StartLogging(bool UseVPW)
         {
             try
             {
                 VPWProtocol = UseVPW;
                 ReceivedBytes = 0;
-
                 if (LogDevice == null)
                 {
                     LoggerBold("Connection failed");
@@ -1537,31 +1433,38 @@ namespace UniversalPatcher
                     if (!LogDevice.SetLoggingFilter())
                         return false;
                 }
+/*                if (!UseVPW)
+                {
+                   slothandler.ResetFilters();
+                }
+*/
                 Logger("Pid setup...");
                 Application.DoEvents();
-                if (!ReConnect)
+                if (!slothandler.CreatePidSetupMessages(SelectedPids))
                 {
-                    bool resp = slothandler.CreatePidSetupMessages();
-
-                    if (!resp)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
+                Logger("Requesting pids...");
                 if (!RequestFirstSlots())
                 {
                     return false;
                 }
+                if (!UseVPW)
+                {
+                    slothandler.SetupPassivePidFilters();
+                }
                 LastCalculatedValues = new double[SelectedPids.Count];
                 LastCalculatedStringValues = new string[SelectedPids.Count];
-                stopLogLoop = false;
                 logTokenSource = new CancellationTokenSource();
                 logToken = logTokenSource.Token;
                 LogDataBuffer = new List<LogData>();
                 logTask = Task.Factory.StartNew(() => DataLoggingLoop(), logToken);
-                logWriterTokenSource = new CancellationTokenSource();
-                logWriterToken = logWriterTokenSource.Token;
-                logWriterTask = Task.Factory.StartNew(() => LogWriterLoop(), logWriterToken);
+                if (writelog)
+                {
+                    logWriterTokenSource = new CancellationTokenSource();
+                    logWriterToken = logWriterTokenSource.Token;
+                    logWriterTask = Task.Factory.StartNew(() => LogWriterLoop(), logWriterToken);
+                }
                 return true;
             }
             catch (Exception ex)
@@ -1622,7 +1525,6 @@ namespace UniversalPatcher
                 }
             }
 
-            Logger("Requesting pids...");
             Application.DoEvents();
 
             if (passive)
@@ -1631,7 +1533,7 @@ namespace UniversalPatcher
                 //elmStopTreshold = 1000;
                 LogDevice.SetTimeout(AppSettings.TimeoutLoggingPassive);
                 LogDevice.ClearLogQueue();
-                if (!RequestPassiveModeSlots())
+                if (!RequestPassiveModeSlots(true))
                 {
                     LoggerBold("Error requesting Slots");
                     return false;
@@ -1649,21 +1551,28 @@ namespace UniversalPatcher
                     LogDevice.SetTimeout(AppSettings.TimeoutLoggingActive);
                 }
                 LogDevice.ClearLogQueue();
-                RequestNextSlots();
+                RequestNextSlots(true);
             }
             return true;
         }
 
-        public bool RequestNextSlots()
+        public bool RequestNextSlots(bool FirstRequest)
         {
-            OBDMessage msg;
-            byte[] rq = slothandler.CreateNextSlotRequestMessage();
-            msg = new OBDMessage(rq);
-            Debug.WriteLine("Requesting Slots: " + msg.ToString());
-            bool resp =  LogDevice.SendMessage(msg, -maxSlotsPerRequest);
-            Thread.Sleep(100);
-            Application.DoEvents();
-            return resp;
+            if (slothandler.Slots.Count > 0)
+            {
+                OBDMessage msg;
+                byte[] rq = slothandler.CreateNextSlotRequestMessage(FirstRequest);
+                msg = new OBDMessage(rq);
+                Debug.WriteLine("Requesting Slots: " + msg.ToString());
+                bool resp = LogDevice.SendMessage(msg, -maxSlotsPerRequest);
+                Thread.Sleep(100);
+                Application.DoEvents();
+                return resp;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 
@@ -1684,7 +1593,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    queryMsg = new byte[] { 0x00, 0x00, CanPcmAddrByte1, CanPcmAddrByte2, 0x1A, 0xC1 };
+                    queryMsg = new byte[] { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x1A, 0xC1 };
                     pos = 6;
                 }
                 bool m = LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
@@ -1710,7 +1619,11 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            if (resp[2] == CanPcmAddrByte1 && resp[3] == CanPcmAddrByte2)
+                            if (resp[2] == datalogger.CanDevice.RequestByte1 && resp[3] == datalogger.CanDevice.RequestByte2 && resp[4] == 0x5A)
+                            {
+                                break;
+                            }
+                            if (resp[2] == datalogger.CanDevice.ResByte1 && resp[3] == datalogger.CanDevice.ResByte2 && resp[4] == 0x5A)
                             {
                                 break;
                             }
@@ -1789,7 +1702,7 @@ namespace UniversalPatcher
                 }
                 else //CAN
                 {
-                    byte[] queryMsg = { 0x00, 0x00, CanPcmAddrByte1, CanPcmAddrByte2, 0x1A, 0x90 };
+                    byte[] queryMsg = { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x1A, 0x90 };
                     bool m = LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
                     if (!m)
                     {
@@ -1801,17 +1714,16 @@ namespace UniversalPatcher
                     Thread.Sleep(100);
                     OBDMessage resp = LogDevice.ReceiveMessage(true);
                     DateTime startTime = DateTime.Now;
-                    CANDevice cd = CANQuery.GetDeviceAddresses(CanPcmAddr);
                     while (true)
                     {
-                        if (resp != null && resp.Length >= 23 && ValidateQueryResponse(resp, CanPcmAddr)) // resp[2] == CanPcmAddrByte1 && resp[3] == 0xE8)
+                        if (resp != null && resp.Length >= 23 && ValidateQueryResponse(resp, (ushort)CanDevice.ResID)) // resp[2] == CanPcmAddrByte1 && resp[3] == 0xE8)
                         {                            
-                            Array.Copy(resp.GetBytes(), 6, vinbytes, 0, 17);
+                            Array.Copy(resp.GetBytes(), 6, vinbytes, 1, 17);
                             break;
                         }
                         if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(1000))
                         {
-                            LoggerBold("Timeout requesting OS");
+                            LoggerBold("Timeout requesting VIN");
                             return;
                         }
                         resp = LogDevice.ReceiveMessage(true);
@@ -1830,27 +1742,36 @@ namespace UniversalPatcher
             Receiver.SetReceiverPaused(false);
         }
 
-        public DTCCodeStatus DecodeDTCstatus(byte[] msg)
+        public DTCCodeStatus DecodeDTCstatus(byte[] msg, ushort module)
         {
             DTCCodeStatus dcs = new DTCCodeStatus();
             try
             {
-                ushort dtc = ReadUint16(msg, 4, true);
-                byte stat = msg[6];
-                if (stat > 0)
+                ushort dtc;
+                ushort stat;
+                if (VPWProtocol)
+                {
+                    dtc = ReadUint16(msg, 4, true);
+                    stat = msg[6];
+                }
+                else
+                {
+                    dtc = ReadUint16(msg, 5, true);
+                    stat = ReadUint16(msg,7,true);
+                }
+                //if (stat > 0)
                 {
                     string code = DtcSearch.DecodeDTC(dtc.ToString("X4"));
                     dcs.Code = code;
                     if (VPWProtocol)
                     {
-                        byte module = msg[2];
+                        module = msg[2];
                         dcs.Module = module.ToString("X2");
-                        if (analyzer.PhysAddresses.ContainsKey(module))
-                            dcs.Module = analyzer.PhysAddresses[module];
+                        if (analyzer.PhysAddresses.ContainsKey((byte)module))
+                            dcs.Module = analyzer.PhysAddresses[(byte)module];
                     }
                     else
                     {
-                        ushort module = (ushort)(msg[3] << 8 | msg[4]);
                         for(int m=0;m< CanModules.Count; m++)
                         {
                             if (CanModules[m].RequestID == module || CanModules[m].DiagID == module || CanModules[m].ResID == module)
@@ -1933,8 +1854,8 @@ namespace UniversalPatcher
             Logger("Adding DTC request to queue");
             QueuedCommand command = new QueuedCommand();
             command.Cmd = QueueCmd.Getdtc;
-            command.param1 = (byte)module;
-            command.param2 = mode;
+            command.module = module;
+            command.mode = mode;
             lock(queuedCommands)
             {
                 queuedCommands.Enqueue(command);
@@ -1950,8 +1871,18 @@ namespace UniversalPatcher
                 queuedCommands.Enqueue(command);
             }
         }
+        public void QueuePidQuery(LogParam.PidSettings pidSettings )
+        {
+            QueuedCommand command = new QueuedCommand();
+            command.Cmd = QueueCmd.QueryPid;
+            command.PidSettings = pidSettings;
+            lock (queuedCommands)
+            {
+                queuedCommands.Enqueue(command);
+            }
+        }
 
-        public bool RequestDTCCodes(ushort module, byte mode)
+        public bool RequestDTCCodes(ushort module, byte mode, bool WaitAnswer)
         {
             try
             {
@@ -1969,7 +1900,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    msg = new OBDMessage(new byte[] { 0x00,0x00,(byte)(module >>8), (byte)(module), mode, 0x81, mode });
+                    msg = new OBDMessage(new byte[] { 0x00,0x00,(byte)(module >>8), (byte)(module), 0xA9, 0x81, mode });
                 }
                 Logger("Requesting DTC codes for " + moduleStr);
                 Receiver.SetReceiverPaused(true);
@@ -1979,25 +1910,28 @@ namespace UniversalPatcher
                     Debug.WriteLine("Error sending request, continue anyway");
                     //return false;
                 }
-                Thread.Sleep(100);
-                Debug.WriteLine("Receiving DTC codes...");
-                //byte[] endframe = new byte[] { Priority.Physical0, DeviceId.Tool, module, 0x59, 0x00, 0x00, 0xFF };
-                DateTime startTime = DateTime.Now;
-                OBDMessage resp;
-                do
+                if (WaitAnswer)
                 {
+                    Thread.Sleep(100);
+                    Debug.WriteLine("Receiving DTC codes...");
+                    //byte[] endframe = new byte[] { Priority.Physical0, DeviceId.Tool, module, 0x59, 0x00, 0x00, 0xFF };
+                    DateTime startTime = DateTime.Now;
+                    OBDMessage resp;
+                    do
+                    {
 
-                    resp = LogDevice.ReceiveMessage(true);
-                    if (resp != null)
-                    {
-                        Debug.WriteLine("DTC received message: " + resp.ToString());
-                    }
-                    if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(1000))
-                    {
-                        Debug.WriteLine("Timeout waiting for null message");
-                        break;
-                    }
-                } while (resp != null);
+                        resp = LogDevice.ReceiveMessage(true);
+                        if (resp != null)
+                        {
+                            Debug.WriteLine("DTC received message: " + resp.ToString());
+                        }
+                        if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(1000))
+                        {
+                            Debug.WriteLine("Timeout waiting for null message");
+                            break;
+                        }
+                    } while (resp != null);
+                }
                 Logger("Done");
             }
             catch (Exception ex)
@@ -2027,7 +1961,7 @@ namespace UniversalPatcher
                         if (VPWProtocol)
                             presentMsg = new byte[]{ priority, DeviceId.Broadcast, DeviceId.Tool, 0x3F };
                         else
-                            presentMsg = new byte[] { 0x00, 0x00, CanPcmAddrByte1, CanPcmAddrByte2, 0x3e };
+                            presentMsg = new byte[] { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x3e };
                         LogDevice.SendMessage(new OBDMessage(presentMsg), -maxSlotsPerRequest);
                         lastPresent = DateTime.Now;
                         Debug.WriteLine("Sent Tester present, force: " + force);
@@ -2042,7 +1976,7 @@ namespace UniversalPatcher
             return true;
         }
 
-        public ReadValue ParseSinglePidMessage(OBDMessage msg, PidConfig.ProfileDataType datatype)
+        public ReadValue ParseSinglePidMessage(OBDMessage msg, LogParam.PidParameter parm)
         {
             ReadValue retVal = new ReadValue();
             try
@@ -2081,17 +2015,81 @@ namespace UniversalPatcher
                         tmp[1] = 0xFF;
                         rv.PidNr = (int)ReadUint32(tmp, 0, true);
                     }
+                    if (rv.PidNr != parm.Address)
+                    {
+                        Debug.WriteLine("Wrong pid, or other message");
+                        return rv;
+                    }
                     pos = offset + 6;
                     double val = 0;
-                    switch (datatype)
+                    int elementSize = parm.GetElementSize();
+                    //Fix datatype:
+                    if (msg.Length != pos + elementSize)
                     {
-                        case ProfileDataType.UBYTE:
+                        LogParam.ProfileDataType origType = parm.DataType;
+                        string logStr = "Fixing pid "+ parm.Id + " datatype, original: " + parm.DataType.ToString();
+                        int realSize = msg.Length - pos - elementSize + 1;
+                        Debug.WriteLine("Pid real size: " + realSize.ToString());
+                        if (parm.DataType == LogParam.ProfileDataType.UBYTE || 
+                            parm.DataType == LogParam.ProfileDataType.UWORD || 
+                            parm.DataType == LogParam.ProfileDataType.UINT32)
+                        {
+                            switch(realSize)
+                            {
+                                case 1:
+                                    parm.DataType = LogParam.ProfileDataType.UBYTE;
+                                    break;
+                                case 2:
+                                    parm.DataType = LogParam.ProfileDataType.UWORD;
+                                    break;
+                                case 3:
+                                    parm.DataType = LogParam.ProfileDataType.UWORD;
+                                    break;
+                                case 4:
+                                    parm.DataType = LogParam.ProfileDataType.UINT32;
+                                    break;
+                                default:
+                                    Debug.WriteLine("Something wrong, pid size can't be " + realSize.ToString());
+                                    return rv;
+                            }
+                        }
+                        else
+                        {
+                            switch (realSize)
+                            {
+                                case 1:
+                                    parm.DataType = LogParam.ProfileDataType.SBYTE;
+                                    break;
+                                case 2:
+                                    parm.DataType = LogParam.ProfileDataType.SWORD;
+                                    break;
+                                case 3:
+                                    parm.DataType = LogParam.ProfileDataType.SWORD;
+                                    break;
+                                case 4:
+                                    parm.DataType = LogParam.ProfileDataType.INT32;
+                                    break;
+                                default:
+                                    Debug.WriteLine("Something wrong, pid size can't be " + realSize.ToString());
+                                    return rv;
+                            }
+
+                        }
+                        if (origType != parm.DataType)
+                        {
+                            logStr += ", new: " + parm.DataType.ToString();
+                            Logger(logStr);
+                        }
+                    }
+                    switch (parm.DataType)
+                    {
+                        case LogParam.ProfileDataType.UBYTE:
                             val = (byte)msg[pos];
                             break;
-                        case ProfileDataType.SBYTE:
+                        case LogParam.ProfileDataType.SBYTE:
                             val = (sbyte)msg[pos];
                             break;
-                        case ProfileDataType.UWORD:
+                        case LogParam.ProfileDataType.UWORD :
                             if (msg.Length <= pos + 1)
                             {
                                 rv.FailureCode = 0x22;
@@ -2101,7 +2099,7 @@ namespace UniversalPatcher
                                 val = ReadUint16(msg.GetBytes(), (uint)pos, true);
                             }
                             break;
-                        case ProfileDataType.SWORD:
+                        case LogParam.ProfileDataType.SWORD:
                             if (msg.Length <= pos + 1)
                             {
                                 rv.FailureCode = 0x22;
@@ -2109,6 +2107,26 @@ namespace UniversalPatcher
                             else
                             {
                                 val = ReadInt16(msg.GetBytes(), (uint)pos, true);
+                            }
+                            break;
+                        case LogParam.ProfileDataType.UINT32:
+                            if (msg.Length <= pos + 3)
+                            {
+                                rv.FailureCode = 0x22;
+                            }
+                            else
+                            {
+                                val = ReadUint32(msg.GetBytes(), (uint)pos, true);
+                            }
+                            break;
+                        case LogParam.ProfileDataType.INT32:
+                            if (msg.Length <= pos + 3)
+                            {
+                                rv.FailureCode = 0x22;
+                            }
+                            else
+                            {
+                                val = ReadInt32(msg.GetBytes(), (uint)pos, true);
                             }
                             break;
                     }
@@ -2130,10 +2148,10 @@ namespace UniversalPatcher
         }
 
         
-        private bool RequestPassiveModeSlots()
+        private bool RequestPassiveModeSlots(bool FirstRequest)
         {
             lastPresent = DateTime.Now;
-            if (!RequestNextSlots())
+            if (!RequestNextSlots(FirstRequest))
                 return false;
             if (VPWProtocol)
             {
@@ -2148,7 +2166,7 @@ namespace UniversalPatcher
                 if (LogDevice.LogDeviceType != LoggingDevType.Elm && LogDevice.LogDeviceType != LoggingDevType.Obdlink) //If Elm device, need to wait for prompt
                 {
                     Thread.Sleep(100);
-                    if (!RequestNextSlots())
+                    if (!RequestNextSlots(FirstRequest))
                         return false;
                 }
             }
@@ -2159,7 +2177,7 @@ namespace UniversalPatcher
         {
             Debug.WriteLine("Elm prompt received");
 
-            if (stopLogLoop)
+            if (logToken.IsCancellationRequested)
             {
                 SetBusQuiet();
                 return;
@@ -2175,7 +2193,7 @@ namespace UniversalPatcher
                 if (!AllSlotsRequested)
                 {
                     //LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
-                    if (!RequestPassiveModeSlots())
+                    if (!RequestPassiveModeSlots(false))
                     {
                         LoggerBold("Error requesting Slots");
                         StopLogging();
@@ -2190,7 +2208,7 @@ namespace UniversalPatcher
             }
             else
             {
-                RequestNextSlots();
+                RequestNextSlots(false);
             }
 
         }
@@ -2233,54 +2251,75 @@ namespace UniversalPatcher
 
         private  bool ValidateLogMessage(OBDMessage oMsg, ref int SlotCount)
         {
-            byte lastSlot = slothandler.Slots.Last().Id;
-            int bytePos;
-            if (VPWProtocol)
+            try
             {
-                if (!Utility.CompareArraysPart(oMsg.GetBytes(), new byte[] { priority, DeviceId.Tool, DeviceId.Pcm }))
+                byte lastSlot = 0;
+                if (slothandler.Slots.Count > 0)
                 {
-                    Debug.WriteLine("Unknown msg");
-                    return false;
+                    lastSlot = slothandler.Slots.Last().Id;
                 }
-                if (oMsg.Length < 11)
+                int bytePos;
+                if (VPWProtocol)
                 {
-                    Debug.WriteLine("Short msg");
-                    return false;
+                    if (!Utility.CompareArraysPart(oMsg.GetBytes(), new byte[] { priority, DeviceId.Tool, DeviceId.Pcm }))
+                    {
+                        Debug.WriteLine("Unknown msg");
+                        return false;
+                    }
+                    if (oMsg.Length < 11)
+                    {
+                        Debug.WriteLine("Short msg");
+                        return false;
+                    }
+                    byte slot = oMsg[4];
+                    if ((reverseSlotNumbers && slot < lastSlot) || (!reverseSlotNumbers && slot > lastSlot))    //It's not slot. Maybe 2A ?
+                    {
+                        return false;
+                    }
+                    bytePos = 3;
                 }
-                byte slot = oMsg[4];
-                if ((reverseSlotNumbers && slot < lastSlot) || (!reverseSlotNumbers && slot > lastSlot))    //It's not slot. Maybe 2A ?
+                else
                 {
-                    return false;
+                    if (oMsg.Length < 8)
+                    {
+                        Debug.WriteLine("Short msg");
+                        return false;
+                    }
+                    int src = ReadInt32(oMsg.Data, 0, true);
+                    if (slothandler.PassiveSources.Contains(src))
+                    {
+                        return true;
+                    }
+                    ushort msgSrc = (ushort)(oMsg[2] << 8 | oMsg[3]);
+                    if (oMsg[0] != 0x00 || oMsg[1] != 0x00 || msgSrc != CanDevice.DiagID) // || oMsg[3] != 0xE8)
+                    {
+                        Debug.WriteLine("Unknown msg");
+                        return false;
+                    }
+                    bytePos = 4;
                 }
-                bytePos = 3;
-            }
-            else
-            {
-                if (oMsg.Length < 8)
-                {
-                    Debug.WriteLine("Short msg");
-                    return false;
-                }
-                CANDevice cd = CANQuery.GetDeviceAddresses(CanPcmAddr);
-                ushort msgSrc = (ushort)(oMsg[2] << 8 | oMsg[3]);
-                if (oMsg[0] != 0x00 || oMsg[1] != 0x00 || msgSrc != cd.DiagID) // || oMsg[3] != 0xE8)
-                {
-                    Debug.WriteLine("Unknown msg");
-                    return false;
-                }
-                bytePos = 4;
-            }
 
 
-            byte PcmResponse = oMsg[bytePos];
-            if (PcmResponse == 0x7F)
+                byte PcmResponse = oMsg[bytePos];
+                if (PcmResponse == 0x7F)
+                {
+                    Debug.WriteLine(oMsg.ToString() + ": " + PcmResponses[oMsg.GetBytes().Last()]);
+                    SlotCount++;
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
             {
-                Debug.WriteLine(oMsg.ToString() + ": " + PcmResponses[oMsg.GetBytes().Last()]);
-                SlotCount++;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, DataLogger line " + line + ": " + ex.Message + ", inner exception: " + ex.InnerException);
                 return false;
-            }
-
-            return true;
+            }                
         }
 
         public bool ValidateQueryResponse(OBDMessage oMsg, ushort ExpectedSrc)
@@ -2289,12 +2328,12 @@ namespace UniversalPatcher
             {
                 return false;
             }
-            Debug.WriteLine("Validating message: " + oMsg.ToString());
+            //Debug.WriteLine("Validating message: " + oMsg.ToString());
             if (VPWProtocol)
             {
                 if (oMsg.Length < 3)
                 {
-                    Debug.WriteLine("Short message");
+                    //Debug.WriteLine("Short message");
                     return false;
                 }
                 //priority, DeviceId.Tool, DeviceId.Pcm
@@ -2315,19 +2354,19 @@ namespace UniversalPatcher
             {
                 if (oMsg.Length < 5)
                 {
-                    Debug.WriteLine("Short msg");
+                    //Debug.WriteLine("Short msg");
                     return false;
                 }
                 if (oMsg[0] != 0 || oMsg[1] != 0)
                 {
-                    Debug.WriteLine("Unknown msg");
+                    //Debug.WriteLine("Unknown msg");
                     return false;
                 }
                 CANDevice cd = CANQuery.GetDeviceAddresses(ExpectedSrc);
                 ushort msgSrc = (ushort)(oMsg[2] << 8 | oMsg[3]);
                 if (msgSrc != cd.DiagID && msgSrc != cd.RequestID && msgSrc != cd.ResID) 
                 {
-                    Debug.WriteLine("Unknown msg");
+                    //Debug.WriteLine("Unknown msg");
                     return false;
                 }
             }
@@ -2454,7 +2493,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, LoadLogFile line " + line + ": " + ex.Message + ", inner exception: " + ex.InnerException);
+                LoggerBold("Error, DataLogger line " + line + ": " + ex.Message + ", inner exception: " + ex.InnerException);
             }
         }
 
@@ -2464,45 +2503,38 @@ namespace UniversalPatcher
             {
                 return true;
             }
-            QueuedCommand command;
-            lock (queuedCommands)
+            while (queuedCommands.Count > 0)
             {
-                command = queuedCommands.Dequeue();
-            }
+                QueuedCommand command;
+                lock (queuedCommands)
+                {
+                    command = queuedCommands.Dequeue();
+                }
 
-            Application.DoEvents();
-            //SetBusQuiet();
-            //Thread.Sleep(10);
-            datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
-            //Thread.Sleep(10);
-            //SetBusQuiet();
-/*            OBDMessage resp = LogDevice.ReceiveMessage();
-            while (resp != null)
-            {
-                resp = LogDevice.ReceiveMessage();
-            }
-*/
-            switch (command.Cmd)
-            {
-                case QueueCmd.Getdtc:
-                    RequestDTCCodes(command.param1, command.param2);
-                    break;
-                case QueueCmd.GetVin:
-                    QueryVIN();
-                    break;
-                case QueueCmd.Custom:
-                    Logger("Sending queued command: " + command.Description);
-                    LogDevice.SendMessage(command.CustomMsg, 1);
-                    //LogDevice.ReceiveMessage(true);
-                    break;
+                Application.DoEvents();
+                datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                switch (command.Cmd)
+                {
+                    case QueueCmd.Getdtc:
+                        RequestDTCCodes(command.module, command.mode, true);
+                        break;
+                    case QueueCmd.GetVin:
+                        QueryVIN();
+                        break;
+                    case QueueCmd.QueryPid:
+                        QueryPid(command.PidSettings, true);
+                        break;
+                    case QueueCmd.Custom:
+                        Logger("Sending queued command: " + command.Description);
+                        LogDevice.SendMessage(command.CustomMsg, 1);
+                        //LogDevice.ReceiveMessage(true);
+                        break;
+                }
             }
             if (passive)
             {
-                //maxSlotsPerMessage = 4;
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
-                //AllSlotsRequested = false;
-                //RequestPassiveModeSlots();
-                SendTesterPresent(false);
+                //SendTesterPresent(false);
             }
             else
             {
@@ -2524,7 +2556,7 @@ namespace UniversalPatcher
                     if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
                     {
                         //Started with 4 Slots, now asking 50 more
-                        RequestNextSlots();
+                        RequestNextSlots(false);
                     }
                     Debug.WriteLine("Set Slots per request to: " + maxPassiveSlotsPerRequest);
                     maxSlotsPerRequest = maxPassiveSlotsPerRequest;
@@ -2533,7 +2565,7 @@ namespace UniversalPatcher
             }
             else //SendOnce
             {
-                if (!RequestNextSlots())    // (??)Works with Obdlink, because we know how many Slots are coming
+                if (!RequestNextSlots(false))    // (??)Works with Obdlink, because we know how many Slots are coming
                     throw new Exception("Error in Slot request");
             }
         }
@@ -2541,25 +2573,26 @@ namespace UniversalPatcher
         public void DataLoggingLoop()
         {
             Thread.CurrentThread.IsBackground = true;
-            int totalSlots = 0;
-            long prevSlotTime = 0;
             DateTime LastRecvTime = DateTime.Now;
             AllSlotsRequested = false;
+            slothandler.ReceivedRows = 0;
+            int NumMessages = 1;
             Logger("Logging started");
-
             while (!logToken.IsCancellationRequested)
             {
                 try
                 {
+                    List<OBDMessage> oMsgs = new List<OBDMessage>();
                     int SlotCount = 0;
                     int retryCount = 0; //Receiving ok?
+
                     while ( SlotCount < maxSlotsPerRequest) //Loop there until requested Slots are handled
                     {
                         if (LogDevice == null || !Connected)
                         {
                             break;
                         }
-                        if (stopLogLoop) 
+                        if (logToken.IsCancellationRequested) 
                         {
                             if (LogDevice.LogDeviceType == LoggingDevType.Obdlink || LogDevice.LogDeviceType == LoggingDevType.Elm)
                             {
@@ -2572,21 +2605,41 @@ namespace UniversalPatcher
                                 break;
                             }
                         }
-                        if (passive)
+                        if (queuedCommands.Count > 0 && !passive)
+                        {
+                            SendQueuedCommand();
+                        }
+                        if (queuedCommands.Count > 0 && !VPWProtocol)
+                        {
+                            Logger("Waiting " + AppSettings.LoggerCANWaitSecondsStopMessages.ToString() + " seconds for PCM to stop sending data");
+                            Thread.Sleep(AppSettings.LoggerCANWaitSecondsStopMessages * 1000); //Wait until PCM stop sending data
+                            SendQueuedCommand();
+                            RequestFirstSlots();
+                            LastRecvTime = DateTime.Now;
+                        }
+                        if (queuedCommands.Count == 0 && passive)
                         {
                             SendTesterPresent(false);
                         }
-
-                        OBDMessage oMsg;
-                        oMsg= LogDevice.ReceiveLogMessage();
-                        if (oMsg == null)
+                        
+                        //Receive DATA:
+                        oMsgs = LogDevice.ReceiveLogMessages(NumMessages);
+                        if (oMsgs.Count == 0)
                         {
-                            Debug.WriteLine("Received null message");
-                            if (DateTime.Now.Subtract(LastRecvTime) > TimeSpan.FromSeconds(AppSettings.LoggerRetryAfterSeconds))
+                            //Debug.WriteLine("Received null message");
+                            if (queuedCommands.Count > 0 && DateTime.Now.Subtract(LastRecvTime) > TimeSpan.FromMilliseconds(300))
+                            {
+                                SendQueuedCommand();
+                                RequestFirstSlots();
+                                LastRecvTime = DateTime.Now;
+                            }
+                            else if (DateTime.Now.Subtract(LastRecvTime) > TimeSpan.FromSeconds(AppSettings.LoggerRetryAfterSeconds))
                             {
                                 if (retryCount < AppSettings.LoggerRetryCount)
                                 {
                                     Logger("Data not received in "+AppSettings.LoggerRetryAfterSeconds.ToString()+" seconds, sending new request");
+                                    //slothandler.CreatePidSetupMessages(datalogger.SelectedPids);
+                                    NumMessages = 1;
                                     RequestFirstSlots();
                                     LastRecvTime = DateTime.Now;
                                     retryCount++;
@@ -2594,54 +2647,46 @@ namespace UniversalPatcher
                                 else
                                 {
                                     LoggerBold("No data after retries, giving up");
-                                    stopLogLoop = true;
+                                    logTokenSource.Cancel();
                                     break;
                                 }
                             }
                             continue;
                         }
-                        Debug.WriteLine("Received: " + oMsg.ToString() +", Elmprompt: " + oMsg.ElmPrompt + " Slot count: " +SlotCount.ToString());
-                        if (oMsg.ElmPrompt)
+                        foreach (OBDMessage oMsg in oMsgs)
                         {
-                            if (stopLogLoop)
+                            Debug.WriteLine("Received: " + oMsg.ToString() + ", Elmprompt: " + oMsg.ElmPrompt + " Slot count: " + SlotCount.ToString());
+                            if (oMsg.ElmPrompt)
                             {
-                                break;
+                                if (logToken.IsCancellationRequested)
+                                {
+                                    break;
+                                }
+                                ELMPromptReceived();
+                                //continue;
                             }
-                            ELMPromptReceived();
-                            continue;
+                            if (!ValidateLogMessage(oMsg, ref SlotCount))
+                            {
+                                continue;
+                            }
+                            //We really have received a Slot!
+                            SlotCount++;
+                            LastRecvTime = DateTime.Now;
+                            Debug.WriteLine("Decoding message");
+                            slothandler.HandleSlotMessage(oMsg);
+                            Application.DoEvents();
                         }
-                        if (!ValidateLogMessage(oMsg,ref SlotCount))
-                        {
-                            continue;
-                        }
-                        //We really have received a Slot!
-                        SlotCount++;
-                        totalSlots++;
-                        LastRecvTime = DateTime.Now;
-                        if (totalSlots == 10)
-                        {
-                            prevSlotTime = oMsg.TimeStamp;
-                        }
-                        if (totalSlots == 110)
-                        {
-                            long tLast = oMsg.TimeStamp;
-                            long SlotDelay = tLast - prevSlotTime;
-                            Debug.WriteLine("Time for 100 Slots: " + (SlotDelay / 10000).ToString() + " ms");
-                        }
-                        Debug.WriteLine("Decoding message");
-                        slothandler.HandleSlotMessage(oMsg);
-                        Application.DoEvents();
                     } //Inner logloop
-                    if (stopLogLoop)
+                    if (logToken.IsCancellationRequested)
                     {
                         break;
                     }
 
-                    if (!SendQueuedCommand())
+                    if (queuedCommands.Count == 0)
                     {
-                        return;     //If receieved Stop-command, return
+                        RequestMoreData();
+                        NumMessages = AppSettings.LoggerLoggingMessagesPerRequest;
                     }
-                    RequestMoreData();
                 }
                 catch (Exception ex)
                 {

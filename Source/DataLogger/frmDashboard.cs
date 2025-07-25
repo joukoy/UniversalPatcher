@@ -195,7 +195,7 @@ namespace UniversalPatcher
                 if (string.IsNullOrEmpty(FileName))
                 {
                     AppSettings.DashboardLastFile = Path.Combine(Application.StartupPath, "Logger", "Dashboard", "Dashboard.xml");
-                    FileName = SelectSaveFile(XmlFilter, AppSettings.DashboardLastFile);
+                    FileName = SelectSaveFile(DashboardFilter, AppSettings.DashboardLastFile);
                     if (string.IsNullOrEmpty(FileName))
                     {
                         return;
@@ -292,7 +292,7 @@ namespace UniversalPatcher
             {
                 if (gauge.Type == UpGauge.GaugeType.Analog)
                 {
-                    double val = parm.GetCalculatedValue(pidProfile);
+                    double val = parm.GetCalculatedValue(pidProfile, !datalogger.LogRunning);
                     if (val > int.MinValue)
                     {
                         gauge.Gauge.Speed = val;
@@ -312,7 +312,7 @@ namespace UniversalPatcher
             {
                 AppSettings.DashboardLastFile = Path.Combine(Application.StartupPath, "Logger", "Dashboard", "Dashboard.xml");
             }
-            string fName = SelectFile("Select dahboard config", XmlFilter, AppSettings.DashboardLastFile);
+            string fName = SelectFile("Select dahboard config", DashboardFilter, AppSettings.DashboardLastFile);
             if (fName.Length == 0)
             {
                 return;

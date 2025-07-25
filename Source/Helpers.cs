@@ -20,18 +20,38 @@ public static class Helpers
 {
     public static string ExtraCategories = "* * * * Extra categories * * * *";
     public static string EmptyCategories = "(Empty)";
+    public static string PatchFilter = "PATCH files (*.patch;*.xml)|*.patch;*.xml|All files (*.*)|*.*";
+    public static string XmlPatchFilter = "XMLPATCH files(*.xmlpatch)|*.xmlpatch|All files(*.*)|*.*";
     public static string BinFilter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
     public static string CsvFilter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+    public static string DbcFilter = "DBC files (*.dbc)|*.dbc|All files (*.*)|*.*";
     public static string XmlFilter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string TunerSessionFilter = "Session files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string JProfileFilter = "Jprofile files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string HistogramFilter = "Histogram files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string ChecksumSearchFilter = "Cksum files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string DisplayProfileFilter = "DisplayProfile files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string PidParmFilter = "PidParameter files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string TablelistFilter = "Tablelist files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string PlatformConfigFilter = "Platform files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string SegmentseekFilter = "Segmentseek files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string TableseekFilter = "Tableseek files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string AutodetectFilter = "Autodetect files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string SegmentConfigFilter = "SegmentConfig files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string TableSearchFilter = "Tablesearch files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string DashboardFilter = "Dash files (*.xml)|*.xml|All files (*.*)|*.*";
     public static string XmlXFilter = "XMLX files (*.xmlx)|*.xmlx|All files (*.*)|*.*";
     public static string TxtFilter = "TXT files (*.txt)|*.txt|All files (*.*)|*.*";
+    public static string DebuglogFilter = "Debug log files (*.txt)|*.txt|All files (*.*)|*.*";
+    public static string AnalyzerFilter = "Analyzer files (*.txt)|*.txt|All files (*.*)|*.*";
+    public static string ScriptFilter = "Script files (*.txt)|*.txt|All files (*.*)|*.*";
     public static string XdfFilter = "XDF files (*.xdf)|*.xdf|All files (*.*)|*.*";
     public static string RtfFilter = "RTF files (*.rtf)|*.rtf|All files (*.*)|*.*";
-    public static string RtfFTxtilter = "RTF or TXT (*.rtf;*.txt)|*.rtf;*.txt|All files (*.*)|*.*";
+    public static string RtfFTxtFilter = "RTF or TXT (*.rtf;*.txt)|*.rtf;*.txt|All files (*.*)|*.*";
     public static string ProfileFilter = "XML files (*.xml)|*.xml|LogProfile files (*.logprofile)|*.logprofile|All files (*.*)|*.*";
 
-    public static string[] OnStrings = { "on", "enabled", "enable", "reduced","low", "active", "set", "open", "yes", "good", "presed", "pressed", "true"};
-    public static string[] OffStrings = { "off", "disabled", "disable", "normal", "inactive", "not set", "closed", "no", "bad", "released", "false"};
+    public static string[] OnStrings = { "on", "enabled", "enable", "reduced", "low", "active", "set", "open", "yes", "good", "presed", "pressed", "true" };
+    public static string[] OffStrings = { "off", "disabled", "disable", "normal", "inactive", "not set", "closed", "no", "bad", "released", "false" };
 
     public static UPLogger uPLogger = new UPLogger();
     public static DataLogger.LogDataEvents LoggerDataEvents = new DataLogger.LogDataEvents();
@@ -39,7 +59,7 @@ public static class Helpers
     public static List<object> ClipBrd;
     private static int? _processId;
 
-    public static void Logger(string LogText, Boolean NewLine = true, bool Bold= false)
+    public static void Logger(string LogText, Boolean NewLine = true, bool Bold = false)
     {
         uPLogger.Add(LogText, NewLine, Bold);
     }
@@ -138,22 +158,12 @@ public static class Helpers
         List<string> fileList = new List<string>();
 
         OpenFileDialog fdlg = new OpenFileDialog();
-        if (Filter.Contains("BIN"))
+        if (Filter == BinFilter)
         {
-            fdlg.InitialDirectory = AppSettings.LastBINfolder;
-            Filter = "BIN files (*.bin)|*.bin";
-            for (int f = 0; f < fileTypeList.Count; f++)
-            {
-                string newFilter = "|" + fileTypeList[f].Description + "|" + "*." + fileTypeList[f].Extension;
-                Filter += newFilter;
-            }
-            Filter += "|All files (*.*)|*.*";
+            fdlg.InitialDirectory = GetLastFolder(BinFilter);
+            Filter = GenerateFilter();
         }
-        else if (Filter.ToLower().Contains("xdf"))
-        {
-            fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
-        }
-        else if (defaultFile.Length > 0)
+        if (defaultFile.Length > 0)
         {
 
             fdlg.FileName = Path.GetFileName(defaultFile);
@@ -161,10 +171,7 @@ public static class Helpers
         }
         else
         {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                fdlg.InitialDirectory = AppSettings.LastXMLfolder;
-            if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
-                fdlg.InitialDirectory = AppSettings.LastPATCHfolder;
+            fdlg.InitialDirectory = GetLastFolder(Filter);
         }
 
         fdlg.Title = Title;
@@ -174,13 +181,6 @@ public static class Helpers
         fdlg.Multiselect = true;
         if (fdlg.ShowDialog() == DialogResult.OK)
         {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                AppSettings.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("BIN"))
-                AppSettings.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("PATCH"))
-                AppSettings.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
-            AppSettings.Save();
             foreach (string fName in fdlg.FileNames)
                 fileList.Add(fName);
         }
@@ -213,46 +213,89 @@ public static class Helpers
         return Filter;
     }
 
+    public static string GetLastFolder(string Filter)
+    {
+        FiletypeFolder lastfolder = LastFolders.Where(X => X.Filter == Filter).FirstOrDefault();
+        if (lastfolder == null)
+        {
+            if (Filter == XdfFilter)
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
+            }
+            else if (Filter == XmlFilter)
+            {
+                return Path.Combine(Application.StartupPath, "XML");
+            }
+            else if (Filter == PatchFilter || Filter == XmlPatchFilter)
+            {
+                return Path.Combine(Application.StartupPath, "Patches");
+            }
+            return "";
+        }
+        else
+        {
+            return lastfolder.LastFolder;
+        }
+    }
+    public static void SetLastFolder(string Filter, string Folder)
+    {
+        try
+        {
+            FiletypeFolder lastfolder = LastFolders.Where(X => X.Filter == Filter).FirstOrDefault();
+            if (lastfolder == null)
+            {
+                lastfolder = new FiletypeFolder();
+                lastfolder.Filter = Filter;
+                lastfolder.LastFolder = "";
+                LastFolders.Add(lastfolder);
+            }
+            if (Folder != lastfolder.LastFolder)
+            {
+                lastfolder.LastFolder = Folder;
+                string lastFoldersFile = Path.Combine(Application.StartupPath, "XML", "lastfolders.xml");
+                using (FileStream stream = new FileStream(lastFoldersFile, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<FiletypeFolder>));
+                    writer.Serialize(stream, LastFolders);
+                    stream.Close();
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, j2534Client line " + line + ": " + ex.Message);
+        }
+    }
     public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
     {
         OpenFileDialog fdlg = new OpenFileDialog();
-        if (Filter.StartsWith("BIN"))
+        fdlg.Title = Title;
+        fdlg.Filter = Filter;
+        fdlg.FilterIndex = 1;
+        fdlg.RestoreDirectory = true;
+        if (Filter == "" || Filter == BinFilter)
         {
-            fdlg.InitialDirectory = AppSettings.LastBINfolder;
-            Filter = GenerateFilter();
+            fdlg.Filter = GenerateFilter();
         }
-        else if (Filter.ToLower().StartsWith("xdf"))
+        if (!string.IsNullOrEmpty(defaultFile))
         {
-            fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
-        }
-        else if (!string.IsNullOrEmpty(defaultFile))
-        {
-
             fdlg.FileName = Path.GetFileName(defaultFile);
             fdlg.InitialDirectory = Path.GetDirectoryName(defaultFile);
         }
         else
         {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                fdlg.InitialDirectory = AppSettings.LastXMLfolder;
-            if (Filter.Contains("PATCH") )
-                fdlg.InitialDirectory = AppSettings.LastPATCHfolder;
+            fdlg.InitialDirectory = GetLastFolder(Filter);
         }
-
-        fdlg.Title = Title;
-        fdlg.Filter = Filter;
-        fdlg.FilterIndex = 1;
-        fdlg.RestoreDirectory = true;
 
         if (fdlg.ShowDialog() == DialogResult.OK)
         {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                AppSettings.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("BIN"))
-                AppSettings.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("PATCH"))
-                AppSettings.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
-            AppSettings.Save();
+            SetLastFolder(Filter, Path.GetDirectoryName(fdlg.FileName));
             return fdlg.FileName;
         }
         return "";
@@ -260,46 +303,32 @@ public static class Helpers
 
     public static string SelectSaveFile(string Filter = "", string defaultFileName = "")
     {
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
-        if (Filter == "" || Filter.Contains("BIN"))
-            //saveFileDialog.Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
-            saveFileDialog.Filter = GenerateFilter();
-        else
-            saveFileDialog.Filter = Filter;
-        saveFileDialog.RestoreDirectory = true;
-        saveFileDialog.Title = "Save to file";
-        if (defaultFileName.Length > 0)
+        SaveFileDialog fdlg = new SaveFileDialog();
+        fdlg.Filter = Filter;
+        fdlg.RestoreDirectory = true;
+        fdlg.Title = "Save to file";
+        if (Filter == "" || Filter == BinFilter)
         {
-            saveFileDialog.FileName = Path.GetFileName(defaultFileName);
+            fdlg.Filter = GenerateFilter();
+        }
+        if (!string.IsNullOrEmpty(defaultFileName))
+        {
+            fdlg.FileName = Path.GetFileName(defaultFileName);
             string defPath = Path.GetDirectoryName(defaultFileName);
             if (defPath != "")
             {
-                saveFileDialog.InitialDirectory = defPath;
+                fdlg.InitialDirectory = defPath;
             }
         }
         else
         {
-            if (Filter.Contains("PATCH"))
-                saveFileDialog.InitialDirectory = AppSettings.LastPATCHfolder;
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                saveFileDialog.InitialDirectory = AppSettings.LastXMLfolder;
-            else if (Filter.Contains("BIN"))
-                saveFileDialog.InitialDirectory = AppSettings.LastBINfolder;
-            else if (Filter.Contains("XDF"))
-                saveFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
+            fdlg.InitialDirectory =  GetLastFolder(Filter);
         }
 
-        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        if (fdlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                AppSettings.LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            else if (Filter.Contains("BIN"))
-                AppSettings.LastBINfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            else if (Filter.Contains("PATCH"))
-                AppSettings.LastPATCHfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            AppSettings.Save();
-            return saveFileDialog.FileName;
+            SetLastFolder(Filter, Path.GetDirectoryName(fdlg.FileName));
+            return fdlg.FileName;
         }
         else
             return "";
@@ -316,16 +345,12 @@ public static class Helpers
         folderBrowser.CheckPathExists = true;
         if (defaultFolder.Length > 0)
             folderBrowser.InitialDirectory = defaultFolder;
-        else
-            folderBrowser.InitialDirectory = AppSettings.LastBINfolder;
         // Always default to Folder Selection.
         folderBrowser.Title = Title;
         folderBrowser.FileName = "Folder Selection";
         if (folderBrowser.ShowDialog() == DialogResult.OK)
         {
             folderPath = Path.GetDirectoryName(folderBrowser.FileName);
-            AppSettings.LastBINfolder = folderPath;
-            AppSettings.Save();
         }
         return folderPath;
     }

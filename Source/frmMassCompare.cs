@@ -410,9 +410,10 @@ namespace UniversalPatcher
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "Compare files";
                 frmF.Text = "Search and Compare: " + td.TableName;
-                frmF.LoadFiles(AppSettings.LastBINfolder);
+                frmF.LoadFiles(GetLastFolder(BinFilter));
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
+                    SetLastFolder(BinFilter, frmF.txtFolder.Text);
                     if (compareAll)
                     {
                         List<string> files = new List<string>();

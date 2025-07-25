@@ -148,7 +148,7 @@ namespace UniversalPatcher
                 if (newResults.Count > 0)
                 {
                     string defFile = Path.Combine(Application.StartupPath, "ChecksumSearch", OS + ".XML");
-                    string fName = SelectSaveFile(XmlFilter, defFile);
+                    string fName = SelectSaveFile(ChecksumSearchFilter, defFile);
                     if (string.IsNullOrEmpty(fName))
                         return;
                     using (FileStream stream = new FileStream(fName, FileMode.Create))
@@ -176,7 +176,7 @@ namespace UniversalPatcher
             try
             {
                 string defFile = Path.Combine(Application.StartupPath, "ChecksumSearch", OS + ".XML");
-                string fName = SelectFile("Select config file", XmlFilter, defFile);
+                string fName = SelectFile("Select config file", ChecksumSearchFilter, defFile);
                 if (string.IsNullOrEmpty(fName))
                     return;
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<CkSearchResult>));

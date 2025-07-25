@@ -43,14 +43,19 @@
             this.radioTuner = new System.Windows.Forms.RadioButton();
             this.radioLogger = new System.Windows.Forms.RadioButton();
             this.radioLauncher = new System.Windows.Forms.RadioButton();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createShortcutsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.serialportServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupMode.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnPatcher
             // 
-            this.btnPatcher.Location = new System.Drawing.Point(12, 122);
+            this.btnPatcher.Location = new System.Drawing.Point(12, 142);
             this.btnPatcher.Name = "btnPatcher";
             this.btnPatcher.Size = new System.Drawing.Size(96, 23);
             this.btnPatcher.TabIndex = 1;
@@ -61,7 +66,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::UniversalPatcher.Properties.Resources.UniversalPatcher;
-            this.pictureBox1.Location = new System.Drawing.Point(115, 6);
+            this.pictureBox1.Location = new System.Drawing.Point(115, 11);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(320, 218);
             this.pictureBox1.TabIndex = 2;
@@ -69,7 +74,7 @@
             // 
             // btnTuner
             // 
-            this.btnTuner.Location = new System.Drawing.Point(12, 93);
+            this.btnTuner.Location = new System.Drawing.Point(12, 113);
             this.btnTuner.Name = "btnTuner";
             this.btnTuner.Size = new System.Drawing.Size(96, 23);
             this.btnTuner.TabIndex = 1;
@@ -79,7 +84,7 @@
             // 
             // btnAbout
             // 
-            this.btnAbout.Location = new System.Drawing.Point(12, 185);
+            this.btnAbout.Location = new System.Drawing.Point(12, 205);
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(96, 23);
             this.btnAbout.TabIndex = 5;
@@ -92,7 +97,7 @@
             this.groupMode.Controls.Add(this.radioAdvanced);
             this.groupMode.Controls.Add(this.radioBasic);
             this.groupMode.Controls.Add(this.radioTourist);
-            this.groupMode.Location = new System.Drawing.Point(12, 6);
+            this.groupMode.Location = new System.Drawing.Point(12, 26);
             this.groupMode.Name = "groupMode";
             this.groupMode.Size = new System.Drawing.Size(96, 79);
             this.groupMode.TabIndex = 6;
@@ -138,7 +143,7 @@
             // 
             // btnLogger
             // 
-            this.btnLogger.Location = new System.Drawing.Point(13, 154);
+            this.btnLogger.Location = new System.Drawing.Point(13, 174);
             this.btnLogger.Name = "btnLogger";
             this.btnLogger.Size = new System.Drawing.Size(96, 23);
             this.btnLogger.TabIndex = 7;
@@ -208,6 +213,39 @@
             this.radioLauncher.UseVisualStyleBackColor = true;
             this.radioLauncher.CheckedChanged += new System.EventHandler(this.radioLauncher_CheckedChanged);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolsToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(444, 24);
+            this.menuStrip1.TabIndex = 9;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createShortcutsToolStripMenuItem,
+            this.serialportServerToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // createShortcutsToolStripMenuItem
+            // 
+            this.createShortcutsToolStripMenuItem.Name = "createShortcutsToolStripMenuItem";
+            this.createShortcutsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createShortcutsToolStripMenuItem.Text = "Create shortcuts";
+            this.createShortcutsToolStripMenuItem.Click += new System.EventHandler(this.createShortcutsToolStripMenuItem_Click);
+            // 
+            // serialportServerToolStripMenuItem
+            // 
+            this.serialportServerToolStripMenuItem.Name = "serialportServerToolStripMenuItem";
+            this.serialportServerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.serialportServerToolStripMenuItem.Text = "Serialport server";
+            this.serialportServerToolStripMenuItem.Click += new System.EventHandler(this.serialportServerToolStripMenuItem_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -220,8 +258,10 @@
             this.Controls.Add(this.btnTuner);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnPatcher);
+            this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "FrmMain";
             this.Text = "Universal Patcher";
             this.Load += new System.EventHandler(this.FrmMain_Load);
@@ -230,7 +270,10 @@
             this.groupMode.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -249,5 +292,9 @@
         private System.Windows.Forms.RadioButton radioPatcher;
         private System.Windows.Forms.RadioButton radioTuner;
         private System.Windows.Forms.RadioButton radioLogger;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createShortcutsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem serialportServerToolStripMenuItem;
     }
 }

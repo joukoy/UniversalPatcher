@@ -28,6 +28,34 @@
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
   </SegmentConfig>
+<SegmentConfig>
+    <Name>SYS extra</Name>
+    <Version />
+    <Addresses />
+    <SwapAddress />
+    <CS1Address>seek:cs2:4</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks>seek:start2-seek:end2</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>true</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+  </SegmentConfig>
   <SegmentConfig>
     <Name>System</Name>
     <Version />
@@ -84,6 +112,34 @@
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
   </SegmentConfig>
+<SegmentConfig>
+    <Name>SPEEDO extra</Name>
+    <Version />
+    <Addresses />
+    <SwapAddress />
+    <CS1Address>seek:cs3:4</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks>seek:start3-seek:end3</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>true</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+  </SegmentConfig>
   <SegmentConfig>
     <Name>Speedo</Name>
     <Version />
@@ -139,6 +195,34 @@
     <Missing>false</Missing>
     <CS1Method>1</CS1Method>
     <CS2Method>4</CS2Method>
+  </SegmentConfig>
+<SegmentConfig>
+    <Name>ENG extra</Name>
+    <Version />
+    <Addresses />
+    <SwapAddress />
+    <CS1Address>seek:cs1:4</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks>seek:start1-seek:end1</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>true</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Engine</Name>

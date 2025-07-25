@@ -530,7 +530,7 @@ namespace UniversalPatcher
                 }
                 if (string.IsNullOrEmpty(fName))
                 {
-                    fName = SelectFile("Select Historgram setup", XmlFilter, defName);
+                    fName = SelectFile("Select Historgram setup", HistogramFilter, defName);
                     if (fName.Length == 0)
                         return;
                 }
@@ -652,7 +652,7 @@ namespace UniversalPatcher
                         defName = FileName;
                     else
                         defName = Path.Combine(Application.StartupPath, "Histogram", tData.TableName + ".xml");
-                    fName = SelectSaveFile(XmlFilter, defName);
+                    fName = SelectSaveFile(HistogramFilter, defName);
                     if (fName.Length == 0)
                         return;
                 }

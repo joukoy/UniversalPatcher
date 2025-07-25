@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using static LoggerUtils;
 
 namespace UniversalPatcher
 {
@@ -45,6 +46,11 @@ namespace UniversalPatcher
             LoggerConsole4x = true;
             LoggerGraphicsInterval = 1;
             LoggerGraphicsShowMaxTime = 10;
+            LoggerGrapohicsBackColor = System.Drawing.ColorTranslator.ToHtml(Color.White);
+            LoggerGraphicsLogLastProfileFile = "profile1.xml";
+            LoggerGraphicsLiveLastProfileFile = "live1.xml";
+            LoggerGraphicsLineWidth = 1;
+            LoggerGraphicsColorPalette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.BrightPastel;
             LoggerTimestampFormat = "HH:mm:ss.ffff";
             LoggerLogSeparator = ",";
             LoggerDecimalSeparator = ".";
@@ -58,6 +64,7 @@ namespace UniversalPatcher
             LoggerStartJ2534Process = true;
             LoggerJ2534ProcessVisible = false;
             LoggerStartJ2534ProcessDebug = false;
+            LoggerJ2534ProcessWriteDebugLog = false;
             LoggerAutoDisconnect = true;
             LoggerFilterStartOfMessage = true;
             LoggerFilterTXIndication = true;
@@ -69,9 +76,16 @@ namespace UniversalPatcher
             LoggerTestPidCompatibility = true;
             LoggerRetryAfterSeconds = 2;
             LoggerRetryCount = 3;
+            LoggerCANWaitSecondsStopMessages = 5;
+            LoggerStartKey = Keys.F4;
+            LoggerPidMismatchRemember = false;
+            LoggerDeviceUrl = "192.168.4.1:22222";
+            LoggerPortType = iPortType.Serial;
+            SerialServerPort = 22222;
+            SerialServerBaudRate = 115200;
+
             RetryWriteTimes = 3;
             RetryWriteDelay = 10;
-            LoggerResetAfterMiss = 50;
             ClearFuncAddrOnDisconnect = true;
             LoggerGraphDisableResample = false;
             TableEditorHexShowAddress = false;
@@ -85,15 +99,24 @@ namespace UniversalPatcher
             LastJScriptFile = "";
             DashboardRows = 2;
             DashboardCols = 3;
+            AnalyzerNumMessages = 1;
+            LoggerLoggingMessagesPerRequest = 1;
+            LoggerRestartAfterSeconds = 30;
+            WBCanID = 0x7E6;
+            WBCanBaudrate = 115200;
+            WBDebug = false;
+            WBCanBytePosition = 2;
+            WBCanAfrFactor = 0.01;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
             TimeoutLoggingActiveObdlink = TimeoutScenario.Minimum;
             TimeoutLoggingPassive = TimeoutScenario.DataLogging4;
             TimeoutReceive = 100;
+            TimeoutReceivePerMessage = 30;
             TimeoutLoggingReceive = 100;
             TimeoutScriptRead = 100;
             //TimeoutScriptWrite = 100;
-            TimeoutJ2534Write = 10;
+            TimeoutJ2534Write = 30;
             TimeoutSerialPortRead = 2000;
             TimeoutSerialPortWrite = 100;
             TimeoutAvtRead = 3000;
@@ -120,9 +143,9 @@ namespace UniversalPatcher
         }
 
         public StartupUtil OpenInStartup { get; set; }
-        public string LastXMLfolder { get; set; }
-        public string LastPATCHfolder { get; set; }
-        public string LastBINfolder { get; set; }
+        //public string LastXMLfolder { get; set; }
+        //public string LastPATCHfolder { get; set; }
+        //public string LastBINfolder { get; set; }
         public uint SuppressAfter { get; set; }
         public bool DebugOn { get; set; }
         public bool AutorefreshCVNlist { get; set; }
@@ -221,9 +244,11 @@ namespace UniversalPatcher
         public bool LoggerUseJ2534 { get; set; }
         public string LoggerSerialDeviceType { get; set; }
         public string LoggerResponseMode { get; set; }
-        public bool LoggerUseFTDI { get; set; }
+        public iPortType LoggerPortType { get; set; }
         public bool LoggerShowAdvanced { get; set; }
         public string LoggerFTDIPort { get; set; }
+        public string LoggerDeviceUrl { get; set; }
+
         public int LoggerBaudRate { get; set; }
         public bool LoggerUseFilters { get; set; }
         public bool LoggerUseVPW { get; set; }
@@ -237,6 +262,7 @@ namespace UniversalPatcher
         public int LoggerRetryAfterSeconds { get; set; }
         //public Font LoggerConsoleFont { get; set; }
         public int LoggerScriptDelay { get; set; }
+        public int LoggerRestartAfterSeconds { get; set; }
         public string LoggerJ2534SettingsFile { get; set; }
         public string JConsoleDevice { get; set; }
         public bool JConsoleTimestamps { get; set; }
@@ -253,6 +279,9 @@ namespace UniversalPatcher
         public int LoggerGraphicsInterval { get; set; }
         public int LoggerGraphicsShowMaxTime { get; set; }
         public bool LoggerGraphicsShowPoints { get; set; }
+        public string LoggerGrapohicsBackColor { get; set; }
+        public int LoggerGraphicsLineWidth { get; set; }
+        public System.Windows.Forms.DataVisualization.Charting.ChartColorPalette LoggerGraphicsColorPalette { get; set; }
         public string LoggerLastLogfile { get; set; }
         public string LoggerTimestampFormat { get; set; }
         public string LoggerLogSeparator { get; set; }
@@ -269,6 +298,7 @@ namespace UniversalPatcher
         public bool LoggerStartJ2534Process { get; set; }
         public bool LoggerJ2534ProcessVisible { get; set; }
         public bool LoggerStartJ2534ProcessDebug { get; set; }
+        public bool LoggerJ2534ProcessWriteDebugLog { get; set; }
         public bool LoggerAutoDisconnect { get; set; }
         public bool LoggerFilterStartOfMessage { get; set; }
         public bool LoggerFilterTXIndication { get; set; }
@@ -277,14 +307,18 @@ namespace UniversalPatcher
         public ushort LoggerCanPcmAddress { get; set; }
         public int LoggerTesterPresentInterval { get; set; }
         public int LoggerConsoleDisplayInterval { get; set; }
+        public int LoggerCANWaitSecondsStopMessages { get; set; }
+        public int LoggerLoggingMessagesPerRequest { get; set; }
+
         public int RetryWriteTimes { get; set; }
         public int RetryWriteDelay { get; set; }
-        public int LoggerResetAfterMiss { get; set; }
         public bool ClearFuncAddrOnDisconnect { get; set; }
         public bool LoggerTestPidCompatibility { get; set; }
         public string LogImportTimeStampFormat { get; set; }
         public bool LogImportTimeStampElapsed { get; set; }
         public bool LoggerGraphDisableResample { get; set; }
+        public PidMisMatch LoggerPidMismatch { get; set; }
+        public bool LoggerPidMismatchRemember { get; set; }
         public string ControlCommandsFile { get; set; }
         public string MapSessionMapBin { get; set; }
         public string MapSessionRefBin { get; set; }
@@ -303,8 +337,13 @@ namespace UniversalPatcher
         public FormWindowState DashboardWindowState { get; set; }
         public Point DashboardWindowLocation { get; set; }
         public string DashboardLastFile { get; set; }
-
-
+        public Keys LoggerStartKey { get; set; }
+        public int AnalyzerNumMessages { get; set; }
+        public int SerialServerPort { get; set; }
+        public string SerialServerDevice{ get; set; }
+        public string SerialServerFtdiDevice { get; set; }
+        public iPortType SerialServerDevicePortType { get; set; }
+        public int SerialServerBaudRate { get; set; }
         public TimeoutScenario TimeoutLoggingActive { get; set; }
         public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }
         public TimeoutScenario TimeoutLoggingPassive { get; set; }
@@ -315,6 +354,7 @@ namespace UniversalPatcher
         public int TimeoutJ2534Write { get; set; }
         public int TimeoutAnalyzerReceive { get; set; }
         public int TimeoutReceive { get; set; }
+        public int TimeoutReceivePerMessage { get; set; }
         public int TimeoutLoggingReceive { get; set; }
         //public int TimeoutScriptWrite { get; set; }
         public int TimeoutConsoleReceive { get; set; }
@@ -322,6 +362,13 @@ namespace UniversalPatcher
 
         public WideBand.WBType Wbtype { get; set; }
         public string WBSerial { get; set; }
+        public ushort WBCanID { get; set; }
+        public ushort WBCanBytePosition { get; set; }
+        public double WBCanAfrFactor { get; set; }
+        public int WBCanBaudrate { get; set; }
+        public bool WBDebug { get; set; }
+        public int UpxLastBaudrate { get; set; }
+        public bool IsoTpDebug { get; set; }
         //public int TimeoutLoggingWrite { get; set; }
         //public int TimeoutJLoggingWrite { get; set; }
         //public int TimeoutJconsoleWrite { get; set; }

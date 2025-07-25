@@ -27,7 +27,7 @@ namespace UniversalPatcher
         public J2534InitParameters(bool VpwLogger)
         {
             this.VPWLogger = VpwLogger;
-            Protocol = ProtocolID.J1850VPW;
+            Protocol = ProtocolID.J1850VPW; 
             Baudrate = "";
             Sconfigs = "";
             Kinit = KInit.None;
@@ -52,5 +52,7 @@ namespace UniversalPatcher
         public string PassFilters { get; set; }
         public bool UsePrimaryChannel { get; set; }
         public bool SeparateProtoByChannel { get; set; }
+        [NonSerialized]
+        public CANDevice CanPCM; //For ELM327
     }
 }

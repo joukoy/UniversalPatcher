@@ -51,9 +51,15 @@ namespace UniversalPatcher
                 if (chkTunerAdvanced.Checked)
                     CreateShortcut(dst, "Tuner-Advanced", "advanced tuner");
 
-                if (chkLogger.Checked)
-                    CreateShortcut(dst, "Logger", "- logger");
+                if (chkLoggerTourist.Checked)
+                    CreateShortcut(dst, "Logger", "tourist logger");
+                if (chkLoggerBasic.Checked)
+                    CreateShortcut(dst, "Logger", "basic logger");
+                if (chkLoggerAdvanced.Checked)
+                    CreateShortcut(dst, "Logger", "advanced logger");
 
+                if (chkSerialportServer.Checked)
+                    CreateShortcut(dst, "Logger", "- serialportserver");
                 Logger(" [OK]");
                 this.Close();
             }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Helpers;
 using static Upatcher;
-
+using static UniversalPatcher.ExtensionMethods;
 namespace UniversalPatcher
 {
     public partial class frmJ2534Server : Form

@@ -1071,12 +1071,15 @@ namespace UniversalPatcher
                         string descr = td.TableDescription;
                         if (td.Values.ToLower().StartsWith("enum:"))
                             descr += ", " + td.Values;
-                        descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
-                        if (descr.Length > 900)
+                        if (descr != null)
                         {
-                            descr = descr.Substring(0, 900);
+                            descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                            if (descr.Length > 900)
+                            {
+                                descr = descr.Substring(0, 900);
+                            }
+                            tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         }
-                        tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",","."));
                         tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
@@ -1126,12 +1129,15 @@ namespace UniversalPatcher
                         string descr = td.TableDescription;
                         if (td.Values.ToLower().StartsWith("enum:"))
                             descr += ", " + td.Values;
-                        descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
-                        if (descr.Length > 900)
+                        if (descr != null)
                         {
-                            descr = descr.Substring(0, 900);
+                            descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                            if (descr.Length > 900)
+                            {
+                                descr = descr.Substring(0, 900);
+                            }
+                            tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         }
-                        tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",", "."));
                         tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
                         int tableFlags = 0;

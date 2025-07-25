@@ -829,7 +829,7 @@ namespace UniversalPatcher
                         break;
                     case XMLTYPE.TableSeek:
                         if (fName.Length == 0)
-                            fName = SelectSaveFile(XmlFilter, "new-tableseek.xml");
+                            fName = SelectSaveFile(SegmentseekFilter, "new-tableseek.xml");
                         if (fName.Length == 0)
                             return;
                         Logger("Saving file " + fName, false);
@@ -844,7 +844,7 @@ namespace UniversalPatcher
                         break;
                     case XMLTYPE.SegmentSeek:
                         if (fName.Length == 0)
-                            fName = SelectSaveFile(XmlFilter, "new-segmentseek.xml");
+                            fName = SelectSaveFile(SegmentseekFilter, "new-segmentseek.xml");
                         if (fName.Length == 0)
                             return;
                         Logger("Saving file " + fName, false);

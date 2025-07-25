@@ -763,8 +763,15 @@
 - Logger: Request data again, if nothing received in 2 seconds 
 - Logger: Added Dashboard (show values in analog gauges)
 
-0.22.31
+0.23.00
 - Fixed bug: OS not detected if OS is not first segment
 - Logger: Profile handling rewrite, other fixes & improvements
+- Logger: Start/Stop logging with user-defined key press. Default: F4
+- Logger: Added working mode selection
+- Logger: Support for DBC files and passive mode logging
+- Initial support for running under wine: universalpatcher.sh
+- Logger: Support for CAN/ISO15765 protocol with ELM327 fevices
+- Logger: Support for TCP/IP server & client for serialport devices
+- Logger graphics: Added Color & line width selection
 
 

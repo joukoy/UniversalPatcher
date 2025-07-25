@@ -112,6 +112,13 @@ namespace UniversalPatcher
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.labelDataValues = new System.Windows.Forms.Label();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
+            this.tabGraphSettings = new System.Windows.Forms.TabPage();
+            this.btnBackgroundColor = new System.Windows.Forms.Button();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.label5 = new System.Windows.Forms.Label();
+            this.numLineWidth = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
+            this.comboColorPalette = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -139,6 +146,8 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
+            this.tabGraphSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numLineWidth)).BeginInit();
             this.SuspendLayout();
             // 
             // chart1
@@ -148,6 +157,7 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             chartArea1.Area3DStyle.Enable3D = true;
             chartArea1.AxisX.IsLabelAutoFit = false;
+            chartArea1.AxisY.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
             chartArea1.Name = "ChartArea1";
             chartArea1.ShadowColor = System.Drawing.Color.White;
             this.chart1.ChartAreas.Add(chartArea1);
@@ -291,6 +301,7 @@ namespace UniversalPatcher
             this.tabControl1.Controls.Add(this.tabPointValues);
             this.tabControl1.Controls.Add(this.tabAdvanced);
             this.tabControl1.Controls.Add(this.tabZoom);
+            this.tabControl1.Controls.Add(this.tabGraphSettings);
             this.tabControl1.Location = new System.Drawing.Point(3, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -718,14 +729,14 @@ namespace UniversalPatcher
             // showPointsToolStripMenuItem
             // 
             this.showPointsToolStripMenuItem.Name = "showPointsToolStripMenuItem";
-            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showPointsToolStripMenuItem.Text = "Show points";
             this.showPointsToolStripMenuItem.Click += new System.EventHandler(this.showPointsToolStripMenuItem_Click);
             // 
             // autoscaleToolStripMenuItem
             // 
             this.autoscaleToolStripMenuItem.Name = "autoscaleToolStripMenuItem";
-            this.autoscaleToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.autoscaleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.autoscaleToolStripMenuItem.Text = "Autoscale";
             this.autoscaleToolStripMenuItem.Click += new System.EventHandler(this.autoscaleToolStripMenuItem_Click);
             // 
@@ -742,7 +753,7 @@ namespace UniversalPatcher
             this.cursorXYToolStripMenuItem,
             this.noCursorToolStripMenuItem});
             this.mouseFunctionToolStripMenuItem.Name = "mouseFunctionToolStripMenuItem";
-            this.mouseFunctionToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.mouseFunctionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.mouseFunctionToolStripMenuItem.Text = "Mouse function";
             // 
             // zoomXToolStripMenuItem
@@ -814,7 +825,7 @@ namespace UniversalPatcher
             this.wheelZoomXYToolStripMenuItem1,
             this.noWheelZoomToolStripMenuItem1});
             this.mouseWheelToolStripMenuItem.Name = "mouseWheelToolStripMenuItem";
-            this.mouseWheelToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.mouseWheelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.mouseWheelToolStripMenuItem.Text = "Mouse wheel";
             // 
             // wheelZoomXToolStripMenuItem1
@@ -848,14 +859,14 @@ namespace UniversalPatcher
             // resetZoomToolStripMenuItem
             // 
             this.resetZoomToolStripMenuItem.Name = "resetZoomToolStripMenuItem";
-            this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.resetZoomToolStripMenuItem.Text = "Reset zoom";
             this.resetZoomToolStripMenuItem.Click += new System.EventHandler(this.resetZoomToolStripMenuItem_Click);
             // 
             // disableResampleToolStripMenuItem
             // 
             this.disableResampleToolStripMenuItem.Name = "disableResampleToolStripMenuItem";
-            this.disableResampleToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.disableResampleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.disableResampleToolStripMenuItem.Text = "Disable resample";
             this.disableResampleToolStripMenuItem.Click += new System.EventHandler(this.disableResampleToolStripMenuItem_Click);
             // 
@@ -930,6 +941,74 @@ namespace UniversalPatcher
             this.chkGetLiveData.UseVisualStyleBackColor = true;
             this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
             // 
+            // tabGraphSettings
+            // 
+            this.tabGraphSettings.Controls.Add(this.comboColorPalette);
+            this.tabGraphSettings.Controls.Add(this.label6);
+            this.tabGraphSettings.Controls.Add(this.numLineWidth);
+            this.tabGraphSettings.Controls.Add(this.label5);
+            this.tabGraphSettings.Controls.Add(this.btnBackgroundColor);
+            this.tabGraphSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabGraphSettings.Name = "tabGraphSettings";
+            this.tabGraphSettings.Size = new System.Drawing.Size(382, 359);
+            this.tabGraphSettings.TabIndex = 4;
+            this.tabGraphSettings.Text = "Graph";
+            this.tabGraphSettings.UseVisualStyleBackColor = true;
+            // 
+            // btnBackgroundColor
+            // 
+            this.btnBackgroundColor.Location = new System.Drawing.Point(168, 24);
+            this.btnBackgroundColor.Name = "btnBackgroundColor";
+            this.btnBackgroundColor.Size = new System.Drawing.Size(120, 23);
+            this.btnBackgroundColor.TabIndex = 0;
+            this.btnBackgroundColor.Text = "Background Color...";
+            this.btnBackgroundColor.UseVisualStyleBackColor = true;
+            this.btnBackgroundColor.Click += new System.EventHandler(this.btnBackgroundColor_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(15, 84);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(58, 13);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "Line width:";
+            // 
+            // numLineWidth
+            // 
+            this.numLineWidth.Location = new System.Drawing.Point(168, 82);
+            this.numLineWidth.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numLineWidth.Name = "numLineWidth";
+            this.numLineWidth.Size = new System.Drawing.Size(120, 20);
+            this.numLineWidth.TabIndex = 2;
+            this.numLineWidth.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numLineWidth.ValueChanged += new System.EventHandler(this.numLineWidth_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(15, 59);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(69, 13);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "Color palette:";
+            // 
+            // comboColorPalette
+            // 
+            this.comboColorPalette.FormattingEnabled = true;
+            this.comboColorPalette.Location = new System.Drawing.Point(167, 55);
+            this.comboColorPalette.Name = "comboColorPalette";
+            this.comboColorPalette.Size = new System.Drawing.Size(121, 21);
+            this.comboColorPalette.TabIndex = 4;
+            // 
             // frmLoggerGraphics
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -977,6 +1056,9 @@ namespace UniversalPatcher
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
+            this.tabGraphSettings.ResumeLayout(false);
+            this.tabGraphSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numLineWidth)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1050,5 +1132,12 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkPlaying;
         private System.Windows.Forms.TabPage tabZoom;
         public System.Windows.Forms.DataVisualization.Charting.Chart chart2;
+        private System.Windows.Forms.TabPage tabGraphSettings;
+        private System.Windows.Forms.Button btnBackgroundColor;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.NumericUpDown numLineWidth;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox comboColorPalette;
+        private System.Windows.Forms.Label label6;
     }
 }

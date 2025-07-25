@@ -1,10 +1,38 @@
 <?xml version="1.0"?>
 <ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SegmentConfig>
+    <Name>BootBlock</Name>
+    <Version>1</Version>
+    <Addresses>@3febd&lt;800000</Addresses>
+    <SwapAddress>@3febd&lt;800000</SwapAddress>
+    <CS1Address>3fda0:2:hex</CS1Address>
+    <CS2Address>3fd80:2:hex</CS2Address>
+    <Checksum1Method>crc16</Checksum1Method>
+    <Checksum2Method>Wordsum</Checksum2Method>
+    <CS1Blocks>@3fec5*3&lt;800000</CS1Blocks>
+    <CS2Blocks>@3fedd*2&lt;800000</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>3fd85:4:int</PNAddr>
+    <VerAddr>3fd89:2:text</VerAddr>
+    <SegNrAddr>3fd83:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
     <Name>OS</Name>
     <Version>1</Version>
-    <Addresses>@140126&lt;800000</Addresses>
-    <SwapAddress>@140126&lt;800000</SwapAddress>
+    <Addresses>@140126*2&lt;800000</Addresses>
+    <SwapAddress>@140126*2&lt;800000</SwapAddress>
     <CS1Address>#120:2:hex</CS1Address>
     <CS2Address>#100:2:hex</CS2Address>
     <Checksum1Method>crc16</Checksum1Method>

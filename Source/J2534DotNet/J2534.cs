@@ -194,9 +194,8 @@ namespace J2534DotNet
                 if (!isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
                 IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg))*numMsgs + 4 );
                 IntPtr pNextMsg = IntPtr.Zero;
-                //IntPtr[] pMsgs = new IntPtr[50];
-                IntPtr MsgCount = Marshal.AllocHGlobal(8);
-                Marshal.WriteInt64(MsgCount, numMsgs);
+                IntPtr MsgCount = Marshal.AllocHGlobal(4);
+                Marshal.WriteInt32(MsgCount, numMsgs);
                 J2534Err returnValue;
                 lock (devLock)
                 {
@@ -206,7 +205,7 @@ namespace J2534DotNet
                 {
                     //Debug.WriteLine("J2534 received messages: " + numMsgs);
                     pNextMsg = pMsg;
-                    numMsgs = (int)Marshal.ReadInt64(MsgCount);
+                    numMsgs = (int)Marshal.ReadInt32(MsgCount);
                     for (int i = 0; i < numMsgs; i++)
                     {
                         //pNextMsg = (IntPtr)(Marshal.SizeOf(typeof(UnsafePassThruMsg)) * i + (int)pMsg);
@@ -214,6 +213,10 @@ namespace J2534DotNet
                         msgs.Add(ConvertPassThruMsg(uMsg));
                         pNextMsg += Marshal.SizeOf(typeof(UnsafePassThruMsg));
                     }
+                }
+                else
+                {
+                    numMsgs = 0;
                 }
                 Marshal.FreeHGlobal(pMsg);
                 Marshal.FreeHGlobal(MsgCount);
@@ -357,6 +360,7 @@ namespace J2534DotNet
                 Marshal.StructureToPtr(uPatternMsg, uPatternPtr, false);
 
                 IntPtr filterIdPtr = Marshal.AllocHGlobal(4);
+                Marshal.WriteInt32(filterIdPtr, filterId); // Initial filter ID
 
                 J2534Err returnValue;
                 lock (devLock)
@@ -598,8 +602,8 @@ namespace J2534DotNet
             try
             {
                 if (DeviceID < 0 || !isDllLoaded()) return J2534Err.ERR_DEVICE_NOT_CONNECTED;
-                IntPtr inputPtr = Marshal.AllocHGlobal(8);
-                IntPtr outputPtr = Marshal.AllocHGlobal(8);
+                IntPtr inputPtr = Marshal.AllocHGlobal(4);
+                IntPtr outputPtr = Marshal.AllocHGlobal(4);
                 Marshal.WriteInt32(inputPtr,input);
 
                 J2534Err returnValue;

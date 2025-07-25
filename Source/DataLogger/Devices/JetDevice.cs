@@ -450,15 +450,21 @@ namespace UniversalPatcher
         {
         }
 
-        public override void Receive(bool WaitForTimeout)
+        public override void Receive(int NumMessages, bool WaitForTimeout)
         {
-            if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+            for (int m = 0; m < NumMessages; m++)
             {
-                Response<OBDMessage> response = ReadJETPacket();
-                if (response.Status == ResponseStatus.Success)
+                if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
                 {
-                    Debug.WriteLine("RX: " + response.Value.GetBytes().ToHex());
-                    this.Enqueue(response.Value, true);
+                    Response<OBDMessage> response = ReadJETPacket();
+                    if (response.Status == ResponseStatus.Success)
+                    {
+                        Debug.WriteLine("RX: " + response.Value.GetBytes().ToHex());
+                        this.Enqueue(response.Value, true);
+                    }
+                }
+                else
+                {
                     return;
                 }
             }
@@ -522,6 +528,11 @@ namespace UniversalPatcher
         public override bool RemoveFilters(int[] filterIds)
         {
             Debug.WriteLine("RemoveFilters not implemented");
+            return true;
+        }
+        public override bool RemoveFilters2(int[] filterIds)
+        {
+            Debug.WriteLine("RemoveFilters2 not implemented");
             return true;
         }
 

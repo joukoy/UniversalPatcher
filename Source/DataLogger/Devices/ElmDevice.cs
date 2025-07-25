@@ -269,9 +269,9 @@ namespace UniversalPatcher
         /// Try to read an incoming message from the device.
         /// </summary>
         /// <returns></returns>
-        public override void Receive(bool WaitForTimeout)
+        public override void Receive(int NumMessages, bool WaitForTimeout)
         {
-            this.implementation.Receive(WaitForTimeout);
+            this.implementation.Receive(NumMessages, WaitForTimeout);
         }
 
         /// <summary>
@@ -423,6 +423,11 @@ namespace UniversalPatcher
             Debug.WriteLine("Removing filters");
             this.CurrentFilter = FilterMode.None;
             return this.implementation.SendAndVerify("AT AR", "OK"); // Set receive filter Off
+        }
+        public override bool RemoveFilters2(int[] filterIds)
+        {
+            Debug.WriteLine("RemoveFilters2 not implemented");
+            return true;
         }
 
     }

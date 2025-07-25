@@ -26,7 +26,10 @@ namespace UniversalPatcher
         {
             return (CANDevice)this.MemberwiseClone();
         }
-
+        public byte RequestByte1 { get { return (byte)(RequestID >> 8); } }
+        public byte RequestByte2 { get { return (byte)RequestID; } }
+        public byte ResByte1 { get { return (byte)(ResID >> 8); } }
+        public byte ResByte2 { get { return (byte)ResID; } }
     }
     public static class CANQuery
     {

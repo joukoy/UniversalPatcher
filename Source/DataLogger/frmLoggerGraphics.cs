@@ -87,16 +87,13 @@ namespace UniversalPatcher
                 else
                     txtLogSeparator.Text = ",";
                 chart1.Legends[0].Docking = Docking.Top;
+                /*
                 if (string.IsNullOrEmpty(AppSettings.LoggerGraphicsLiveLastProfileFile))
                 {
-                    AppSettings.LoggerGraphicsLiveLastProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(AppSettings.LoggerLastProfile));
+                    AppSettings.LoggerGraphicsLiveLastProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", "profile1.xml");
                     AppSettings.Save();
                 }
-                if (string.IsNullOrEmpty(AppSettings.LoggerGraphicsLogLastProfileFile))
-                {
-                    AppSettings.LoggerGraphicsLogLastProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(AppSettings.LoggerLastProfile));
-                    AppSettings.Save();
-                }
+                */
 
                 switch (AppSettings.LoggerGraphicsMouseCursor)
                 {
@@ -176,6 +173,14 @@ namespace UniversalPatcher
                     chkShowLastSeconds.Enabled = false;
                     chkShowLastSeconds.Checked = false;
                 }
+                chart1.ChartAreas[0].BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.LoggerGrapohicsBackColor);
+                chart2.ChartAreas[0].BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.LoggerGrapohicsBackColor);
+                numLineWidth.Value = AppSettings.LoggerGraphicsLineWidth;
+                comboColorPalette.DataSource = Enum.GetValues(typeof(ChartColorPalette));
+                comboColorPalette.Text =  (AppSettings.LoggerGraphicsColorPalette).ToString();
+                chart1.Palette = AppSettings.LoggerGraphicsColorPalette;
+                chart2.Palette = AppSettings.LoggerGraphicsColorPalette;
+                this.comboColorPalette.SelectedIndexChanged += new System.EventHandler(this.comboColorPalette_SelectedIndexChanged);
             }
             catch (Exception ex)
             {
@@ -259,25 +264,37 @@ namespace UniversalPatcher
 
         private void ShowAdvSettings()
         {
-            if (dataGridViewAdv.Columns.Count < 2)
+            try
             {
-                dataGridViewAdv.Columns.Add("Setting", "Setting");
-                dataGridViewAdv.Columns.Add("Value", "Value");
+                if (dataGridViewAdv.Columns.Count < 2)
+                {
+                    dataGridViewAdv.Columns.Add("Setting", "Setting");
+                    dataGridViewAdv.Columns.Add("Value", "Value");
+                }
+                dataGridViewAdv.Rows.Clear();
+                foreach (PropertyInfo prop in graphSettings.GetType().GetProperties())
+                {
+                    int row = dataGridViewAdv.Rows.Add();
+                    dataGridViewAdv.Rows[row].Cells[0].Value = prop.Name;
+                    if (prop.Name.ToLower().Contains("time"))
+                    {
+                        long ticks = (long)prop.GetValue(graphSettings, null);
+                        dataGridViewAdv.Rows[row].Cells[1].Value = new DateTime(ticks).ToString("HH:mm:ss:ffff");
+                    }
+                    else
+                    {
+                        dataGridViewAdv.Rows[row].Cells[1].Value = prop.GetValue(graphSettings, null);
+                    }
+                }
             }
-            dataGridViewAdv.Rows.Clear();
-            foreach (PropertyInfo prop in graphSettings.GetType().GetProperties())
+            catch (Exception ex)
             {
-                int row = dataGridViewAdv.Rows.Add();
-                dataGridViewAdv.Rows[row].Cells[0].Value = prop.Name;
-                if (prop.Name.ToLower().Contains("time"))
-                {
-                    long ticks = (long)prop.GetValue(graphSettings, null);
-                    dataGridViewAdv.Rows[row].Cells[1].Value = new DateTime(ticks).ToString("HH:mm:ss:ffff");
-                }
-                else
-                {
-                    dataGridViewAdv.Rows[row].Cells[1].Value = prop.GetValue(graphSettings, null);
-                }
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
             }
         }
 
@@ -807,6 +824,8 @@ namespace UniversalPatcher
                     pidScalars.Add(ps);
                     chart1.Series.Add(new Series());
                     chart1.Series[r].ChartType = ChartType;
+                    //chart1.Series[r].BorderDashStyle = ChartDashStyle.DashDotDot;
+                    chart1.Series[r].BorderWidth = AppSettings.LoggerGraphicsLineWidth;
                     chart1.Series[r].XValueType = ChartValueType.DateTime;
                     if (parm.Name != null)
                         chart1.Series[r].Name = r.ToString() + "-" +  parm.Name;
@@ -1568,7 +1587,7 @@ namespace UniversalPatcher
         private void loadProfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string def = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(AppSettings.LoggerGraphicsLiveLastProfileFile));
-            string fName = SelectFile("Select profilefile", XmlFilter, def);
+            string fName = SelectFile("Select profilefile", DisplayProfileFilter, def);
             if (string.IsNullOrEmpty(fName))
                 return;
             ProfileFile = fName;
@@ -1578,7 +1597,7 @@ namespace UniversalPatcher
         private void SaveProfileAs()
         {
             string def = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(AppSettings.LoggerGraphicsLiveLastProfileFile));
-            string fName = SelectSaveFile(XmlFilter, def);
+            string fName = SelectSaveFile(DisplayProfileFilter, def);
             if (string.IsNullOrEmpty(fName))
                 return;
             ProfileFile = fName;
@@ -1726,6 +1745,7 @@ namespace UniversalPatcher
                     }
                     return retVal;
                 }
+
                 int pidcount = graphSettings.pointDataGroups[0].pointDatas.Length;
                 Debug.WriteLine("Resampling, samplesize: " + samplesize.ToString()+", Original range: " + (EndPoint-StartPoint).ToString()+ ", Chart width: " + chart.Width.ToString());
                 for (int pos = StartPoint; (pos + samplesize) < EndPoint; pos += samplesize)
@@ -2085,6 +2105,36 @@ namespace UniversalPatcher
                 graphSettings.ZoomEndPoint = graphSettings.SampleCount - 1;
             }
             ShowSelectedRange();
+        }
+
+        private void btnBackgroundColor_Click(object sender, EventArgs e)
+        {
+            colorDialog1.Color = chart1.ChartAreas[0].BackColor;
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                chart1.ChartAreas[0].BackColor = colorDialog1.Color;
+                chart2.ChartAreas[0].BackColor = colorDialog1.Color;
+            }
+            AppSettings.LoggerGrapohicsBackColor = System.Drawing.ColorTranslator.ToHtml(colorDialog1.Color);
+            AppSettings.Save();
+        }
+
+        private void numLineWidth_ValueChanged(object sender, EventArgs e)
+        {
+            for (int x=0; x<chart1.Series.Count;x++)
+            {
+                chart1.Series[x].BorderWidth = (int)numLineWidth.Value;
+            }
+            AppSettings.LoggerGraphicsLineWidth = (int)numLineWidth.Value;
+            AppSettings.Save();
+        }
+
+        private void comboColorPalette_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AppSettings.LoggerGraphicsColorPalette = (ChartColorPalette)comboColorPalette.SelectedItem;
+            chart1.Palette = (ChartColorPalette)comboColorPalette.SelectedItem;
+            chart2.Palette = (ChartColorPalette)comboColorPalette.SelectedItem;
+            AppSettings.Save();
         }
     }
 }

@@ -109,6 +109,7 @@ namespace UniversalPatcher
             Debug.WriteLine("Initializing " + this.ToString());
 
             //For further inits:
+            this.Protocol = j2534Init.Protocol;
             this.BaudRate = BaudRate;
             SerialPortConfiguration configuration = new SerialPortConfiguration();
             configuration.BaudRate = BaudRate;
@@ -536,8 +537,8 @@ namespace UniversalPatcher
                 if (m == null)
                 {
                     // This should never happen, but just in case...
-                    Logger("No response to send attempt. " + message.ToString());
-                    return Response.Create(ResponseStatus.Error, new OBDMessage(new byte[0]));
+                    Debug.WriteLine("No response to send attempt. " + message.ToString());
+                    return Response.Create(ResponseStatus.UnexpectedResponse, new OBDMessage(new byte[0]));
                 }
 
                 Debug.WriteLine("RX: " + m.ToString());
@@ -600,7 +601,17 @@ namespace UniversalPatcher
                 //Debug.WriteLine("Sendrequest called");
                 //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());                  
                 //this.ClearMessageQueue();
-                Response<OBDMessage> m = SendDVIPacket(message, responses);
+                Response<OBDMessage> m = new Response<OBDMessage>(ResponseStatus.Error, new OBDMessage());
+                for (int retry=0;retry <5;retry++)
+                {
+                    m = SendDVIPacket(message, responses);
+                    if (m.Status != ResponseStatus.UnexpectedResponse)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(100);
+                    Debug.WriteLine("Send failed, retry attempt: " + retry.ToString());
+                }
                 message.TimeStamp = DateTime.Now.Ticks;
                 this.MessageSent(message);
                 if (m.Status != ResponseStatus.Success)
@@ -634,15 +645,22 @@ namespace UniversalPatcher
         /// Messages are placed into the queue by the code in ReadDvIPacket.
         /// Retry loops and message processing are in the application layer.
         /// </remarks>
-        public override void Receive(bool WaitForTimeout)
+        public override void Receive(int NumMessages, bool WaitForTimeout)
         {
             if (this.Port == null || !Port.PortOpen())
             {
                 Debug.WriteLine("Port closed, disposing OBDX Pro device");
             }
-            if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+            for (int m = 0; m < NumMessages; m++)
             {
-                ReadDVIPacket(ReadTimeout);
+                if (WaitForTimeout || Port.GetReceiveQueueSize() > 3)
+                {
+                    ReadDVIPacket(ReadTimeout);
+                }
+                else
+                {
+                    break;
+                }
             }
             Debug.WriteLine("Port have " + Port.GetReceiveQueueSize().ToString() + " bytes in queue");
         }
@@ -661,7 +679,7 @@ namespace UniversalPatcher
             this.Port.Send(MsgATZ);
             System.Threading.Thread.Sleep(50);
             this.Port.Send(MsgATZ);
-            System.Threading.Thread.Sleep(300);
+            System.Threading.Thread.Sleep(400);
             this.Port.DiscardBuffers();
 
             //AT@1 will return OBDX Pro VT - will then need to change its API to DVI bytes.
@@ -1250,6 +1268,11 @@ namespace UniversalPatcher
 */
             RemoveToFilter();
             this.CurrentFilter = FilterMode.None;
+            return true;
+        }
+        public override bool RemoveFilters2(int[] filterIds)
+        {
+            Debug.WriteLine("RemoveFilters2 not implemented");
             return true;
         }
 

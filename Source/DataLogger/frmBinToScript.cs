@@ -45,7 +45,7 @@ namespace UniversalPatcher
 
         private void btnBrowseScript_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile(TxtFilter, txtScriptFile.Text);
+            string FileName = SelectSaveFile(ScriptFilter, txtScriptFile.Text);
             if (FileName.Length == 0)
             {
                 return;

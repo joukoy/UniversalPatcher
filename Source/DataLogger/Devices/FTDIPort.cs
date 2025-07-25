@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -19,7 +20,7 @@ namespace UniversalPatcher
     {
         private string name;
         private FTDI port;
-        private Queue<SerialByte> internalQueue = new Queue<SerialByte>();
+        private BlockingCollection<SerialByte> internalQueue = new BlockingCollection<SerialByte>();
         private int RTimeout = 500;
         private int WTimeout = 500;
         private static EventWaitHandle waitHandle;
@@ -84,8 +85,12 @@ namespace UniversalPatcher
             SerialPortConfiguration config = configuration as SerialPortConfiguration;
             this.port = new FTDI();
             RTimeout = config.Timeout;
+            string sPort = this.name;
+            string[] sParts = sPort.Split(':');
+            if (sParts.Length > 1)
+                sPort = sParts[0].Trim();
 
-            FTDI.FT_STATUS ftStatus = port.OpenBySerialNumber(this.name);
+            FTDI.FT_STATUS ftStatus = port.OpenBySerialNumber(sPort);
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 throw new Exception("Failed to open device (error " + ftStatus.ToString() + ")");
@@ -156,14 +161,11 @@ namespace UniversalPatcher
 
                     uint numBytesRead = 0;
                     port.Read(rx, bytes, ref numBytesRead);
-                    lock (this.internalQueue)
+                    for (int i = 0; i < bytes; i++)
                     {
-                        for (int i = 0; i < bytes; i++)
-                        {
-                            SerialByte sb = new SerialByte(1);
-                            sb.Data[0] = rx[i];
-                            this.internalQueue.Enqueue(sb);
-                        }
+                        SerialByte sb = new SerialByte(1);
+                        sb.Data[0] = rx[i];
+                        this.internalQueue.Add(sb);
                     }
                     //Debug.WriteLine("Receiving FTDI data, bytes: " + BitConverter.ToString(rx));
                 }
@@ -179,6 +181,7 @@ namespace UniversalPatcher
         /// </summary>
         public void Dispose()
         {
+            receiverTokenSource.Cancel();
             if (this.port != null)
             {
                 if (this.port.IsOpen)
@@ -224,21 +227,25 @@ namespace UniversalPatcher
         /// </summary>
         int IPort.Receive(SerialByte buffer, int offset, int count)
         {
-            // Using the BaseStream causes data to be lost.
-            //return this.port.Read(buffer, offset, count);
             int rCount = 0;
             int pos = offset;
+            int remainms = RTimeout;
             DateTime startTime = DateTime.Now;
             receiverTokenSource = new CancellationTokenSource();
             receiverToken = receiverTokenSource.Token;
-
-            while (this.internalQueue.Count < count)
+            while (rCount < count)
             {
-                Thread.Sleep(1);
-                if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(RTimeout))
+                if (internalQueue.TryTake(out SerialByte sb, remainms,receiverToken))
                 {
-                    Debug.WriteLine("FTDI waiting for: " + count + ", received: " + this.internalQueue.Count);
-                    throw new TimeoutException();
+                    buffer.Data[pos] = sb.Data[0];
+                    pos++;
+                    rCount++;
+                    remainms = (int)(RTimeout - DateTime.Now.Subtract(startTime).TotalMilliseconds);
+                }
+                else
+                {
+                    //Debug.WriteLine("FTDI port timeout: " + RTimeout.ToString());
+                    break;
                 }
                 if (receiverToken.IsCancellationRequested)
                 {
@@ -246,22 +253,6 @@ namespace UniversalPatcher
                     throw new TimeoutException();
                 }
             }
-            lock (this.internalQueue)
-            {
-                SerialByte sb = internalQueue.Dequeue();
-                buffer.TimeStamp = sb.TimeStamp;
-                buffer.Data[pos] = sb.Data[0];
-                pos++;
-                rCount++;
-                while (rCount < count)
-                {
-                    buffer.Data[pos] = internalQueue.Dequeue().Data[0];
-                    pos++;
-                    rCount++;
-                    datalogger.ReceivedBytes++;
-                }
-            }
-            //Debug.WriteLine("FTDI RX: " + BitConverter.ToString(buffer.Data));
             return rCount;
         }
 
@@ -271,6 +262,7 @@ namespace UniversalPatcher
         public void DiscardBuffers()
         {
             this.port.Purge(FTDI.FT_PURGE.FT_PURGE_RX | FTDI.FT_PURGE.FT_PURGE_TX);
+            while (internalQueue.TryTake(out _)) { }
         }
 
         /// <summary>

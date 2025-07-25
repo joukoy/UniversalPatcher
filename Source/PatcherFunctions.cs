@@ -401,6 +401,12 @@ public class Upatcher
         public string CVN;
     }
 
+    public class FiletypeFolder
+    {
+        public string Filter { get; set; }
+        public string LastFolder { get; set; }
+    }
+
     public class FileType
     {
         public FileType() { }
@@ -496,6 +502,7 @@ public class Upatcher
         SetLoggingFilter,
         SetAnalyzerFilter,
         RemoveFilters,
+        RemoveFilters2,
         SetProgramminVoltage,
         AddToFunctMsgLookupTable,
         DeleteFromFunctMsgLookupTable,
@@ -543,6 +550,7 @@ public class Upatcher
     public static List<PidInfo> PidDescriptions;
     public static List<CANDevice> CanModules;
     public static List<ReDo> RedoLog;
+    public static List<FiletypeFolder> LastFolders = new List<FiletypeFolder>();
 
     public static string tableSearchFile;
     //public static string tableSeekFile = "";
@@ -708,10 +716,6 @@ public class Upatcher
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "ChecksumSearch"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "TuneSessions")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "TunerSessions"));
-        if (AppSettings.LastXMLfolder == "")
-            AppSettings.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
-        if (AppSettings.LastPATCHfolder == "")
-            AppSettings.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
 
         frmSplash = new frmSplashScreen();
         if (AppSettings.SplashShowTime > 0)
@@ -749,6 +753,10 @@ public class Upatcher
             else if (args[1].ToLower().Contains("logger"))
             {
                 Application.Run(new frmLogger());
+            }
+            else if (args[1].ToLower().Contains("serialport"))
+            {
+                Application.Run(new frmSerialPortServer());
             }
             else
             {
@@ -833,6 +841,7 @@ public class Upatcher
             dtcSearchConfigs = new List<DtcSearchConfig>();
             pidSearchConfigs = new List<PidSearchConfig>();
             SwapSegments = new List<SwapSegment>();
+            LastFolders = new List<FiletypeFolder>();
             unitList = new List<Units>();
             patches = new List<Patch>();
             //Dirty fix to make system work without stockcvn.xml
@@ -975,6 +984,20 @@ public class Upatcher
                 unitList = (List<Units>)reader.Deserialize(file);
                 file.Close();
 
+            }
+
+            Logger(",lastFolders", false);
+            ShowSplash("lastfolders");
+            Application.DoEvents();
+
+            string lastFoldersFile = Path.Combine(Application.StartupPath, "XML", "lastfolders.xml");
+            if (File.Exists(lastFoldersFile))
+            {
+                Debug.WriteLine("Loading lastfolders.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<FiletypeFolder>));
+                System.IO.StreamReader file = new System.IO.StreamReader(lastFoldersFile);
+                LastFolders = (List<FiletypeFolder>)reader.Deserialize(file);
+                file.Close();
             }
 
             Logger(",OBD2 Codes", false);
@@ -2465,157 +2488,170 @@ public class Upatcher
     public static string CheckStockCVN(string PN, string Ver, string SegNr, UInt64 cvnInt, bool AddToList, string XMLFile)
     {
         string retVal = "[n/a]";
-
-        string qry = "";
-        if (SegNr.Length > 0)
-            qry = "pn = '" + PN + "' AND ver = '" + Ver + "' AND segmentnr = " + SegNr.ToString(); //+ " AND xmlfile = '" + XMLFile + "'";
-        else
-            qry = "pn = '" + PN + "' AND ver = '" + Ver + "'"; //+ " AND xmlfile = '" + XMLFile + "'";
-        DataRow[] res = cvnDB.stockCvn.Select(qry);
-
-        for (int c = 0; c < res.Length; c++)
+        try
         {
-            if (Path.GetFileName(XMLFile) != res[c]["xmlfile"].ToString() && res[c]["alternatexml"].ToString().Length == 0)
-            {
-                OleDbCommandBuilder builder = new OleDbCommandBuilder(cvnDB.stockAdapter);
-                res[c]["alternatexml"] = Path.GetFileName(XMLFile);
-                cvnDB.stockAdapter.UpdateCommand = builder.GetUpdateCommand();
-                cvnDB.stockAdapter.Update(cvnDB.stockCvn);
-            }
-            uint stockCvnInt = 0;
-            if(HexToUint(res[c]["cvn"].ToString(), out stockCvnInt))
-            if (stockCvnInt == cvnInt)
-            {
-                retVal = "[stock]";
-                break;
-            }
+
+            string qry = "";
+            if (SegNr.Length > 0)
+                qry = "pn = '" + PN + "' AND ver = '" + Ver + "' AND segmentnr = " + SegNr.ToString(); //+ " AND xmlfile = '" + XMLFile + "'";
             else
+                qry = "pn = '" + PN + "' AND ver = '" + Ver + "'"; //+ " AND xmlfile = '" + XMLFile + "'";
+            DataRow[] res = cvnDB.stockCvn.Select(qry);
+
+            for (int c = 0; c < res.Length; c++)
             {
-                retVal = "[modded]";
-                break;
-                //return "[modded]";
-            }
-        }
-
-
-        if (retVal == "[n/a]")
-        {
-            //Check if it's in referencelist
-            bool cvnMismatch = false;
-            uint refC = 0;
-            string refString = "";
-            qry = "pn = '" + PN + "'";
-            res = cvnDB.refCvn.Select(qry);
-
-            for (int r = 0; r < res.Length; r++)
-            {
-                if (AppSettings.RequireValidVerForStock)
-                    if (Ver.Contains("?"))
+                if (Path.GetFileName(XMLFile) != res[c]["xmlfile"].ToString() && res[c]["alternatexml"].ToString().Length == 0)
+                {
+                    OleDbCommandBuilder builder = new OleDbCommandBuilder(cvnDB.stockAdapter);
+                    res[c]["alternatexml"] = Path.GetFileName(XMLFile);
+                    cvnDB.stockAdapter.UpdateCommand = builder.GetUpdateCommand();
+                    cvnDB.stockAdapter.Update(cvnDB.stockCvn);
+                }
+                uint stockCvnInt = 0;
+                if (HexToUint(res[c]["cvn"].ToString(), out stockCvnInt))
+                    if (stockCvnInt == cvnInt)
                     {
-                        Logger("No valid version");
-                        return "[modded/R]";
-                    }
-                refString = res[r]["cvn"].ToString();
-                cvnMismatch = true;    //Found from referencelist, match not found YET
-                if (!HexToUint(refString, out refC))
-                {
-                    LoggerBold("Can't convert from HEX: " + refString);
-                }
-                if (refC == cvnInt)
-                {
-                    Debug.WriteLine("PN: " + PN + " CVN found from Referencelist: " + refString);
-                    cvnMismatch = false; //Found from referencelist, no mismatch
-					retVal = "[stock]";
-
-                }
-                ushort refShort;
-                if (!HexToUshort(refString, out refShort))
-                {
-                    Debug.WriteLine("CheckStockCVN (ushort): Can't convert from HEX: " + refString);
-                }
-                if (SwapBytes(refShort,4) == cvnInt)
-                {
-                    Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + refString);
-                    cvnMismatch = false; //Found from referencelist, no mismatch
-					retVal = "[stock]";
-                }
-                else
-                {
-                    Debug.WriteLine("Byte swapped CVN doesn't match: " + SwapBytes(refShort,4).ToString("X") + " <> " + cvnInt.ToString("X"));
-                }                
-            }
-
-            if (cvnMismatch) //Found from referencelist, have mismatch
-            {
-                retVal = "[modded/R]";
-                bool isInBadCvnList = false;
-                AddToList = false;  //Don't add to CVN list if add to mismatch CVN
-                if (BadCvnList == null)
-                    BadCvnList = new List<CVN>();
-                for (int i = 0; i < BadCvnList.Count; i++)
-                {
-                    uint badCvnInt = 0;
-                    if (HexToUint(BadCvnList[i].cvn, out badCvnInt))
-                    {
-                        if (BadCvnList[i].PN == PN && badCvnInt == cvnInt)
-                        {
-                            isInBadCvnList = true;
-                            Debug.WriteLine("PN: " + PN + ", CVN: " + cvnInt + " is already in badCvnList");
-                            break;
-                        }
-                    }
-                }
-                if (!isInBadCvnList)
-                {
-                    Debug.WriteLine("Adding PN: " + PN + ", CVN: " + cvnInt + " to badCvnList");
-                    CVN C1 = new CVN();
-                    C1.cvn = cvnInt.ToString("X");
-                    C1.PN = PN;
-                    C1.SegmentNr = SegNr;
-                    C1.Ver = Ver;
-                    C1.XmlFile = Path.GetFileName(XMLFile);
-                    C1.ReferenceCvn = refString.TrimStart('0');
-                    BadCvnList.Add(C1);
-
-                }
-            }
-        }
-
-        if (AddToList && retVal != "[stock]")
-        {
-            bool IsinCVNlist = false;
-            if (ListCVN == null)
-                ListCVN = new List<CVN>();
-
-            for (int c = 0; c < ListCVN.Count; c++)
-            {
-                //if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
-                uint listCvnInt = 0;
-                if (HexToUint(ListCVN[c].cvn, out listCvnInt))
-                    if (ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && listCvnInt == cvnInt)
-                    {
-                        Debug.WriteLine("Already in CVN list: " + cvnInt);
-                        IsinCVNlist = true;
+                        retVal = "[stock]";
                         break;
                     }
+                    else
+                    {
+                        retVal = "[modded]";
+                        break;
+                        //return "[modded]";
+                    }
             }
-            if (!IsinCVNlist)
-            {
-                CVN newCvn = new CVN();
 
-                newCvn.PN = PN;
-                newCvn.cvn = cvnInt.ToString("X");
-                newCvn.SegmentNr = SegNr;
-                newCvn.Ver = Ver;
-                newCvn.XmlFile = Path.GetFileName(XMLFile);
+
+            if (retVal == "[n/a]")
+            {
+                //Check if it's in referencelist
+                bool cvnMismatch = false;
+                uint refC = 0;
+                string refString = "";
                 qry = "pn = '" + PN + "'";
                 res = cvnDB.refCvn.Select(qry);
 
-                if (res.Length > 0)
-                    newCvn.ReferenceCvn = res[0]["cvn"].ToString().TrimStart('0');
+                for (int r = 0; r < res.Length; r++)
+                {
+                    if (AppSettings.RequireValidVerForStock)
+                        if (Ver.Contains("?"))
+                        {
+                            Logger("No valid version");
+                            return "[modded/R]";
+                        }
+                    refString = res[r]["cvn"].ToString();
+                    cvnMismatch = true;    //Found from referencelist, match not found YET
+                    if (!HexToUint(refString, out refC))
+                    {
+                        LoggerBold("Can't convert from HEX: " + refString);
+                    }
+                    if (refC == cvnInt)
+                    {
+                        Debug.WriteLine("PN: " + PN + " CVN found from Referencelist: " + refString);
+                        cvnMismatch = false; //Found from referencelist, no mismatch
+                        retVal = "[stock]";
 
-                ListCVN.Add(newCvn);
+                    }
+                    ushort refShort;
+                    if (!HexToUshort(refString, out refShort))
+                    {
+                        Debug.WriteLine("CheckStockCVN (ushort): Can't convert from HEX: " + refString);
+                    }
+                    if (SwapBytes(refShort, 4) == cvnInt)
+                    {
+                        Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + refString);
+                        cvnMismatch = false; //Found from referencelist, no mismatch
+                        retVal = "[stock]";
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Byte swapped CVN doesn't match: " + SwapBytes(refShort, 4).ToString("X") + " <> " + cvnInt.ToString("X"));
+                    }
+                }
+
+                if (cvnMismatch) //Found from referencelist, have mismatch
+                {
+                    retVal = "[modded/R]";
+                    bool isInBadCvnList = false;
+                    AddToList = false;  //Don't add to CVN list if add to mismatch CVN
+                    if (BadCvnList == null)
+                        BadCvnList = new List<CVN>();
+                    for (int i = 0; i < BadCvnList.Count; i++)
+                    {
+                        uint badCvnInt = 0;
+                        if (HexToUint(BadCvnList[i].cvn, out badCvnInt))
+                        {
+                            if (BadCvnList[i].PN == PN && badCvnInt == cvnInt)
+                            {
+                                isInBadCvnList = true;
+                                Debug.WriteLine("PN: " + PN + ", CVN: " + cvnInt + " is already in badCvnList");
+                                break;
+                            }
+                        }
+                    }
+                    if (!isInBadCvnList)
+                    {
+                        Debug.WriteLine("Adding PN: " + PN + ", CVN: " + cvnInt + " to badCvnList");
+                        CVN C1 = new CVN();
+                        C1.cvn = cvnInt.ToString("X");
+                        C1.PN = PN;
+                        C1.SegmentNr = SegNr;
+                        C1.Ver = Ver;
+                        C1.XmlFile = Path.GetFileName(XMLFile);
+                        C1.ReferenceCvn = refString.TrimStart('0');
+                        BadCvnList.Add(C1);
+
+                    }
+                }
             }
+
+            if (AddToList && retVal != "[stock]")
+            {
+                bool IsinCVNlist = false;
+                if (ListCVN == null)
+                    ListCVN = new List<CVN>();
+
+                for (int c = 0; c < ListCVN.Count; c++)
+                {
+                    //if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
+                    uint listCvnInt = 0;
+                    if (HexToUint(ListCVN[c].cvn, out listCvnInt))
+                        if (ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && listCvnInt == cvnInt)
+                        {
+                            Debug.WriteLine("Already in CVN list: " + cvnInt);
+                            IsinCVNlist = true;
+                            break;
+                        }
+                }
+                if (!IsinCVNlist)
+                {
+                    CVN newCvn = new CVN();
+
+                    newCvn.PN = PN;
+                    newCvn.cvn = cvnInt.ToString("X");
+                    newCvn.SegmentNr = SegNr;
+                    newCvn.Ver = Ver;
+                    newCvn.XmlFile = Path.GetFileName(XMLFile);
+                    qry = "pn = '" + PN + "'";
+                    res = cvnDB.refCvn.Select(qry);
+
+                    if (res.Length > 0)
+                        newCvn.ReferenceCvn = res[0]["cvn"].ToString().TrimStart('0');
+
+                    ListCVN.Add(newCvn);
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            Debug.WriteLine("Error patcherfunctions, line " + line + ": " + ex.Message);
+
         }
         return retVal;
    }
@@ -2669,7 +2705,7 @@ public class Upatcher
             var frame = st.GetFrame(st.FrameCount - 1);
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
-            Debug.WriteLine("Error searchBytes, line " + line + ": " + ex.Message);
+            Debug.WriteLine("Error patcherfunctions, line " + line + ": " + ex.Message);
         }
         return uint.MaxValue;
     }

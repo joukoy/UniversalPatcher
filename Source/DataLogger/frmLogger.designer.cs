@@ -31,21 +31,21 @@ namespace UniversalPatcher
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLogger));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle52 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle53 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle54 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle55 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle56 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle57 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle58 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle59 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle60 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle61 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle62 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle63 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle49 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle50 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle51 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
             this.timerShowData = new System.Windows.Forms.Timer(this.components);
             this.comboSerialPort = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -54,6 +54,7 @@ namespace UniversalPatcher
             this.treeProfiles = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.groupPlayback = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.labelTimeStamp = new System.Windows.Forms.Label();
             this.label39 = new System.Windows.Forms.Label();
             this.numPlaybackSpeed = new System.Windows.Forms.NumericUpDown();
@@ -72,11 +73,15 @@ namespace UniversalPatcher
             this.label2 = new System.Windows.Forms.Label();
             this.labelSeparator = new System.Windows.Forms.Label();
             this.txtLogFolder = new System.Windows.Forms.TextBox();
-            this.listProfiles = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
             this.dataGridLogData = new System.Windows.Forms.DataGridView();
+            this.contextMenuLogDataGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.removeToolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.btnWbMoreSettings = new System.Windows.Forms.Button();
+            this.txtWBCanId = new System.Windows.Forms.TextBox();
+            this.label59 = new System.Windows.Forms.Label();
             this.comboWBport = new System.Windows.Forms.ComboBox();
             this.comboWBType = new System.Windows.Forms.ComboBox();
             this.label45 = new System.Windows.Forms.Label();
@@ -86,11 +91,6 @@ namespace UniversalPatcher
             this.label43 = new System.Windows.Forms.Label();
             this.radioCAN = new System.Windows.Forms.RadioButton();
             this.radioVPW = new System.Windows.Forms.RadioButton();
-            this.groupBox10 = new System.Windows.Forms.GroupBox();
-            this.numRetryDelay = new System.Windows.Forms.NumericUpDown();
-            this.numRetryTimes = new System.Windows.Forms.NumericUpDown();
-            this.label35 = new System.Windows.Forms.Label();
-            this.label34 = new System.Windows.Forms.Label();
             this.groupHWSettings = new System.Windows.Forms.GroupBox();
             this.categories = new System.Windows.Forms.GroupBox();
             this.j2534RadioButton = new System.Windows.Forms.RadioButton();
@@ -99,42 +99,80 @@ namespace UniversalPatcher
             this.j2534DeviceList = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.serialOptionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.radioTCPIP = new System.Windows.Forms.RadioButton();
+            this.radioFTDI = new System.Windows.Forms.RadioButton();
+            this.radioRS232 = new System.Windows.Forms.RadioButton();
             this.comboBaudRate = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.chkFTDI = new System.Windows.Forms.CheckBox();
             this.comboSerialDeviceType = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelSerialport = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.groupAdvanced = new System.Windows.Forms.GroupBox();
+            this.label64 = new System.Windows.Forms.Label();
+            this.numRestartLoggingAfter = new System.Windows.Forms.NumericUpDown();
+            this.chkRestartLogging = new System.Windows.Forms.CheckBox();
+            this.numAnalyzerNumMessages = new System.Windows.Forms.NumericUpDown();
+            this.label62 = new System.Windows.Forms.Label();
+            this.chkJ2534ServerCreateDebugLog = new System.Windows.Forms.CheckBox();
+            this.btnAllSettings = new System.Windows.Forms.Button();
+            this.comboStartLoggingKey = new System.Windows.Forms.ComboBox();
+            this.label58 = new System.Windows.Forms.Label();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.numRetryDelay = new System.Windows.Forms.NumericUpDown();
+            this.numRetryTimes = new System.Windows.Forms.NumericUpDown();
+            this.label35 = new System.Windows.Forms.Label();
+            this.label34 = new System.Windows.Forms.Label();
             this.chkTestPidCompatibility = new System.Windows.Forms.CheckBox();
             this.btnStartIdleTraffic = new System.Windows.Forms.Button();
             this.numIdleTrafficInterval = new System.Windows.Forms.NumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
-            this.numResetAfter = new System.Windows.Forms.NumericUpDown();
-            this.label40 = new System.Windows.Forms.Label();
             this.btnTimeouts = new System.Windows.Forms.Button();
             this.chkAutoDisconnect = new System.Windows.Forms.CheckBox();
             this.chkJ2534ServerVisible = new System.Windows.Forms.CheckBox();
             this.chkStartJ2534Process = new System.Windows.Forms.CheckBox();
             this.chkVPWFilters = new System.Windows.Forms.CheckBox();
-            this.chkRawValues = new System.Windows.Forms.CheckBox();
             this.chkReverseSlotNumbers = new System.Windows.Forms.CheckBox();
             this.labelResponseMode = new System.Windows.Forms.Label();
             this.comboResponseMode = new System.Windows.Forms.ComboBox();
             this.tabProfile = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.dataGridProfile = new System.Windows.Forms.DataGridView();
-            this.dataGridSelectedPids = new System.Windows.Forms.DataGridView();
-            this.label55 = new System.Windows.Forms.Label();
-            this.label46 = new System.Windows.Forms.Label();
-            this.comboFilterByOS = new System.Windows.Forms.ComboBox();
+            this.btnProfileRefresh = new System.Windows.Forms.Button();
+            this.groupDetectSupportedPids = new System.Windows.Forms.GroupBox();
+            this.btnFilterByBin = new System.Windows.Forms.Button();
+            this.label63 = new System.Windows.Forms.Label();
             this.btnTestPids = new System.Windows.Forms.Button();
-            this.chkFilterParamsByOS = new System.Windows.Forms.CheckBox();
+            this.comboFilterByOS = new System.Windows.Forms.ComboBox();
+            this.btnPidProfileImportDbc = new System.Windows.Forms.Button();
+            this.chkContinuousPidTest = new System.Windows.Forms.CheckBox();
+            this.btnTestMasterlistPids = new System.Windows.Forms.Button();
+            this.btnTestEnabledPids = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnProfileLoad = new System.Windows.Forms.Button();
+            this.comboProfileFilename = new System.Windows.Forms.ComboBox();
+            this.label57 = new System.Windows.Forms.Label();
+            this.label56 = new System.Windows.Forms.Label();
+            this.comboProfileCategory = new System.Windows.Forms.ComboBox();
+            this.btnSaveProfile = new System.Windows.Forms.Button();
             this.label41 = new System.Windows.Forms.Label();
+            this.comboProfilePlatform = new System.Windows.Forms.ComboBox();
+            this.dataGridProfile = new System.Windows.Forms.DataGridView();
+            this.contextMenuProfile = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.btnQueryPid = new System.Windows.Forms.Button();
+            this.label55 = new System.Windows.Forms.Label();
             this.txtParamSearch = new System.Windows.Forms.TextBox();
+            this.chkFilterParamsByOS = new System.Windows.Forms.CheckBox();
+            this.dataGridSelectedPids = new System.Windows.Forms.DataGridView();
+            this.contextMenuEnabledPids = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.removeToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.label46 = new System.Windows.Forms.Label();
             this.tabPidEditor = new System.Windows.Forms.TabPage();
             this.splitContainerProfile2 = new System.Windows.Forms.SplitContainer();
+            this.chkPidEditorProfileOnly = new System.Windows.Forms.CheckBox();
+            this.chkPidEditorShowCustom = new System.Windows.Forms.CheckBox();
+            this.chkPidEditorShowMaster = new System.Windows.Forms.CheckBox();
+            this.txtPidEditorFilter = new System.Windows.Forms.TextBox();
+            this.label54 = new System.Windows.Forms.Label();
             this.dataGridViewPidEditor = new System.Windows.Forms.DataGridView();
             this.contextMenuPidEditor = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -144,8 +182,22 @@ namespace UniversalPatcher
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.addToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.txtPidEditorFilter = new System.Windows.Forms.TextBox();
-            this.label54 = new System.Windows.Forms.Label();
+            this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.massUpdateSelectedPIDsToAllProfilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.massUpdateALLPIDsToAllProfilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnPidEditorImportDBC = new System.Windows.Forms.Button();
+            this.comboPidEditorDatatype = new System.Windows.Forms.ComboBox();
+            this.label61 = new System.Windows.Forms.Label();
+            this.chkPideditorCustom = new System.Windows.Forms.CheckBox();
+            this.btnDuplicatePid = new System.Windows.Forms.Button();
+            this.btnAddNewPid = new System.Windows.Forms.Button();
+            this.comboPidEditorType = new System.Windows.Forms.ComboBox();
+            this.label60 = new System.Windows.Forms.Label();
+            this.txtPidId = new System.Windows.Forms.TextBox();
+            this.txtPidname = new System.Windows.Forms.TextBox();
+            this.labelPidEditorId = new System.Windows.Forms.Label();
+            this.label40 = new System.Windows.Forms.Label();
             this.groupConversion = new System.Windows.Forms.GroupBox();
             this.txtConversionFormat = new System.Windows.Forms.TextBox();
             this.label53 = new System.Windows.Forms.Label();
@@ -171,12 +223,19 @@ namespace UniversalPatcher
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabAnalyzer = new System.Windows.Forms.TabPage();
+            this.labelPassivePidValues = new System.Windows.Forms.Label();
+            this.splitAnalyzer = new System.Windows.Forms.SplitContainer();
+            this.dataGridAnalyzer = new System.Windows.Forms.DataGridView();
+            this.contextMenuAnalyzer = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showSignalBitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchSignalFromDBCFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dataGridPassivePidValues = new System.Windows.Forms.DataGridView();
+            this.chkCombinePids = new System.Windows.Forms.CheckBox();
             this.btnStartStopAnalyzer = new System.Windows.Forms.Button();
             this.btnSaveAnalyzerMsgs = new System.Windows.Forms.Button();
             this.btnAnalyzerSaveCsv = new System.Windows.Forms.Button();
             this.btnClearAnalyzerGrid = new System.Windows.Forms.Button();
             this.chkHideHeartBeat = new System.Windows.Forms.CheckBox();
-            this.dataGridAnalyzer = new System.Windows.Forms.DataGridView();
             this.tabDTC = new System.Windows.Forms.TabPage();
             this.groupDTC = new System.Windows.Forms.GroupBox();
             this.btnTestModulePids = new System.Windows.Forms.Button();
@@ -208,6 +267,13 @@ namespace UniversalPatcher
             this.saveCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabVPWConsole = new System.Windows.Forms.TabPage();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.label65 = new System.Windows.Forms.Label();
+            this.numFloodByteCount = new System.Windows.Forms.NumericUpDown();
+            this.chkFlood4x = new System.Windows.Forms.CheckBox();
+            this.txtFloodByte = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.chkFloodActive = new System.Windows.Forms.CheckBox();
             this.vScrollBarVpwConsole = new System.Windows.Forms.VScrollBar();
             this.richVPWmessages = new System.Windows.Forms.RichTextBox();
             this.txtSendBus = new System.Windows.Forms.TextBox();
@@ -344,6 +410,10 @@ namespace UniversalPatcher
             this.saveJConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.createDebugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.touristToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearJConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearVPWConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -369,6 +439,7 @@ namespace UniversalPatcher
             this.patcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tunerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.launcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.serialportServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -384,6 +455,9 @@ namespace UniversalPatcher
             this.timerJconsoleShowLogText = new System.Windows.Forms.Timer(this.components);
             this.labelProtocol = new System.Windows.Forms.Label();
             this.labelAFR = new System.Windows.Forms.Label();
+            this.timerAnalyzerCombined = new System.Windows.Forms.Timer(this.components);
+            this.chkLoggingStarted = new System.Windows.Forms.CheckBox();
+            this.timerAnalyzer = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -391,26 +465,32 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numPlaybackSpeed)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
+            this.contextMenuLogDataGrid.SuspendLayout();
             this.tabSettings.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupProtocol.SuspendLayout();
-            this.groupBox10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numRetryTimes)).BeginInit();
             this.groupHWSettings.SuspendLayout();
             this.categories.SuspendLayout();
             this.j2534OptionsGroupBox.SuspendLayout();
             this.serialOptionsGroupBox.SuspendLayout();
             this.groupAdvanced.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRestartLoggingAfter)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numAnalyzerNumMessages)).BeginInit();
+            this.groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRetryTimes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numIdleTrafficInterval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numResetAfter)).BeginInit();
             this.tabProfile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.groupDetectSupportedPids.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridProfile)).BeginInit();
+            this.contextMenuProfile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSelectedPids)).BeginInit();
+            this.contextMenuEnabledPids.SuspendLayout();
             this.tabPidEditor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerProfile2)).BeginInit();
             this.splitContainerProfile2.Panel1.SuspendLayout();
@@ -425,12 +505,20 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPidEditorPids)).BeginInit();
             this.contextMenuPidEditorPids.SuspendLayout();
             this.tabAnalyzer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitAnalyzer)).BeginInit();
+            this.splitAnalyzer.Panel1.SuspendLayout();
+            this.splitAnalyzer.Panel2.SuspendLayout();
+            this.splitAnalyzer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAnalyzer)).BeginInit();
+            this.contextMenuAnalyzer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridPassivePidValues)).BeginInit();
             this.tabDTC.SuspendLayout();
             this.groupDTC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDtcCodes)).BeginInit();
             this.contextMenuDtc.SuspendLayout();
             this.tabVPWConsole.SuspendLayout();
+            this.groupBox11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numFloodByteCount)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).BeginInit();
@@ -462,7 +550,7 @@ namespace UniversalPatcher
             // comboSerialPort
             // 
             this.comboSerialPort.FormattingEnabled = true;
-            this.comboSerialPort.Location = new System.Drawing.Point(80, 37);
+            this.comboSerialPort.Location = new System.Drawing.Point(80, 54);
             this.comboSerialPort.Name = "comboSerialPort";
             this.comboSerialPort.Size = new System.Drawing.Size(255, 21);
             this.comboSerialPort.TabIndex = 2;
@@ -484,7 +572,7 @@ namespace UniversalPatcher
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(974, 507);
+            this.tabControl1.Size = new System.Drawing.Size(974, 506);
             this.tabControl1.TabIndex = 3;
             // 
             // tabLog
@@ -494,7 +582,7 @@ namespace UniversalPatcher
             this.tabLog.Location = new System.Drawing.Point(4, 22);
             this.tabLog.Name = "tabLog";
             this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(966, 481);
+            this.tabLog.Size = new System.Drawing.Size(966, 480);
             this.tabLog.TabIndex = 0;
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
@@ -506,11 +594,10 @@ namespace UniversalPatcher
             this.groupLogSettings.Controls.Add(this.treeProfiles);
             this.groupLogSettings.Controls.Add(this.groupPlayback);
             this.groupLogSettings.Controls.Add(this.groupBox1);
-            this.groupLogSettings.Controls.Add(this.listProfiles);
             this.groupLogSettings.Controls.Add(this.label3);
             this.groupLogSettings.Location = new System.Drawing.Point(0, 6);
             this.groupLogSettings.Name = "groupLogSettings";
-            this.groupLogSettings.Size = new System.Drawing.Size(438, 469);
+            this.groupLogSettings.Size = new System.Drawing.Size(438, 468);
             this.groupLogSettings.TabIndex = 31;
             this.groupLogSettings.TabStop = false;
             // 
@@ -525,7 +612,7 @@ namespace UniversalPatcher
             this.treeProfiles.Location = new System.Drawing.Point(14, 136);
             this.treeProfiles.Name = "treeProfiles";
             this.treeProfiles.SelectedImageIndex = 0;
-            this.treeProfiles.Size = new System.Drawing.Size(413, 234);
+            this.treeProfiles.Size = new System.Drawing.Size(413, 232);
             this.treeProfiles.TabIndex = 32;
             // 
             // imageList1
@@ -540,18 +627,29 @@ namespace UniversalPatcher
             // 
             this.groupPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupPlayback.Controls.Add(this.button1);
             this.groupPlayback.Controls.Add(this.labelTimeStamp);
             this.groupPlayback.Controls.Add(this.label39);
             this.groupPlayback.Controls.Add(this.numPlaybackSpeed);
             this.groupPlayback.Controls.Add(this.hScrollPlayback);
             this.groupPlayback.Controls.Add(this.btnPlay);
             this.groupPlayback.Controls.Add(this.btnPause);
-            this.groupPlayback.Location = new System.Drawing.Point(10, 376);
+            this.groupPlayback.Location = new System.Drawing.Point(10, 374);
             this.groupPlayback.Name = "groupPlayback";
             this.groupPlayback.Size = new System.Drawing.Size(417, 83);
             this.groupPlayback.TabIndex = 31;
             this.groupPlayback.TabStop = false;
             this.groupPlayback.Text = "Playback";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(309, 18);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(45, 28);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // labelTimeStamp
             // 
@@ -748,20 +846,6 @@ namespace UniversalPatcher
             this.txtLogFolder.Size = new System.Drawing.Size(370, 20);
             this.txtLogFolder.TabIndex = 10;
             // 
-            // listProfiles
-            // 
-            this.listProfiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listProfiles.Enabled = false;
-            this.listProfiles.FormattingEnabled = true;
-            this.listProfiles.Location = new System.Drawing.Point(352, 104);
-            this.listProfiles.Name = "listProfiles";
-            this.listProfiles.Size = new System.Drawing.Size(99, 225);
-            this.listProfiles.TabIndex = 29;
-            this.listProfiles.Visible = false;
-            this.listProfiles.SelectedIndexChanged += new System.EventHandler(this.listProfiles_SelectedIndexChanged);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -776,69 +860,114 @@ namespace UniversalPatcher
             this.dataGridLogData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle52.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle52.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle52.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle52.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle52.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle52.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle52.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridLogData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle52;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridLogData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridLogData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle53.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle53.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle53.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle53.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle53.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle53.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle53.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridLogData.DefaultCellStyle = dataGridViewCellStyle53;
+            this.dataGridLogData.ContextMenuStrip = this.contextMenuLogDataGrid;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridLogData.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridLogData.Location = new System.Drawing.Point(443, 3);
             this.dataGridLogData.Name = "dataGridLogData";
-            dataGridViewCellStyle54.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle54.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle54.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle54.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle54.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle54.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle54.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridLogData.RowHeadersDefaultCellStyle = dataGridViewCellStyle54;
-            this.dataGridLogData.Size = new System.Drawing.Size(517, 475);
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridLogData.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.dataGridLogData.Size = new System.Drawing.Size(517, 473);
             this.dataGridLogData.TabIndex = 8;
+            this.dataGridLogData.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridLogData_CellContentClick);
+            // 
+            // contextMenuLogDataGrid
+            // 
+            this.contextMenuLogDataGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.removeToolStripMenuItem4});
+            this.contextMenuLogDataGrid.Name = "contextMenuLogDataGrid";
+            this.contextMenuLogDataGrid.Size = new System.Drawing.Size(118, 26);
+            // 
+            // removeToolStripMenuItem4
+            // 
+            this.removeToolStripMenuItem4.Name = "removeToolStripMenuItem4";
+            this.removeToolStripMenuItem4.Size = new System.Drawing.Size(117, 22);
+            this.removeToolStripMenuItem4.Text = "Remove";
+            this.removeToolStripMenuItem4.Click += new System.EventHandler(this.removeToolStripMenuItem4_Click);
             // 
             // tabSettings
             // 
             this.tabSettings.Controls.Add(this.groupBox6);
             this.tabSettings.Controls.Add(this.groupProtocol);
-            this.tabSettings.Controls.Add(this.groupBox10);
             this.tabSettings.Controls.Add(this.groupHWSettings);
             this.tabSettings.Controls.Add(this.groupAdvanced);
             this.tabSettings.Location = new System.Drawing.Point(4, 22);
             this.tabSettings.Name = "tabSettings";
-            this.tabSettings.Size = new System.Drawing.Size(966, 481);
+            this.tabSettings.Size = new System.Drawing.Size(966, 480);
             this.tabSettings.TabIndex = 3;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.btnWbMoreSettings);
+            this.groupBox6.Controls.Add(this.txtWBCanId);
+            this.groupBox6.Controls.Add(this.label59);
             this.groupBox6.Controls.Add(this.comboWBport);
             this.groupBox6.Controls.Add(this.comboWBType);
             this.groupBox6.Controls.Add(this.label45);
             this.groupBox6.Controls.Add(this.label44);
-            this.groupBox6.Location = new System.Drawing.Point(10, 288);
+            this.groupBox6.Location = new System.Drawing.Point(11, 308);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(357, 74);
+            this.groupBox6.Size = new System.Drawing.Size(357, 95);
             this.groupBox6.TabIndex = 37;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Serial WB";
+            // 
+            // btnWbMoreSettings
+            // 
+            this.btnWbMoreSettings.Location = new System.Drawing.Point(242, 68);
+            this.btnWbMoreSettings.Name = "btnWbMoreSettings";
+            this.btnWbMoreSettings.Size = new System.Drawing.Size(97, 21);
+            this.btnWbMoreSettings.TabIndex = 7;
+            this.btnWbMoreSettings.Text = "More settings";
+            this.btnWbMoreSettings.UseVisualStyleBackColor = true;
+            this.btnWbMoreSettings.Click += new System.EventHandler(this.btnWbMoreSettings_Click);
+            // 
+            // txtWBCanId
+            // 
+            this.txtWBCanId.Enabled = false;
+            this.txtWBCanId.Location = new System.Drawing.Point(84, 68);
+            this.txtWBCanId.Name = "txtWBCanId";
+            this.txtWBCanId.Size = new System.Drawing.Size(66, 20);
+            this.txtWBCanId.TabIndex = 6;
+            // 
+            // label59
+            // 
+            this.label59.AutoSize = true;
+            this.label59.Location = new System.Drawing.Point(16, 71);
+            this.label59.Name = "label59";
+            this.label59.Size = new System.Drawing.Size(43, 13);
+            this.label59.TabIndex = 5;
+            this.label59.Text = "CAN id:";
             // 
             // comboWBport
             // 
             this.comboWBport.FormattingEnabled = true;
             this.comboWBport.Location = new System.Drawing.Point(85, 41);
             this.comboWBport.Name = "comboWBport";
-            this.comboWBport.Size = new System.Drawing.Size(255, 21);
+            this.comboWBport.Size = new System.Drawing.Size(254, 21);
             this.comboWBport.TabIndex = 4;
             // 
             // comboWBType
@@ -846,7 +975,7 @@ namespace UniversalPatcher
             this.comboWBType.FormattingEnabled = true;
             this.comboWBType.Location = new System.Drawing.Point(85, 17);
             this.comboWBType.Name = "comboWBType";
-            this.comboWBType.Size = new System.Drawing.Size(255, 21);
+            this.comboWBType.Size = new System.Drawing.Size(254, 21);
             this.comboWBType.TabIndex = 3;
             // 
             // label45
@@ -873,7 +1002,7 @@ namespace UniversalPatcher
             this.groupProtocol.Controls.Add(this.label43);
             this.groupProtocol.Controls.Add(this.radioCAN);
             this.groupProtocol.Controls.Add(this.radioVPW);
-            this.groupProtocol.Location = new System.Drawing.Point(9, 232);
+            this.groupProtocol.Location = new System.Drawing.Point(10, 252);
             this.groupProtocol.Name = "groupProtocol";
             this.groupProtocol.Size = new System.Drawing.Size(359, 50);
             this.groupProtocol.TabIndex = 36;
@@ -882,7 +1011,7 @@ namespace UniversalPatcher
             // 
             // txtPcmAddress
             // 
-            this.txtPcmAddress.Location = new System.Drawing.Point(261, 17);
+            this.txtPcmAddress.Location = new System.Drawing.Point(275, 16);
             this.txtPcmAddress.Name = "txtPcmAddress";
             this.txtPcmAddress.Size = new System.Drawing.Size(65, 20);
             this.txtPcmAddress.TabIndex = 3;
@@ -921,58 +1050,6 @@ namespace UniversalPatcher
             this.radioVPW.UseVisualStyleBackColor = true;
             this.radioVPW.CheckedChanged += new System.EventHandler(this.radioVPW_CheckedChanged);
             // 
-            // groupBox10
-            // 
-            this.groupBox10.Controls.Add(this.numRetryDelay);
-            this.groupBox10.Controls.Add(this.numRetryTimes);
-            this.groupBox10.Controls.Add(this.label35);
-            this.groupBox10.Controls.Add(this.label34);
-            this.groupBox10.Location = new System.Drawing.Point(375, 232);
-            this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(348, 50);
-            this.groupBox10.TabIndex = 35;
-            this.groupBox10.TabStop = false;
-            this.groupBox10.Text = "Write retry";
-            // 
-            // numRetryDelay
-            // 
-            this.numRetryDelay.Location = new System.Drawing.Point(261, 17);
-            this.numRetryDelay.Name = "numRetryDelay";
-            this.numRetryDelay.Size = new System.Drawing.Size(74, 20);
-            this.numRetryDelay.TabIndex = 3;
-            this.numRetryDelay.ValueChanged += new System.EventHandler(this.numRetryDelay_ValueChanged);
-            // 
-            // numRetryTimes
-            // 
-            this.numRetryTimes.Location = new System.Drawing.Point(106, 15);
-            this.numRetryTimes.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numRetryTimes.Name = "numRetryTimes";
-            this.numRetryTimes.Size = new System.Drawing.Size(74, 20);
-            this.numRetryTimes.TabIndex = 2;
-            this.numRetryTimes.ValueChanged += new System.EventHandler(this.numRetryTimes_ValueChanged);
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(192, 17);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(63, 13);
-            this.label35.TabIndex = 1;
-            this.label35.Text = "Retry delay:";
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(10, 17);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(84, 13);
-            this.label34.TabIndex = 0;
-            this.label34.Text = "Retry times (ms):";
-            // 
             // groupHWSettings
             // 
             this.groupHWSettings.Controls.Add(this.categories);
@@ -980,7 +1057,7 @@ namespace UniversalPatcher
             this.groupHWSettings.Controls.Add(this.serialOptionsGroupBox);
             this.groupHWSettings.Location = new System.Drawing.Point(8, 3);
             this.groupHWSettings.Name = "groupHWSettings";
-            this.groupHWSettings.Size = new System.Drawing.Size(361, 224);
+            this.groupHWSettings.Size = new System.Drawing.Size(361, 243);
             this.groupHWSettings.TabIndex = 22;
             this.groupHWSettings.TabStop = false;
             // 
@@ -1051,24 +1128,62 @@ namespace UniversalPatcher
             // 
             // serialOptionsGroupBox
             // 
+            this.serialOptionsGroupBox.Controls.Add(this.radioTCPIP);
+            this.serialOptionsGroupBox.Controls.Add(this.radioFTDI);
+            this.serialOptionsGroupBox.Controls.Add(this.radioRS232);
             this.serialOptionsGroupBox.Controls.Add(this.comboBaudRate);
             this.serialOptionsGroupBox.Controls.Add(this.label7);
-            this.serialOptionsGroupBox.Controls.Add(this.chkFTDI);
             this.serialOptionsGroupBox.Controls.Add(this.comboSerialDeviceType);
-            this.serialOptionsGroupBox.Controls.Add(this.label1);
+            this.serialOptionsGroupBox.Controls.Add(this.labelSerialport);
             this.serialOptionsGroupBox.Controls.Add(this.comboSerialPort);
             this.serialOptionsGroupBox.Controls.Add(this.label4);
             this.serialOptionsGroupBox.Location = new System.Drawing.Point(6, 96);
             this.serialOptionsGroupBox.Name = "serialOptionsGroupBox";
-            this.serialOptionsGroupBox.Size = new System.Drawing.Size(348, 120);
+            this.serialOptionsGroupBox.Size = new System.Drawing.Size(348, 133);
             this.serialOptionsGroupBox.TabIndex = 20;
             this.serialOptionsGroupBox.TabStop = false;
             this.serialOptionsGroupBox.Text = "Serialport options";
             // 
+            // radioTCPIP
+            // 
+            this.radioTCPIP.AutoSize = true;
+            this.radioTCPIP.Location = new System.Drawing.Point(146, 25);
+            this.radioTCPIP.Name = "radioTCPIP";
+            this.radioTCPIP.Size = new System.Drawing.Size(61, 17);
+            this.radioTCPIP.TabIndex = 23;
+            this.radioTCPIP.TabStop = true;
+            this.radioTCPIP.Text = "TCP/IP";
+            this.radioTCPIP.UseVisualStyleBackColor = true;
+            this.radioTCPIP.CheckedChanged += new System.EventHandler(this.radioTCPIP_CheckedChanged);
+            // 
+            // radioFTDI
+            // 
+            this.radioFTDI.AutoSize = true;
+            this.radioFTDI.Location = new System.Drawing.Point(80, 25);
+            this.radioFTDI.Name = "radioFTDI";
+            this.radioFTDI.Size = new System.Drawing.Size(49, 17);
+            this.radioFTDI.TabIndex = 22;
+            this.radioFTDI.TabStop = true;
+            this.radioFTDI.Text = "FTDI";
+            this.radioFTDI.UseVisualStyleBackColor = true;
+            this.radioFTDI.CheckedChanged += new System.EventHandler(this.radioFTDI_CheckedChanged);
+            // 
+            // radioRS232
+            // 
+            this.radioRS232.AutoSize = true;
+            this.radioRS232.Location = new System.Drawing.Point(7, 25);
+            this.radioRS232.Name = "radioRS232";
+            this.radioRS232.Size = new System.Drawing.Size(51, 17);
+            this.radioRS232.TabIndex = 21;
+            this.radioRS232.TabStop = true;
+            this.radioRS232.Text = "Serial";
+            this.radioRS232.UseVisualStyleBackColor = true;
+            this.radioRS232.CheckedChanged += new System.EventHandler(this.radioRS232_CheckedChanged);
+            // 
             // comboBaudRate
             // 
             this.comboBaudRate.FormattingEnabled = true;
-            this.comboBaudRate.Location = new System.Drawing.Point(80, 89);
+            this.comboBaudRate.Location = new System.Drawing.Point(80, 106);
             this.comboBaudRate.Name = "comboBaudRate";
             this.comboBaudRate.Size = new System.Drawing.Size(256, 21);
             this.comboBaudRate.TabIndex = 20;
@@ -1076,45 +1191,34 @@ namespace UniversalPatcher
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 92);
+            this.label7.Location = new System.Drawing.Point(8, 109);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(53, 13);
             this.label7.TabIndex = 19;
             this.label7.Text = "Baudrate:";
             // 
-            // chkFTDI
-            // 
-            this.chkFTDI.AutoSize = true;
-            this.chkFTDI.Location = new System.Drawing.Point(10, 19);
-            this.chkFTDI.Name = "chkFTDI";
-            this.chkFTDI.Size = new System.Drawing.Size(72, 17);
-            this.chkFTDI.TabIndex = 18;
-            this.chkFTDI.Text = "Use FTDI";
-            this.chkFTDI.UseVisualStyleBackColor = true;
-            this.chkFTDI.CheckedChanged += new System.EventHandler(this.chkFTDI_CheckedChanged);
-            // 
             // comboSerialDeviceType
             // 
             this.comboSerialDeviceType.FormattingEnabled = true;
-            this.comboSerialDeviceType.Location = new System.Drawing.Point(81, 63);
+            this.comboSerialDeviceType.Location = new System.Drawing.Point(81, 80);
             this.comboSerialDeviceType.Name = "comboSerialDeviceType";
             this.comboSerialDeviceType.Size = new System.Drawing.Size(255, 21);
             this.comboSerialDeviceType.TabIndex = 17;
             this.comboSerialDeviceType.SelectedIndexChanged += new System.EventHandler(this.comboSerialDeviceType_SelectedIndexChanged);
             // 
-            // label1
+            // labelSerialport
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Port:";
+            this.labelSerialport.AutoSize = true;
+            this.labelSerialport.Location = new System.Drawing.Point(8, 57);
+            this.labelSerialport.Name = "labelSerialport";
+            this.labelSerialport.Size = new System.Drawing.Size(29, 13);
+            this.labelSerialport.TabIndex = 3;
+            this.labelSerialport.Text = "Port:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 66);
+            this.label4.Location = new System.Drawing.Point(8, 83);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(68, 13);
             this.label4.TabIndex = 16;
@@ -1122,33 +1226,206 @@ namespace UniversalPatcher
             // 
             // groupAdvanced
             // 
+            this.groupAdvanced.Controls.Add(this.label64);
+            this.groupAdvanced.Controls.Add(this.numRestartLoggingAfter);
+            this.groupAdvanced.Controls.Add(this.chkRestartLogging);
+            this.groupAdvanced.Controls.Add(this.numAnalyzerNumMessages);
+            this.groupAdvanced.Controls.Add(this.label62);
+            this.groupAdvanced.Controls.Add(this.chkJ2534ServerCreateDebugLog);
+            this.groupAdvanced.Controls.Add(this.btnAllSettings);
+            this.groupAdvanced.Controls.Add(this.comboStartLoggingKey);
+            this.groupAdvanced.Controls.Add(this.label58);
+            this.groupAdvanced.Controls.Add(this.groupBox10);
             this.groupAdvanced.Controls.Add(this.chkTestPidCompatibility);
             this.groupAdvanced.Controls.Add(this.btnStartIdleTraffic);
             this.groupAdvanced.Controls.Add(this.numIdleTrafficInterval);
             this.groupAdvanced.Controls.Add(this.label21);
-            this.groupAdvanced.Controls.Add(this.numResetAfter);
-            this.groupAdvanced.Controls.Add(this.label40);
             this.groupAdvanced.Controls.Add(this.btnTimeouts);
             this.groupAdvanced.Controls.Add(this.chkAutoDisconnect);
             this.groupAdvanced.Controls.Add(this.chkJ2534ServerVisible);
             this.groupAdvanced.Controls.Add(this.chkStartJ2534Process);
             this.groupAdvanced.Controls.Add(this.chkVPWFilters);
-            this.groupAdvanced.Controls.Add(this.chkRawValues);
             this.groupAdvanced.Controls.Add(this.chkReverseSlotNumbers);
             this.groupAdvanced.Controls.Add(this.labelResponseMode);
             this.groupAdvanced.Controls.Add(this.comboResponseMode);
             this.groupAdvanced.Location = new System.Drawing.Point(375, 4);
             this.groupAdvanced.Name = "groupAdvanced";
-            this.groupAdvanced.Size = new System.Drawing.Size(348, 223);
+            this.groupAdvanced.Size = new System.Drawing.Size(335, 358);
             this.groupAdvanced.TabIndex = 34;
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced settings";
             this.groupAdvanced.Enter += new System.EventHandler(this.groupAdvanced_Enter);
             // 
+            // label64
+            // 
+            this.label64.AutoSize = true;
+            this.label64.Location = new System.Drawing.Point(187, 96);
+            this.label64.Name = "label64";
+            this.label64.Size = new System.Drawing.Size(133, 13);
+            this.label64.TabIndex = 53;
+            this.label64.Text = "seconds, if connection lost";
+            // 
+            // numRestartLoggingAfter
+            // 
+            this.numRestartLoggingAfter.Location = new System.Drawing.Point(132, 94);
+            this.numRestartLoggingAfter.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numRestartLoggingAfter.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numRestartLoggingAfter.Name = "numRestartLoggingAfter";
+            this.numRestartLoggingAfter.Size = new System.Drawing.Size(49, 20);
+            this.numRestartLoggingAfter.TabIndex = 52;
+            this.numRestartLoggingAfter.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // chkRestartLogging
+            // 
+            this.chkRestartLogging.AutoSize = true;
+            this.chkRestartLogging.Location = new System.Drawing.Point(9, 95);
+            this.chkRestartLogging.Name = "chkRestartLogging";
+            this.chkRestartLogging.Size = new System.Drawing.Size(121, 17);
+            this.chkRestartLogging.TabIndex = 51;
+            this.chkRestartLogging.Text = "Restart logging after";
+            this.chkRestartLogging.UseVisualStyleBackColor = true;
+            // 
+            // numAnalyzerNumMessages
+            // 
+            this.numAnalyzerNumMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numAnalyzerNumMessages.Location = new System.Drawing.Point(262, 208);
+            this.numAnalyzerNumMessages.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numAnalyzerNumMessages.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numAnalyzerNumMessages.Name = "numAnalyzerNumMessages";
+            this.numAnalyzerNumMessages.Size = new System.Drawing.Size(60, 20);
+            this.numAnalyzerNumMessages.TabIndex = 12;
+            this.numAnalyzerNumMessages.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numAnalyzerNumMessages.ValueChanged += new System.EventHandler(this.numAnalyzerNumMessages_ValueChanged);
+            // 
+            // label62
+            // 
+            this.label62.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label62.AutoSize = true;
+            this.label62.Location = new System.Drawing.Point(6, 210);
+            this.label62.Name = "label62";
+            this.label62.Size = new System.Drawing.Size(165, 13);
+            this.label62.TabIndex = 11;
+            this.label62.Text = "Analyzer/idle: Messages/request:";
+            // 
+            // chkJ2534ServerCreateDebugLog
+            // 
+            this.chkJ2534ServerCreateDebugLog.AutoSize = true;
+            this.chkJ2534ServerCreateDebugLog.Location = new System.Drawing.Point(221, 54);
+            this.chkJ2534ServerCreateDebugLog.Name = "chkJ2534ServerCreateDebugLog";
+            this.chkJ2534ServerCreateDebugLog.Size = new System.Drawing.Size(101, 17);
+            this.chkJ2534ServerCreateDebugLog.TabIndex = 50;
+            this.chkJ2534ServerCreateDebugLog.Text = "Write debug log";
+            this.chkJ2534ServerCreateDebugLog.UseVisualStyleBackColor = true;
+            this.chkJ2534ServerCreateDebugLog.CheckedChanged += new System.EventHandler(this.chkJ2534ServerCreateDebugLog_CheckedChanged);
+            // 
+            // btnAllSettings
+            // 
+            this.btnAllSettings.Location = new System.Drawing.Point(247, 275);
+            this.btnAllSettings.Name = "btnAllSettings";
+            this.btnAllSettings.Size = new System.Drawing.Size(75, 23);
+            this.btnAllSettings.TabIndex = 49;
+            this.btnAllSettings.Text = "All settings";
+            this.btnAllSettings.UseVisualStyleBackColor = true;
+            this.btnAllSettings.Click += new System.EventHandler(this.btnAllSettings_Click);
+            // 
+            // comboStartLoggingKey
+            // 
+            this.comboStartLoggingKey.FormattingEnabled = true;
+            this.comboStartLoggingKey.Location = new System.Drawing.Point(155, 121);
+            this.comboStartLoggingKey.Name = "comboStartLoggingKey";
+            this.comboStartLoggingKey.Size = new System.Drawing.Size(167, 21);
+            this.comboStartLoggingKey.TabIndex = 48;
+            this.comboStartLoggingKey.SelectedIndexChanged += new System.EventHandler(this.comboStartLoggingKey_SelectedIndexChanged);
+            // 
+            // label58
+            // 
+            this.label58.AutoSize = true;
+            this.label58.Location = new System.Drawing.Point(6, 124);
+            this.label58.Name = "label58";
+            this.label58.Size = new System.Drawing.Size(136, 13);
+            this.label58.TabIndex = 47;
+            this.label58.Text = "Start/stop logging with key:";
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.numRetryDelay);
+            this.groupBox10.Controls.Add(this.numRetryTimes);
+            this.groupBox10.Controls.Add(this.label35);
+            this.groupBox10.Controls.Add(this.label34);
+            this.groupBox10.Location = new System.Drawing.Point(9, 304);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(313, 50);
+            this.groupBox10.TabIndex = 35;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Write retry";
+            // 
+            // numRetryDelay
+            // 
+            this.numRetryDelay.Location = new System.Drawing.Point(234, 17);
+            this.numRetryDelay.Name = "numRetryDelay";
+            this.numRetryDelay.Size = new System.Drawing.Size(74, 20);
+            this.numRetryDelay.TabIndex = 3;
+            this.numRetryDelay.ValueChanged += new System.EventHandler(this.numRetryDelay_ValueChanged);
+            // 
+            // numRetryTimes
+            // 
+            this.numRetryTimes.Location = new System.Drawing.Point(78, 17);
+            this.numRetryTimes.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numRetryTimes.Name = "numRetryTimes";
+            this.numRetryTimes.Size = new System.Drawing.Size(46, 20);
+            this.numRetryTimes.TabIndex = 2;
+            this.numRetryTimes.ValueChanged += new System.EventHandler(this.numRetryTimes_ValueChanged);
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(143, 19);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(85, 13);
+            this.label35.TabIndex = 1;
+            this.label35.Text = "Retry delay (ms):";
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(10, 19);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(62, 13);
+            this.label34.TabIndex = 0;
+            this.label34.Text = "Retry times:";
+            // 
             // chkTestPidCompatibility
             // 
             this.chkTestPidCompatibility.AutoSize = true;
-            this.chkTestPidCompatibility.Location = new System.Drawing.Point(9, 75);
+            this.chkTestPidCompatibility.Location = new System.Drawing.Point(9, 57);
             this.chkTestPidCompatibility.Name = "chkTestPidCompatibility";
             this.chkTestPidCompatibility.Size = new System.Drawing.Size(124, 17);
             this.chkTestPidCompatibility.TabIndex = 46;
@@ -1157,7 +1434,7 @@ namespace UniversalPatcher
             // 
             // btnStartIdleTraffic
             // 
-            this.btnStartIdleTraffic.Location = new System.Drawing.Point(203, 192);
+            this.btnStartIdleTraffic.Location = new System.Drawing.Point(221, 178);
             this.btnStartIdleTraffic.Name = "btnStartIdleTraffic";
             this.btnStartIdleTraffic.Size = new System.Drawing.Size(101, 26);
             this.btnStartIdleTraffic.TabIndex = 45;
@@ -1167,14 +1444,14 @@ namespace UniversalPatcher
             // 
             // numIdleTrafficInterval
             // 
-            this.numIdleTrafficInterval.Location = new System.Drawing.Point(127, 197);
+            this.numIdleTrafficInterval.Location = new System.Drawing.Point(155, 180);
             this.numIdleTrafficInterval.Maximum = new decimal(new int[] {
             100000000,
             0,
             0,
             0});
             this.numIdleTrafficInterval.Name = "numIdleTrafficInterval";
-            this.numIdleTrafficInterval.Size = new System.Drawing.Size(56, 20);
+            this.numIdleTrafficInterval.Size = new System.Drawing.Size(60, 20);
             this.numIdleTrafficInterval.TabIndex = 44;
             this.numIdleTrafficInterval.Value = new decimal(new int[] {
             100,
@@ -1185,40 +1462,15 @@ namespace UniversalPatcher
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(6, 199);
+            this.label21.Location = new System.Drawing.Point(6, 182);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(115, 13);
             this.label21.TabIndex = 43;
             this.label21.Text = "Idle traffic interval (ms):";
             // 
-            // numResetAfter
-            // 
-            this.numResetAfter.Enabled = false;
-            this.numResetAfter.Location = new System.Drawing.Point(189, 166);
-            this.numResetAfter.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.numResetAfter.Name = "numResetAfter";
-            this.numResetAfter.Size = new System.Drawing.Size(115, 20);
-            this.numResetAfter.TabIndex = 42;
-            this.numResetAfter.Visible = false;
-            // 
-            // label40
-            // 
-            this.label40.AutoSize = true;
-            this.label40.Enabled = false;
-            this.label40.Location = new System.Drawing.Point(6, 168);
-            this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(177, 13);
-            this.label40.TabIndex = 41;
-            this.label40.Text = "Reset connection after missed data:";
-            this.label40.Visible = false;
-            // 
             // btnTimeouts
             // 
-            this.btnTimeouts.Location = new System.Drawing.Point(229, 124);
+            this.btnTimeouts.Location = new System.Drawing.Point(155, 275);
             this.btnTimeouts.Name = "btnTimeouts";
             this.btnTimeouts.Size = new System.Drawing.Size(75, 23);
             this.btnTimeouts.TabIndex = 40;
@@ -1229,7 +1481,7 @@ namespace UniversalPatcher
             // chkAutoDisconnect
             // 
             this.chkAutoDisconnect.AutoSize = true;
-            this.chkAutoDisconnect.Location = new System.Drawing.Point(9, 95);
+            this.chkAutoDisconnect.Location = new System.Drawing.Point(9, 77);
             this.chkAutoDisconnect.Name = "chkAutoDisconnect";
             this.chkAutoDisconnect.Size = new System.Drawing.Size(213, 17);
             this.chkAutoDisconnect.TabIndex = 39;
@@ -1265,7 +1517,7 @@ namespace UniversalPatcher
             // chkVPWFilters
             // 
             this.chkVPWFilters.AutoSize = true;
-            this.chkVPWFilters.Location = new System.Drawing.Point(9, 57);
+            this.chkVPWFilters.Location = new System.Drawing.Point(9, 39);
             this.chkVPWFilters.Name = "chkVPWFilters";
             this.chkVPWFilters.Size = new System.Drawing.Size(103, 17);
             this.chkVPWFilters.TabIndex = 35;
@@ -1273,22 +1525,12 @@ namespace UniversalPatcher
             this.chkVPWFilters.UseVisualStyleBackColor = true;
             this.chkVPWFilters.CheckedChanged += new System.EventHandler(this.chkBusFilters_CheckedChanged);
             // 
-            // chkRawValues
-            // 
-            this.chkRawValues.AutoSize = true;
-            this.chkRawValues.Location = new System.Drawing.Point(9, 19);
-            this.chkRawValues.Name = "chkRawValues";
-            this.chkRawValues.Size = new System.Drawing.Size(82, 17);
-            this.chkRawValues.TabIndex = 26;
-            this.chkRawValues.Text = "Raw values";
-            this.chkRawValues.UseVisualStyleBackColor = true;
-            // 
             // chkReverseSlotNumbers
             // 
             this.chkReverseSlotNumbers.AutoSize = true;
             this.chkReverseSlotNumbers.Checked = true;
             this.chkReverseSlotNumbers.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkReverseSlotNumbers.Location = new System.Drawing.Point(9, 37);
+            this.chkReverseSlotNumbers.Location = new System.Drawing.Point(9, 19);
             this.chkReverseSlotNumbers.Name = "chkReverseSlotNumbers";
             this.chkReverseSlotNumbers.Size = new System.Drawing.Size(149, 17);
             this.chkReverseSlotNumbers.TabIndex = 27;
@@ -1298,7 +1540,7 @@ namespace UniversalPatcher
             // labelResponseMode
             // 
             this.labelResponseMode.AutoSize = true;
-            this.labelResponseMode.Location = new System.Drawing.Point(9, 115);
+            this.labelResponseMode.Location = new System.Drawing.Point(6, 151);
             this.labelResponseMode.Name = "labelResponseMode";
             this.labelResponseMode.Size = new System.Drawing.Size(88, 13);
             this.labelResponseMode.TabIndex = 24;
@@ -1307,7 +1549,7 @@ namespace UniversalPatcher
             // comboResponseMode
             // 
             this.comboResponseMode.FormattingEnabled = true;
-            this.comboResponseMode.Location = new System.Drawing.Point(9, 132);
+            this.comboResponseMode.Location = new System.Drawing.Point(155, 148);
             this.comboResponseMode.Name = "comboResponseMode";
             this.comboResponseMode.Size = new System.Drawing.Size(167, 21);
             this.comboResponseMode.TabIndex = 23;
@@ -1318,7 +1560,7 @@ namespace UniversalPatcher
             this.tabProfile.Controls.Add(this.splitContainer1);
             this.tabProfile.Location = new System.Drawing.Point(4, 22);
             this.tabProfile.Name = "tabProfile";
-            this.tabProfile.Size = new System.Drawing.Size(966, 481);
+            this.tabProfile.Size = new System.Drawing.Size(966, 480);
             this.tabProfile.TabIndex = 2;
             this.tabProfile.Text = "Profile";
             this.tabProfile.UseVisualStyleBackColor = true;
@@ -1331,57 +1573,318 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnProfileRefresh);
+            this.splitContainer1.Panel1.Controls.Add(this.groupDetectSupportedPids);
+            this.splitContainer1.Panel1.Controls.Add(this.btnPidProfileImportDbc);
+            this.splitContainer1.Panel1.Controls.Add(this.chkContinuousPidTest);
+            this.splitContainer1.Panel1.Controls.Add(this.btnTestMasterlistPids);
+            this.splitContainer1.Panel1.Controls.Add(this.btnTestEnabledPids);
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
             this.splitContainer1.Panel1.Controls.Add(this.dataGridProfile);
+            this.splitContainer1.Panel1.Controls.Add(this.btnQueryPid);
+            this.splitContainer1.Panel1.Controls.Add(this.label55);
+            this.splitContainer1.Panel1.Controls.Add(this.txtParamSearch);
+            this.splitContainer1.Panel1.Controls.Add(this.chkFilterParamsByOS);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dataGridSelectedPids);
-            this.splitContainer1.Panel2.Controls.Add(this.label55);
             this.splitContainer1.Panel2.Controls.Add(this.label46);
-            this.splitContainer1.Panel2.Controls.Add(this.comboFilterByOS);
-            this.splitContainer1.Panel2.Controls.Add(this.btnTestPids);
-            this.splitContainer1.Panel2.Controls.Add(this.chkFilterParamsByOS);
-            this.splitContainer1.Panel2.Controls.Add(this.label41);
-            this.splitContainer1.Panel2.Controls.Add(this.btnQueryPid);
-            this.splitContainer1.Panel2.Controls.Add(this.txtParamSearch);
-            this.splitContainer1.Size = new System.Drawing.Size(966, 481);
-            this.splitContainer1.SplitterDistance = 725;
+            this.splitContainer1.Size = new System.Drawing.Size(966, 480);
+            this.splitContainer1.SplitterDistance = 620;
             this.splitContainer1.TabIndex = 41;
+            // 
+            // btnProfileRefresh
+            // 
+            this.btnProfileRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnProfileRefresh.Location = new System.Drawing.Point(467, 26);
+            this.btnProfileRefresh.Name = "btnProfileRefresh";
+            this.btnProfileRefresh.Size = new System.Drawing.Size(141, 23);
+            this.btnProfileRefresh.TabIndex = 47;
+            this.btnProfileRefresh.Text = "Refresh pids";
+            this.btnProfileRefresh.UseVisualStyleBackColor = true;
+            this.btnProfileRefresh.Click += new System.EventHandler(this.btnProfileRefresh_Click);
+            // 
+            // groupDetectSupportedPids
+            // 
+            this.groupDetectSupportedPids.Controls.Add(this.btnFilterByBin);
+            this.groupDetectSupportedPids.Controls.Add(this.label63);
+            this.groupDetectSupportedPids.Controls.Add(this.btnTestPids);
+            this.groupDetectSupportedPids.Controls.Add(this.comboFilterByOS);
+            this.groupDetectSupportedPids.Location = new System.Drawing.Point(165, 7);
+            this.groupDetectSupportedPids.Name = "groupDetectSupportedPids";
+            this.groupDetectSupportedPids.Size = new System.Drawing.Size(292, 51);
+            this.groupDetectSupportedPids.TabIndex = 46;
+            this.groupDetectSupportedPids.TabStop = false;
+            this.groupDetectSupportedPids.Text = "Detect compatible pids";
+            // 
+            // btnFilterByBin
+            // 
+            this.btnFilterByBin.Location = new System.Drawing.Point(6, 19);
+            this.btnFilterByBin.Name = "btnFilterByBin";
+            this.btnFilterByBin.Size = new System.Drawing.Size(65, 26);
+            this.btnFilterByBin.TabIndex = 40;
+            this.btnFilterByBin.Text = "By BIN";
+            this.btnFilterByBin.UseVisualStyleBackColor = true;
+            this.btnFilterByBin.Click += new System.EventHandler(this.btnFilterByBin_Click);
+            // 
+            // label63
+            // 
+            this.label63.AutoSize = true;
+            this.label63.Location = new System.Drawing.Point(148, 27);
+            this.label63.Name = "label63";
+            this.label63.Size = new System.Drawing.Size(40, 13);
+            this.label63.TabIndex = 45;
+            this.label63.Text = "By OS:";
+            // 
+            // btnTestPids
+            // 
+            this.btnTestPids.Location = new System.Drawing.Point(77, 19);
+            this.btnTestPids.Name = "btnTestPids";
+            this.btnTestPids.Size = new System.Drawing.Size(65, 26);
+            this.btnTestPids.TabIndex = 5;
+            this.btnTestPids.Text = "By query";
+            this.btnTestPids.UseVisualStyleBackColor = true;
+            this.btnTestPids.Click += new System.EventHandler(this.btnTestPids_Click);
+            // 
+            // comboFilterByOS
+            // 
+            this.comboFilterByOS.FormattingEnabled = true;
+            this.comboFilterByOS.Location = new System.Drawing.Point(194, 24);
+            this.comboFilterByOS.Name = "comboFilterByOS";
+            this.comboFilterByOS.Size = new System.Drawing.Size(92, 21);
+            this.comboFilterByOS.TabIndex = 4;
+            // 
+            // btnPidProfileImportDbc
+            // 
+            this.btnPidProfileImportDbc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPidProfileImportDbc.Location = new System.Drawing.Point(466, 438);
+            this.btnPidProfileImportDbc.Name = "btnPidProfileImportDbc";
+            this.btnPidProfileImportDbc.Size = new System.Drawing.Size(142, 23);
+            this.btnPidProfileImportDbc.TabIndex = 44;
+            this.btnPidProfileImportDbc.Text = "Import DBC ->";
+            this.btnPidProfileImportDbc.UseVisualStyleBackColor = true;
+            this.btnPidProfileImportDbc.Click += new System.EventHandler(this.btnPidProfileImportBdc_Click);
+            // 
+            // chkContinuousPidTest
+            // 
+            this.chkContinuousPidTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkContinuousPidTest.AutoSize = true;
+            this.chkContinuousPidTest.Location = new System.Drawing.Point(467, 390);
+            this.chkContinuousPidTest.Name = "chkContinuousPidTest";
+            this.chkContinuousPidTest.Size = new System.Drawing.Size(113, 17);
+            this.chkContinuousPidTest.TabIndex = 43;
+            this.chkContinuousPidTest.Text = "Continuous testing";
+            this.chkContinuousPidTest.UseVisualStyleBackColor = true;
+            this.chkContinuousPidTest.CheckedChanged += new System.EventHandler(this.chkProfileTestPidsTimer_CheckedChanged);
+            // 
+            // btnTestMasterlistPids
+            // 
+            this.btnTestMasterlistPids.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTestMasterlistPids.Location = new System.Drawing.Point(467, 303);
+            this.btnTestMasterlistPids.Name = "btnTestMasterlistPids";
+            this.btnTestMasterlistPids.Size = new System.Drawing.Size(142, 23);
+            this.btnTestMasterlistPids.TabIndex = 42;
+            this.btnTestMasterlistPids.Text = "<- Test selected";
+            this.btnTestMasterlistPids.UseVisualStyleBackColor = true;
+            this.btnTestMasterlistPids.Click += new System.EventHandler(this.btnPidEditorTestMasterlistPids_Click);
+            // 
+            // btnTestEnabledPids
+            // 
+            this.btnTestEnabledPids.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTestEnabledPids.Location = new System.Drawing.Point(467, 361);
+            this.btnTestEnabledPids.Name = "btnTestEnabledPids";
+            this.btnTestEnabledPids.Size = new System.Drawing.Size(142, 23);
+            this.btnTestEnabledPids.TabIndex = 41;
+            this.btnTestEnabledPids.Text = "Test all enabled ->";
+            this.btnTestEnabledPids.UseVisualStyleBackColor = true;
+            this.btnTestEnabledPids.Click += new System.EventHandler(this.btnTestEnabledPids_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.btnProfileLoad);
+            this.groupBox2.Controls.Add(this.comboProfileFilename);
+            this.groupBox2.Controls.Add(this.label57);
+            this.groupBox2.Controls.Add(this.label56);
+            this.groupBox2.Controls.Add(this.comboProfileCategory);
+            this.groupBox2.Controls.Add(this.btnSaveProfile);
+            this.groupBox2.Controls.Add(this.label41);
+            this.groupBox2.Controls.Add(this.comboProfilePlatform);
+            this.groupBox2.Location = new System.Drawing.Point(463, 64);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(153, 213);
+            this.groupBox2.TabIndex = 41;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Profile file";
+            // 
+            // btnProfileLoad
+            // 
+            this.btnProfileLoad.Location = new System.Drawing.Point(4, 155);
+            this.btnProfileLoad.Name = "btnProfileLoad";
+            this.btnProfileLoad.Size = new System.Drawing.Size(142, 23);
+            this.btnProfileLoad.TabIndex = 8;
+            this.btnProfileLoad.Text = "Load";
+            this.btnProfileLoad.UseVisualStyleBackColor = true;
+            this.btnProfileLoad.Click += new System.EventHandler(this.btnProfileLoad_Click);
+            // 
+            // comboProfileFilename
+            // 
+            this.comboProfileFilename.FormattingEnabled = true;
+            this.comboProfileFilename.Location = new System.Drawing.Point(4, 128);
+            this.comboProfileFilename.Name = "comboProfileFilename";
+            this.comboProfileFilename.Size = new System.Drawing.Size(142, 21);
+            this.comboProfileFilename.TabIndex = 7;
+            this.comboProfileFilename.SelectedIndexChanged += new System.EventHandler(this.comboProfileFilename_SelectedIndexChanged);
+            // 
+            // label57
+            // 
+            this.label57.AutoSize = true;
+            this.label57.Location = new System.Drawing.Point(6, 108);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(52, 13);
+            this.label57.TabIndex = 6;
+            this.label57.Text = "Filename:";
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Location = new System.Drawing.Point(6, 64);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(52, 13);
+            this.label56.TabIndex = 5;
+            this.label56.Text = "Category:";
+            // 
+            // comboProfileCategory
+            // 
+            this.comboProfileCategory.FormattingEnabled = true;
+            this.comboProfileCategory.Location = new System.Drawing.Point(4, 82);
+            this.comboProfileCategory.Name = "comboProfileCategory";
+            this.comboProfileCategory.Size = new System.Drawing.Size(142, 21);
+            this.comboProfileCategory.TabIndex = 4;
+            this.comboProfileCategory.SelectedIndexChanged += new System.EventHandler(this.comboProfileCategory_SelectedIndexChanged);
+            // 
+            // btnSaveProfile
+            // 
+            this.btnSaveProfile.Location = new System.Drawing.Point(4, 184);
+            this.btnSaveProfile.Name = "btnSaveProfile";
+            this.btnSaveProfile.Size = new System.Drawing.Size(142, 23);
+            this.btnSaveProfile.TabIndex = 2;
+            this.btnSaveProfile.Text = "Save";
+            this.btnSaveProfile.UseVisualStyleBackColor = true;
+            this.btnSaveProfile.Click += new System.EventHandler(this.btnSaveProfile_Click);
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(6, 24);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(48, 13);
+            this.label41.TabIndex = 1;
+            this.label41.Text = "Platform:";
+            // 
+            // comboProfilePlatform
+            // 
+            this.comboProfilePlatform.FormattingEnabled = true;
+            this.comboProfilePlatform.Location = new System.Drawing.Point(4, 40);
+            this.comboProfilePlatform.Name = "comboProfilePlatform";
+            this.comboProfilePlatform.Size = new System.Drawing.Size(142, 21);
+            this.comboProfilePlatform.TabIndex = 0;
+            this.comboProfilePlatform.SelectedIndexChanged += new System.EventHandler(this.comboProfilePlatform_SelectedIndexChanged);
             // 
             // dataGridProfile
             // 
-            dataGridViewCellStyle55.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle55.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle55.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle55.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle55.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle55.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle55.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridProfile.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle55;
+            this.dataGridProfile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridProfile.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridProfile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle56.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle56.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle56.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle56.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle56.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle56.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle56.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridProfile.DefaultCellStyle = dataGridViewCellStyle56;
-            this.dataGridProfile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridProfile.ContextMenuStrip = this.contextMenuProfile;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridProfile.DefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridProfile.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataGridProfile.Location = new System.Drawing.Point(0, 0);
+            this.dataGridProfile.Location = new System.Drawing.Point(0, 64);
             this.dataGridProfile.Name = "dataGridProfile";
-            dataGridViewCellStyle57.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle57.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle57.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle57.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle57.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle57.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle57.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridProfile.RowHeadersDefaultCellStyle = dataGridViewCellStyle57;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridProfile.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            this.dataGridProfile.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dataGridProfile.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridProfile.Size = new System.Drawing.Size(725, 481);
+            this.dataGridProfile.Size = new System.Drawing.Size(457, 416);
             this.dataGridProfile.TabIndex = 1;
+            // 
+            // contextMenuProfile
+            // 
+            this.contextMenuProfile.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToolStripMenuItem3});
+            this.contextMenuProfile.Name = "contextMenuProfile";
+            this.contextMenuProfile.Size = new System.Drawing.Size(97, 26);
+            // 
+            // addToolStripMenuItem3
+            // 
+            this.addToolStripMenuItem3.Name = "addToolStripMenuItem3";
+            this.addToolStripMenuItem3.Size = new System.Drawing.Size(96, 22);
+            this.addToolStripMenuItem3.Text = "Add";
+            this.addToolStripMenuItem3.Click += new System.EventHandler(this.addToolStripMenuItem3_Click);
+            // 
+            // btnQueryPid
+            // 
+            this.btnQueryPid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQueryPid.Location = new System.Drawing.Point(467, 332);
+            this.btnQueryPid.Name = "btnQueryPid";
+            this.btnQueryPid.Size = new System.Drawing.Size(142, 23);
+            this.btnQueryPid.TabIndex = 4;
+            this.btnQueryPid.Text = "Test selected ->";
+            this.btnQueryPid.UseVisualStyleBackColor = true;
+            this.btnQueryPid.Click += new System.EventHandler(this.btnQueryPid_Click);
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(5, 34);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(32, 13);
+            this.label55.TabIndex = 39;
+            this.label55.Text = "Filter:";
+            // 
+            // txtParamSearch
+            // 
+            this.txtParamSearch.Location = new System.Drawing.Point(40, 31);
+            this.txtParamSearch.Name = "txtParamSearch";
+            this.txtParamSearch.Size = new System.Drawing.Size(119, 20);
+            this.txtParamSearch.TabIndex = 3;
+            this.txtParamSearch.TextChanged += new System.EventHandler(this.txtParamSearch_TextChanged);
+            // 
+            // chkFilterParamsByOS
+            // 
+            this.chkFilterParamsByOS.AutoSize = true;
+            this.chkFilterParamsByOS.Checked = true;
+            this.chkFilterParamsByOS.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFilterParamsByOS.Location = new System.Drawing.Point(8, 7);
+            this.chkFilterParamsByOS.Name = "chkFilterParamsByOS";
+            this.chkFilterParamsByOS.Size = new System.Drawing.Size(151, 17);
+            this.chkFilterParamsByOS.TabIndex = 36;
+            this.chkFilterParamsByOS.Text = "Show only compatible pids";
+            this.chkFilterParamsByOS.UseVisualStyleBackColor = true;
+            this.chkFilterParamsByOS.CheckedChanged += new System.EventHandler(this.chkFilterParamsByOS_CheckedChanged);
             // 
             // dataGridSelectedPids
             // 
@@ -1391,99 +1894,41 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridSelectedPids.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridSelectedPids.Location = new System.Drawing.Point(2, 124);
+            this.dataGridSelectedPids.ContextMenuStrip = this.contextMenuEnabledPids;
+            this.dataGridSelectedPids.Location = new System.Drawing.Point(2, 31);
             this.dataGridSelectedPids.Name = "dataGridSelectedPids";
-            this.dataGridSelectedPids.Size = new System.Drawing.Size(232, 354);
+            this.dataGridSelectedPids.Size = new System.Drawing.Size(336, 446);
             this.dataGridSelectedPids.TabIndex = 40;
             // 
-            // label55
+            // contextMenuEnabledPids
             // 
-            this.label55.AutoSize = true;
-            this.label55.Location = new System.Drawing.Point(8, 7);
-            this.label55.Name = "label55";
-            this.label55.Size = new System.Drawing.Size(32, 13);
-            this.label55.TabIndex = 39;
-            this.label55.Text = "Filter:";
+            this.contextMenuEnabledPids.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.removeToolStripMenuItem3});
+            this.contextMenuEnabledPids.Name = "contextMenuEnabledPids";
+            this.contextMenuEnabledPids.Size = new System.Drawing.Size(118, 26);
+            // 
+            // removeToolStripMenuItem3
+            // 
+            this.removeToolStripMenuItem3.Name = "removeToolStripMenuItem3";
+            this.removeToolStripMenuItem3.Size = new System.Drawing.Size(117, 22);
+            this.removeToolStripMenuItem3.Text = "Remove";
+            this.removeToolStripMenuItem3.Click += new System.EventHandler(this.removeToolStripMenuItem3_Click);
             // 
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(8, 108);
+            this.label46.Location = new System.Drawing.Point(12, 10);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(75, 13);
             this.label46.TabIndex = 38;
             this.label46.Text = "Enabled PIDs:";
-            // 
-            // comboFilterByOS
-            // 
-            this.comboFilterByOS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboFilterByOS.FormattingEnabled = true;
-            this.comboFilterByOS.Location = new System.Drawing.Point(78, 48);
-            this.comboFilterByOS.Name = "comboFilterByOS";
-            this.comboFilterByOS.Size = new System.Drawing.Size(154, 21);
-            this.comboFilterByOS.TabIndex = 4;
-            // 
-            // btnTestPids
-            // 
-            this.btnTestPids.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTestPids.Location = new System.Drawing.Point(11, 75);
-            this.btnTestPids.Name = "btnTestPids";
-            this.btnTestPids.Size = new System.Drawing.Size(103, 30);
-            this.btnTestPids.TabIndex = 5;
-            this.btnTestPids.Text = "Filter by query";
-            this.btnTestPids.UseVisualStyleBackColor = true;
-            this.btnTestPids.Click += new System.EventHandler(this.btnTestPids_Click);
-            // 
-            // chkFilterParamsByOS
-            // 
-            this.chkFilterParamsByOS.AutoSize = true;
-            this.chkFilterParamsByOS.Checked = true;
-            this.chkFilterParamsByOS.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkFilterParamsByOS.Location = new System.Drawing.Point(11, 30);
-            this.chkFilterParamsByOS.Name = "chkFilterParamsByOS";
-            this.chkFilterParamsByOS.Size = new System.Drawing.Size(135, 17);
-            this.chkFilterParamsByOS.TabIndex = 36;
-            this.chkFilterParamsByOS.Text = "Filter parameters by OS";
-            this.chkFilterParamsByOS.UseVisualStyleBackColor = true;
-            this.chkFilterParamsByOS.CheckedChanged += new System.EventHandler(this.chkFilterParamsByOS_CheckedChanged);
-            // 
-            // label41
-            // 
-            this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(8, 51);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(64, 13);
-            this.label41.TabIndex = 3;
-            this.label41.Text = "Filter by OS:";
-            // 
-            // btnQueryPid
-            // 
-            this.btnQueryPid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQueryPid.Location = new System.Drawing.Point(129, 75);
-            this.btnQueryPid.Name = "btnQueryPid";
-            this.btnQueryPid.Size = new System.Drawing.Size(103, 30);
-            this.btnQueryPid.TabIndex = 4;
-            this.btnQueryPid.Text = "Test pid";
-            this.btnQueryPid.UseVisualStyleBackColor = true;
-            this.btnQueryPid.Click += new System.EventHandler(this.btnQueryPid_Click);
-            // 
-            // txtParamSearch
-            // 
-            this.txtParamSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtParamSearch.Location = new System.Drawing.Point(78, 4);
-            this.txtParamSearch.Name = "txtParamSearch";
-            this.txtParamSearch.Size = new System.Drawing.Size(154, 20);
-            this.txtParamSearch.TabIndex = 3;
-            this.txtParamSearch.TextChanged += new System.EventHandler(this.txtParamSearch_TextChanged);
             // 
             // tabPidEditor
             // 
             this.tabPidEditor.Controls.Add(this.splitContainerProfile2);
             this.tabPidEditor.Location = new System.Drawing.Point(4, 22);
             this.tabPidEditor.Name = "tabPidEditor";
-            this.tabPidEditor.Size = new System.Drawing.Size(966, 481);
+            this.tabPidEditor.Size = new System.Drawing.Size(966, 480);
             this.tabPidEditor.TabIndex = 10;
             this.tabPidEditor.Text = "PID Editor";
             this.tabPidEditor.UseVisualStyleBackColor = true;
@@ -1496,30 +1941,101 @@ namespace UniversalPatcher
             // 
             // splitContainerProfile2.Panel1
             // 
+            this.splitContainerProfile2.Panel1.Controls.Add(this.chkPidEditorProfileOnly);
+            this.splitContainerProfile2.Panel1.Controls.Add(this.chkPidEditorShowCustom);
+            this.splitContainerProfile2.Panel1.Controls.Add(this.chkPidEditorShowMaster);
+            this.splitContainerProfile2.Panel1.Controls.Add(this.txtPidEditorFilter);
+            this.splitContainerProfile2.Panel1.Controls.Add(this.label54);
             this.splitContainerProfile2.Panel1.Controls.Add(this.dataGridViewPidEditor);
             // 
             // splitContainerProfile2.Panel2
             // 
-            this.splitContainerProfile2.Panel2.Controls.Add(this.txtPidEditorFilter);
-            this.splitContainerProfile2.Panel2.Controls.Add(this.label54);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.btnPidEditorImportDBC);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.comboPidEditorDatatype);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.label61);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.chkPideditorCustom);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.btnDuplicatePid);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.btnAddNewPid);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.comboPidEditorType);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.label60);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.txtPidId);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.txtPidname);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.labelPidEditorId);
+            this.splitContainerProfile2.Panel2.Controls.Add(this.label40);
             this.splitContainerProfile2.Panel2.Controls.Add(this.groupConversion);
             this.splitContainerProfile2.Panel2.Controls.Add(this.dataGridViewPidEditorConversions);
             this.splitContainerProfile2.Panel2.Controls.Add(this.label47);
             this.splitContainerProfile2.Panel2.Controls.Add(this.labelProfilePids);
             this.splitContainerProfile2.Panel2.Controls.Add(this.dataGridViewPidEditorPids);
-            this.splitContainerProfile2.Size = new System.Drawing.Size(966, 481);
-            this.splitContainerProfile2.SplitterDistance = 497;
+            this.splitContainerProfile2.Size = new System.Drawing.Size(966, 480);
+            this.splitContainerProfile2.SplitterDistance = 496;
             this.splitContainerProfile2.TabIndex = 1;
+            // 
+            // chkPidEditorProfileOnly
+            // 
+            this.chkPidEditorProfileOnly.AutoSize = true;
+            this.chkPidEditorProfileOnly.Location = new System.Drawing.Point(345, 8);
+            this.chkPidEditorProfileOnly.Name = "chkPidEditorProfileOnly";
+            this.chkPidEditorProfileOnly.Size = new System.Drawing.Size(114, 17);
+            this.chkPidEditorProfileOnly.TabIndex = 14;
+            this.chkPidEditorProfileOnly.Text = "Only profile\'s PIDs ";
+            this.chkPidEditorProfileOnly.UseVisualStyleBackColor = true;
+            this.chkPidEditorProfileOnly.CheckedChanged += new System.EventHandler(this.chkPidEditorProfileOnly_CheckedChanged);
+            // 
+            // chkPidEditorShowCustom
+            // 
+            this.chkPidEditorShowCustom.AutoSize = true;
+            this.chkPidEditorShowCustom.Checked = true;
+            this.chkPidEditorShowCustom.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkPidEditorShowCustom.Location = new System.Drawing.Point(252, 7);
+            this.chkPidEditorShowCustom.Name = "chkPidEditorShowCustom";
+            this.chkPidEditorShowCustom.Size = new System.Drawing.Size(87, 17);
+            this.chkPidEditorShowCustom.TabIndex = 13;
+            this.chkPidEditorShowCustom.Text = "Custom PIDs";
+            this.chkPidEditorShowCustom.UseVisualStyleBackColor = true;
+            this.chkPidEditorShowCustom.CheckedChanged += new System.EventHandler(this.chkPidEditorShowCustom_CheckedChanged);
+            // 
+            // chkPidEditorShowMaster
+            // 
+            this.chkPidEditorShowMaster.AutoSize = true;
+            this.chkPidEditorShowMaster.Checked = true;
+            this.chkPidEditorShowMaster.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkPidEditorShowMaster.Location = new System.Drawing.Point(150, 8);
+            this.chkPidEditorShowMaster.Name = "chkPidEditorShowMaster";
+            this.chkPidEditorShowMaster.Size = new System.Drawing.Size(96, 17);
+            this.chkPidEditorShowMaster.TabIndex = 12;
+            this.chkPidEditorShowMaster.Text = "Masterlist PIDs";
+            this.chkPidEditorShowMaster.UseVisualStyleBackColor = true;
+            this.chkPidEditorShowMaster.CheckedChanged += new System.EventHandler(this.chkPidEditorShowMaster_CheckedChanged);
+            // 
+            // txtPidEditorFilter
+            // 
+            this.txtPidEditorFilter.Location = new System.Drawing.Point(44, 6);
+            this.txtPidEditorFilter.Name = "txtPidEditorFilter";
+            this.txtPidEditorFilter.Size = new System.Drawing.Size(100, 20);
+            this.txtPidEditorFilter.TabIndex = 11;
+            this.txtPidEditorFilter.TextChanged += new System.EventHandler(this.txtPidEditorFilter_TextChanged);
+            // 
+            // label54
+            // 
+            this.label54.AutoSize = true;
+            this.label54.Location = new System.Drawing.Point(6, 8);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(32, 13);
+            this.label54.TabIndex = 10;
+            this.label54.Text = "Filter:";
             // 
             // dataGridViewPidEditor
             // 
+            this.dataGridViewPidEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewPidEditor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewPidEditor.ContextMenuStrip = this.contextMenuPidEditor;
-            this.dataGridViewPidEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewPidEditor.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataGridViewPidEditor.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewPidEditor.Location = new System.Drawing.Point(0, 32);
             this.dataGridViewPidEditor.Name = "dataGridViewPidEditor";
-            this.dataGridViewPidEditor.Size = new System.Drawing.Size(497, 481);
+            this.dataGridViewPidEditor.Size = new System.Drawing.Size(496, 448);
             this.dataGridViewPidEditor.TabIndex = 0;
             // 
             // contextMenuPidEditor
@@ -1531,28 +2047,32 @@ namespace UniversalPatcher
             this.importPCMHammerFilesToolStripMenuItem,
             this.toolStripSeparator4,
             this.addToolStripMenuItem2,
-            this.removeToolStripMenuItem2});
+            this.removeToolStripMenuItem2,
+            this.duplicateToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.massUpdateSelectedPIDsToAllProfilesToolStripMenuItem,
+            this.massUpdateALLPIDsToAllProfilesToolStripMenuItem});
             this.contextMenuPidEditor.Name = "contextMenuStripPidEditor";
-            this.contextMenuPidEditor.Size = new System.Drawing.Size(214, 142);
+            this.contextMenuPidEditor.Size = new System.Drawing.Size(285, 214);
             // 
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(284, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(284, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(284, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
@@ -1560,45 +2080,166 @@ namespace UniversalPatcher
             // 
             this.importPCMHammerFilesToolStripMenuItem.Enabled = false;
             this.importPCMHammerFilesToolStripMenuItem.Name = "importPCMHammerFilesToolStripMenuItem";
-            this.importPCMHammerFilesToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.importPCMHammerFilesToolStripMenuItem.Size = new System.Drawing.Size(284, 22);
             this.importPCMHammerFilesToolStripMenuItem.Text = "Import PCM Hammer files";
             this.importPCMHammerFilesToolStripMenuItem.Click += new System.EventHandler(this.importPCMHammerFilesToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(210, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(281, 6);
             // 
             // addToolStripMenuItem2
             // 
             this.addToolStripMenuItem2.Name = "addToolStripMenuItem2";
-            this.addToolStripMenuItem2.Size = new System.Drawing.Size(213, 22);
+            this.addToolStripMenuItem2.Size = new System.Drawing.Size(284, 22);
             this.addToolStripMenuItem2.Text = "Add";
             this.addToolStripMenuItem2.Click += new System.EventHandler(this.addToolStripMenuItem2_Click);
             // 
             // removeToolStripMenuItem2
             // 
             this.removeToolStripMenuItem2.Name = "removeToolStripMenuItem2";
-            this.removeToolStripMenuItem2.Size = new System.Drawing.Size(213, 22);
+            this.removeToolStripMenuItem2.Size = new System.Drawing.Size(284, 22);
             this.removeToolStripMenuItem2.Text = "Remove";
             this.removeToolStripMenuItem2.Click += new System.EventHandler(this.removeToolStripMenuItem2_Click);
             // 
-            // txtPidEditorFilter
+            // duplicateToolStripMenuItem
             // 
-            this.txtPidEditorFilter.Location = new System.Drawing.Point(41, 9);
-            this.txtPidEditorFilter.Name = "txtPidEditorFilter";
-            this.txtPidEditorFilter.Size = new System.Drawing.Size(180, 20);
-            this.txtPidEditorFilter.TabIndex = 11;
-            this.txtPidEditorFilter.TextChanged += new System.EventHandler(this.txtPidEditorFilter_TextChanged);
+            this.duplicateToolStripMenuItem.Name = "duplicateToolStripMenuItem";
+            this.duplicateToolStripMenuItem.Size = new System.Drawing.Size(284, 22);
+            this.duplicateToolStripMenuItem.Text = "Duplicate";
+            this.duplicateToolStripMenuItem.Click += new System.EventHandler(this.duplicateToolStripMenuItem_Click);
             // 
-            // label54
+            // toolStripSeparator5
             // 
-            this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(3, 11);
-            this.label54.Name = "label54";
-            this.label54.Size = new System.Drawing.Size(32, 13);
-            this.label54.TabIndex = 10;
-            this.label54.Text = "Filter:";
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(281, 6);
+            // 
+            // massUpdateSelectedPIDsToAllProfilesToolStripMenuItem
+            // 
+            this.massUpdateSelectedPIDsToAllProfilesToolStripMenuItem.Name = "massUpdateSelectedPIDsToAllProfilesToolStripMenuItem";
+            this.massUpdateSelectedPIDsToAllProfilesToolStripMenuItem.Size = new System.Drawing.Size(284, 22);
+            this.massUpdateSelectedPIDsToAllProfilesToolStripMenuItem.Text = "Mass update selected PIDs to all profiles";
+            this.massUpdateSelectedPIDsToAllProfilesToolStripMenuItem.Click += new System.EventHandler(this.massUpdateSelectedPIDsToAllProfilesToolStripMenuItem_Click);
+            // 
+            // massUpdateALLPIDsToAllProfilesToolStripMenuItem
+            // 
+            this.massUpdateALLPIDsToAllProfilesToolStripMenuItem.Name = "massUpdateALLPIDsToAllProfilesToolStripMenuItem";
+            this.massUpdateALLPIDsToAllProfilesToolStripMenuItem.Size = new System.Drawing.Size(284, 22);
+            this.massUpdateALLPIDsToAllProfilesToolStripMenuItem.Text = "Mass update ALL PIDs to all profiles";
+            this.massUpdateALLPIDsToAllProfilesToolStripMenuItem.Click += new System.EventHandler(this.massUpdateALLPIDsToAllProfilesToolStripMenuItem_Click);
+            // 
+            // btnPidEditorImportDBC
+            // 
+            this.btnPidEditorImportDBC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPidEditorImportDBC.Location = new System.Drawing.Point(361, 427);
+            this.btnPidEditorImportDBC.Name = "btnPidEditorImportDBC";
+            this.btnPidEditorImportDBC.Size = new System.Drawing.Size(99, 23);
+            this.btnPidEditorImportDBC.TabIndex = 21;
+            this.btnPidEditorImportDBC.Text = "Import from DBC";
+            this.btnPidEditorImportDBC.UseVisualStyleBackColor = true;
+            this.btnPidEditorImportDBC.Click += new System.EventHandler(this.btnPidEditorImportDBC_Click);
+            // 
+            // comboPidEditorDatatype
+            // 
+            this.comboPidEditorDatatype.FormattingEnabled = true;
+            this.comboPidEditorDatatype.Location = new System.Drawing.Point(83, 62);
+            this.comboPidEditorDatatype.Name = "comboPidEditorDatatype";
+            this.comboPidEditorDatatype.Size = new System.Drawing.Size(132, 21);
+            this.comboPidEditorDatatype.TabIndex = 20;
+            this.comboPidEditorDatatype.SelectedIndexChanged += new System.EventHandler(this.comboPidEditorDatatype_SelectedIndexChanged);
+            // 
+            // label61
+            // 
+            this.label61.AutoSize = true;
+            this.label61.Location = new System.Drawing.Point(3, 66);
+            this.label61.Name = "label61";
+            this.label61.Size = new System.Drawing.Size(53, 13);
+            this.label61.TabIndex = 19;
+            this.label61.Text = "Datatype:";
+            // 
+            // chkPideditorCustom
+            // 
+            this.chkPideditorCustom.AutoSize = true;
+            this.chkPideditorCustom.Location = new System.Drawing.Point(232, 9);
+            this.chkPideditorCustom.Name = "chkPideditorCustom";
+            this.chkPideditorCustom.Size = new System.Drawing.Size(160, 17);
+            this.chkPideditorCustom.TabIndex = 18;
+            this.chkPideditorCustom.Text = "Custom (Save only to profile)";
+            this.chkPideditorCustom.UseVisualStyleBackColor = true;
+            this.chkPideditorCustom.CheckedChanged += new System.EventHandler(this.chkPideditorCustom_CheckedChanged);
+            // 
+            // btnDuplicatePid
+            // 
+            this.btnDuplicatePid.Location = new System.Drawing.Point(83, 427);
+            this.btnDuplicatePid.Name = "btnDuplicatePid";
+            this.btnDuplicatePid.Size = new System.Drawing.Size(75, 23);
+            this.btnDuplicatePid.TabIndex = 17;
+            this.btnDuplicatePid.Text = "Duplicate";
+            this.btnDuplicatePid.UseVisualStyleBackColor = true;
+            this.btnDuplicatePid.Click += new System.EventHandler(this.btnDuplicatePid_Click);
+            // 
+            // btnAddNewPid
+            // 
+            this.btnAddNewPid.Location = new System.Drawing.Point(2, 427);
+            this.btnAddNewPid.Name = "btnAddNewPid";
+            this.btnAddNewPid.Size = new System.Drawing.Size(75, 23);
+            this.btnAddNewPid.TabIndex = 16;
+            this.btnAddNewPid.Text = "Add new";
+            this.btnAddNewPid.UseVisualStyleBackColor = true;
+            this.btnAddNewPid.Click += new System.EventHandler(this.btnAddNewPid_Click);
+            // 
+            // comboPidEditorType
+            // 
+            this.comboPidEditorType.FormattingEnabled = true;
+            this.comboPidEditorType.Location = new System.Drawing.Point(83, 5);
+            this.comboPidEditorType.Name = "comboPidEditorType";
+            this.comboPidEditorType.Size = new System.Drawing.Size(133, 21);
+            this.comboPidEditorType.TabIndex = 15;
+            this.comboPidEditorType.SelectedIndexChanged += new System.EventHandler(this.comboPidEditorType_SelectedIndexChanged);
+            // 
+            // label60
+            // 
+            this.label60.AutoSize = true;
+            this.label60.Location = new System.Drawing.Point(3, 9);
+            this.label60.Name = "label60";
+            this.label60.Size = new System.Drawing.Size(34, 13);
+            this.label60.TabIndex = 14;
+            this.label60.Text = "Type:";
+            // 
+            // txtPidId
+            // 
+            this.txtPidId.Location = new System.Drawing.Point(291, 32);
+            this.txtPidId.Name = "txtPidId";
+            this.txtPidId.Size = new System.Drawing.Size(133, 20);
+            this.txtPidId.TabIndex = 13;
+            this.txtPidId.TextChanged += new System.EventHandler(this.txtPidId_TextChanged);
+            // 
+            // txtPidname
+            // 
+            this.txtPidname.Location = new System.Drawing.Point(83, 32);
+            this.txtPidname.Name = "txtPidname";
+            this.txtPidname.Size = new System.Drawing.Size(133, 20);
+            this.txtPidname.TabIndex = 12;
+            this.txtPidname.TextChanged += new System.EventHandler(this.txtPidname_TextChanged);
+            // 
+            // labelPidEditorId
+            // 
+            this.labelPidEditorId.AutoSize = true;
+            this.labelPidEditorId.Location = new System.Drawing.Point(229, 35);
+            this.labelPidEditorId.Name = "labelPidEditorId";
+            this.labelPidEditorId.Size = new System.Drawing.Size(19, 13);
+            this.labelPidEditorId.TabIndex = 11;
+            this.labelPidEditorId.Text = "Id:";
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(3, 35);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(38, 13);
+            this.label40.TabIndex = 10;
+            this.label40.Text = "Name:";
             // 
             // groupConversion
             // 
@@ -1617,9 +2258,9 @@ namespace UniversalPatcher
             this.groupConversion.Controls.Add(this.chkConversionBitMapped);
             this.groupConversion.Controls.Add(this.label48);
             this.groupConversion.Controls.Add(this.numConversionBitIndex);
-            this.groupConversion.Location = new System.Drawing.Point(6, 154);
+            this.groupConversion.Location = new System.Drawing.Point(6, 217);
             this.groupConversion.Name = "groupConversion";
-            this.groupConversion.Size = new System.Drawing.Size(456, 85);
+            this.groupConversion.Size = new System.Drawing.Size(457, 85);
             this.groupConversion.TabIndex = 9;
             this.groupConversion.TabStop = false;
             this.groupConversion.Text = "Conversion";
@@ -1757,10 +2398,11 @@ namespace UniversalPatcher
             this.dataGridViewPidEditorConversions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewPidEditorConversions.ContextMenuStrip = this.contextMenuPidEditorConversions;
             this.dataGridViewPidEditorConversions.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataGridViewPidEditorConversions.Location = new System.Drawing.Point(4, 48);
+            this.dataGridViewPidEditorConversions.Location = new System.Drawing.Point(4, 111);
             this.dataGridViewPidEditorConversions.Name = "dataGridViewPidEditorConversions";
-            this.dataGridViewPidEditorConversions.Size = new System.Drawing.Size(458, 100);
+            this.dataGridViewPidEditorConversions.Size = new System.Drawing.Size(459, 100);
             this.dataGridViewPidEditorConversions.TabIndex = 5;
+            this.dataGridViewPidEditorConversions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewPidEditorConversions_CellContentClick);
             // 
             // contextMenuPidEditorConversions
             // 
@@ -1787,7 +2429,7 @@ namespace UniversalPatcher
             // label47
             // 
             this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(3, 32);
+            this.label47.Location = new System.Drawing.Point(3, 95);
             this.label47.Name = "label47";
             this.label47.Size = new System.Drawing.Size(68, 13);
             this.label47.TabIndex = 4;
@@ -1796,7 +2438,7 @@ namespace UniversalPatcher
             // labelProfilePids
             // 
             this.labelProfilePids.AutoSize = true;
-            this.labelProfilePids.Location = new System.Drawing.Point(3, 242);
+            this.labelProfilePids.Location = new System.Drawing.Point(3, 305);
             this.labelProfilePids.Name = "labelProfilePids";
             this.labelProfilePids.Size = new System.Drawing.Size(30, 13);
             this.labelProfilePids.TabIndex = 1;
@@ -1810,9 +2452,9 @@ namespace UniversalPatcher
             this.dataGridViewPidEditorPids.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewPidEditorPids.ContextMenuStrip = this.contextMenuPidEditorPids;
             this.dataGridViewPidEditorPids.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataGridViewPidEditorPids.Location = new System.Drawing.Point(2, 258);
+            this.dataGridViewPidEditorPids.Location = new System.Drawing.Point(2, 321);
             this.dataGridViewPidEditorPids.Name = "dataGridViewPidEditorPids";
-            this.dataGridViewPidEditorPids.Size = new System.Drawing.Size(458, 100);
+            this.dataGridViewPidEditorPids.Size = new System.Drawing.Size(459, 100);
             this.dataGridViewPidEditorPids.TabIndex = 0;
             this.dataGridViewPidEditorPids.Visible = false;
             // 
@@ -1840,18 +2482,133 @@ namespace UniversalPatcher
             // 
             // tabAnalyzer
             // 
+            this.tabAnalyzer.Controls.Add(this.labelPassivePidValues);
+            this.tabAnalyzer.Controls.Add(this.splitAnalyzer);
+            this.tabAnalyzer.Controls.Add(this.chkCombinePids);
             this.tabAnalyzer.Controls.Add(this.btnStartStopAnalyzer);
             this.tabAnalyzer.Controls.Add(this.btnSaveAnalyzerMsgs);
             this.tabAnalyzer.Controls.Add(this.btnAnalyzerSaveCsv);
             this.tabAnalyzer.Controls.Add(this.btnClearAnalyzerGrid);
             this.tabAnalyzer.Controls.Add(this.chkHideHeartBeat);
-            this.tabAnalyzer.Controls.Add(this.dataGridAnalyzer);
             this.tabAnalyzer.Location = new System.Drawing.Point(4, 22);
             this.tabAnalyzer.Name = "tabAnalyzer";
-            this.tabAnalyzer.Size = new System.Drawing.Size(966, 481);
+            this.tabAnalyzer.Size = new System.Drawing.Size(966, 480);
             this.tabAnalyzer.TabIndex = 4;
             this.tabAnalyzer.Text = "Analyzer";
             this.tabAnalyzer.UseVisualStyleBackColor = true;
+            // 
+            // labelPassivePidValues
+            // 
+            this.labelPassivePidValues.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelPassivePidValues.AutoSize = true;
+            this.labelPassivePidValues.Location = new System.Drawing.Point(604, 16);
+            this.labelPassivePidValues.Name = "labelPassivePidValues";
+            this.labelPassivePidValues.Size = new System.Drawing.Size(98, 13);
+            this.labelPassivePidValues.TabIndex = 1;
+            this.labelPassivePidValues.Text = "Passive pid values:";
+            this.labelPassivePidValues.Visible = false;
+            // 
+            // splitAnalyzer
+            // 
+            this.splitAnalyzer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitAnalyzer.Location = new System.Drawing.Point(-1, 32);
+            this.splitAnalyzer.Name = "splitAnalyzer";
+            // 
+            // splitAnalyzer.Panel1
+            // 
+            this.splitAnalyzer.Panel1.Controls.Add(this.dataGridAnalyzer);
+            // 
+            // splitAnalyzer.Panel2
+            // 
+            this.splitAnalyzer.Panel2.Controls.Add(this.dataGridPassivePidValues);
+            this.splitAnalyzer.Size = new System.Drawing.Size(967, 445);
+            this.splitAnalyzer.SplitterDistance = 441;
+            this.splitAnalyzer.TabIndex = 14;
+            // 
+            // dataGridAnalyzer
+            // 
+            this.dataGridAnalyzer.AllowUserToAddRows = false;
+            this.dataGridAnalyzer.AllowUserToDeleteRows = false;
+            this.dataGridAnalyzer.AllowUserToOrderColumns = true;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridAnalyzer.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            this.dataGridAnalyzer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridAnalyzer.ContextMenuStrip = this.contextMenuAnalyzer;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridAnalyzer.DefaultCellStyle = dataGridViewCellStyle8;
+            this.dataGridAnalyzer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridAnalyzer.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.dataGridAnalyzer.Location = new System.Drawing.Point(0, 0);
+            this.dataGridAnalyzer.Name = "dataGridAnalyzer";
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridAnalyzer.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            this.dataGridAnalyzer.Size = new System.Drawing.Size(441, 445);
+            this.dataGridAnalyzer.TabIndex = 3;
+            // 
+            // contextMenuAnalyzer
+            // 
+            this.contextMenuAnalyzer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showSignalBitsToolStripMenuItem,
+            this.searchSignalFromDBCFilesToolStripMenuItem});
+            this.contextMenuAnalyzer.Name = "contextMenuAnalyzer";
+            this.contextMenuAnalyzer.Size = new System.Drawing.Size(245, 48);
+            // 
+            // showSignalBitsToolStripMenuItem
+            // 
+            this.showSignalBitsToolStripMenuItem.Name = "showSignalBitsToolStripMenuItem";
+            this.showSignalBitsToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.showSignalBitsToolStripMenuItem.Text = "Show Signal bits";
+            this.showSignalBitsToolStripMenuItem.Click += new System.EventHandler(this.showSignalBitsToolStripMenuItem_Click);
+            // 
+            // searchSignalFromDBCFilesToolStripMenuItem
+            // 
+            this.searchSignalFromDBCFilesToolStripMenuItem.Name = "searchSignalFromDBCFilesToolStripMenuItem";
+            this.searchSignalFromDBCFilesToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.searchSignalFromDBCFilesToolStripMenuItem.Text = "Search signal(s) from DBC files...";
+            this.searchSignalFromDBCFilesToolStripMenuItem.Click += new System.EventHandler(this.searchSignalFromDBCFilesToolStripMenuItem_Click);
+            // 
+            // dataGridPassivePidValues
+            // 
+            this.dataGridPassivePidValues.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridPassivePidValues.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridPassivePidValues.Location = new System.Drawing.Point(0, 0);
+            this.dataGridPassivePidValues.Name = "dataGridPassivePidValues";
+            this.dataGridPassivePidValues.Size = new System.Drawing.Size(521, 445);
+            this.dataGridPassivePidValues.TabIndex = 0;
+            // 
+            // chkCombinePids
+            // 
+            this.chkCombinePids.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkCombinePids.AutoSize = true;
+            this.chkCombinePids.Enabled = false;
+            this.chkCombinePids.Location = new System.Drawing.Point(720, 8);
+            this.chkCombinePids.Name = "chkCombinePids";
+            this.chkCombinePids.Size = new System.Drawing.Size(108, 17);
+            this.chkCombinePids.TabIndex = 9;
+            this.chkCombinePids.Text = "Combine CAN ids";
+            this.chkCombinePids.UseVisualStyleBackColor = true;
             // 
             // btnStartStopAnalyzer
             // 
@@ -1906,52 +2663,13 @@ namespace UniversalPatcher
             this.chkHideHeartBeat.Text = "Hide Heartbeat";
             this.chkHideHeartBeat.UseVisualStyleBackColor = true;
             // 
-            // dataGridAnalyzer
-            // 
-            this.dataGridAnalyzer.AllowUserToAddRows = false;
-            this.dataGridAnalyzer.AllowUserToDeleteRows = false;
-            this.dataGridAnalyzer.AllowUserToOrderColumns = true;
-            this.dataGridAnalyzer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle58.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle58.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle58.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle58.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle58.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle58.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle58.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridAnalyzer.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle58;
-            this.dataGridAnalyzer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle59.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle59.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle59.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle59.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle59.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle59.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle59.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridAnalyzer.DefaultCellStyle = dataGridViewCellStyle59;
-            this.dataGridAnalyzer.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridAnalyzer.Location = new System.Drawing.Point(0, 28);
-            this.dataGridAnalyzer.Name = "dataGridAnalyzer";
-            dataGridViewCellStyle60.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle60.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle60.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle60.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle60.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle60.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle60.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridAnalyzer.RowHeadersDefaultCellStyle = dataGridViewCellStyle60;
-            this.dataGridAnalyzer.Size = new System.Drawing.Size(964, 452);
-            this.dataGridAnalyzer.TabIndex = 3;
-            // 
             // tabDTC
             // 
             this.tabDTC.Controls.Add(this.groupDTC);
             this.tabDTC.Controls.Add(this.dataGridDtcCodes);
             this.tabDTC.Location = new System.Drawing.Point(4, 22);
             this.tabDTC.Name = "tabDTC";
-            this.tabDTC.Size = new System.Drawing.Size(966, 481);
+            this.tabDTC.Size = new System.Drawing.Size(966, 480);
             this.tabDTC.TabIndex = 5;
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
@@ -2158,14 +2876,14 @@ namespace UniversalPatcher
             this.dataGridDtcCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle61.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle61.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle61.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle61.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle61.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle61.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle61.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridDtcCodes.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle61;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridDtcCodes.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridDtcCodes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridDtcCodes.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Module,
@@ -2175,25 +2893,25 @@ namespace UniversalPatcher
             this.Conversion,
             this.Scaling});
             this.dataGridDtcCodes.ContextMenuStrip = this.contextMenuDtc;
-            dataGridViewCellStyle62.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle62.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle62.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle62.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle62.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle62.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle62.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridDtcCodes.DefaultCellStyle = dataGridViewCellStyle62;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridDtcCodes.DefaultCellStyle = dataGridViewCellStyle11;
             this.dataGridDtcCodes.Location = new System.Drawing.Point(208, 0);
             this.dataGridDtcCodes.Name = "dataGridDtcCodes";
-            dataGridViewCellStyle63.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle63.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle63.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle63.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle63.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle63.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle63.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridDtcCodes.RowHeadersDefaultCellStyle = dataGridViewCellStyle63;
-            this.dataGridDtcCodes.Size = new System.Drawing.Size(754, 480);
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridDtcCodes.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            this.dataGridDtcCodes.Size = new System.Drawing.Size(754, 478);
             this.dataGridDtcCodes.TabIndex = 7;
             // 
             // Module
@@ -2252,16 +2970,103 @@ namespace UniversalPatcher
             // 
             // tabVPWConsole
             // 
+            this.tabVPWConsole.Controls.Add(this.groupBox11);
             this.tabVPWConsole.Controls.Add(this.vScrollBarVpwConsole);
             this.tabVPWConsole.Controls.Add(this.richVPWmessages);
             this.tabVPWConsole.Controls.Add(this.txtSendBus);
             this.tabVPWConsole.Controls.Add(this.groupBox3);
             this.tabVPWConsole.Location = new System.Drawing.Point(4, 22);
             this.tabVPWConsole.Name = "tabVPWConsole";
-            this.tabVPWConsole.Size = new System.Drawing.Size(966, 481);
+            this.tabVPWConsole.Size = new System.Drawing.Size(966, 480);
             this.tabVPWConsole.TabIndex = 6;
             this.tabVPWConsole.Text = "VPW Console";
             this.tabVPWConsole.UseVisualStyleBackColor = true;
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.label65);
+            this.groupBox11.Controls.Add(this.numFloodByteCount);
+            this.groupBox11.Controls.Add(this.chkFlood4x);
+            this.groupBox11.Controls.Add(this.txtFloodByte);
+            this.groupBox11.Controls.Add(this.label1);
+            this.groupBox11.Controls.Add(this.chkFloodActive);
+            this.groupBox11.Location = new System.Drawing.Point(5, 286);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(142, 113);
+            this.groupBox11.TabIndex = 38;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Flood test";
+            // 
+            // label65
+            // 
+            this.label65.AutoSize = true;
+            this.label65.Location = new System.Drawing.Point(9, 52);
+            this.label65.Name = "label65";
+            this.label65.Size = new System.Drawing.Size(36, 13);
+            this.label65.TabIndex = 5;
+            this.label65.Text = "Bytes:";
+            // 
+            // numFloodByteCount
+            // 
+            this.numFloodByteCount.Location = new System.Drawing.Point(73, 47);
+            this.numFloodByteCount.Maximum = new decimal(new int[] {
+            2090,
+            0,
+            0,
+            0});
+            this.numFloodByteCount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numFloodByteCount.Name = "numFloodByteCount";
+            this.numFloodByteCount.Size = new System.Drawing.Size(60, 20);
+            this.numFloodByteCount.TabIndex = 4;
+            this.numFloodByteCount.Value = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            // 
+            // chkFlood4x
+            // 
+            this.chkFlood4x.AutoSize = true;
+            this.chkFlood4x.Checked = true;
+            this.chkFlood4x.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFlood4x.Location = new System.Drawing.Point(73, 21);
+            this.chkFlood4x.Name = "chkFlood4x";
+            this.chkFlood4x.Size = new System.Drawing.Size(39, 17);
+            this.chkFlood4x.TabIndex = 3;
+            this.chkFlood4x.Text = "4X";
+            this.chkFlood4x.UseVisualStyleBackColor = true;
+            // 
+            // txtFloodByte
+            // 
+            this.txtFloodByte.Location = new System.Drawing.Point(73, 72);
+            this.txtFloodByte.Name = "txtFloodByte";
+            this.txtFloodByte.Size = new System.Drawing.Size(60, 20);
+            this.txtFloodByte.TabIndex = 2;
+            this.txtFloodByte.Text = "55";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Byte:";
+            // 
+            // chkFloodActive
+            // 
+            this.chkFloodActive.AutoSize = true;
+            this.chkFloodActive.Location = new System.Drawing.Point(11, 21);
+            this.chkFloodActive.Name = "chkFloodActive";
+            this.chkFloodActive.Size = new System.Drawing.Size(56, 17);
+            this.chkFloodActive.TabIndex = 0;
+            this.chkFloodActive.Text = "Active";
+            this.chkFloodActive.UseVisualStyleBackColor = true;
+            this.chkFloodActive.CheckedChanged += new System.EventHandler(this.chkFloodActive_CheckedChanged);
             // 
             // vScrollBarVpwConsole
             // 
@@ -2270,7 +3075,7 @@ namespace UniversalPatcher
             this.vScrollBarVpwConsole.LargeChange = 1;
             this.vScrollBarVpwConsole.Location = new System.Drawing.Point(940, 3);
             this.vScrollBarVpwConsole.Name = "vScrollBarVpwConsole";
-            this.vScrollBarVpwConsole.Size = new System.Drawing.Size(21, 449);
+            this.vScrollBarVpwConsole.Size = new System.Drawing.Size(21, 447);
             this.vScrollBarVpwConsole.TabIndex = 37;
             this.vScrollBarVpwConsole.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBarVpwConsole_Scroll);
             // 
@@ -2285,7 +3090,7 @@ namespace UniversalPatcher
             this.richVPWmessages.Location = new System.Drawing.Point(154, 3);
             this.richVPWmessages.Name = "richVPWmessages";
             this.richVPWmessages.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richVPWmessages.Size = new System.Drawing.Size(783, 449);
+            this.richVPWmessages.Size = new System.Drawing.Size(783, 447);
             this.richVPWmessages.TabIndex = 2;
             this.richVPWmessages.Text = "";
             this.richVPWmessages.WordWrap = false;
@@ -2294,7 +3099,7 @@ namespace UniversalPatcher
             // 
             this.txtSendBus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSendBus.Location = new System.Drawing.Point(154, 455);
+            this.txtSendBus.Location = new System.Drawing.Point(154, 453);
             this.txtSendBus.Name = "txtSendBus";
             this.txtSendBus.Size = new System.Drawing.Size(807, 20);
             this.txtSendBus.TabIndex = 1;
@@ -2312,7 +3117,7 @@ namespace UniversalPatcher
             this.groupBox3.Controls.Add(this.chkConsoleTimestamps);
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(145, 296);
+            this.groupBox3.Size = new System.Drawing.Size(145, 265);
             this.groupBox3.TabIndex = 35;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "VPW Console";
@@ -2458,7 +3263,7 @@ namespace UniversalPatcher
             this.tabJConsole.Location = new System.Drawing.Point(4, 22);
             this.tabJConsole.Margin = new System.Windows.Forms.Padding(2);
             this.tabJConsole.Name = "tabJConsole";
-            this.tabJConsole.Size = new System.Drawing.Size(966, 481);
+            this.tabJConsole.Size = new System.Drawing.Size(966, 480);
             this.tabJConsole.TabIndex = 7;
             this.tabJConsole.Text = "J-Console";
             this.tabJConsole.UseVisualStyleBackColor = true;
@@ -2470,7 +3275,7 @@ namespace UniversalPatcher
             this.vScrollBarJConsole.LargeChange = 1;
             this.vScrollBarJConsole.Location = new System.Drawing.Point(943, 3);
             this.vScrollBarJConsole.Name = "vScrollBarJConsole";
-            this.vScrollBarJConsole.Size = new System.Drawing.Size(19, 411);
+            this.vScrollBarJConsole.Size = new System.Drawing.Size(19, 409);
             this.vScrollBarJConsole.TabIndex = 54;
             this.vScrollBarJConsole.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBarJConsole_Scroll);
             // 
@@ -3259,7 +4064,7 @@ namespace UniversalPatcher
             // numJConsoleScriptDelay
             // 
             this.numJConsoleScriptDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.numJConsoleScriptDelay.Location = new System.Drawing.Point(730, 448);
+            this.numJConsoleScriptDelay.Location = new System.Drawing.Point(730, 447);
             this.numJConsoleScriptDelay.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -3274,7 +4079,7 @@ namespace UniversalPatcher
             // 
             this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(631, 452);
+            this.label20.Location = new System.Drawing.Point(631, 451);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(84, 13);
             this.label20.TabIndex = 41;
@@ -3290,7 +4095,7 @@ namespace UniversalPatcher
             this.richJConsole.Location = new System.Drawing.Point(446, 3);
             this.richJConsole.Name = "richJConsole";
             this.richJConsole.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richJConsole.Size = new System.Drawing.Size(520, 411);
+            this.richJConsole.Size = new System.Drawing.Size(520, 409);
             this.richJConsole.TabIndex = 3;
             this.richJConsole.Text = "";
             this.richJConsole.WordWrap = false;
@@ -3299,7 +4104,7 @@ namespace UniversalPatcher
             // 
             this.btnJconsoleStopScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnJconsoleStopScript.Enabled = false;
-            this.btnJconsoleStopScript.Location = new System.Drawing.Point(533, 444);
+            this.btnJconsoleStopScript.Location = new System.Drawing.Point(533, 443);
             this.btnJconsoleStopScript.Name = "btnJconsoleStopScript";
             this.btnJconsoleStopScript.Size = new System.Drawing.Size(81, 23);
             this.btnJconsoleStopScript.TabIndex = 46;
@@ -3311,7 +4116,7 @@ namespace UniversalPatcher
             // 
             this.txtJConsoleSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtJConsoleSend.Location = new System.Drawing.Point(446, 419);
+            this.txtJConsoleSend.Location = new System.Drawing.Point(446, 417);
             this.txtJConsoleSend.Margin = new System.Windows.Forms.Padding(2);
             this.txtJConsoleSend.Name = "txtJConsoleSend";
             this.txtJConsoleSend.Size = new System.Drawing.Size(516, 20);
@@ -3321,7 +4126,7 @@ namespace UniversalPatcher
             // btnJConsoleUploadScript
             // 
             this.btnJConsoleUploadScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnJConsoleUploadScript.Location = new System.Drawing.Point(445, 444);
+            this.btnJConsoleUploadScript.Location = new System.Drawing.Point(445, 443);
             this.btnJConsoleUploadScript.Name = "btnJConsoleUploadScript";
             this.btnJConsoleUploadScript.Size = new System.Drawing.Size(82, 24);
             this.btnJConsoleUploadScript.TabIndex = 0;
@@ -3335,7 +4140,7 @@ namespace UniversalPatcher
             this.groupJConsoleProto.Controls.Add(this.radioJConsoleProto2);
             this.groupJConsoleProto.Controls.Add(this.radioJConsoleProto1);
             this.groupJConsoleProto.Enabled = false;
-            this.groupJConsoleProto.Location = new System.Drawing.Point(798, 437);
+            this.groupJConsoleProto.Location = new System.Drawing.Point(798, 435);
             this.groupJConsoleProto.Name = "groupJConsoleProto";
             this.groupJConsoleProto.Size = new System.Drawing.Size(94, 43);
             this.groupJConsoleProto.TabIndex = 47;
@@ -3372,7 +4177,7 @@ namespace UniversalPatcher
             this.tabAlgoTest.Controls.Add(this.txtAlgoTest);
             this.tabAlgoTest.Location = new System.Drawing.Point(4, 22);
             this.tabAlgoTest.Name = "tabAlgoTest";
-            this.tabAlgoTest.Size = new System.Drawing.Size(966, 481);
+            this.tabAlgoTest.Size = new System.Drawing.Size(966, 480);
             this.tabAlgoTest.TabIndex = 8;
             this.tabAlgoTest.Text = "AlgoTest";
             this.tabAlgoTest.UseVisualStyleBackColor = true;
@@ -3552,7 +4357,7 @@ namespace UniversalPatcher
             this.txtAlgoTest.Multiline = true;
             this.txtAlgoTest.Name = "txtAlgoTest";
             this.txtAlgoTest.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtAlgoTest.Size = new System.Drawing.Size(787, 478);
+            this.txtAlgoTest.Size = new System.Drawing.Size(787, 477);
             this.txtAlgoTest.TabIndex = 4;
             // 
             // tabCANdevices
@@ -3560,42 +4365,42 @@ namespace UniversalPatcher
             this.tabCANdevices.Controls.Add(this.dataGridCANDevices);
             this.tabCANdevices.Location = new System.Drawing.Point(4, 22);
             this.tabCANdevices.Name = "tabCANdevices";
-            this.tabCANdevices.Size = new System.Drawing.Size(966, 481);
+            this.tabCANdevices.Size = new System.Drawing.Size(966, 480);
             this.tabCANdevices.TabIndex = 9;
             this.tabCANdevices.Text = "CAN devices";
             this.tabCANdevices.UseVisualStyleBackColor = true;
             // 
             // dataGridCANDevices
             // 
-            dataGridViewCellStyle49.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle49.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle49.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle49.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle49.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle49.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle49.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridCANDevices.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle49;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridCANDevices.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
             this.dataGridCANDevices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle50.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle50.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle50.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle50.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle50.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle50.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle50.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridCANDevices.DefaultCellStyle = dataGridViewCellStyle50;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridCANDevices.DefaultCellStyle = dataGridViewCellStyle14;
             this.dataGridCANDevices.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridCANDevices.Location = new System.Drawing.Point(0, 0);
             this.dataGridCANDevices.Name = "dataGridCANDevices";
-            dataGridViewCellStyle51.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle51.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle51.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle51.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle51.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle51.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle51.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridCANDevices.RowHeadersDefaultCellStyle = dataGridViewCellStyle51;
-            this.dataGridCANDevices.Size = new System.Drawing.Size(966, 481);
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridCANDevices.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
+            this.dataGridCANDevices.Size = new System.Drawing.Size(966, 480);
             this.dataGridCANDevices.TabIndex = 0;
             // 
             // btnConnect
@@ -3637,7 +4442,7 @@ namespace UniversalPatcher
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(974, 134);
+            this.txtResult.Size = new System.Drawing.Size(974, 135);
             this.txtResult.TabIndex = 6;
             this.txtResult.Text = "";
             // 
@@ -3669,7 +4474,8 @@ namespace UniversalPatcher
             this.saveVPWConsoleToolStripMenuItem,
             this.saveJConsoleToolStripMenuItem,
             this.toolStripSeparator3,
-            this.createDebugLogToolStripMenuItem});
+            this.createDebugLogToolStripMenuItem,
+            this.modeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
@@ -3746,6 +4552,37 @@ namespace UniversalPatcher
             this.createDebugLogToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.createDebugLogToolStripMenuItem.Text = "Create debug log...";
             this.createDebugLogToolStripMenuItem.Click += new System.EventHandler(this.createDebugLogToolStripMenuItem_Click);
+            // 
+            // modeToolStripMenuItem
+            // 
+            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.touristToolStripMenuItem,
+            this.basicToolStripMenuItem,
+            this.advancedToolStripMenuItem});
+            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.modeToolStripMenuItem.Text = "Mode";
+            // 
+            // touristToolStripMenuItem
+            // 
+            this.touristToolStripMenuItem.Name = "touristToolStripMenuItem";
+            this.touristToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.touristToolStripMenuItem.Text = "Tourist";
+            this.touristToolStripMenuItem.Click += new System.EventHandler(this.touristToolStripMenuItem_Click);
+            // 
+            // basicToolStripMenuItem
+            // 
+            this.basicToolStripMenuItem.Name = "basicToolStripMenuItem";
+            this.basicToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.basicToolStripMenuItem.Text = "Basic";
+            this.basicToolStripMenuItem.Click += new System.EventHandler(this.basicToolStripMenuItem_Click);
+            // 
+            // advancedToolStripMenuItem
+            // 
+            this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
+            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.advancedToolStripMenuItem.Text = "Advanced";
+            this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
             // actionToolStripMenuItem
             // 
@@ -3871,7 +4708,8 @@ namespace UniversalPatcher
             this.toolStripSeparator2,
             this.patcherToolStripMenuItem,
             this.tunerToolStripMenuItem,
-            this.launcherToolStripMenuItem});
+            this.launcherToolStripMenuItem,
+            this.serialportServerToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -3944,6 +4782,13 @@ namespace UniversalPatcher
             this.launcherToolStripMenuItem.Text = "Launcher";
             this.launcherToolStripMenuItem.Click += new System.EventHandler(this.launcherToolStripMenuItem_Click);
             // 
+            // serialportServerToolStripMenuItem
+            // 
+            this.serialportServerToolStripMenuItem.Name = "serialportServerToolStripMenuItem";
+            this.serialportServerToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.serialportServerToolStripMenuItem.Text = "Serialport Server";
+            this.serialportServerToolStripMenuItem.Click += new System.EventHandler(this.serialportServerToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -3992,7 +4837,7 @@ namespace UniversalPatcher
             // 
             this.splitContainer2.Panel2.Controls.Add(this.txtResult);
             this.splitContainer2.Size = new System.Drawing.Size(974, 645);
-            this.splitContainer2.SplitterDistance = 507;
+            this.splitContainer2.SplitterDistance = 506;
             this.splitContainer2.TabIndex = 5;
             // 
             // labelConnected
@@ -4059,11 +4904,32 @@ namespace UniversalPatcher
             this.labelAFR.TabIndex = 26;
             this.labelAFR.Text = "AFR";
             // 
+            // timerAnalyzerCombined
+            // 
+            this.timerAnalyzerCombined.Interval = 300;
+            this.timerAnalyzerCombined.Tick += new System.EventHandler(this.timerAnalyzerCombined_Tick);
+            // 
+            // chkLoggingStarted
+            // 
+            this.chkLoggingStarted.AutoSize = true;
+            this.chkLoggingStarted.Enabled = false;
+            this.chkLoggingStarted.Location = new System.Drawing.Point(123, 34);
+            this.chkLoggingStarted.Name = "chkLoggingStarted";
+            this.chkLoggingStarted.Size = new System.Drawing.Size(15, 14);
+            this.chkLoggingStarted.TabIndex = 27;
+            this.chkLoggingStarted.UseVisualStyleBackColor = true;
+            // 
+            // timerAnalyzer
+            // 
+            this.timerAnalyzer.Interval = 300;
+            this.timerAnalyzer.Tick += new System.EventHandler(this.timerAnalyzer_Tick);
+            // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(980, 708);
+            this.Controls.Add(this.chkLoggingStarted);
             this.Controls.Add(this.labelAFR);
             this.Controls.Add(this.labelProtocol);
             this.Controls.Add(this.btnConnect);
@@ -4073,6 +4939,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.btnStartStop);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "frmLogger";
             this.Text = "Logger";
             this.Load += new System.EventHandler(this.frmLogger_Load);
@@ -4086,15 +4953,12 @@ namespace UniversalPatcher
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).EndInit();
+            this.contextMenuLogDataGrid.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupProtocol.ResumeLayout(false);
             this.groupProtocol.PerformLayout();
-            this.groupBox10.ResumeLayout(false);
-            this.groupBox10.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numRetryTimes)).EndInit();
             this.groupHWSettings.ResumeLayout(false);
             this.categories.ResumeLayout(false);
             this.categories.PerformLayout();
@@ -4104,18 +4968,31 @@ namespace UniversalPatcher
             this.serialOptionsGroupBox.PerformLayout();
             this.groupAdvanced.ResumeLayout(false);
             this.groupAdvanced.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRestartLoggingAfter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numAnalyzerNumMessages)).EndInit();
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRetryDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRetryTimes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numIdleTrafficInterval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numResetAfter)).EndInit();
             this.tabProfile.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.groupDetectSupportedPids.ResumeLayout(false);
+            this.groupDetectSupportedPids.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridProfile)).EndInit();
+            this.contextMenuProfile.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSelectedPids)).EndInit();
+            this.contextMenuEnabledPids.ResumeLayout(false);
             this.tabPidEditor.ResumeLayout(false);
             this.splitContainerProfile2.Panel1.ResumeLayout(false);
+            this.splitContainerProfile2.Panel1.PerformLayout();
             this.splitContainerProfile2.Panel2.ResumeLayout(false);
             this.splitContainerProfile2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerProfile2)).EndInit();
@@ -4131,7 +5008,13 @@ namespace UniversalPatcher
             this.contextMenuPidEditorPids.ResumeLayout(false);
             this.tabAnalyzer.ResumeLayout(false);
             this.tabAnalyzer.PerformLayout();
+            this.splitAnalyzer.Panel1.ResumeLayout(false);
+            this.splitAnalyzer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitAnalyzer)).EndInit();
+            this.splitAnalyzer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAnalyzer)).EndInit();
+            this.contextMenuAnalyzer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridPassivePidValues)).EndInit();
             this.tabDTC.ResumeLayout(false);
             this.groupDTC.ResumeLayout(false);
             this.groupDTC.PerformLayout();
@@ -4139,6 +5022,9 @@ namespace UniversalPatcher
             this.contextMenuDtc.ResumeLayout(false);
             this.tabVPWConsole.ResumeLayout(false);
             this.tabVPWConsole.PerformLayout();
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numFloodByteCount)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox9.ResumeLayout(false);
@@ -4182,7 +5068,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabLog;
         private System.Windows.Forms.TabPage tabProfile;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelSerialport;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadProfileToolStripMenuItem;
@@ -4211,12 +5097,9 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label labelProgress;
         private System.Windows.Forms.Label labelResponseMode;
         private System.Windows.Forms.ComboBox comboResponseMode;
-        private System.Windows.Forms.CheckBox chkFTDI;
-        private System.Windows.Forms.CheckBox chkRawValues;
         private System.Windows.Forms.CheckBox chkReverseSlotNumbers;
         private System.Windows.Forms.TabPage tabSettings;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ListBox listProfiles;
         private System.Windows.Forms.GroupBox groupLogSettings;
         private System.Windows.Forms.GroupBox groupAdvanced;
         private System.Windows.Forms.TabPage tabAnalyzer;
@@ -4421,10 +5304,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkEecvSecondKey;
         private System.Windows.Forms.GroupBox groupProtocol;
         private System.Windows.Forms.RadioButton radioCAN;
-        private System.Windows.Forms.NumericUpDown numResetAfter;
-        private System.Windows.Forms.Label label40;
         private System.Windows.Forms.ComboBox comboFilterByOS;
-        private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Button btnTestPids;
         private System.Windows.Forms.Button btnTestModulePids;
         private System.Windows.Forms.TextBox txtPidRange;
@@ -4461,7 +5341,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.ComboBox comboWBType;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Label label44;
-        private System.Windows.Forms.Label labelAFR;
         private System.Windows.Forms.ToolStripMenuItem parseKline23LogfileToBinToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkTestPidCompatibility;
         private System.Windows.Forms.ToolStripMenuItem patcherToolStripMenuItem;
@@ -4515,6 +5394,87 @@ namespace UniversalPatcher
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TreeView treeProfiles;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.Button btnTestEnabledPids;
+        private System.Windows.Forms.Button btnFilterByBin;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ComboBox comboProfileCategory;
+        private System.Windows.Forms.Button btnSaveProfile;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.ComboBox comboProfilePlatform;
+        private System.Windows.Forms.Label label56;
+        private System.Windows.Forms.Label label57;
+        private System.Windows.Forms.ComboBox comboProfileFilename;
+        private System.Windows.Forms.Button btnProfileLoad;
+        private System.Windows.Forms.ComboBox comboStartLoggingKey;
+        private System.Windows.Forms.Label label58;
+        private System.Windows.Forms.ContextMenuStrip contextMenuProfile;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem3;
+        private System.Windows.Forms.ContextMenuStrip contextMenuEnabledPids;
+        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem3;
+        private System.Windows.Forms.ContextMenuStrip contextMenuLogDataGrid;
+        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem4;
+        private System.Windows.Forms.TextBox txtPidId;
+        private System.Windows.Forms.TextBox txtPidname;
+        private System.Windows.Forms.Label labelPidEditorId;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.ComboBox comboPidEditorType;
+        private System.Windows.Forms.Label label60;
+        private System.Windows.Forms.Button btnAddNewPid;
+        private System.Windows.Forms.ToolStripMenuItem duplicateToolStripMenuItem;
+        private System.Windows.Forms.Button btnDuplicatePid;
+        private System.Windows.Forms.ToolStripMenuItem modeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem touristToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem basicToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem advancedToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkPideditorCustom;
+        private System.Windows.Forms.CheckBox chkPidEditorShowCustom;
+        private System.Windows.Forms.CheckBox chkPidEditorShowMaster;
+        private System.Windows.Forms.CheckBox chkPidEditorProfileOnly;
+        private System.Windows.Forms.Button btnTestMasterlistPids;
+        private System.Windows.Forms.CheckBox chkContinuousPidTest;
+        private System.Windows.Forms.Button btnAllSettings;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem massUpdateSelectedPIDsToAllProfilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem massUpdateALLPIDsToAllProfilesToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboPidEditorDatatype;
+        private System.Windows.Forms.Label label61;
+        private System.Windows.Forms.Button btnPidEditorImportDBC;
+        private System.Windows.Forms.Button btnPidProfileImportDbc;
+        private System.Windows.Forms.CheckBox chkCombinePids;
+        private System.Windows.Forms.Timer timerAnalyzerCombined;
+        private System.Windows.Forms.CheckBox chkJ2534ServerCreateDebugLog;
+        private System.Windows.Forms.NumericUpDown numAnalyzerNumMessages;
+        private System.Windows.Forms.Label label62;
+        private System.Windows.Forms.SplitContainer splitAnalyzer;
+        private System.Windows.Forms.DataGridView dataGridPassivePidValues;
+        private System.Windows.Forms.Label labelPassivePidValues;
+        private System.Windows.Forms.ContextMenuStrip contextMenuAnalyzer;
+        private System.Windows.Forms.ToolStripMenuItem showSignalBitsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem searchSignalFromDBCFilesToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupDetectSupportedPids;
+        private System.Windows.Forms.Label label63;
+        private System.Windows.Forms.Label label64;
+        private System.Windows.Forms.NumericUpDown numRestartLoggingAfter;
+        private System.Windows.Forms.CheckBox chkRestartLogging;
+        private System.Windows.Forms.CheckBox chkLoggingStarted;
+        private System.Windows.Forms.Timer timerAnalyzer;
+        private System.Windows.Forms.TextBox txtWBCanId;
+        private System.Windows.Forms.Label label59;
+        private System.Windows.Forms.Label labelAFR;
+        private System.Windows.Forms.Button btnWbMoreSettings;
+        private System.Windows.Forms.Button btnProfileRefresh;
+        private System.Windows.Forms.RadioButton radioTCPIP;
+        private System.Windows.Forms.RadioButton radioFTDI;
+        private System.Windows.Forms.RadioButton radioRS232;
+        private System.Windows.Forms.ToolStripMenuItem serialportServerToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.TextBox txtFloodByte;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox chkFloodActive;
+        private System.Windows.Forms.CheckBox chkFlood4x;
+        private System.Windows.Forms.Label label65;
+        private System.Windows.Forms.NumericUpDown numFloodByteCount;
+        private System.Windows.Forms.Button button1;
     }
 }
 

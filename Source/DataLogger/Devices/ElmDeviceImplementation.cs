@@ -157,7 +157,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Try to read an incoming message from the device.
         /// </summary>
-        public virtual void Receive(bool WaitForTimeout)
+        public virtual void Receive(int NumMessages, bool WaitForTimeout)
         {
             throw new NotImplementedException("This is only implemented by derived classes.");
         }

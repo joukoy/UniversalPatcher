@@ -2301,7 +2301,7 @@ namespace UniversalPatcher
                 {
                     tv = treeMulti;
                 }
-                if (tv.SelectedNode != null)
+                if (tv!= null && tv.SelectedNode != null)
                 {
                     if (tv.SelectedNode.Name == "Patches")
                         return;
@@ -2466,7 +2466,7 @@ namespace UniversalPatcher
             dataGridView1.EndEdit();
             string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
             //string defName = PCM.OS + ".xml";
-            string fName = SelectSaveFile(XmlFilter, defName);
+            string fName = SelectSaveFile(TablelistFilter, defName);
             if (string.IsNullOrEmpty(fName))
                 return;
             PCM.SaveTableList(fName);
@@ -3332,9 +3332,10 @@ namespace UniversalPatcher
             {
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "Open files";
-                frmF.LoadFiles(AppSettings.LastBINfolder);
+                frmF.LoadFiles(GetLastFolder(BinFilter));
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
+                    SetLastFolder(BinFilter, frmF.txtFolder.Text);
                     for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                     {
                         string newFile = frmF.listFiles.CheckedItems[i].Tag.ToString();
@@ -3650,7 +3651,7 @@ namespace UniversalPatcher
                 if (createNew)
                 {
                     string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
-                    patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
+                    patchFname = SelectSaveFile(XmlPatchFilter, defName);
                     if (string.IsNullOrEmpty(patchFname))
                         return;
                     frmData frmD = new frmData();
@@ -3662,7 +3663,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    patchFname = SelectFile("Select patch", "PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*");
+                    patchFname = SelectFile("Select patch", XmlPatchFilter);
                     if (patchFname.Length == 0)
                         return;
                     newPatch = LoadPatchFile(patchFname);
@@ -3851,6 +3852,12 @@ namespace UniversalPatcher
                     groupExtraOffset.Visible = false;
                     btnFlash.Visible = false;
 
+                    openMapSessionToolStripMenuItem.Visible = false;
+                    loadMapSessionToolStripMenuItem.Visible = false;
+                    saveMapSessionToolStripMenuItem.Visible = false;
+                    saveSessionAsToolStripMenuItem.Visible = false;
+                    closeSessionToolStripMenuItem.Visible = false;
+                    newSessionToolStripMenuItem.Visible = false;
                     break;
                 case 1: //Basic
                     basicToolStripMenuItem.Checked = true;
@@ -3897,6 +3904,12 @@ namespace UniversalPatcher
                     resetTunerModeColumnsToolStripMenuItem.Visible = false;
                     groupExtraOffset.Visible = false;
                     btnFlash.Visible = false;
+                    openMapSessionToolStripMenuItem.Visible = false;
+                    loadMapSessionToolStripMenuItem.Visible = false;
+                    saveMapSessionToolStripMenuItem.Visible = false;
+                    saveSessionAsToolStripMenuItem.Visible = false;
+                    closeSessionToolStripMenuItem.Visible = false;
+                    newSessionToolStripMenuItem.Visible = false;
 
                     EnableTunerModeColumns();
                     break;
@@ -3945,6 +3958,13 @@ namespace UniversalPatcher
                     resetTunerModeColumnsToolStripMenuItem.Visible = false;
                     groupExtraOffset.Visible = true;
                     btnFlash.Visible = true;
+
+                    openMapSessionToolStripMenuItem.Visible = true;
+                    loadMapSessionToolStripMenuItem.Visible = true;
+                    saveMapSessionToolStripMenuItem.Visible = true;
+                    saveSessionAsToolStripMenuItem.Visible = true;
+                    closeSessionToolStripMenuItem.Visible = true;
+                    newSessionToolStripMenuItem.Visible = true;
 
                     break;
             }
@@ -6879,7 +6899,7 @@ namespace UniversalPatcher
             {
                 string sesPath = Path.Combine(Application.StartupPath, "TunerSessions");
                 string defFile = Path.Combine(sesPath, "Session.xml");
-                string fName = SelectFile("Select session file", XmlFilter,defFile);
+                string fName = SelectFile("Select session file", TunerSessionFilter, defFile);
                 if (string.IsNullOrEmpty(fName))
                 {
                     return "";
@@ -7067,18 +7087,10 @@ namespace UniversalPatcher
                 }
                 dataGridView1.EndEdit();
                 string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + "-mapped.xml");
-                string fName = SelectSaveFile(XmlFilter, defName);
+                string fName = SelectSaveFile(TablelistFilter, defName);
                 if (string.IsNullOrEmpty(fName))
                     return;
-                Logger("Saving file " + fName + "...", false);
-
-                using (FileStream stream = new FileStream(fName, FileMode.Create))
-                {
-                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
-                    writer.Serialize(stream, savingTds);
-                    stream.Close();
-                }
-                Logger(" [OK]");
+                PCM.SaveTableList(fName);
             }
             catch (Exception ex)
             {
@@ -7176,7 +7188,7 @@ namespace UniversalPatcher
 
             if (createDebugLogToolStripMenuItem.Checked)
             {
-                string fName = SelectSaveFile(TxtFilter);
+                string fName = SelectSaveFile(DebuglogFilter);
                 DebugFileListener = new FileTraceListener(fName);
                 Debug.Listeners.Add(DebugFileListener);
             }
@@ -7185,6 +7197,24 @@ namespace UniversalPatcher
                 Debug.Listeners.Remove(DebugFileListener);
                 DebugFileListener.CloseLog();
             }
+        }
+
+        private void swapTablenameExtratablenameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (PCM == null || PCM.tableDatas == null || PCM.tableDatas.Count == 0)
+            {
+                return;
+            }
+            foreach(TableData td in PCM.tableDatas)
+            {
+                if (!string.IsNullOrEmpty(td.ExtraTableName))
+                {
+                    string tmp = td.TableName;
+                    td.TableName = td.ExtraTableName;
+                    td.ExtraTableName = tmp;
+                }
+            }
+            FilterTables(true);
         }
     }
 }

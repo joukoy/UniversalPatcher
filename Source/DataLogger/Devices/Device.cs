@@ -8,6 +8,7 @@ using static LoggerUtils;
 using J2534DotNet;
 using System.Windows.Forms;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace UniversalPatcher
 {
@@ -53,12 +54,12 @@ namespace UniversalPatcher
         /// <summary>
         /// 10.4 kpbs. This is the standard VPW speed.
         /// </summary>
-        Standard,
+        Standard = 1,
 
         /// <summary>
         /// 41.2 kbps. This is the high VPW speed.
         /// </summary>
-        FourX,
+        FourX = 4,
     }
 
     /// <summary>
@@ -152,17 +153,18 @@ namespace UniversalPatcher
         /// <summary>
         /// Queue of messages received from the VPW bus.
         /// </summary>
-        private Queue<OBDMessage> queue = new Queue<OBDMessage>();
+        //private Queue<OBDMessage> queue = new Queue<OBDMessage>();
+        private BlockingCollection<OBDMessage> queue = new BlockingCollection<OBDMessage>();
 
         /// <summary>
         /// Queue of messages received from the J2534 scondary channel.
         /// </summary>
-        private Queue<OBDMessage> queue2 = new Queue<OBDMessage>();
+        private BlockingCollection<OBDMessage> queue2 = new BlockingCollection<OBDMessage>();
 
         /// <summary>
         /// Queue of Log messages received from the VPW bus.
         /// </summary>
-        private Queue<OBDMessage> logQueue = new Queue<OBDMessage>();
+        private BlockingCollection<OBDMessage> logQueue = new BlockingCollection<OBDMessage>();
 
         /// <summary>
         /// Number of messages recevied so far.
@@ -185,16 +187,22 @@ namespace UniversalPatcher
         public bool Connected { get; set; }
 
         /// <summary>
+        /// Connected protocol
+        /// </summary>
+        public ProtocolID Protocol { get; set; }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         public Device()
         {
-            // These default values can be overwritten in derived classes.
-            this.MaxSendSize = 100;
-            this.MaxReceiveSize = 100;
+            // These default values can be overwritten.
+            this.MaxSendSize = 4096;
+            this.MaxReceiveSize = 4096;
             this.Supports4X = false;
             this.Speed = VpwSpeed.Standard;
-            Connected = false;
+            this.Connected = false;
+            this.Protocol = ProtocolID.J1850VPW;
         }
 
         /// <summary>
@@ -246,8 +254,10 @@ namespace UniversalPatcher
         public void ClearMessageQueue()
         {
             Debug.WriteLine("Clearing: {0} messages from queue", queue.Count);
-            this.queue.Clear();
-            this.queue2.Clear();
+            //this.queue.Clear();
+            //this.queue2.Clear();
+            while (queue.TryTake(out _)) { }
+            while (queue2.TryTake(out _)) { }
             //ClearMessageBuffer();
         }
 
@@ -256,8 +266,8 @@ namespace UniversalPatcher
         /// </summary>
         public void ClearLogQueue()
         {
-            this.logQueue.Clear();
-            //ClearMessageBuffer();
+            //this.logQueue.Clear();
+            while (logQueue.TryTake(out _)) { }
         }
 
         /// <summary>
@@ -308,15 +318,12 @@ namespace UniversalPatcher
         {
             if (this.queue.Count == 0)
             {
-                this.Receive(WaitForTimeout);
+                this.Receive(1, WaitForTimeout);
             }
 
             if (this.queue.Count > 0)
             {
-                lock (this.queue)
-                {
-                    return this.queue.Dequeue();
-                }
+                return this.queue.Take();
             }
             else
             {
@@ -325,21 +332,39 @@ namespace UniversalPatcher
         }
 
         /// <summary>
-        /// Reads a message from the VPW bus and returns it.
+        /// Reads list of  messages from the bus and returns it.
+        /// </summary>
+        public List<OBDMessage> ReceiveMultipleMessages(int NumMessages, bool WaitForTimeout)
+        {
+            if (this.queue.Count < NumMessages)
+            {
+                this.Receive(NumMessages, WaitForTimeout);
+            }
+
+            List<OBDMessage> messages = new List<OBDMessage>();
+            if (this.queue.Count > 0)
+            {
+                for (int m = 0; m < this.queue.Count && m < NumMessages; m++)
+                {
+                    messages.Add(this.queue.Take());
+                }
+            }
+            return messages;
+        }
+
+        /// <summary>
+        /// Reads a message from the bus and returns it.
         /// </summary>
         public OBDMessage ReceiveMessage2()
         {
             if (this.queue2.Count == 0)
             {
-                this.Receive2();
+                this.Receive2(1);
             }
 
             if (this.queue2.Count > 0)
             {
-                lock (this.queue2)
-                {
-                    return this.queue2.Dequeue();
-                }
+                    return this.queue2.Take();
             }
             else
             {
@@ -348,26 +373,46 @@ namespace UniversalPatcher
         }
 
         /// <summary>
-        /// Reads a message from the VPW bus and returns it.
+        /// Reads a message from the bus and returns it.
         /// </summary>
-        public OBDMessage ReceiveLogMessage()
+        public List<OBDMessage> ReceiveMultipleMessage2(int NumMessages)
         {
-            if (this.logQueue.Count == 0)
+            if (this.queue2.Count < NumMessages)
             {
-                this.Receive(true);
+                this.Receive2(NumMessages);
             }
+            List<OBDMessage> messages = new List<OBDMessage>();
+            if (this.queue2.Count > 0)
+            {
+                lock (this.queue2)
+                {
+                    for (int m = 0; m < NumMessages && m < this.queue2.Count; m++)
+                    {
+                        messages.Add(this.queue2.Take());
+                    }
+                }
+            }
+            return messages;
+        }
 
+        /// <summary>
+        /// Reads a message from the bus and returns it.
+        /// </summary>
+        public List<OBDMessage> ReceiveLogMessages(int NumMessages)
+        {
+            if (this.logQueue.Count < NumMessages)
+            {
+                this.Receive(NumMessages, true);
+            }
+            List<OBDMessage> messages = new List<OBDMessage>();
             lock (this.logQueue)
             {
-                if (this.logQueue.Count > 0)
+                for (int m=0;m< this.logQueue.Count && m< NumMessages;m++)
                 {
-                    return this.logQueue.Dequeue();
-                }
-                else
-                {
-                    return null;
+                    messages.Add(this.logQueue.Take());
                 }
             }
+            return messages;
         }
 
         /// <summary>
@@ -404,12 +449,12 @@ namespace UniversalPatcher
         {
             try
             {
-                //Debug.WriteLine("Message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
                 if (message == null)
                 {
                     Debug.WriteLine("Device Enqueue: null message");
                     return;
                 }
+                Debug.WriteLine("Message: " + message.ToString() + ", elmprompt: " + message.ElmPrompt);
                 MsgEventparameter msg = new MsgEventparameter(message);
                 if (SendEvent)
                 {
@@ -417,17 +462,11 @@ namespace UniversalPatcher
                 }
                 //if (message.ElmPrompt || (message.Length > 4 && message.GetBytes()[3] == 0x6A))
                 {
-                    lock (this.logQueue)
-                    {
-                        this.logQueue.Enqueue(message);
-                    }
+                    this.logQueue.Add(message);
                 }
                 //if (message.Length > 3)
                 {
-                    lock (this.queue)
-                    {
-                        this.queue.Enqueue(message);
-                    }
+                    this.queue.Add(message);
                 }
             }
             catch (Exception ex)
@@ -448,7 +487,7 @@ namespace UniversalPatcher
         {
             try
             {
-                //Debug.WriteLine("Message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
+                Debug.WriteLine("Secondary protocol message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
                 if (message == null)
                 {
                     Debug.WriteLine("Device Enqueue2: null message");
@@ -459,10 +498,7 @@ namespace UniversalPatcher
                 {
                     OnMsgReceived(msg);
                 }
-                lock (this.queue2)
-                {
-                    this.queue2.Enqueue(message);
-                }
+                this.queue2.Add(message);
             }
             catch (Exception ex)
             {
@@ -479,12 +515,12 @@ namespace UniversalPatcher
         /// <summary>
         /// List for an incoming message of the VPW bus.
         /// </summary>
-        public abstract void Receive(bool WaitForTimeout);
+        public abstract void Receive(int NumMessages, bool WaitForTimeout);
 
         /// <summary>
         /// List for an incoming message of the VPW bus, protocol 2.
         /// </summary>
-        public virtual void Receive2()
+        public virtual void Receive2(int NumMessages)
         {
             throw new Exception("Receive2 must be implemented in device");
         }
@@ -593,6 +629,7 @@ namespace UniversalPatcher
         public abstract bool SetLoggingFilter();
         public abstract bool SetAnalyzerFilter();
         public abstract bool RemoveFilters(int[] filterIDs);
+        public abstract bool RemoveFilters2(int[] filterIDs);
         public virtual void Disconnect()
         {
             return;

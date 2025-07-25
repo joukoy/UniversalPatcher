@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<ArrayOfOBD2Code xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<?xml version='1.0' encoding='utf-8'?>
+<ArrayOfOBD2Code>
   <OBD2Code>
     <Code>P0000</Code>
     <Description>No trouble code</Description>
@@ -4295,10 +4295,6 @@
   <OBD2Code>
     <Code>P1177</Code>
     <Description>Synchronization Fault</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1178</Code>
-    <Description>( open )</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P1180</Code>
@@ -14700,4 +14696,3116 @@
     <Code>P014A</Code>
     <Description>O2 Sensor Delayed Response - Rich to Lean (Bank 2 Sensor 2)</Description>
   </OBD2Code>
-</ArrayOfOBD2Code>
+ <OBD2Code>
+    <Code>P3400</Code>
+    <Description>Cylinder Deactivation System Bank 1</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>P00B7</Code>
+    <Description>Coolant Low Flow</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>P00C0</Code>
+    <Description>Turbocharger/Supercharger Bypass Valve 'B' Control Circuit</Description>
+  </OBD2Code>
+
+<OBD2Code>
+    <Code>P0856</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P006A</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P006B</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P006C</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P006D</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P008F</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P008C</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P008D</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A01</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A02</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A03</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A05</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A06</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A07</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A8D</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A8F</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0A94</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0AB9</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0AC4</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0AF7</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0B38</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0B39</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0B3A</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1002</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1007</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1008</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1009</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P100C</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P100D</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P103B</Code>
+    <Description>Traction Control Input Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0713</Code>
+    <Description>Transmission Fluid Temperature Sensor High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P071A</Code>
+    <Description>Transmission Fluid Temperature Sensor High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P071D</Code>
+    <Description>Transmission Fluid Temperature Sensor High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0721</Code>
+    <Description>Output Speed Sensor Circuit Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0729</Code>
+    <Description>Gear 6 Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0731</Code>
+    <Description>Gear 1 Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0732</Code>
+    <Description>Gear 2 Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0733</Code>
+    <Description>Gear 3 Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0734</Code>
+    <Description>Gear 4 Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0735</Code>
+    <Description>Gear 5 Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0736</Code>
+    <Description>Reverse Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P076F</Code>
+    <Description>Reverse Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P07B5</Code>
+    <Description>Reverse Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P07B6</Code>
+    <Description>Reverse Incorrect Ratio</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0800</Code>
+    <Description>Transmission Control System MIL Request</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0801</Code>
+    <Description>Reverse Inhibit Control Circuit Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0803</Code>
+    <Description>Skip Shift Solenoid Control Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0806</Code>
+    <Description>Clutch Position Sensor Range Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0807</Code>
+    <Description>Clutch Position Sensor Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0808</Code>
+    <Description>Clutch Position Sensor Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P080A</Code>
+    <Description>Clutch Position Not Learned</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P080C</Code>
+    <Description>Clutch Position Not Learned</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P080D</Code>
+    <Description>Clutch Position Not Learned</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0812</Code>
+    <Description>Reverse Input Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P081A</Code>
+    <Description>Reverse Input Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P081B</Code>
+    <Description>Reverse Input Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0831</Code>
+    <Description>Clutch Pedal Switch A Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0833</Code>
+    <Description>Clutch Pedal Switch B Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2272</Code>
+    <Description>O2 Sensor Signal Stuck Lean Bank 2</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2273</Code>
+    <Description>O2 Sensor Signal Stuck Rich Bank 2</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P227C</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P227D</Code>
+    <Description>Barometric Pressure Sensor C Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P227E</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P228C</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P228D</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22D9</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22DA</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22DB</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22DD</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22DE</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22DF</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22E1</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22E2</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22E3</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22E5</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22E6</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P22E7</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2300</Code>
+    <Description>Ignition Coil A Primary Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2301</Code>
+    <Description>Ignition Coil A Primary Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2303</Code>
+    <Description>Ignition Coil B Primary Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2304</Code>
+    <Description>Ignition Coil B Primary Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2306</Code>
+    <Description>Ignition Coil C Primary Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2307</Code>
+    <Description>Ignition Coil C Primary Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2309</Code>
+    <Description>Ignition Coil D Primary Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2310</Code>
+    <Description>Ignition Coil D Primary Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2312</Code>
+    <Description>Ignition Coil E Primary Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2313</Code>
+    <Description>Ignition Coil E Primary Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2315</Code>
+    <Description>Ignition Coil F Primary Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2316</Code>
+    <Description>Ignition Coil F Primary Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2318</Code>
+    <Description>Ignition Coil G Primary Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2319</Code>
+    <Description>Ignition Coil G Primary Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2321</Code>
+    <Description>Ignition Coil H Primary Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2322</Code>
+    <Description>Ignition Coil H Primary Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2400</Code>
+    <Description>EVAP System Leak Detection Pump Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2401</Code>
+    <Description>EVAP System Leak Detection Pump Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2402</Code>
+    <Description>EVAP System Leak Detection Pump Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2418</Code>
+    <Description>EVAP System Switching Valve Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2419</Code>
+    <Description>EVAP System Switching Valve Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2420</Code>
+    <Description>EVAP System Switching Valve Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2421</Code>
+    <Description>EVAP System Vent Valve Stuck Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2422</Code>
+    <Description>EVAP System Vent Valve Stuck Closed</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2430</Code>
+    <Description>Secondary Air Injection System Air Flow</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2431</Code>
+    <Description>Secondary Air Injection System Air Flow</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2432</Code>
+    <Description>Secondary Air Injection System Air Flow</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2433</Code>
+    <Description>Secondary Air Injection System Air Flow</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2435</Code>
+    <Description>Secondary Air Injection System Air Flow</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2436</Code>
+    <Description>Secondary Air Injection System Air Flow</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2437</Code>
+    <Description>Secondary Air Injection System Air Flow</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2438</Code>
+    <Description>Secondary Air Injection System Air Flow</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2440</Code>
+    <Description>Secondary Air Injection System Switching Valve</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2444</Code>
+    <Description>Secondary Air Injection System Pump Stuck</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2450</Code>
+    <Description>EVAP System Switching Valve Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P24B9</Code>
+    <Description>Hybrid Battery Pack Cooling Fan Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P24BA</Code>
+    <Description>Hybrid Battery Pack Cooling Fan Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P24BB</Code>
+    <Description>Hybrid Battery Pack Cooling Fan Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P250A</Code>
+    <Description>Turbocharger Wastegate Regulating Valve Position</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2534</Code>
+    <Description>Ignition Switch Run/Start Position Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2535</Code>
+    <Description>Ignition Switch Run/Start Position Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2176</Code>
+    <Description>Throttle Position Sensor Circuit Intermittent</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P217B</Code>
+    <Description>Accelerator Pedal Position Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P217C</Code>
+    <Description>Accelerator Pedal Position Sensor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P217E</Code>
+    <Description>Accelerator Pedal Position Sensor Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P217F</Code>
+    <Description>Accelerator Pedal Position Sensor Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2181</Code>
+    <Description>Accelerator Pedal Position Sensor High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2187</Code>
+    <Description>Fuel System Too Lean Bank</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2189</Code>
+    <Description>Fuel System Too Rich Bank</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2195</Code>
+    <Description>Oxygen Sensor Signal Stuck Lean</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2196</Code>
+    <Description>Oxygen Sensor Signal Stuck Rich</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2197</Code>
+    <Description>Oxygen Sensor Signal Biased Rich</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2198</Code>
+    <Description>Oxygen Sensor Signal Biased Lean</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2199</Code>
+    <Description>Intake Air Temperature Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P219A</Code>
+    <Description>Intake Air Temperature Sensor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P219B</Code>
+    <Description>Intake Air Temperature Sensor Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2227</Code>
+    <Description>Barometric Pressure Sensor Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2228</Code>
+    <Description>Barometric Pressure Sensor Circuit Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2229</Code>
+    <Description>Barometric Pressure Sensor Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P222B</Code>
+    <Description>Barometric Pressure Sensor Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P222C</Code>
+    <Description>Barometric Pressure Sensor Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P222D</Code>
+    <Description>Barometric Pressure Sensor Circuit Short</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P222E</Code>
+    <Description>Manifold Absolute Pressure Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2230</Code>
+    <Description>Manifold Absolute Pressure Sensor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2257</Code>
+    <Description>Secondary Air Injection System Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2258</Code>
+    <Description>Secondary Air Injection System Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2261</Code>
+    <Description>Turbocharger Bypass Valve Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2263</Code>
+    <Description>Turbocharger Boost System Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P226B</Code>
+    <Description>Turbocharger Wastegate Position Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2270</Code>
+    <Description>Oxygen Sensor Signal Stuck Lean</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2271</Code>
+    <Description>Oxygen Sensor Signal Stuck Rich</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>P2537</Code>
+    <Description>Ignition Switch Accessory Position Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2544</Code>
+    <Description>Torque Management Request Input Signal A</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2548</Code>
+    <Description>Torque Management Request Input Signal B</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P257D</Code>
+    <Description>Engine Hood Switch Circuit Range Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P257E</Code>
+    <Description>Engine Hood Switch Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P257F</Code>
+    <Description>Engine Hood Switch Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25A2</Code>
+    <Description>Brake System Control Module A MIL</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25A5</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25A6</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25A7</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25AF</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25C9</Code>
+    <Description>Brake System Control Module B MIL</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25CA</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25CB</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25CC</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25CD</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25CE</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P25CF</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2600</Code>
+    <Description>Coolant Pump Control Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2602</Code>
+    <Description>Coolant Pump Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2603</Code>
+    <Description>Coolant Pump Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2614</Code>
+    <Description>Camshaft Position Signal Output Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2615</Code>
+    <Description>Camshaft Position Signal Output Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2616</Code>
+    <Description>Camshaft Position Signal Output Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2617</Code>
+    <Description>Crankshaft Position Signal Output Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2618</Code>
+    <Description>Crankshaft Position Signal Output Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2619</Code>
+    <Description>Crankshaft Position Signal Output Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P261A</Code>
+    <Description>Cylinder Head Temperature Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P261B</Code>
+    <Description>Cylinder Head Temperature Sensor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P261C</Code>
+    <Description>Cylinder Head Temperature Sensor Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P261D</Code>
+    <Description>Coolant Pump B Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P261E</Code>
+    <Description>Cylinder Head Temperature Sensor High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P262B</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2632</Code>
+    <Description>Fuel Pump A Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2633</Code>
+    <Description>Fuel Pump A Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2634</Code>
+    <Description>Fuel Pump B Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2635</Code>
+    <Description>Fuel Pump A Low Flow Performance</Description>
+  </OBD2Code>
+  
+  <OBD2Code>
+    <Code>P263A</Code>
+    <Description>Generator L Terminal Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P263B</Code>
+    <Description>Generator L Terminal Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P264F</Code>
+    <Description>Engine Serial Number Not Programmed</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2665</Code>
+    <Description>Fuel Shutoff Valve B Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2666</Code>
+    <Description>Fuel Shutoff Valve B Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2667</Code>
+    <Description>Fuel Shutoff Valve B Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2668</Code>
+    <Description>Fuel Mode Indicator Lamp Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P26C7</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P26C8</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P26E4</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P26E5</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P26E6</Code>
+    <Description>ISO/SAE Reserved Code</Description>
+  </OBD2Code>
+  
+  <OBD2Code>
+    <Code>P2796</Code>
+    <Description>Auxiliary Transmission Fluid Pump Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2797</Code>
+    <Description>Auxiliary Transmission Fluid Pump Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2798</Code>
+    <Description>Auxiliary Transmission Fluid Pump Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2799</Code>
+    <Description>Auxiliary Transmission Fluid Pump Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P279A</Code>
+    <Description>Auxiliary Transmission Fluid Pump Performance Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P279B</Code>
+    <Description>Auxiliary Transmission Fluid Pump Stuck Off</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P279C</Code>
+    <Description>Auxiliary Transmission Fluid Pump Stuck On</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2802</Code>
+    <Description>Transmission Control Module Processor</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2803</Code>
+    <Description>Transmission Control Module Processor Performance</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>P3051</Code>
+    <Description>DC/DC Converter Actuator Voltage Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P3052</Code>
+    <Description>DC/DC Converter Actuator Voltage Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P3053</Code>
+    <Description>DC/DC Converter Actuator Voltage Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P3054</Code>
+    <Description>DC/DC Converter Actuator Voltage Sensor High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P3055</Code>
+    <Description>DC/DC Converter Actuator Voltage Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P3056</Code>
+    <Description>DC/DC Converter Actuator Voltage Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P3057</Code>
+    <Description>DC/DC Converter Actuator Current Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P3058</Code>
+    <Description>DC/DC Converter Actuator Current Sensor Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P3059</Code>
+    <Description>DC/DC Converter Actuator Current Sensor High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P305A</Code>
+    <Description>DC/DC Converter Actuator Current Performance Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P305B</Code>
+    <Description>DC/DC Converter Actuator Temperature Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P305C</Code>
+    <Description>DC/DC Converter Actuator Temperature Sensor Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P305D</Code>
+    <Description>DC/DC Converter Actuator Temperature Sensor High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P305E</Code>
+    <Description>DC/DC Converter Actuator Temperature Performance Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P305F</Code>
+    <Description>Dual Battery Control Module Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C120A</Code>
+    <Description>Left Front Wheel Speed Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C120C</Code>
+    <Description>Right Front Wheel Speed Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C120D</Code>
+    <Description>Right Front Wheel Speed Sensor Drive</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C120E</Code>
+    <Description>Left Rear Wheel Speed Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C120F</Code>
+    <Description>Right Rear Wheel Speed Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1210</Code>
+    <Description>ABS Outlet Valve Coil RF Circuit Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1211</Code>
+    <Description>ABS Outlet Valve Coil RF Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C121C</Code>
+    <Description>Torque Request Signal Denied</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C121D</Code>
+    <Description>ABS System Hydraulic Pump Motor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C121E</Code>
+    <Description>ABS System Pump Motor Relay Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C121F</Code>
+    <Description>ABS System Valve Relay Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1221</Code>
+    <Description>Lamp ABS Warning Output Circuit Short To Ground</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1222</Code>
+    <Description>Speed Wheel Mismatch</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1223</Code>
+    <Description>Lamp Brake Warning Output Circuit Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1224</Code>
+    <Description>Lamp Brake Warning Output Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1225</Code>
+    <Description>Lamp Brake Warning Output Circuit Short To Battery</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1226</Code>
+    <Description>Lamp Brake Warning Output Circuit Short To Ground</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1227</Code>
+    <Description>Speed Wheel Sensor LR Input Short Circuit To Battery</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1228</Code>
+    <Description>Speed Wheel Sensor LR Input Short Circuit To Ground</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C122E</Code>
+    <Description>ABS Control Module Internal Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1232</Code>
+    <Description>Speed Wheel Sensor Rear Center Input Short Circuit To Battery</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1233</Code>
+    <Description>Speed Wheel LF Input Signal Missing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1234</Code>
+    <Description>Speed Wheel RF Input Signal Missing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1235</Code>
+    <Description>Speed Wheel RR Input Signal Missing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C123A</Code>
+    <Description>Electronic Stability Control System Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C123B</Code>
+    <Description>Electronic Stability Control Steering Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C123C</Code>
+    <Description>Dynamics Sensor Mounting Installation Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C123D</Code>
+    <Description>Yaw Rate Sensor Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C123E</Code>
+    <Description>Lateral Acceleration Sensor Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C123F</Code>
+    <Description>Steering Angle Sensor Comparative Performance</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>C124F</Code>
+    <Description>Electronic Brake Control Module Internal Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1250</Code>
+    <Description>ABS Inlet Valve Coil LR Circuit Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1251</Code>
+    <Description>ABS Inlet Valve Coil LR Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1252</Code>
+    <Description>ABS Inlet Valve Coil LR Circuit Short To Battery</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1253</Code>
+    <Description>ABS Inlet Valve Coil LR Circuit Short To Ground</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1254</Code>
+    <Description>ABS Inlet Valve Coil RR Circuit Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1255</Code>
+    <Description>ABS Inlet Valve Coil RR Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1256</Code>
+    <Description>ABS Inlet Valve Coil RR Circuit Short To Battery</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1257</Code>
+    <Description>ABS Inlet Valve Coil RR Circuit Short To Ground</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1258</Code>
+    <Description>Speed Wheel LF Comparison Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C126C</Code>
+    <Description>ABS System Brake Switch Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C126D</Code>
+    <Description>ABS System Brake Switch Signal Invalid</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C126E</Code>
+    <Description>ABS System Brake Switch Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C126F</Code>
+    <Description>ABS System Brake Switch Circuit Short</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1270</Code>
+    <Description>Motor # 1 Input Circuit Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1271</Code>
+    <Description>Motor # 1 Input Circuit Short to Gnd</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1272</Code>
+    <Description>Motor # 2 Input Circuit Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1273</Code>
+    <Description>Motor # 2 Input Circuit Short to Vbat</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C1274</Code>
+    <Description>Solenoid Relay # 1 Circuit Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C127A</Code>
+    <Description>Electronic Brake Control System Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C127B</Code>
+    <Description>Electronic Brake Control System Signal Invalid</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C127C</Code>
+    <Description>Electronic Brake Control System Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C127D</Code>
+    <Description>Electronic Brake Control System Circuit Short</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C128A</Code>
+    <Description>ABS Control Module Memory Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C128B</Code>
+    <Description>ABS Control Module Processor Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C128C</Code>
+    <Description>ABS Control Module Communication Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C128D</Code>
+    <Description>ABS Control Module Configuration Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C128E</Code>
+    <Description>ABS Control Module Hardware Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C128F</Code>
+    <Description>ABS Control Module Software Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C129A</Code>
+    <Description>Wheel Speed Sensor Circuit Erratic</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C129B</Code>
+    <Description>Wheel Speed Sensor Signal Erratic</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C129C</Code>
+    <Description>Wheel Speed Sensor Range Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C129D</Code>
+    <Description>Wheel Speed Sensor Correlation Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C129E</Code>
+    <Description>Wheel Speed Sensor Signal Missing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C129F</Code>
+    <Description>Wheel Speed Sensor Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12A7</Code>
+    <Description>Electronic Stability Control System Disabled</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12B1</Code>
+    <Description>ABS Hydraulic Pump Motor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12B2</Code>
+    <Description>ABS Hydraulic Pump Motor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12B3</Code>
+    <Description>ABS Hydraulic Pump Motor Stuck</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12B4</Code>
+    <Description>ABS Hydraulic Pump Motor Electrical</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12B6</Code>
+    <Description>ABS Hydraulic Pump Motor Relay</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12B7</Code>
+    <Description>ABS Hydraulic Pump Motor Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12B8</Code>
+    <Description>ABS Hydraulic Pump Motor Feedback</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12B9</Code>
+    <Description>ABS Hydraulic Pump Motor Timeout</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12BA</Code>
+    <Description>ABS Hydraulic Pump Motor Overload</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12BB</Code>
+    <Description>ABS Hydraulic Pump Motor Overcurrent</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12BC</Code>
+    <Description>ABS Hydraulic Pump Motor Undervoltage</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12BD</Code>
+    <Description>ABS Hydraulic Pump Motor Overvoltage</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12BE</Code>
+    <Description>ABS Hydraulic Pump Motor Temperature</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12C2</Code>
+    <Description>Electronic Stability Control Actuator Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12C5</Code>
+    <Description>Electronic Stability Control Actuator Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12CC</Code>
+    <Description>Electronic Stability Control Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12CF</Code>
+    <Description>Electronic Stability Control Sensor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D0</Code>
+    <Description>Electronic Stability Control System Timeout</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D1</Code>
+    <Description>Electronic Stability Control System Overload</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D2</Code>
+    <Description>Electronic Stability Control System Overcurrent</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D3</Code>
+    <Description>Electronic Stability Control System Undervoltage</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D4</Code>
+    <Description>Electronic Stability Control System Overvoltage</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D5</Code>
+    <Description>Electronic Stability Control System Temperature</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D6</Code>
+    <Description>Electronic Stability Control System Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D7</Code>
+    <Description>Electronic Stability Control System Calibration</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D8</Code>
+    <Description>Electronic Stability Control System Configuration</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12D9</Code>
+    <Description>Electronic Stability Control System Hardware</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12DA</Code>
+    <Description>Electronic Stability Control System Software</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12DB</Code>
+    <Description>Electronic Stability Control System Memory</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12DD</Code>
+    <Description>Electronic Stability Control System Processor</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12DF</Code>
+    <Description>Electronic Stability Control System Watchdog</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E0</Code>
+    <Description>Traction Control System Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E1</Code>
+    <Description>Traction Control System Signal Invalid</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E2</Code>
+    <Description>Traction Control System Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E3</Code>
+    <Description>Traction Control System Circuit Short</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E4</Code>
+    <Description>Traction Control System Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E5</Code>
+    <Description>Traction Control System Disabled</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E6</Code>
+    <Description>Traction Control System Actuator Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E7</Code>
+    <Description>Traction Control System Actuator Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E8</Code>
+    <Description>Traction Control System Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12E9</Code>
+    <Description>Traction Control System Sensor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12F2</Code>
+    <Description>Brake Assist System Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12F3</Code>
+    <Description>Brake Assist System Signal Invalid</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12F4</Code>
+    <Description>Brake Assist System Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12F5</Code>
+    <Description>Brake Assist System Circuit Short</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12F6</Code>
+    <Description>Brake Assist System Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12F7</Code>
+    <Description>Brake Assist System Disabled</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12F8</Code>
+    <Description>Brake Assist System Actuator Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12FE</Code>
+    <Description>Brake Assist System Sensor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>C12FF</Code>
+    <Description>Brake Assist System Sensor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>B269A</Code>
+    <Description>Body Control Module Memory Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>B269C</Code>
+    <Description>Body Control Module Communication Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>B269D</Code>
+    <Description>Body Control Module Configuration Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0073</Code>
+    <Description>Control Module Communication Bus Off</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>U0074</Code>
+    <Description>Control Module Communication Bus Off</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0075</Code>
+    <Description>Control Module Communication Bus Off</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0076</Code>
+    <Description>Control Module Communication Bus Off</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0077</Code>
+    <Description>Control Module Communication Bus Off</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U007A</Code>
+    <Description>Control Module Communication Bus Off</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0100</Code>
+    <Description>Lost Communication With ECM PCM A</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0101</Code>
+    <Description>Lost Communication With TCM</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0102</Code>
+    <Description>Lost Communication With Transfer Case Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0103</Code>
+    <Description>Lost Communication With Gear Shift Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0104</Code>
+    <Description>Lost Communication With Cruise Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0105</Code>
+    <Description>Lost Communication With Fuel Injector Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0106</Code>
+    <Description>Lost Communication With Glow Plug Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0109</Code>
+    <Description>Lost Communication With Fuel Pump Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U010C</Code>
+    <Description>Lost Communication With Four Wheel Drive</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U010E</Code>
+    <Description>Lost Communication With Parking Brake Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0111</Code>
+    <Description>Lost Communication With Battery Energy Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0115</Code>
+    <Description>Lost Communication With ECM PCM B</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0117</Code>
+    <Description>Lost Communication With Reductant Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0121</Code>
+    <Description>Lost Communication With Anti Lock Brake</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0122</Code>
+    <Description>Lost Communication With Vehicle Dynamics Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0126</Code>
+    <Description>Lost Communication With Steering Angle Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0128</Code>
+    <Description>Lost Communication With Park Brake Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0129</Code>
+    <Description>Lost Communication With Brake System Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U012A</Code>
+    <Description>Lost Communication With Body Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U012B</Code>
+    <Description>Lost Communication With Auxiliary Heater Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0131</Code>
+    <Description>Lost Communication With Remote Function Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0135</Code>
+    <Description>Lost Communication With Instrument Panel Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0140</Code>
+    <Description>Lost Communication With Body Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0146</Code>
+    <Description>Lost Communication With Restraints Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0151</Code>
+    <Description>Lost Communication With Restraints Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U016B</Code>
+    <Description>Lost Communication With Satellite Radio Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0180</Code>
+    <Description>Lost Communication With Navigation Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0184</Code>
+    <Description>Lost Communication With Radio Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0293</Code>
+    <Description>Lost Communication With Hybrid Powertrain Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0298</Code>
+    <Description>Lost Communication With Solar Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U029D</Code>
+    <Description>Lost Communication With Electric AC Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U029E</Code>
+    <Description>Lost Communication With Electric Heater Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U02A3</Code>
+    <Description>Lost Communication With Auxiliary Battery Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0615</Code>
+    <Description>Invalid Data Received From ECM</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1346</Code>
+    <Description>Battery Positive Voltage Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1347</Code>
+    <Description>Battery Positive Voltage Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U135C</Code>
+    <Description>Data Link Connector Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1501</Code>
+    <Description>Manufacturer Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1510</Code>
+    <Description>Manufacturer Control Module Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1511</Code>
+    <Description>Manufacturer Control Module Data</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U179A</Code>
+    <Description>Manufacturer Specific Network Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1805</Code>
+    <Description>Manufacturer Specific Communication Protocol</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U180D</Code>
+    <Description>Manufacturer Specific Data Link</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U180F</Code>
+    <Description>Manufacturer Specific Network Protocol</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1815</Code>
+    <Description>Manufacturer Specific Serial Data</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1816</Code>
+    <Description>Manufacturer Specific Serial Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1817</Code>
+    <Description>Manufacturer Specific Data Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1818</Code>
+    <Description>Manufacturer Specific Data Protocol</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1819</Code>
+    <Description>Manufacturer Specific Communication Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1820</Code>
+    <Description>Manufacturer Specific Network Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1821</Code>
+    <Description>Manufacturer Specific Bus Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1828</Code>
+    <Description>Manufacturer Specific Module Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1829</Code>
+    <Description>Manufacturer Specific Control Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U182A</Code>
+    <Description>Manufacturer Specific System Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U182B</Code>
+    <Description>Manufacturer Specific Device Communication</Description>
+  </OBD2Code>
+<OBD2Code>
+    <Code>U016B</Code>
+    <Description>Lost Communication With Instrument Panel Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0160</Code>
+    <Description>Lost Communication With HVAC Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0164</Code>
+    <Description>Lost Communication With Air Conditioning Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0293</Code>
+    <Description>Lost Communication With Turbocharger Boost Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0298</Code>
+    <Description>Lost Communication With EGR Valve Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U029D</Code>
+    <Description>Lost Communication With NOx Sensor A</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U029E</Code>
+    <Description>Lost Communication With NOx Sensor B</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U02A3</Code>
+    <Description>Lost Communication With Diesel Exhaust Fluid</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U0615</Code>
+    <Description>Lost Communication With Interior Lighting Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1346</Code>
+    <Description>Manufacturer Specific Communication Circuit Loss</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1347</Code>
+    <Description>Manufacturer Specific Communication Circuit Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U135C</Code>
+    <Description>Manufacturer Specific Network Communication Error</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1501</Code>
+    <Description>Manufacturer Specific LIN Bus Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1510</Code>
+    <Description>Manufacturer Specific LIN Bus Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1511</Code>
+    <Description>Manufacturer Specific LIN Bus Network</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U179A</Code>
+    <Description>Manufacturer Specific Communication Error</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1805</Code>
+    <Description>Manufacturer Specific Network Communication Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U180D</Code>
+    <Description>Manufacturer Specific Network Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U180F</Code>
+    <Description>Manufacturer Specific Network Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1815</Code>
+    <Description>Manufacturer Specific Network Circuit Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1816</Code>
+    <Description>Manufacturer Specific Network Module Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1817</Code>
+    <Description>Manufacturer Specific Network Control Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1818</Code>
+    <Description>Manufacturer Specific Network System Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1819</Code>
+    <Description>Manufacturer Specific Communication Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1820</Code>
+    <Description>Manufacturer Specific Network Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1821</Code>
+    <Description>Manufacturer Specific Network Communication Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1828</Code>
+    <Description>Manufacturer Specific Network System Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1829</Code>
+    <Description>Manufacturer Specific Network Control System</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U182A</Code>
+    <Description>Manufacturer Specific Network Module System</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U182B</Code>
+    <Description>Manufacturer Specific Network Circuit System</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U182C</Code>
+    <Description>Manufacturer Specific Network Communication System</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U182D</Code>
+    <Description>Manufacturer Specific Network Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1833</Code>
+    <Description>Manufacturer Specific Network Module Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1838</Code>
+    <Description>Manufacturer Specific Network System Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1842</Code>
+    <Description>Manufacturer Specific Network Circuit Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1843</Code>
+    <Description>Manufacturer Specific Network Communication Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1858</Code>
+    <Description>Manufacturer Specific Network System Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U185D</Code>
+    <Description>Manufacturer Specific Network Module Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U185E</Code>
+    <Description>Manufacturer Specific Network Circuit Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U186A</Code>
+    <Description>Manufacturer Specific Network Communication Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U186B</Code>
+    <Description>Manufacturer Specific Network System Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U186F</Code>
+    <Description>Manufacturer Specific Network Control Module</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1888</Code>
+    <Description>Manufacturer Specific Network Circuit Communication</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U18A2</Code>
+    <Description>Manufacturer Specific Network Module System</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U18A5</Code>
+    <Description>Manufacturer Specific Network Communication Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U18A7</Code>
+    <Description>Manufacturer Specific Network Control Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U18AC</Code>
+    <Description>Manufacturer Specific Network System Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U216A</Code>
+    <Description>Manufacturer Specific Network Communication Error</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U216B</Code>
+    <Description>Manufacturer Specific Network System Error</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U2400</Code>
+    <Description>Manufacturer Specific Network Module Error</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U2616</Code>
+    <Description>Manufacturer Specific Network Circuit Error</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>P06A3</Code>
+    <Description>Sensor Reference Voltage D Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06AF</Code>
+    <Description>Engine Oil Pressure Control Solenoid Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06B6</Code>
+    <Description>Internal Control Module Knock Sensor Processor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06B7</Code>
+    <Description>Internal Control Module Knock Sensor Processor Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06D2</Code>
+    <Description>Engine Oil Pressure Control Circuit Range Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06DA</Code>
+    <Description>Engine Oil Pressure Control Circuit Open</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06DB</Code>
+    <Description>Engine Oil Pressure Control Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06DC</Code>
+    <Description>Engine Oil Pressure Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06DD</Code>
+    <Description>Engine Oil Pressure Control Circuit Stuck Off</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06DE</Code>
+    <Description>Engine Oil Pressure Control Circuit Stuck On</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06E4</Code>
+    <Description>Engine Oil Pressure Control Solenoid Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P06EC</Code>
+    <Description>Engine Oil Pressure Control System Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0700</Code>
+    <Description>Transmission Control System Malfunction</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>P086A</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P086B</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P086C</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P086D</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P086F</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P088C</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P088D</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+ <OBD2Code>
+    <Code>P103C</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P105B</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P105C</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P105D</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P105E</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P105F</Code>
+    <Description>ISO SAE Reserved</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1060</Code>
+    <Description>Variable Valve Timing Bank 1 Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1061</Code>
+    <Description>Variable Valve Timing Bank 1 Limp Home</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1062</Code>
+    <Description>Variable Valve Timing Bank 1 Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1063</Code>
+    <Description>Variable Valve Timing Bank 1 Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1064</Code>
+    <Description>Variable Valve Timing Bank 1 Control</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1065</Code>
+    <Description>Variable Valve Timing Bank 1 System</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1066</Code>
+    <Description>Cylinder 1 Oil Supply Solenoid Valve</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1067</Code>
+    <Description>Cylinder 2 Oil Supply Solenoid Valve</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1068</Code>
+    <Description>Cylinder 3 Oil Supply Solenoid Valve</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1069</Code>
+    <Description>Cylinder 4 Oil Supply Solenoid Valve</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P106A</Code>
+    <Description>Cylinder 1 Oil Supply Solenoid Switch</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P106B</Code>
+    <Description>Cylinder 2 Oil Supply Solenoid Switch</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P106C</Code>
+    <Description>Cylinder 3 Oil Supply Solenoid Switch</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P106D</Code>
+    <Description>Cylinder 4 Oil Supply Solenoid Switch</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P106E</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P106F</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1070</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1071</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1072</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1073</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1074</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1075</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1076</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1077</Code>
+    <Description>Manufacturer Specific Variable Valve Timing</Description>
+  </OBD2Code>
+<OBD2Code>
+    <Code>P1078</Code>
+    <Description>Intake Manifold Runner Control System Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1079</Code>
+    <Description>Intake Manifold Runner Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P107A</Code>
+    <Description>Injector Circuit Malfunction Cylinders</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P107B</Code>
+    <Description>Ambient Air Temperature Sensor Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P107C</Code>
+    <Description>Engine System Circuit Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P107D</Code>
+    <Description>Engine System Circuit Performance Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P107E</Code>
+    <Description>Engine System Circuit Range Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P107F</Code>
+    <Description>Engine System Circuit Diagnostic Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1080</Code>
+    <Description>Engine System Circuit Range Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1081</Code>
+    <Description>Engine System Circuit Performance Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P108A</Code>
+    <Description>Engine System Circuit Malfunction Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P108B</Code>
+    <Description>Engine System Circuit Range Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P108C</Code>
+    <Description>Engine System Circuit Performance Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P108D</Code>
+    <Description>Engine System Circuit Diagnostic Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P108E</Code>
+    <Description>Engine System Circuit Range Diagnostic</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P108F</Code>
+    <Description>Engine System Circuit Performance Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1090</Code>
+    <Description>Engine System Circuit Range Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1091</Code>
+    <Description>Engine System Circuit Performance Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P109C</Code>
+    <Description>Engine System Circuit Diagnostic Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P10BC</Code>
+    <Description>Engine System Circuit Performance Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P10E1</Code>
+    <Description>Engine System Circuit Code Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P10E2</Code>
+    <Description>Engine System Circuit Performance Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P10E3</Code>
+    <Description>Engine System Circuit Range Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P10E4</Code>
+    <Description>Engine System Circuit Diagnostic Problem</Description>
+  </OBD2Code>
+
+  <OBD2Code>
+    <Code>P110C</Code>
+    <Description>Engine Oil Temperature Sensor Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P111E</Code>
+    <Description>Engine System Circuit Range Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P111F</Code>
+    <Description>Engine System Circuit Performance Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P112F</Code>
+    <Description>Manifold Absolute Pressure Throttle Angle High</Description>
+  </OBD2Code>
+<OBD2Code>
+    <Code>P1178</Code>
+    <Description>Oxygen Sensor Circuit Performance Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1179</Code>
+    <Description>Fuel Pump Driver Control Module Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P117B</Code>
+    <Description>Engine System Circuit Performance Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P117C</Code>
+    <Description>Engine System Circuit Range Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P117D</Code>
+    <Description>Engine System Circuit Diagnostic Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P117E</Code>
+    <Description>Engine System Circuit Performance Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P117F</Code>
+    <Description>Engine System Circuit Range Performance</Description>
+  </OBD2Code>
+
+  <OBD2Code>
+    <Code>P11E9</Code>
+    <Description>Fuel Injector Assembly Circuit Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P11EA</Code>
+    <Description>Fuel Injector Assembly Circuit Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P11EB</Code>
+    <Description>Fuel Injector Assembly Circuit Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P11EC</Code>
+    <Description>Fuel Injector Assembly Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P11EF</Code>
+    <Description>Fuel Injector Assembly Circuit Range Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P11F0</Code>
+    <Description>Fuel Injector Assembly Circuit Performance Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P11F1</Code>
+    <Description>Fuel Injector Assembly Circuit Diagnostic Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P11F2</Code>
+    <Description>Fuel Injector Assembly Circuit Range Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P11FF</Code>
+    <Description>Fuel Injector Assembly Circuit Performance Range</Description>
+  </OBD2Code>
+
+  <OBD2Code>
+    <Code>P120C</Code>
+    <Description>Engine System Circuit Performance Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P120D</Code>
+    <Description>Engine System Circuit Range Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P120E</Code>
+    <Description>Engine System Circuit Diagnostic Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P110A</Code>
+    <Description>Ambient Air Temperature Sensor Circuit Low</Description>
+  </OBD2Code>
+<OBD2Code>
+    <Code>P121A</Code>
+    <Description>Accelerator Pedal Position Sensor Range Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P121B</Code>
+    <Description>Accelerator Pedal Position Sensor Circuit Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P121C</Code>
+    <Description>Accelerator Pedal Position Sensor Circuit Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P121D</Code>
+    <Description>Accelerator Pedal Position Sensor Circuit Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P121E</Code>
+    <Description>Accelerator Pedal Position Sensor Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P123A</Code>
+    <Description>Throttle Position Sensor Circuit Range Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P123B</Code>
+    <Description>Throttle Position Sensor Circuit Performance Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P123C</Code>
+    <Description>Throttle Position Sensor Circuit Diagnostic Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P124A</Code>
+    <Description>Throttle Position Sensor Circuit Range Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P124B</Code>
+    <Description>Throttle Position Sensor Circuit Performance Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P124C</Code>
+    <Description>Throttle Position Sensor Circuit Diagnostic Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P124D</Code>
+    <Description>Throttle Position Sensor Circuit Range Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P124E</Code>
+    <Description>Throttle Position Sensor Circuit Performance Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P124F</Code>
+    <Description>Throttle Position Sensor Circuit Diagnostic Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P126B</Code>
+    <Description>Engine System Circuit Performance Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P126C</Code>
+    <Description>Engine System Circuit Range Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P126E</Code>
+    <Description>Engine System Circuit Diagnostic Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P126F</Code>
+    <Description>Engine System Circuit Performance Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P127A</Code>
+    <Description>Engine System Circuit Range Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P127C</Code>
+    <Description>Engine System Circuit Performance Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P127D</Code>
+    <Description>Engine System Circuit Diagnostic Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P128A</Code>
+    <Description>Engine System Circuit Range Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P128B</Code>
+    <Description>Engine System Circuit Performance Problem</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P128C</Code>
+    <Description>Engine System Circuit Diagnostic Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P128D</Code>
+    <Description>Engine System Circuit Range Issue</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P128F</Code>
+    <Description>Engine System Circuit Performance Diagnostic</Description>
+  </OBD2Code>
+<OBD2Code>
+<Code>P129B</Code>
+<Description>Intake Pipe Pressure Sensor Implausible</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P129C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P129D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P129E</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12A6</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12A8</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C3</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C4</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C5</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C6</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C7</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C8</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C9</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CA</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CB</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CC</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CD</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CE</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P130F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P135A</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P135B</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145E</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145E</Code>
+<Description>EVAP System Leak Detection Pump to Vent Solenoid Valve Leak Detected</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P129B</Code>
+<Description>Intake Pipe Pressure Sensor Implausible</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P129C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P129D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P129E</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12A6</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12A8</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C3</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C4</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C5</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C6</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C7</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C8</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12C9</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CA</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CB</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CC</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CD</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P12CE</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P130F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P135A</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P135B</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145E</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P145F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P158A</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P158B</Code>
+<Description>Idle Air Control Actuator 1</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P159F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15A0</Code>
+<Description>Motor Drive Module Temperature Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15A1</Code>
+<Description>Motor Drive Module Temperature Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15A2</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15A3</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15AC</Code>
+<Description>Engine Mount Control Unit Internal Malfunction</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15AE</Code>
+<Description>Cylinder Pause Signal Malfunction</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15AF</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15B0</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15F2</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15F4</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15F6</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15F7</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15F8</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15F9</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15FB</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15FD</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P15FF</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P160A</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P160D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P160E</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P161C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P162B</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P162C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P162D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P163A</Code>
+<Description>Generator B Control Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P164B</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P164C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P164D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P164E</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P164F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P165C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P166F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P167F</Code>
+<Description>Non-OEM Calibration Detected</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P168E</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P168F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16A0</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16A1</Code>
+<Description>Engine Control Module Internal Malfunction</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16A2</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16A3</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16A4</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16A5</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16A6</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16A7</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16AF</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16B3</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16B4</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16B5</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16B6</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16BB</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16BC</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16BD</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16BF</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16D4</Code>
+<Description>Glow Plug Circuit Shorted to Ground</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16D5</Code>
+<Description>TCM Internal Circuit Malfunction F-CAN</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16D6</Code>
+<Description>IMA-CAN Malfunction Internal Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16DC</Code>
+<Description>Electric Vacuum Pump Relay Stuck On</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16DD</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16DE</Code>
+<Description>Battery Monitor Internal Temperature Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16DF</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16E1</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16E2</Code>
+<Description>Battery Monitor Module Read Only Memory</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16E3</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16E4</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16E5</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16E7</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16E9</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16FD</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16F3</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16FD</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16FE</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P16FF</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P171A</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P171B</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P171C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P171D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P175F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P17A2</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P17D4</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P185F</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P188B</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P18C4</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P18C5</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P18C6</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P18C7</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P18C8</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P18C9</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P18CA</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P1B12</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P1E00</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P1F59</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P1F5A</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P1F5B</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P1F5C</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P1F5D</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P1F5E</Code>
+<Description>Manufacturer Specific Powertrain Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2070</Code>
+<Description>Intake Manifold Tuning Valve Stuck Open</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2071</Code>
+<Description>Intake Manifold Tuning Valve Stuck Closed</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2076</Code>
+<Description>Intake Manifold Tuning Valve Position Sensor</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2077</Code>
+<Description>Intake Manifold Tuning Valve Position Sensor</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2078</Code>
+<Description>Intake Manifold Tuning Valve Position Sensor</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2088</Code>
+<Description>Camshaft Position Actuator Control Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2089</Code>
+<Description>Camshaft Position Actuator Control Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2090</Code>
+<Description>Exhaust Camshaft Position Actuator Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2091</Code>
+<Description>Exhaust Camshaft Position Actuator Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+<Code>P2092</Code>
+<Description>Intake Camshaft Position Actuator Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2093</Code>
+    <Description>Camshaft Position Actuator Control Circuit High Bank</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2094</Code>
+    <Description>Camshaft Position Actuator Control Circuit Low Bank</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2095</Code>
+    <Description>Camshaft Position Actuator Control Circuit High Bank</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2096</Code>
+    <Description>Post Catalyst Fuel Trim Too Lean Bank</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2097</Code>
+    <Description>Post Catalyst Fuel Trim Too Rich Bank</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2098</Code>
+    <Description>Post Catalyst Fuel Trim Too Lean Bank</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2099</Code>
+    <Description>Post Catalyst Fuel Trim Too Rich Bank</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2100</Code>
+    <Description>Throttle Actuator Control Motor Circuit Open</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2102</Code>
+    <Description>Throttle Actuator Control Motor Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2103</Code>
+    <Description>Throttle Actuator Control Motor Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2122</Code>
+    <Description>Throttle Position Sensor Switch Circuit Low Input</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2123</Code>
+    <Description>Throttle Position Sensor Switch Circuit High Input</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2127</Code>
+    <Description>Throttle Position Sensor Switch Circuit Low Input</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2128</Code>
+    <Description>Throttle Position Sensor Switch Circuit High Input</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2147</Code>
+    <Description>Fuel Injector Group Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2148</Code>
+    <Description>Fuel Injector Group Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2150</Code>
+    <Description>Fuel Injector Group Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2151</Code>
+    <Description>Fuel Injector Group Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2153</Code>
+    <Description>Fuel Injector Group Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2154</Code>
+    <Description>Fuel Injector Group Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2156</Code>
+    <Description>Fuel Injector Group Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2157</Code>
+    <Description>Fuel Injector Group Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2158</Code>
+    <Description>Vehicle Speed Sensor Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2160</Code>
+    <Description>Vehicle Speed Sensor Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2161</Code>
+    <Description>Vehicle Speed Sensor Circuit Intermittent</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P16F0</Code>
+    <Description>Manufacturer Specific Code</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2138</Code>
+    <Description>Throttle Pedal Position Sensor Voltage Correlation</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P215B</Code>
+    <Description>Fuel Injector Group Circuit</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P216B</Code>
+    <Description>Fuel Injector Group Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P216C</Code>
+    <Description>Fuel Injector Group Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P216E</Code>
+    <Description>Fuel Injector Group Circuit Low</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P216F</Code>
+    <Description>Fuel Injector Group Circuit High</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2269</Code>
+    <Description>Water In Fuel Condition</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>P2687</Code>
+    <Description>Fuel Supply Heater Control Circuit Open</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>U0136</Code>
+    <Description>Lost Communication With Module</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>U01B0</Code>
+    <Description>Lost Communication Control Module</Description>
+</OBD2Code>
+<OBD2Code>
+    <Code>U01B4</Code>
+    <Description>Lost Communication Control Module</Description>
+</OBD2Code>
+<OBD2Code><Code>P00C1</Code><Description>Turbocharger/Supercharger Bypass Valve 'B' Control Circuit Low</Description></OBD2Code>
+<OBD2Code><Code>P00C2</Code><Description>Turbocharger/Supercharger Bypass Valve 'B' Control Circuit High</Description></OBD2Code>
+<OBD2Code><Code>P00C4</Code><Description>Turbocharger/Supercharger Bypass Valve 'B' - Mechanical</Description></OBD2Code>
+<OBD2Code><Code>P00C6</Code><Description>Fuel Rail Pressure Low</Description></OBD2Code>
+<OBD2Code><Code>P00C7</Code><Description>Intake Air Pressure Management System</Description></OBD2Code>
+<OBD2Code><Code>P00C8</Code><Description>Fuel Pressure Regulator High Control Circuit Open</Description></OBD2Code>
+<OBD2Code><Code>P00C9</Code><Description>Fuel Pressure Regulator High Control Circuit Low Voltage</Description></OBD2Code><OBD2Code><Code>P00CA</Code><Description>Fuel Pressure Regualtor High Control Circuit High Voltage</Description></OBD2Code><OBD2Code><Code>P00E9</Code><Description>Intake Air Temperature Sensor 3 Circuit Range/Performance (Bank 1)</Description></OBD2Code><OBD2Code><Code>P3401</Code><Description>Cylinder 1 Deactivation/Intake Valve Control Circuit Open</Description></OBD2Code><OBD2Code><Code>P3403</Code><Description>Cylinder 1 Deactivation Solenoid Valve Control Circuit Low Voltage</Description></OBD2Code><OBD2Code><Code>P3404</Code><Description>Cylinder 1 Deactivation Solenoid Valve Control Circuit High Voltage</Description></OBD2Code><OBD2Code><Code>P3409</Code><Description>Cyl2 Deactivation/Intake Valve Control Circuit/Open</Description></OBD2Code><OBD2Code><Code>P3411</Code><Description>Cylinder 2 Deactivation Control Circuit Low</Description></OBD2Code><OBD2Code><Code>p3412</Code><Description>Cylinder 2 Deactivation Control Circuit High</Description></OBD2Code><OBD2Code><Code>P3417</Code><Description>Cylinder 3 Deactivation Control Circuit Open</Description></OBD2Code><OBD2Code><Code>P3419</Code><Description>Cylinder 3 Deactivation Control Circuit Low</Description></OBD2Code><OBD2Code><Code>P3420</Code><Description>Cylinder #3 Deactivation Control Circuit</Description></OBD2Code><OBD2Code><Code>P3425</Code><Description>Cylinder 4 Deactivation Circuit Open</Description></OBD2Code><OBD2Code><Code>P3427</Code><Description>Cylinder 4 Deactivation Circuit Low</Description></OBD2Code><OBD2Code><Code>P3412</Code><Description>Cylinder 2 Deactivation Control Circuit High</Description></OBD2Code><OBD2Code><Code>P3428</Code><Description>Cylinder 4 Deactivation  Control Circuit High Voltage</Description></OBD2Code><OBD2Code><Code>P3433</Code><Description>Cylinder 5 Deactivation  Control Circuit/Open</Description></OBD2Code><OBD2Code><Code>P3435</Code><Description>Cylinder 4 Deactivation Control Circuit/Open</Description></OBD2Code><OBD2Code><Code>P3436</Code><Description>Cylinder 5 Deactivation Control Circuit</Description></OBD2Code><OBD2Code><Code>P3441</Code><Description>Cylinder 6 Deactivation Control Circuit Open</Description></OBD2Code><OBD2Code><Code>P3443</Code><Description>Cylinder 6 Deactivation Circuit low voltage</Description></OBD2Code><OBD2Code><Code>P3444</Code><Description>Cylinder 6 Deactivation Control Circuit</Description></OBD2Code><OBD2Code><Code>P3449</Code><Description>Cylinder 7 Deactivation Circuit Open</Description></OBD2Code><OBD2Code><Code>P3444</Code><Description>Cylinder 6 Deactivation Control Circuit High</Description></OBD2Code><OBD2Code><Code>P3451</Code><Description>Cylinder 7 Deactivation Control Circuit Low</Description></OBD2Code><OBD2Code><Code>P3452</Code><Description>Cylinder 7 Deactivation Control Circuit High</Description></OBD2Code><OBD2Code><Code>P3457</Code><Description>Cylinder 8 Deactivation Valve Control Circuit Open</Description></OBD2Code><OBD2Code><Code>P3459</Code><Description>Cylinder 8 Deactivation Control Circuit Low</Description></OBD2Code><OBD2Code><Code>P3460</Code><Description>Cylinder 8 Deactivation Control Low</Description></OBD2Code><OBD2Code><Code>C0880</Code><Description>Control Module Voltage Reference</Description></OBD2Code><OBD2Code><Code>C0890</Code><Description>Control Module Voltage Reference Output 3</Description></OBD2Code><OBD2Code><Code>P00EA</Code><Description>Intake Air Temperature Sensor 3 Circuit Low</Description></OBD2Code><OBD2Code><Code>P00EB</Code><Description>Intake Air Temperature Sensor 3 Circuit High</Description></OBD2Code><OBD2Code><Code>P00EC</Code><Description>Intake Air Temperature Sensor 3 Circuit Intermittent/Erratic</Description></OBD2Code><OBD2Code><Code>P00F4</Code><Description>Humidity Sensor Circuit Low</Description></OBD2Code><OBD2Code><Code>P00F5</Code><Description>Humidity Sensor Circuit High</Description></OBD2Code><OBD2Code><Code>P00F6</Code><Description>Humidity Sensor Circuit Intermittent/Erratic</Description></OBD2Code><OBD2Code><Code>P010B</Code><Description>Mass or Volume Air Flow B Circuit Range/Performance</Description></OBD2Code><OBD2Code><Code>P010C</Code><Description>Mass Air Flow (MAF) Sensor Low Frequency/Voltage</Description></OBD2Code><OBD2Code><Code>P010D</Code><Description>Mass Air Flow (MAF) B Circuit High</Description></OBD2Code><OBD2Code><Code>P014B</Code><Description>Bank 2 Sensor 2 O2 sensor Delayed Response</Description></OBD2Code><OBD2Code><Code>P015A</Code><Description>Bank 1 Sensor 1 O2 Sensor Delayed Response</Description></OBD2Code><OBD2Code><Code>P015B</Code><Description>O2 sensor Delayed Response – Lean to Rich (Bank 1, Sensor 1)</Description></OBD2Code><OBD2Code><Code>P015C</Code><Description>O2 sensor Delayed Response – Lean to Rich (Bank 2, Sensor 1)</Description></OBD2Code><OBD2Code><Code>P015D</Code><Description>O2 Sensor Delayed Response – Lean to Rich" (Bank 2, Sensor 1)</Description></OBD2Code><OBD2Code><Code>P017B</Code><Description>Cylinder Head Temperature Sensor Circuit Range/Performance</Description></OBD2Code><OBD2Code><Code>P017C</Code><Description>Cylinder Head Temperature Sensor Circuit Low</Description></OBD2Code><OBD2Code><Code>P017D</Code><Description>Cylinder Head Temperature Sensor Circuit High</Description></OBD2Code><OBD2Code><Code>P018B</Code><Description>fuel pressure sensor B circuit range/performance</Description></OBD2Code><OBD2Code><Code>P018C</Code><Description>Fuel Pressure Sensor “B” Circuit Low</Description></OBD2Code><OBD2Code><Code>P018D</Code><Description>Fuel Pressure Sensor "B" Circuit High</Description></OBD2Code><OBD2Code><Code>P019F</Code><Description>Alternative Fuel Tank 'A' Pressure Sensor Performance</Description></OBD2Code><OBD2Code><Code>P01A0</Code><Description>Alternative Fuel Tank 'A' Pressure Sensor Circuit Low</Description></OBD2Code><OBD2Code><Code>P01A1</Code><Description>Alternative Fuel Tank 'A' Pressure Sensor Circuit High</Description></OBD2Code><OBD2Code><Code>P01A4</Code><Description>Alternative Fuel Rail Pressure Sensor Performance</Description></OBD2Code><OBD2Code><Code>P01A5</Code><Description>Alternative Fuel Rail Pressure Sensor Circuit Low</Description></OBD2Code><OBD2Code><Code>P01A6</Code><Description>Alternative Fuel Rail Pressure Sensor Circuit High</Description></OBD2Code><OBD2Code><Code>P01A7</Code><Description>Alternative Fuel Rail Pressure Sensor Circuit Intermittent</Description></OBD2Code><OBD2Code><Code>P01A8</Code><Description>Alternative Fuel Rail/System Pressure</Description></OBD2Code><OBD2Code><Code>P01A9</Code><Description>Alternative Fuel Rail/System Pressure</Description></OBD2Code><OBD2Code><Code>P01AB</Code><Description>Alternative Fuel Tank Temperature Sensor Performance</Description></OBD2Code><OBD2Code><Code>P01AC</Code><Description>Alternative Fuel Tank Temperature Sensor Circuit Low</Description></OBD2Code><OBD2Code><Code>P01AD</Code><Description>Alternative Fuel Tank Temperature Sensor Circuit High</Description></OBD2Code><OBD2Code><Code>P01B0</Code><Description>Alternative Fuel Tank 'A' Level Sensor Range/Performance</Description></OBD2Code><OBD2Code><Code>P01B1</Code><Description>Alternative Fuel Tank 'A' Level Sensor Circuit Low</Description></OBD2Code><OBD2Code><Code>P01B2</Code><Description>Alternative Fuel Tank 'A' Level Sensor Circuit High</Description></OBD2Code><OBD2Code><Code>P01B5</Code><Description>Alternative Fuel Rail Temperature Sensor Performance</Description></OBD2Code><OBD2Code><Code>P01B6</Code><Description>Alternative Fuel Rail Temperature Sensor Circuit Low</Description></OBD2Code><OBD2Code><Code>P01B7</Code><Description>Alternative Fuel Rail Temperature Sensor Circuit High</Description></OBD2Code><OBD2Code><Code>P01F0</Code><Description>Coolant Temperature Relapsed Below Diagnostic Range</Description></OBD2Code><OBD2Code><Code>P023B</Code><Description>Charge Air Cooler Coolant Pump Control Circuit Low</Description></OBD2Code><OBD2Code><Code>P023C</Code><Description>Charge Air Cooler Coolant Pump Control Circuit High</Description></OBD2Code><OBD2Code><Code>P023F</Code><Description>Fuel Pump Secondary Circuit/Open</Description></OBD2Code><OBD2Code><Code>P025A</Code><Description>Fuel Pump Control Module Circuit / Open</Description></OBD2Code><OBD2Code><Code>P026A</Code><Description>Charge Air Cooler Efficiency Below Threshold</Description></OBD2Code><OBD2Code><Code>P02FC</Code><Description>Cold Start Fuel Injection Control Circuit Low</Description></OBD2Code><OBD2Code><Code>P02FD</Code><Description>Cold Start Fuel Injection Control Circuit High</Description></OBD2Code><OBD2Code><Code>P034A</Code><Description>Crankshaft Position Sensor Engine Start Position Incorrect</Description></OBD2Code><OBD2Code><Code>P034B</Code><Description>Crankshaft Position Sensor Crankshaft Direction Incorrect</Description></OBD2Code><OBD2Code><Code>P041F</Code><Description>AIR System Switching Valve 'A' Circuit Low</Description></OBD2Code><OBD2Code><Code>P043E</Code><Description>Evaporative Emission System Leak Detection Reference Orifice Low Flow</Description></OBD2Code><OBD2Code><Code>P043F</Code><Description>Evap Leak Detection Reference Orifice High</Description></OBD2Code><OBD2Code><Code>P044F</Code><Description>AIR System Switching Valve 'A' Circuit High</Description></OBD2Code><OBD2Code><Code>P050A</Code><Description>Cold Start Idle Air Control System Performance</Description></OBD2Code><OBD2Code><Code>P050B</Code><Description>Cold Start Ignition Timing Performance</Description></OBD2Code><OBD2Code><Code>P050D</Code><Description>Cold Start Rough Idle</Description></OBD2Code><OBD2Code><Code>P050E</Code><Description>Cold Start Engine Exhaust Temperature Too Low</Description></OBD2Code><OBD2Code><Code>P050F</Code><Description>Brake Assist Vacuum Too Low</Description></OBD2Code><OBD2Code><Code>P056C</Code><Description>Cruise Control Cancel Switch Circuit</Description></OBD2Code><OBD2Code><Code>P057B</Code><Description>brake pedal position sensor A circuit</Description></OBD2Code><OBD2Code><Code>P057C</Code><Description>Brake Pedal Position Sensor A Circuit Low</Description></OBD2Code><OBD2Code><Code>P057D</Code><Description>Brake Pedal Position Sensor A Circuit High</Description></OBD2Code><OBD2Code><Code>P057E</Code><Description>Brake Pedal Position Sensor 'A' Circuit Intermittent/Erratic</Description></OBD2Code><OBD2Code><Code>P058A</Code><Description>Battery Monitor Module Performance</Description></OBD2Code><OBD2Code><Code>P058B</Code><Description>Battery Monitor Module Current Monitoring Performance</Description></OBD2Code><OBD2Code><Code>P058C</Code><Description>Battery Monitor Module Temperature Monitoring Performance</Description></OBD2Code><OBD2Code><Code>P058D</Code><Description>Battery Monitor Module Voltage Monitoring Performance</Description></OBD2Code><OBD2Code><Code>P058E</Code><Description>Battery Monitor Module Temperature Too High</Description></OBD2Code><OBD2Code><Code>P058F</Code><Description>Battery Monitor Module Temperature Too Low</Description></OBD2Code><OBD2Code><Code>P059F</Code><Description>Active Grille Air Shutter A Performance/stuck Off</Description></OBD2Code><OBD2Code><Code>P05AE</Code><Description>Active Grill Air Shutter 'B' Performance/Stuck Off</Description></OBD2Code><OBD2Code><Code>P05CC</Code><Description>Cold Start 'A' Camshaft Position Timing Performance (Bank 1)</Description></OBD2Code><OBD2Code><Code>P05CD</Code><Description>Cold Start 'A' Camshaft Position Timing Performance (Bank 2)</Description></OBD2Code><OBD2Code><Code>P05CE</Code><Description>Cold Start 'B' Camshaft Position Timing Performance (Bank 1)</Description></OBD2Code><OBD2Code><Code>P05CF</Code><Description>Cold Start 'B' Camshaft Position Timing Performance (Bank 2)</Description></OBD2Code><OBD2Code><Code>P062B</Code><Description>Internal Control Module Fuel Injector Control Performance</Description></OBD2Code><OBD2Code><Code>P064A</Code><Description>Fuel Pump Control Module 'A' Malfunction</Description></OBD2Code><OBD2Code><Code>P143E</Code><Description>Fuel Level Sensor 2 Reference Feedback</Description></OBD2Code><OBD2Code><Code>P150A</Code><Description>Engine Off Timer Performance</Description></OBD2Code><OBD2Code><Code>P150B</Code><Description>Transmission Output Speed Sensor Circuit</Description></OBD2Code><OBD2Code><Code>P150C</Code><Description>Transmission Control Module Engine Speed Request Signal Message Counter Incorrect</Description></OBD2Code><OBD2Code><Code>P150D</Code><Description>Cold Start Rough Idle</Description></OBD2Code><OBD2Code><Code>P150E</Code><Description>Supply Voltage Circuit 1 Low Voltage</Description></OBD2Code><OBD2Code><Code>P151D</Code><Description>Supply Voltage Circuit 2 Low Voltage</Description></OBD2Code><OBD2Code><Code>P151E</Code><Description>active grille shutter system</Description></OBD2Code><OBD2Code><Code>P151F</Code><Description>manufacturer-specific fault</Description></OBD2Code><OBD2Code><Code>P155A</Code><Description>CRUISE CONTROL SWITCH STATE UNDETERMINED</Description></OBD2Code><OBD2Code><Code>P155B</Code><Description>CRUISE CONTROL SET/COAST SWITCH 2 CIRCUIT</Description></OBD2Code><OBD2Code><Code>P155C</Code><Description>CRUISE CONTROL RESUME/ACCELERATION SWITCH 2 CIRCUIT</Description></OBD2Code><OBD2Code><Code>P155D</Code><Description>Hill Descent Control Message Counter</Description></OBD2Code><OBD2Code><Code>P155E</Code><Description>manufacturer-specific fault</Description></OBD2Code><OBD2Code><Code>P155F</Code><Description>DC/DC CONVERTER PERFORMANCE SIGNAL</Description></OBD2Code><OBD2Code><Code>P156A</Code><Description>Air conditioning refrigerant high pressure when A/C off</Description></OBD2Code><OBD2Code><Code>P156B</Code><Description>Fuel Composition Sensor Circuit Malfunction</Description></OBD2Code><OBD2Code><Code>P156C</Code><Description>AIR CONDITIONING PRESSURE TOO HIGH</Description></OBD2Code><OBD2Code><Code>P156D</Code><Description>DC/DC CONVERTER IGNITION SWITCH RUN/START SIGNAL</Description></OBD2Code><OBD2Code><Code>P156E</Code><Description>DC/DC CONVERTER CRANK CONTROL SIGNAL</Description></OBD2Code></ArrayOfOBD2Code>

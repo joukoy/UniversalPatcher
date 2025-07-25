@@ -14,9 +14,19 @@ using System.Threading;
 using System.Drawing;
 using static UniversalPatcher.PidConfig;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 public static class LoggerUtils
 {
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr LoadLibrary(string dllToLoad);
+
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
+
+    [DllImport("kernel32.dll")]
+    public static extern bool FreeLibrary(IntPtr hModule);
+
     public static List<OBDMessage> analyzerData { get; set; }
 
     public static Dictionary<byte, string> PcmResponses;
@@ -24,11 +34,25 @@ public static class LoggerUtils
 
     public static readonly string savedFiltersFile = Path.Combine(Application.StartupPath, "Logger", "savedfilters.xml");
 
+    public enum iPortType
+    {
+        Serial,
+        FTDI,
+        TcpIP
+    }
 
     public enum ControlType
     {
         Slider,
         Set
+    }
+
+    public enum PidMisMatch
+    {
+        NewCustom,
+        UseMaster,
+        UseMasterSave,
+        UseProfile,
     }
     public class RealTimeControl
     {
@@ -120,7 +144,9 @@ public static class LoggerUtils
         "115200",
         "230400",
         "460800",
-        "921600"
+        "500000",
+        "921600",
+        "1000000"
     };
 
     public class MsgFilter
@@ -361,7 +387,7 @@ public static class LoggerUtils
 
     public class Conversion
     {
-        public string Units { get; set; }
+        public string Units { get { return units; } set { if (string.IsNullOrEmpty(value)) units = "Raw"; else units = value; } }
 
         public string Expression { get; set; }
 
@@ -375,6 +401,7 @@ public static class LoggerUtils
 
         public string FalseValue { get; set; }
 
+        private string units;
         public Conversion()
         {
             this.IsBitMapped = false;
@@ -705,5 +732,31 @@ public static class LoggerUtils
         PcmResponses.Add(0x79, "Incorrect Byte Count During Block Transfer");
     }
 
+    public static bool IsRunningUnderWine()
+    {
+        try
+        {
+            IntPtr m_pDll = LoadLibrary("ntdll.dll");
+            IntPtr FuncAddr = GetProcAddress(m_pDll, "wine_get_version");
+            if (FuncAddr != IntPtr.Zero)
+            {
+                //wine_get_version available only in Wine
+                Debug.WriteLine("Running in Wine");
+                FreeLibrary(m_pDll);
+                return true;
+            }
+            else
+            {
+                Debug.WriteLine("Running in Windows");
+                FreeLibrary(m_pDll);
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("IsRunningUnderWine Error " + ex.Message);
+            return false;
+        }
+    }
 
 }

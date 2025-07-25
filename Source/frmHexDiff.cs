@@ -426,7 +426,7 @@ namespace UniversalPatcher
             try
             {
                 string defaultFileName = Path.Combine(Application.StartupPath, "Tuner", Path.GetFileName(pcm1.FileName) + "-" + Path.GetFileName(pcm2.FileName) + ".XML");
-                string fName = SelectSaveFile(XmlFilter, defaultFileName);
+                string fName = SelectSaveFile(TablelistFilter, defaultFileName);
                 if (fName.Length == 0)
                     return;
 
@@ -511,7 +511,7 @@ namespace UniversalPatcher
             try
             {
                 string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
-                string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
+                string patchFname = SelectSaveFile(XmlPatchFilter, defName);
                 if (patchFname.Length == 0)
                     return;
                 string Description = "";

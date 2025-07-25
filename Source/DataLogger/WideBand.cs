@@ -18,6 +18,7 @@ namespace UniversalPatcher
             AEM,
             PLX,
             Innovate,
+            Elm327_CAN,
             Test
         }
         private enum PlxParserState
@@ -32,6 +33,7 @@ namespace UniversalPatcher
         }
         public double RAW { get { return raw; } }
         private double raw;
+        private ushort CanId;
         private SerialPort port;
         private PlxParserState plxState;
         private int plxPartialValue = 0;
@@ -39,6 +41,9 @@ namespace UniversalPatcher
         private byte plxInstance = 0;
         private int innovatePos = 0;
         ushort innovateLambda = 0;
+        //private List<DateTime> ValSetTimes = new List<DateTime>();
+        Hertz hertz = new Hertz();
+
         public double AFR 
         { 
             get 
@@ -49,16 +54,15 @@ namespace UniversalPatcher
                         return 0;
                     case WBType.AEM:
                         return raw;
-                        break;
                     case WBType.PLX:
                         return raw / 25.5 + 10;
-                        break;
                     case WBType.Innovate:
-                        return (raw / 1000 + 0.5) * 14.7; 
-                        break;
+                        return (raw / 1000 + 0.5) * 14.7;
+                    case WBType.Elm327_CAN:
+                        return raw * AppSettings.WBCanAfrFactor;
                     case WBType.Test:
-                        return 14.1;
-                        break;
+                        hertz.AddTime();
+                        return raw;
                     default:
                         return 0;
                 }
@@ -69,10 +73,6 @@ namespace UniversalPatcher
         {
             try
             {
-                if (string.IsNullOrEmpty(AppSettings.WBSerial))
-                {
-                    return;
-                }
                 switch (AppSettings.Wbtype)
                 {
                     case WBType.None:
@@ -85,6 +85,9 @@ namespace UniversalPatcher
                         break;
                     case WBType.Innovate:
                         StartInnovate();
+                        break;
+                    case WBType.Elm327_CAN:
+                        Task.Factory.StartNew(() => StartCAN());
                         break;
                     case WBType.Test:
                         raw = 14.1;
@@ -123,6 +126,10 @@ namespace UniversalPatcher
                 Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
             }
         }
+        public double Herz()
+        {
+            return hertz.GetHertz();
+        }
         private bool OpenSerialPort(int BaudRate)
         {
             try
@@ -155,6 +162,10 @@ namespace UniversalPatcher
         }
         private void StartAem()
         {
+            if (string.IsNullOrEmpty(AppSettings.WBSerial))
+            {
+                return;
+            }
             if (OpenSerialPort(9600))
             {
                 this.port.ErrorReceived += Port_ErrorReceived;
@@ -167,8 +178,13 @@ namespace UniversalPatcher
             try
             {
                 string aemStr = port.ReadLine();
-                Debug.WriteLine("AEM: " + aemStr);
+                if (AppSettings.WBDebug)
+                {
+                    Debug.WriteLine("AEM: " + aemStr);
+                }
                 raw = Convert.ToDouble(aemStr, System.Globalization.CultureInfo.InvariantCulture);
+                hertz.AddTime();
+                //ValSetTimes.Add(DateTime.Now);
             }
             catch (Exception ex)
             {
@@ -183,6 +199,10 @@ namespace UniversalPatcher
 
         private void StartPlx()
         {
+            if (string.IsNullOrEmpty(AppSettings.WBSerial))
+            {
+                return;
+            }
             plxState = PlxParserState.EXPECTING_START;
             if (OpenSerialPort(19200))
             {
@@ -204,7 +224,10 @@ namespace UniversalPatcher
                         Debug.WriteLine("PLX: Error reading byte from buffer");
                         return;
                     }
-                    Debug.WriteLine("PLX: State: " + plxState.ToString() + " received: " + data.ToString("X2"));
+                    if (AppSettings.WBDebug)
+                    {
+                        Debug.WriteLine("PLX: State: " + plxState.ToString() + " received: " + data.ToString("X2"));
+                    }
                     byte b = (byte)data;
 
                     if (b == 0x80)
@@ -242,7 +265,12 @@ namespace UniversalPatcher
                         case PlxParserState.EXPECTING_SECOND_HALF_OF_VALUE:
                             plxState = PlxParserState.EXPECTING_FIRST_HALF_OF_SENSOR_TYPE;
                             raw = (plxPartialValue << 6) | b;
-                            Debug.WriteLine("PLX sensor : {0} instance : {1} value : {2} " + plxSensorType.ToString(), plxInstance.ToString(), raw.ToString());
+                            //ValSetTimes.Add(DateTime.Now);
+                            hertz.AddTime();
+                            if (AppSettings.WBDebug)
+                            {
+                                Debug.WriteLine("PLX sensor : {0} instance : {1} value : {2} " + plxSensorType.ToString(), plxInstance.ToString(), raw.ToString());
+                            }
                             break;
                     }
                 }
@@ -260,6 +288,10 @@ namespace UniversalPatcher
 
         private void StartInnovate()
         {
+            if (string.IsNullOrEmpty(AppSettings.WBSerial))
+            {
+                return;
+            }
             if (OpenSerialPort(19200))
             {
                 this.port.ErrorReceived += Port_ErrorReceived;
@@ -287,7 +319,10 @@ namespace UniversalPatcher
                         {
                             //Header high byte
                             innovatePos++;
-                            Debug.WriteLine("Innovate: header high byte");
+                            if (AppSettings.WBDebug)
+                            {
+                                Debug.WriteLine("Innovate: header high byte");
+                            }
                         }
                     }
                     else if (innovatePos == 1)
@@ -296,7 +331,10 @@ namespace UniversalPatcher
                         {
                             //Header low byte
                             innovatePos++;
-                            Debug.WriteLine("Innovate: header low byte");
+                            if (AppSettings.WBDebug)
+                            {
+                                Debug.WriteLine("Innovate: header low byte");
+                            }
                         }
                         else
                         {
@@ -316,10 +354,16 @@ namespace UniversalPatcher
                         else
                         {
 
-                            Debug.WriteLine("Lambda byte0 " + b0.ToString("X2"));
+                            if (AppSettings.WBDebug)
+                            {
+                                Debug.WriteLine("Lambda byte0 " + b0.ToString("X2"));
+                            }
                             innovateLambda = (ushort)((b0 & 63) << 7);
                             innovatePos++;
-                            Debug.WriteLine("Innovate: data high byte\n");
+                            if (AppSettings.WBDebug)
+                            {
+                                Debug.WriteLine("Innovate: data high byte\n");
+                            }
                         }
                     }
                     else if (innovatePos == 5)
@@ -328,12 +372,105 @@ namespace UniversalPatcher
                         if ((b0 & 128) == 128) innovatePos = 0;  //Function/status word
                         else
                         {
-                            Debug.WriteLine("Lambda byte1 " + b0.ToString("X2"));
-
+                            if (AppSettings.WBDebug)
+                            {
+                                Debug.WriteLine("Lambda byte1 " + b0.ToString("X2"));
+                            }
                             //lambda = lambda + b0;
                             innovateLambda = (ushort)(innovateLambda | b0);
                             raw = innovateLambda;
-                            Debug.WriteLine("Innovate: data low byte");
+                            //ValSetTimes.Add(DateTime.Now);
+                            hertz.AddTime();
+                            if (AppSettings.WBDebug)
+                            {
+                                Debug.WriteLine("Innovate: data low byte");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
+            }
+        }
+
+        static void SendCommand(SerialPort port, string command)
+        {
+            port.Write(command + "\r");
+            while (port.BytesToRead == 0)
+            {
+                System.Threading.Thread.Sleep(10);
+            }
+            while (port.BytesToRead > 0)
+            {
+                string portdata = port.ReadExisting();
+                if (AppSettings.WBDebug)
+                {
+                    Debug.Write(portdata);
+                }
+
+            }
+        }
+        private void StartCAN()
+        {
+            if (string.IsNullOrEmpty(AppSettings.WBSerial))
+            {
+                return;
+            }
+            if (port != null &&  port.IsOpen)
+            {
+                port.Close();
+            }
+            if (OpenSerialPort(AppSettings.WBCanBaudrate))
+            {
+                this.CanId = AppSettings.WBCanID;
+                SendCommand(port, "ATZ");     // Reset
+                SendCommand(port, "ATE0");    // Echo off
+                SendCommand(port, "ATL1");    // Linefeed on
+                SendCommand(port, "ATSP6");   // Set protocol to ISO 15765-4 (500 kbps)
+                SendCommand(port, "ATSTFF");   // Set timeout to maximum
+                SendCommand(port, "ATCRA" + CanId.ToString("X"));  //Receive only CanID frames
+                SendCommand(port, "00");    // Read data
+                this.port.ErrorReceived += Port_ErrorReceived;
+                this.port.DataReceived += CAN_DataReceived; ;
+            }
+        }
+
+        private void CAN_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            try
+            {
+                string line = port.ReadLine();
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    if (AppSettings.WBDebug)
+                    {
+                        Debug.WriteLine("CANWB Raw: " + line.Trim());
+                    }
+                    // Parse lines like: "810 04 0F A0 0F F8 ..." (hex values)
+                    if (line.StartsWith(">"))
+                    {
+                        port.Write("00\r");
+                    }
+                    else 
+                    {
+                        //Example: 0: 74 0F 78 67 8F 35 (Not valid values)
+                        int bytepos = AppSettings.WBCanBytePosition + 1; //Skip 0:
+                        string[] parts = line.Trim().Split(' ');
+                        if (parts.Length >= bytepos + 1)
+                        {
+                            raw = Convert.ToUInt16(parts[bytepos] + parts[bytepos+1], 16);
+                            hertz.AddTime();
+                            if (AppSettings.WBDebug)
+                            {
+                                Debug.WriteLine($"CANWB AFR: {AFR:F2}");
+                            }
                         }
                     }
                 }
@@ -353,5 +490,6 @@ namespace UniversalPatcher
         {
             Debug.WriteLine(e.ToString());
         }
+
     }
 }

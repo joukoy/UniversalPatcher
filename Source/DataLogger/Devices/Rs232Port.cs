@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -19,7 +20,7 @@ namespace UniversalPatcher
         private string name;
         private SerialPort port;
         private bool promptReceived = false;
-        private Queue<SerialByte> internalQueue = new Queue<SerialByte>();
+        private BlockingCollection<SerialByte> internalQueue = new BlockingCollection<SerialByte>();
         private readonly object devLock = new object();
 
         private CancellationTokenSource receiverTokenSource = new CancellationTokenSource();
@@ -59,11 +60,14 @@ namespace UniversalPatcher
 
         void IPort.ClosePort()
         {
-            Debug.WriteLine("Closing port (ClosePort)");
-            this.port.DataReceived -= DataReceived;
-            if (this.port.IsOpen)
+            if (this.port != null)
             {
-                this.port.Close();
+                Debug.WriteLine("Closing port (ClosePort)");
+                this.port.DataReceived -= DataReceived;
+                if (this.port.IsOpen)
+                {
+                    this.port.Close();
+                }
             }
         }
         /// <summary>
@@ -82,9 +86,17 @@ namespace UniversalPatcher
                 }
                 this.port.Dispose();
             }
+            Debug.WriteLine("Opening port " + this.name);
             SerialPortConfiguration config = configuration as SerialPortConfiguration;
-            this.port = new SerialPort(this.name);
-            this.port.BaudRate = config.BaudRate;
+            string sPort = this.name;
+            string[] sParts = sPort.Split(':');
+            if (sParts.Length > 1)
+                sPort = sParts[0].Trim();
+            this.port = new SerialPort(sPort);
+            if (this.name.ToLower().Contains("bluetooth"))
+                this.port.BaudRate = 115200;
+            else
+                this.port.BaudRate = config.BaudRate;
             this.port.DataBits = 8;
             this.port.Parity = Parity.None;
             this.port.StopBits = StopBits.One;
@@ -93,7 +105,8 @@ namespace UniversalPatcher
             this.port.WriteTimeout = config.Timeout;
             //For event handling:
             this.port.ReceivedBytesThreshold = 1;
-            this.port.RtsEnable = true;
+            this.port.RtsEnable = config.RtsEnable;
+            this.port.DtrEnable = config.DtrEnable;
             RTimeout = config.Timeout;
 
             this.port.Open();
@@ -127,6 +140,7 @@ namespace UniversalPatcher
         public void Dispose()
         {
             Debug.WriteLine("Closing port (Dispose)");
+            receiverTokenSource.Cancel();
             if (this.port != null)
             {
                 if (this.port.IsOpen)
@@ -179,6 +193,7 @@ namespace UniversalPatcher
         /// </summary>
         int IPort.Receive(SerialByte buffer, int offset, int count)
         {
+            int rCount = 0;
             // Using the BaseStream causes data to be lost.
             //return this.port.Read(buffer, offset, count);
             if (this.port != null && !this.port.IsOpen)
@@ -186,42 +201,68 @@ namespace UniversalPatcher
                 this.Dispose();
                 return 0;
             }
-            int rCount = 0;
-            int pos = offset;
-            DateTime startTime = DateTime.Now;
-            receiverTokenSource = new CancellationTokenSource();
-            receiverToken = receiverTokenSource.Token;
-            //Debug.WriteLine("RS232 reading: " + count + ", available: " + this.internalQueue.Count);
-            while (this.internalQueue.Count < count)
+            try
             {
-                Thread.Sleep(1);
-                if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(RTimeout))
+                int pos = offset;
+                int remainms = RTimeout;
+                DateTime startTime = DateTime.Now;
+                receiverTokenSource = new CancellationTokenSource();
+                receiverToken = receiverTokenSource.Token;
+                //Debug.WriteLine("RS232 reading: " + count + ", available: " + this.internalQueue.Count);
+                
+                while (rCount < count)
                 {
-                    //Debug.WriteLine("RS232 waiting for: " + count + ", available: " + this.internalQueue.Count);
-                    Debug.WriteLine("RS232 port timeout: " + RTimeout.ToString());
-                    throw new TimeoutException();
+                    if (internalQueue.TryTake(out SerialByte sb, remainms, receiverToken))
+                    {
+                        buffer.Data[pos] = sb.Data[0];
+                        pos++;
+                        rCount++;
+                        remainms = (int)(RTimeout - DateTime.Now.Subtract(startTime).TotalMilliseconds);
+                    }
+                    else
+                    {
+                        //Debug.WriteLine("RS232 port timeout: " + RTimeout.ToString());
+                        throw new TimeoutException();
+                        break;
+                    }
+                    if (receiverToken.IsCancellationRequested)
+                    {
+                        Debug.WriteLine("Receive cancelled");
+                        throw new TimeoutException();
+                    }
                 }
-                if (receiverToken.IsCancellationRequested)
+                
+                /*
+                while (this.internalQueue.Count < count)
                 {
-                    Debug.WriteLine("Receive cancelled");
-                    throw new TimeoutException();
+                    Thread.Sleep(1);
+                    if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(RTimeout))
+                    {
+                        //Debug.WriteLine("RS232 waiting for: " + count + ", available: " + this.internalQueue.Count);
+                        Debug.WriteLine("RS232 port timeout: " + RTimeout.ToString());
+                        throw new TimeoutException();
+                    }
+                    if (receiverToken.IsCancellationRequested)
+                    {
+                        Debug.WriteLine("Receive cancelled");
+                        throw new TimeoutException();
+                    }
                 }
-            }
-            lock (this.internalQueue)
-            {
-                SerialByte sb = internalQueue.Dequeue();
+                SerialByte sb = internalQueue.Take();
                 buffer.TimeStamp = sb.TimeStamp;
                 buffer.Data[pos] = sb.Data[0];
                 pos++;
                 rCount++;
                 while (rCount < count)
                 {
-                    buffer.Data[pos] = internalQueue.Dequeue().Data[0];
+                    buffer.Data[pos] = internalQueue.Take().Data[0];
                     pos++;
                     rCount++;
                     datalogger.ReceivedBytes++;
                 }
+                */
             }
+            catch { }
             return rCount;
         }
 
@@ -235,10 +276,7 @@ namespace UniversalPatcher
                 return;
             }
             this.port.DiscardInBuffer();
-            lock (this.internalQueue)
-            {
-                this.internalQueue.Clear();
-            }
+            while (internalQueue.TryTake(out _)) { }
             this.port.DiscardOutBuffer();
         }
 
@@ -300,14 +338,11 @@ namespace UniversalPatcher
 
                             int received = this.port.Read(rx, 0, bytes);
                             //Debug.WriteLine("RS232: " + Encoding.ASCII.GetString(rx));
-                            lock (this.internalQueue)
+                            for (int i = 0; i < bytes; i++)
                             {
-                                for (int i = 0; i < bytes; i++)
-                                {
-                                    SerialByte sb = new SerialByte(1);
-                                    sb.Data[0] = rx[i];
-                                    this.internalQueue.Enqueue(sb);
-                                }
+                                SerialByte sb = new SerialByte(1);
+                                sb.Data[0] = rx[i];
+                                this.internalQueue.Add(sb);
                             }
                         }
                     }
@@ -342,12 +377,9 @@ namespace UniversalPatcher
                     bytes = this.port.BytesToRead;
                 }
                 //Debug.WriteLine("RS232: " + Encoding.ASCII.GetString(rx));
-                lock (this.internalQueue)
+                for (int i = 0; i < rBytes.Count; i++)
                 {
-                    for (int i = 0; i < rBytes.Count; i++)
-                    {
-                        this.internalQueue.Enqueue(rBytes[i]);
-                    }
+                    this.internalQueue.Add(rBytes[i]);
                 }
             }
             catch (Exception ex)

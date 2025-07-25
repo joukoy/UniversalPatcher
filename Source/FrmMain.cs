@@ -200,5 +200,17 @@ namespace UniversalPatcher
             }
 
         }
+
+        private void createShortcutsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmCreateShortcuts fcs = new frmCreateShortcuts();
+            fcs.Show();
+        }
+
+        private void serialportServerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmSerialPortServer fsps = new frmSerialPortServer();
+            fsps.Show();
+        }
     }
 }

@@ -1231,7 +1231,7 @@ namespace UniversalPatcher
                     return;
                 }*/
                 if (fileName == "")
-                    fileName = SelectSaveFile("XMLPATCH files (*.xmlpatch)|*.xmlpatch|All files (*.*)|*.*");
+                    fileName = SelectSaveFile(XmlPatchFilter);
                 if (fileName.Length < 1)
                     return;
                 Logger("Saving to file: " + Path.GetFileName(fileName), false);
@@ -1311,9 +1311,10 @@ namespace UniversalPatcher
             {
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "OK";
-                frmF.LoadFiles(AppSettings.LastBINfolder);
+                frmF.LoadFiles(GetLastFolder(BinFilter));
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
+                    SetLastFolder(BinFilter, frmF.txtFolder.Text);
                     if (!chkLogtodisplay.Checked)
                         txtResult.AppendText("Writing file info to logfile");
                     string dstFolder = frmF.labelCustomdst.Text;
@@ -1734,7 +1735,7 @@ namespace UniversalPatcher
             try
             {
                 if (fileName == null)
-                    fileName = SelectFile("Select XML file", XmlFilter);
+                    fileName = SelectFile("Select XML file", SegmentConfigFilter);
                 if (fileName.Length < 1)
                     return;
                 basefile.LoadConfigFile(fileName);
@@ -2253,7 +2254,7 @@ namespace UniversalPatcher
             try
             {
                 frmExtractSegments frmES = new frmExtractSegments();
-                frmES.LoadFiles(AppSettings.LastBINfolder);
+                frmES.LoadFiles(GetLastFolder(BinFilter));
                 if (frmES.ShowDialog(this) == DialogResult.OK)
                 {
                     if (!chkLogtodisplay.Checked)
@@ -2372,9 +2373,10 @@ namespace UniversalPatcher
         private void btnFixFilesChecksum_Click(object sender, EventArgs e)
         {
             frmFileSelection frmF = new frmFileSelection();
-            frmF.LoadFiles(AppSettings.LastBINfolder);
+            frmF.LoadFiles(GetLastFolder(BinFilter));
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
+                SetLastFolder(BinFilter, frmF.txtFolder.Text);
                 if (!chkLogtodisplay.Checked)
                     txtResult.AppendText("Fixing checksums...");
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
@@ -3101,7 +3103,7 @@ namespace UniversalPatcher
                 string fName;
                 if (basefile.configFileFullName.Length == 0)
                 {
-                    fName = SelectFile("Select tableseekfile (Cancel = edit current list or create new)", XmlFilter);
+                    fName = SelectFile("Select tableseekfile (Cancel = edit current list or create new)", TableseekFilter);
                     if (string.IsNullOrEmpty(fName))
                     {
                         frmE.EditCurrentTableSeek(fName);
@@ -3344,7 +3346,7 @@ namespace UniversalPatcher
             {
                 string fName;
                 if (basefile.configFileFullName.Length == 0)
-                    fName = SelectFile("Select segmentSeekfile", XmlFilter);
+                    fName = SelectFile("Select segmentSeekfile", SegmentseekFilter);
                 else
                     fName = basefile.SegmentSeekFile;
                 frmEditXML frmE = new frmEditXML();
@@ -4045,7 +4047,7 @@ namespace UniversalPatcher
                     }
                 }
                 string defName = Path.GetFileNameWithoutExtension(scriptFname) + "-rebuild.bin";
-                string fName = SelectSaveFile("", defName);
+                string fName = SelectSaveFile(BinFilter, defName);
                 if (fName.Length == 0)
                     return;
                 Logger("Writing to file: " + fName);
@@ -4122,7 +4124,7 @@ namespace UniversalPatcher
                 {
                     string fName = basefile.PlatformConfigFile;
                     if (basefile.configFile.Length == 0)
-                        fName = SelectSaveFile(XmlFilter, "new-platform.xml");
+                        fName = SelectSaveFile(PlatformConfigFilter, "new-platform.xml");
                     if (fName.Length == 0)
                         return;
                     Logger("Saving platform config: " + Path.GetFileName(fName), false);
@@ -4144,7 +4146,7 @@ namespace UniversalPatcher
 
         private void loadPlatformConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string fName = SelectFile("Select platform config", XmlFilter);
+            string fName = SelectFile("Select platform config", PlatformConfigFilter);
             if (fName.Length == 0)
                 return;
             basefile.LoadPlatformConfig(fName);
@@ -4244,11 +4246,10 @@ namespace UniversalPatcher
 
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "OK";
-                frmF.LoadFiles(AppSettings.LastBINfolder);
+                frmF.LoadFiles(GetLastFolder(BinFilter));
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
-                    AppSettings.LastBINfolder = frmF.txtFolder.Text;
-                    AppSettings.Save();
+                    SetLastFolder(BinFilter, frmF.txtFolder.Text);
                     string dstFldr = frmF.labelCustomdst.Text;
                     if (dstFldr.Length == 0)
                     {
@@ -4697,7 +4698,7 @@ namespace UniversalPatcher
             createDebugLogToolStripMenuItem.Checked = chkDebugToLogfile.Checked;
             if (chkDebugToLogfile.Checked)
             {
-                string fName = SelectSaveFile(TxtFilter);
+                string fName = SelectSaveFile(DebuglogFilter);
                 DebugFileListener = new FileTraceListener(fName);
                 Debug.Listeners.Add(DebugFileListener);
             }
