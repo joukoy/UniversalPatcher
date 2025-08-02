@@ -8,7 +8,7 @@ Tuning tool
 - Make/apply patches for bin files
 
 ZIP Package includes PCM Hammer for reading and writing calibrations. Please see:
-https://github.com/LegacyNsfw/PcmHacks
+https://github.com/PcmHammer/PcmHammer
 for support and credits.
 
 Configurable for different engine controller binary files
