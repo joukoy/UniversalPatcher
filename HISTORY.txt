@@ -774,4 +774,8 @@
 - Logger: Support for TCP/IP server & client for serialport devices
 - Logger graphics: Added Color & line width selection
 
+0.23.1
+- Logger graphics: Added "Bar all" checkbox
+- Logger: small fixes/cleanup
+
 

@@ -2136,5 +2136,15 @@ namespace UniversalPatcher
             chart2.Palette = (ChartColorPalette)comboColorPalette.SelectedItem;
             AppSettings.Save();
         }
+
+        private void chkBarAll_CheckedChanged(object sender, EventArgs e)
+        {
+            for (int i = 0; i < pidScalars.Count; i++)
+            {
+                pidScalars[i].Bar = chkBarAll.Checked;
+            }
+            this.Refresh();
+
+        }
     }
 }

@@ -54,7 +54,6 @@ namespace UniversalPatcher
             this.treeProfiles = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.groupPlayback = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.labelTimeStamp = new System.Windows.Forms.Label();
             this.label39 = new System.Windows.Forms.Label();
             this.numPlaybackSpeed = new System.Windows.Forms.NumericUpDown();
@@ -627,7 +626,6 @@ namespace UniversalPatcher
             // 
             this.groupPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupPlayback.Controls.Add(this.button1);
             this.groupPlayback.Controls.Add(this.labelTimeStamp);
             this.groupPlayback.Controls.Add(this.label39);
             this.groupPlayback.Controls.Add(this.numPlaybackSpeed);
@@ -640,16 +638,6 @@ namespace UniversalPatcher
             this.groupPlayback.TabIndex = 31;
             this.groupPlayback.TabStop = false;
             this.groupPlayback.Text = "Playback";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(309, 18);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(45, 28);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // labelTimeStamp
             // 
@@ -5474,7 +5462,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkFlood4x;
         private System.Windows.Forms.Label label65;
         private System.Windows.Forms.NumericUpDown numFloodByteCount;
-        private System.Windows.Forms.Button button1;
     }
 }
 

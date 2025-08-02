@@ -7974,24 +7974,6 @@ namespace UniversalPatcher
             }
 
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            int x = (4 - (5 % 4)) % 4;
-            Logger(x.ToString());
-            x = (4 - (6 % 4)) % 4;
-            Logger(x.ToString());
-            x = (4 - (7 % 4)) % 4;
-            Logger(x.ToString());
-            x = (4 - (8 % 4)) % 4;
-            Logger(x.ToString());
-            x = (4- (9 % 4)) % 4;
-            Logger(x.ToString());
-
-            ushort bytes = 6;
-            byte padding = (byte)((4 - ((bytes + 2) % 4)) % 4);  //bytes + 2 for bitpair count 
-            ushort totalwords = (ushort)((bytes + 2 + padding) / 4);
-            Logger(totalwords.ToString());
-        }
+         
     }
 }
