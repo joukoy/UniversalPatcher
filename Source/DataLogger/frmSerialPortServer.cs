@@ -37,7 +37,7 @@ namespace UniversalPatcher
             numServerPort.Value = AppSettings.SerialServerPort;
             comboBaudRate.DataSource = SupportedBaudRates;
             comboBaudRate.Text = AppSettings.SerialServerBaudRate.ToString();
-            if (AppSettings.SerialServerDevicePortType == iPortType.FTDI)
+            if (AppSettings.SerialServerDevicePortType == DataLogger.iPortType.FTDI)
             {
                 radioFTDI.Checked = true;
             }
@@ -68,14 +68,14 @@ namespace UniversalPatcher
 
                 if (radioFTDI.Checked)
                 {
-                    AppSettings.SerialServerDevicePortType = iPortType.FTDI;
+                    AppSettings.SerialServerDevicePortType = DataLogger.iPortType.FTDI;
                     AppSettings.SerialServerFtdiDevice = comboSerialPort.Text;
                     port = new FTDIPort(sPort);
 
                 }
                 else
                 {
-                    AppSettings.SerialServerDevicePortType = iPortType.Serial;
+                    AppSettings.SerialServerDevicePortType = DataLogger.iPortType.Serial;
                     AppSettings.SerialServerDevice = comboSerialPort.Text;
                     port = new Rs232Port(sPort);
                 }

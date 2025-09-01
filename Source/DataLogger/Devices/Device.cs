@@ -342,12 +342,9 @@ namespace UniversalPatcher
             }
 
             List<OBDMessage> messages = new List<OBDMessage>();
-            if (this.queue.Count > 0)
+            for (int m = 0; m < this.queue.Count && m < NumMessages; m++)
             {
-                for (int m = 0; m < this.queue.Count && m < NumMessages; m++)
-                {
-                    messages.Add(this.queue.Take());
-                }
+                messages.Add(this.queue.Take());
             }
             return messages;
         }

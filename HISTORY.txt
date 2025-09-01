@@ -778,4 +778,9 @@
 - Logger graphics: Added "Bar all" checkbox
 - Logger: small fixes/cleanup
 
+0.23.2
+- Logger: Added baudrate 33K3 for CAN protocols
+- Logger: Fixed bug in serialport driver; problems with OBDX Pro and other serialport devices
+- Logger: Fixed multiple message handling bug in J2534 driver
+- Logger: Fixed bug: Protocol selection was available for devices which don't support CAN
 

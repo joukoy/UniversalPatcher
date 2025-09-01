@@ -636,12 +636,12 @@ namespace UniversalPatcher
             Debug.WriteLine("Done");
         }
 
-        private bool ReceiveData(int NumMessages, bool WaitForTimeout)
+        private bool ReceiveData(int RequestedMessages, bool WaitForTimeout)
         {
             //Debug.WriteLine("Trace: Read Network Packet");
             try
             {
-                int tmpReadTimeout = ReadTimeout + (NumMessages-1) * AppSettings.TimeoutReceivePerMessage;
+                int tmpReadTimeout = ReadTimeout + (RequestedMessages - 1) * AppSettings.TimeoutReceivePerMessage;
                 if (!WaitForTimeout)
                 {
                     tmpReadTimeout = 0;
@@ -649,10 +649,11 @@ namespace UniversalPatcher
                 List<PassThruMsg> rxMsgs = new List<PassThruMsg>();
                 J2534Err jErr;
                 DateTime startTime = DateTime.Now;
-                bool skip = true;
-                while (skip)
+                int receivedMessages = 0;
+                while (receivedMessages < RequestedMessages)
                 {
                     //Debug.WriteLine("J2534 device requested messages: " + NumMessages.ToString());
+                    int NumMessages = RequestedMessages - receivedMessages;
                     jErr = J2534Port.Functions.ReadMsgs((int)ChannelID, ref rxMsgs, ref NumMessages, tmpReadTimeout);
                     //Debug.WriteLine("J2534 device Received messages: " + rxMsgs.Count.ToString() + " (" + NumMessages.ToString() + ")");
                     Application.DoEvents();
@@ -662,22 +663,19 @@ namespace UniversalPatcher
                         {
                             if (AppSettings.LoggerFilterStartOfMessage && (rxMsgs[m].RxStatus & RxStatus.START_OF_MESSAGE) == RxStatus.START_OF_MESSAGE)
                             {
-                                skip = true;
                                 Debug.WriteLine("Skipping START_OF_MESSAGE");
                             }
                             else if (AppSettings.LoggerFilterTXIndication && (rxMsgs[m].RxStatus & RxStatus.TX_INDICATION) == RxStatus.TX_INDICATION)
                             {
-                                skip = true;
                                 Debug.WriteLine("Skipping TX_INDICATION");
                             }
                             else if (!string.IsNullOrEmpty(AppSettings.LoggerFilterRxStatusCustom) && rxMsgs[m].RxStatus == CustomFilter)
                             {
-                                skip = true;
                                 Debug.WriteLine("Skipping: " + CustomFilter.ToString());
                             }
                             else
                             {
-                                skip = false;
+                                receivedMessages++;
                                 //Debug.WriteLine("RX: " + rxMsgs[m].Data.ToHex()); //Debug messages hang program, maybe too frequent?
                                 OBDMessage oMsg = new OBDMessage(rxMsgs[m].Data, DateTime.Now.Ticks, (ulong)OBDError);
                                 oMsg.DeviceTimestamp = rxMsgs[m].Timestamp;
@@ -1667,8 +1665,12 @@ namespace UniversalPatcher
                 ClearFilters();
                 byte[] mask = new byte[] { 0, 0, 0, 0 };
                 byte[] pattern = new byte[] {0, 0, 0, 0 };
-
-                Response<J2534Err> m = SetFilter(mask,pattern, TxFlag.NONE, FilterType.PASS_FILTER, ChannelID, Protocol);
+                ProtocolID proto = ProtocolID.CAN;  //Default for ISO15765
+                if (Protocol == ProtocolID.J1850VPW)
+                    proto = ProtocolID.J1850VPW;
+                else if (Protocol == ProtocolID.ISO15765_PS)
+                    proto = ProtocolID.CAN_PS;
+                Response<J2534Err> m = SetFilter(mask,pattern, TxFlag.NONE, FilterType.PASS_FILTER, ChannelID, proto);
                 if (m.Status != ResponseStatus.Success)
                 {
                     Debug.WriteLine("Failed to set filter, J2534 error: " + m.ToString());

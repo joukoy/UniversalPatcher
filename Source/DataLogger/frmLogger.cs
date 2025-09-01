@@ -205,7 +205,7 @@ namespace UniversalPatcher
             this.KeyUp += FrmLogger_KeyUp;
             logTexts = new List<LogText>();
             jconsolelogTexts = new List<LogText>();
-            datalogger = new DataLogger(AppSettings.LoggerUseVPW);
+            datalogger = new DataLogger(radioVPW.Checked);
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             //comboPidEditorType.ValueMember = "Value";
             //comboPidEditorType.DisplayMember = "Name";
@@ -839,10 +839,10 @@ namespace UniversalPatcher
         {
             try
             {
-                if (radioCAN.Checked)
-                    PidParamFile = Path.Combine(Application.StartupPath, "Logger", "PidParameters-CAN.XML");
-                else
+                if (radioVPW.Checked)
                     PidParamFile = Path.Combine(Application.StartupPath, "Logger", "PidParameters-VPW.XML");
+                else
+                    PidParamFile = Path.Combine(Application.StartupPath, "Logger", "PidParameters-CAN.XML");
                 if (File.Exists(PidParamFile))
                 {
                     LogParamFile.LoadParamfile(PidParamFile);
@@ -2129,9 +2129,6 @@ namespace UniversalPatcher
                 chkAutoDisconnect.Checked = AppSettings.LoggerAutoDisconnect;
                 numRetryDelay.Value = AppSettings.RetryWriteDelay;
                 numRetryTimes.Value = AppSettings.RetryWriteTimes;
-                radioVPW.Checked = AppSettings.LoggerUseVPW;
-                radioCAN.Checked = !AppSettings.LoggerUseVPW;
-                txtPcmAddress.Enabled = !AppSettings.LoggerUseVPW;
                 j2534OptionsGroupBox.Enabled = AppSettings.LoggerUseJ2534;
                 txtPcmAddress.Text = AppSettings.LoggerCanPcmAddress.ToString("X4");
                 numAnalyzerNumMessages.Value = AppSettings.AnalyzerNumMessages;
@@ -2140,6 +2137,24 @@ namespace UniversalPatcher
                 else
                     chkRestartLogging.Checked = false;
                 numRestartLoggingAfter.Value = Math.Abs(AppSettings.LoggerRestartAfterSeconds);
+
+                if (AppSettings.loggerProtocol == LoggingProtocol.HSCAN)
+                {
+                    radioHSCAN.Checked = true;
+                    txtPcmAddress.Enabled = false;
+                }
+                else if (AppSettings.loggerProtocol == LoggingProtocol.LSCAN)
+                {
+                    radioLSCan.Checked = true;
+                    txtPcmAddress.Enabled = false;
+                }
+                else if (AppSettings.loggerProtocol == LoggingProtocol.VPW)
+                {
+                    radioVPW.Checked = true;
+                    txtPcmAddress.Enabled = true;
+                }
+                chkStartPeiodic.Checked = AppSettings.LoggerStartPeriodic;
+                chkWakeUp.Checked = AppSettings.LoggerWakeUp;
 
                 comboStartLoggingKey.Items.Clear();
                 foreach (string keyTxt in Enum.GetNames(typeof(Keys)))
@@ -2658,7 +2673,7 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                if (radioCAN.Checked)
+                if (!radioVPW.Checked)
                 {
                     maxBytes = 128;
                 }
@@ -2806,7 +2821,14 @@ namespace UniversalPatcher
             AppSettings.LoggerStartJ2534Process = chkStartJ2534Process.Checked;
             AppSettings.LoggerJ2534ProcessVisible = chkJ2534ServerVisible.Checked;
             AppSettings.LoggerAutoDisconnect = chkAutoDisconnect.Checked;
-            AppSettings.LoggerUseVPW = radioVPW.Checked;
+            if (radioVPW.Checked)
+                AppSettings.loggerProtocol = LoggingProtocol.VPW;
+            else if (radioHSCAN.Checked)
+                AppSettings.loggerProtocol = LoggingProtocol.HSCAN;
+            else if (radioLSCan.Checked)
+                AppSettings.loggerProtocol = LoggingProtocol.LSCAN;
+            AppSettings.LoggerStartPeriodic = chkStartPeiodic.Checked;
+            AppSettings.LoggerWakeUp = chkWakeUp.Checked;
             chkTestPidCompatibility.Checked = chkTestPidCompatibility.Checked;
             if (HexToUshort(txtPcmAddress.Text, out ushort pcmaddr))
                 AppSettings.LoggerCanPcmAddress = pcmaddr;
@@ -2923,15 +2945,24 @@ namespace UniversalPatcher
                 else
                 {
                     jParams = new J2534InitParameters();
-                    jParams.CanPCM = datalogger.CanDevice;
                     jParams.SeparateProtoByChannel = true;
-                    jParams.Protocol = ProtocolID.ISO15765;
-                    jParams.Baudrate = "ISO15765_500000";
-                    jParams.Sconfigs = "CAN_MIXED_FORMAT=1";
-                    jParams.PassFilters = "Type: FLOW_CONTROL_FILTER,Name:CANloggerFlow" + Environment.NewLine;
+                    if (radioHSCAN.Checked)
+                    {
+                        jParams.Sconfigs = "CAN_MIXED_FORMAT=1";
+                        jParams.Protocol = ProtocolID.ISO15765;
+                        jParams.Baudrate = "ISO15765_500000";
+                    }
+                    else
+                    {
+                        //jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
+                        jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
+                        jParams.Protocol = ProtocolID.SW_ISO15765_PS;
+                        jParams.Baudrate = "ISO15765_33K3";
+                    }
+                    jParams.PassFilters = "Type:FLOW_CONTROL_FILTER,Name:CANFlasherFlow" + Environment.NewLine;
                     jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "Pattern: " + datalogger.CanDevice.ResID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "FlowControl: "+ datalogger.CanDevice.RequestID.ToString("X8")+",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:0000" + datalogger.CanDevice.ResID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "FlowControl:0000" + datalogger.CanDevice.RequestID.ToString("X4") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
                 }
                 if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text), jParams))
                 {
@@ -2968,16 +2999,38 @@ namespace UniversalPatcher
                 if (!UseVPW)
                 {
                     jParams = new J2534InitParameters();
-                    jParams.CanPCM = datalogger.CanDevice;
-                    jParams.Protocol = ProtocolID.CAN;                    
-                    jParams.Baudrate = "CAN_500000";
+                    if (radioHSCAN.Checked)
+                    {
+                        jParams.Protocol = ProtocolID.CAN;
+                        jParams.Baudrate = "ISO15765_500000";
+                    }
+                    else
+                    {
+                        //datalogger.LogDevice.SetJ2534Configs( "J1962_PINS=$00000100",false);
+                        jParams.Protocol = ProtocolID.SW_CAN_PS;
+                        jParams.Baudrate = "ISO15765_33K3";
+                    }
                     jParams.Secondary = true;
                     jParams.SeparateProtoByChannel = true;
                     jParams.UsePrimaryChannel = true;
-                    jParams.PassFilters = "Type:PASS_FILTER,Name:CANloggerPass" + Environment.NewLine;
+                    jParams.PassFilters = "Type:PASS_FILTER,Name:CANFlasherPass" + Environment.NewLine;
                     jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "Pattern: "+ datalogger.CanDevice.DiagID.ToString("X8")+",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:0000" + datalogger.CanDevice.DiagID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                     datalogger.LogDevice.ConnectSecondaryProtocol(jParams);
+                    if(radioLSCan.Checked && chkWakeUp.Checked)
+                    {
+                        byte[] wakeMsg = new byte[] { 00, 00, 01, 00 };
+                        OBDMessage wMsg = new OBDMessage(wakeMsg);
+                        wMsg.Txflag = TxFlag.SW_CAN_HV_TX;
+                        wMsg.SecondaryProtocol = true;
+                        datalogger.LogDevice.SendMessage(wMsg, 0);
+                        Thread.Sleep(500);
+                    }
+                    if (chkStartPeiodic.Checked)
+                    {
+                        string pMsg = "00 00 01 01 FE 3E:2500:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
+                        datalogger.LogDevice.StartPeriodicMsg(pMsg, false);
+                    }
                     if (datalogger.LogDevice.LogDeviceType == DataLogger.LoggingDevType.Elm)
                     {
                         Logger("Message filtering enabled for CAN ELM device. Functions limited");
@@ -3228,7 +3281,7 @@ namespace UniversalPatcher
                 labelTimeStamp.Text = "-";
                 chkContinuousPidTest.Enabled = false;
                 chkContinuousPidTest.Checked = false;
-                if (radioCAN.Checked && serialRadioButton.Checked && !comboSerialDeviceType.Text.StartsWith("UPX"))
+                if (!radioVPW.Checked && serialRadioButton.Checked && !comboSerialDeviceType.Text.StartsWith("UPX"))
                 {
                     Logger("Using SendOnce mode, other modes not supported with Serial device & CAN");
                     datalogger.Responsetype = (byte)ResponseTypes.SendOnce;
@@ -3382,11 +3435,17 @@ namespace UniversalPatcher
         {
             if (serialRadioButton.Checked)
             {
-                //radioVPW.Checked = true;
                 serialOptionsGroupBox.Enabled = true;
                 j2534OptionsGroupBox.Enabled = false;
-                //groupProtocol.Enabled = false;
-                //groupJ2534Options.Visible = false;
+                if (comboSerialDeviceType.Text.Contains("CAN"))
+                {
+                    groupProtocol.Enabled = true;
+                }
+                else
+                {
+                    groupProtocol.Enabled = false;
+                    radioVPW.Checked = true;
+                }
             }
         }
 
@@ -3429,6 +3488,8 @@ namespace UniversalPatcher
             }
             else
             {
+                groupProtocol.Enabled = false;
+                radioVPW.Checked = true;
                 //comboResponseMode.Enabled = true;
                 //comboResponseMode.Text = "SendFast";
             }
@@ -3514,6 +3575,7 @@ namespace UniversalPatcher
                 {
                     return;
                 }
+                datalogger.LogDevice.SetAnalyzerFilter();
                 dataGridAnalyzer.SelectionChanged -= DataGridAnalyzer_SelectionChanged; //Avoid duplicates and disable for original analyzer
                 dataGridAnalyzer.Columns.Clear();
                 splitAnalyzer.Panel2Collapsed = true;
@@ -3541,7 +3603,6 @@ namespace UniversalPatcher
                     //dataGridAnalyzer.DataSource = null;
                     //dataGridAnalyzer.DataSource = blPassiveCanDatas;
                     //dataGridAnalyzer.DataBindingComplete += DataGridAnalyzer_DataBindingComplete;
-                    datalogger.LogDevice.SetAnalyzerFilter();
                     //datalogger.LogDevice.RemoveFilters(null);
                     datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived1_PassivePids;
                     dataGridAnalyzer.SelectionChanged += DataGridAnalyzer_SelectionChanged;
@@ -3824,10 +3885,10 @@ namespace UniversalPatcher
 
         private void btnCurrentDTC_Click(object sender, EventArgs e)
         {
-            if (radioCAN.Checked)
-                getDtcCodes(0x1a);//0x1a = Current data
-            else
+            if (radioVPW.Checked)
                 getDtcCodes(2);//2 = Current data
+            else
+                getDtcCodes(0x1a);//0x1a = Current data
         }
 
         private void btnHistoryDTC_Click(object sender, EventArgs e)
@@ -3837,7 +3898,7 @@ namespace UniversalPatcher
 
         private void btnClearCodes_Click(object sender, EventArgs e)
         {
-            if (radioCAN.Checked)
+            if (!radioVPW.Checked)
             {
                 LoggerBold("Not implemented for CAN");
                 //return;
@@ -4254,19 +4315,7 @@ namespace UniversalPatcher
 
         }
 
-        private void btnConsoleRefresh_Click(object sender, EventArgs e)
-        {
-            if (datalogger.Connected)
-            {
-                datalogger.LogDevice.Receive(1,true);
-            }
-            else
-            {
-                Logger("Not connected");
-            }
-        }
-
-        private void chkConsole4x_CheckedChanged(object sender, EventArgs e)
+         private void chkConsole4x_CheckedChanged(object sender, EventArgs e)
         {
             if (datalogger != null && datalogger.Connected)
             {
@@ -5376,7 +5425,7 @@ namespace UniversalPatcher
             dataGridDtcCodes.Columns["Conversion"].Visible = false;
             dataGridDtcCodes.Columns["Scaling"].Visible = false;
             datalogger.Receiver.SetReceiverPaused(true);
-            if (radioCAN.Checked)
+            if (!radioVPW.Checked)
             {
                 QueryCanModules();
                 return;
@@ -6295,7 +6344,7 @@ namespace UniversalPatcher
                 }
                 datalogger.Receiver.SetReceiverPaused(true);
                 int[] filterIds = null;
-                if (radioCAN.Checked && (ushort)comboModule.SelectedValue != datalogger.CanDevice.ResID)
+                if (!radioVPW.Checked && (ushort)comboModule.SelectedValue != datalogger.CanDevice.ResID)
                 {
                     filterIds = datalogger.SetCanQueryFilter((ushort)comboModule.SelectedValue);
                 }
@@ -6331,17 +6380,18 @@ namespace UniversalPatcher
         {
             datalogger.SetProtocol(radioVPW.Checked);
             LoadModuleList();
-            txtPcmAddress.Enabled = radioCAN.Checked;
-            chkCombinePids.Enabled = radioCAN.Checked;
-            if (!radioCAN.Checked)
-            {
-                chkCombinePids.Checked = false;
-            }
             SetupPidEditor();
         }
 
         private void radioVPW_CheckedChanged(object sender, EventArgs e)
         {
+            chkStartPeiodic.Enabled = !radioVPW.Checked;
+            txtPcmAddress.Enabled = !radioVPW.Checked;
+            chkCombinePids.Enabled = !radioVPW.Checked;
+            if (radioVPW.Checked)
+            {
+                chkCombinePids.Checked = false;
+            }
 
         }
 
@@ -6632,13 +6682,13 @@ namespace UniversalPatcher
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string defname;
-            if (radioCAN.Checked)
+            if (radioVPW.Checked)
             {
-                defname = Path.Combine(Application.StartupPath, "Logger", "PidPrameters-CAN.XML");
+                defname = Path.Combine(Application.StartupPath, "Logger", "PidPrameters-VPW.XML");
             }
             else
             {
-                defname = Path.Combine(Application.StartupPath, "Logger", "PidPrameters-VPW.XML");
+                defname = Path.Combine(Application.StartupPath, "Logger", "PidPrameters-CAN.XML");
             }
             string fName = SelectFile("Select PID file", PidParmFilter, defname);
             if (fName.Length == 0)
@@ -7974,6 +8024,18 @@ namespace UniversalPatcher
             }
 
         }
-         
+
+        private void radioLSCan_CheckedChanged(object sender, EventArgs e)
+        {
+            chkWakeUp.Enabled = radioLSCan.Checked;
+            datalogger.SetProtocol(radioVPW.Checked);
+            LoadModuleList();
+            SetupPidEditor();
+        }
+
+        private void chkCombinePids_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

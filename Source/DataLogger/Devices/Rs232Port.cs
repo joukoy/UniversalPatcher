@@ -201,68 +201,38 @@ namespace UniversalPatcher
                 this.Dispose();
                 return 0;
             }
-            try
+
+//          try //Don't use try, Trytake throws timeout error and it must be handled in calling function, not there
+
+            int pos = offset;
+            int remainms = RTimeout;
+            DateTime startTime = DateTime.Now;
+            receiverTokenSource = new CancellationTokenSource();
+            receiverToken = receiverTokenSource.Token;
+            //Debug.WriteLine("RS232 reading: " + count + ", available: " + this.internalQueue.Count);
+                
+            while (rCount < count)
             {
-                int pos = offset;
-                int remainms = RTimeout;
-                DateTime startTime = DateTime.Now;
-                receiverTokenSource = new CancellationTokenSource();
-                receiverToken = receiverTokenSource.Token;
-                //Debug.WriteLine("RS232 reading: " + count + ", available: " + this.internalQueue.Count);
-                
-                while (rCount < count)
+                if (internalQueue.TryTake(out SerialByte sb, remainms, receiverToken))
                 {
-                    if (internalQueue.TryTake(out SerialByte sb, remainms, receiverToken))
-                    {
-                        buffer.Data[pos] = sb.Data[0];
-                        pos++;
-                        rCount++;
-                        remainms = (int)(RTimeout - DateTime.Now.Subtract(startTime).TotalMilliseconds);
-                    }
-                    else
-                    {
-                        //Debug.WriteLine("RS232 port timeout: " + RTimeout.ToString());
-                        throw new TimeoutException();
-                        break;
-                    }
-                    if (receiverToken.IsCancellationRequested)
-                    {
-                        Debug.WriteLine("Receive cancelled");
-                        throw new TimeoutException();
-                    }
-                }
-                
-                /*
-                while (this.internalQueue.Count < count)
-                {
-                    Thread.Sleep(1);
-                    if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(RTimeout))
-                    {
-                        //Debug.WriteLine("RS232 waiting for: " + count + ", available: " + this.internalQueue.Count);
-                        Debug.WriteLine("RS232 port timeout: " + RTimeout.ToString());
-                        throw new TimeoutException();
-                    }
-                    if (receiverToken.IsCancellationRequested)
-                    {
-                        Debug.WriteLine("Receive cancelled");
-                        throw new TimeoutException();
-                    }
-                }
-                SerialByte sb = internalQueue.Take();
-                buffer.TimeStamp = sb.TimeStamp;
-                buffer.Data[pos] = sb.Data[0];
-                pos++;
-                rCount++;
-                while (rCount < count)
-                {
-                    buffer.Data[pos] = internalQueue.Take().Data[0];
+                    buffer.Data[pos] = sb.Data[0];
                     pos++;
                     rCount++;
-                    datalogger.ReceivedBytes++;
+                    remainms = (int)(RTimeout - DateTime.Now.Subtract(startTime).TotalMilliseconds);
                 }
-                */
+                else
+                {
+                    //Debug.WriteLine("RS232 port timeout: " + RTimeout.ToString());
+                    throw new TimeoutException();
+                    break;
+                }
+                if (receiverToken.IsCancellationRequested)
+                {
+                    Debug.WriteLine("Receive cancelled");
+                    throw new TimeoutException();
+                }
             }
-            catch { }
+                
             return rCount;
         }
 

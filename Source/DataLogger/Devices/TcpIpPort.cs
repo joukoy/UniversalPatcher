@@ -199,37 +199,6 @@ namespace UniversalPatcher
                     return 0;
                 }
             }
-            /*
-            while (this.internalQueue.Count < count)
-            {
-                Thread.Sleep(1);
-                if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(RTimeout))
-                {
-                    Debug.WriteLine("TCPIP port timeout: " + RTimeout.ToString());
-                    throw new TimeoutException();
-                }
-                if (receiverToken.IsCancellationRequested)
-                {
-                    Debug.WriteLine("Receive cancelled");
-                    throw new TimeoutException();
-                }
-            }
-            lock (this.internalQueue)
-            {
-                SerialByte sb = internalQueue.Dequeue();
-                buffer.TimeStamp = sb.TimeStamp;
-                buffer.Data[pos] = sb.Data[0];
-                pos++;
-                rCount++;
-                while (rCount < count)
-                {
-                    buffer.Data[pos] = internalQueue.Dequeue().Data[0];
-                    pos++;
-                    rCount++;
-                    datalogger.ReceivedBytes++;
-                }
-            }
-            */
             return rCount;
         }
 

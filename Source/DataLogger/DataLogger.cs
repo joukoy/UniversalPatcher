@@ -107,6 +107,26 @@ namespace UniversalPatcher
             J2534,
             UPX_OBD
         }
+        public enum LoggingProtocol
+        {
+            HSCAN,
+            LSCAN,
+            VPW,
+        }
+
+        public enum iPortType
+        {
+            Serial,
+            FTDI,
+            TcpIP
+        }
+        public enum PidMisMatch
+        {
+            NewCustom,
+            UseMaster,
+            UseMasterSave,
+            UseProfile,
+        }
 
         public class LogData
         {
@@ -2656,12 +2676,12 @@ namespace UniversalPatcher
                         foreach (OBDMessage oMsg in oMsgs)
                         {
                             Debug.WriteLine("Received: " + oMsg.ToString() + ", Elmprompt: " + oMsg.ElmPrompt + " Slot count: " + SlotCount.ToString());
+                            if (logToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
                             if (oMsg.ElmPrompt)
                             {
-                                if (logToken.IsCancellationRequested)
-                                {
-                                    break;
-                                }
                                 ELMPromptReceived();
                                 //continue;
                             }

@@ -287,7 +287,7 @@ namespace UniversalPatcher
 
                 byte offset = 0;
                 SerialByte rx = new SerialByte(3); // we dont read more than 3 bytes at a time
-                SerialByte timestampbuf = new SerialByte(3);
+                SerialByte timestampbuf = new SerialByte(4);
                 ulong timestampmicro = 0;
                 // First Byte is command
                 //Second is length, third also for long frame

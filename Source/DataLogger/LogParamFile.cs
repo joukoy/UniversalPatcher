@@ -438,7 +438,7 @@ namespace UniversalPatcher
             }
             if (!isEqual)
             {
-                PidMisMatch misMatch = PidMisMatch.NewCustom;
+                DataLogger.PidMisMatch misMatch = DataLogger.PidMisMatch.NewCustom;
                 if (AppSettings.LoggerPidMismatchRemember)
                 {
                     misMatch = AppSettings.LoggerPidMismatch;
@@ -453,19 +453,19 @@ namespace UniversalPatcher
                     {
                         if (fpm.radioNewCustom.Checked)
                         {
-                            misMatch = PidMisMatch.NewCustom;
+                            misMatch = DataLogger.PidMisMatch.NewCustom;
                         }
                         else if (fpm.radioUseMaster.Checked)
                         {
-                            misMatch = PidMisMatch.UseMaster;
+                            misMatch = DataLogger.PidMisMatch.UseMaster;
                         }
                         else if (fpm.radioUseMasterAndSave.Checked)
                         {
-                            misMatch = PidMisMatch.UseMasterSave;
+                            misMatch = DataLogger.PidMisMatch.UseMasterSave;
                         }
                         else
                         {
-                            misMatch = PidMisMatch.UseProfile;
+                            misMatch = DataLogger.PidMisMatch.UseProfile;
                         }
                         AppSettings.LoggerPidMismatchRemember = fpm.chkSaveSelection.Checked;
                         if (fpm.chkSaveSelection.Checked)
@@ -483,19 +483,19 @@ namespace UniversalPatcher
                 }
                 switch (misMatch)
                 {
-                    case PidMisMatch.NewCustom:
+                    case DataLogger.PidMisMatch.NewCustom:
                         parm.Custom = true;
                         Logger("Adding new custom PID: \"" + parm.Name + "\"");
                         datalogger.PidParams.Add(parm);
                         break;
-                    case PidMisMatch.UseMaster:
+                    case DataLogger.PidMisMatch.UseMaster:
                         Logger("Using masterlist PID: \"" + parm.Name + "\"");
                         return masterParms.Last();
-                    case PidMisMatch.UseMasterSave:
+                    case DataLogger.PidMisMatch.UseMasterSave:
                         Logger("Using masterlist PID: \"" + parm.Name + "\"");
                         SaveModifiedProfile = true;
                         return masterParms.Last();
-                    case PidMisMatch.UseProfile:
+                    case DataLogger.PidMisMatch.UseProfile:
                         Logger("Updating masterlist PID \"" + parm.Name + "\"");
                         int idx = datalogger.PidParams.IndexOf(masterParms.Last());
                         datalogger.PidParams[idx] = parm;

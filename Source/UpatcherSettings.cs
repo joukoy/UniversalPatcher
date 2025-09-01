@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using static LoggerUtils;
 
 namespace UniversalPatcher
 {
@@ -69,7 +68,7 @@ namespace UniversalPatcher
             LoggerFilterStartOfMessage = true;
             LoggerFilterTXIndication = true;
             LoggerFilterRxStatusCustom = "";
-            LoggerUseVPW = true;
+            //LoggerUseVPW = true;
             LoggerConsoleDisplayInterval = 200;
             LoggerTesterPresentInterval = 4000;
             LoggerCanPcmAddress = 0x07E0;
@@ -80,7 +79,8 @@ namespace UniversalPatcher
             LoggerStartKey = Keys.F4;
             LoggerPidMismatchRemember = false;
             LoggerDeviceUrl = "192.168.4.1:22222";
-            LoggerPortType = iPortType.Serial;
+            LoggerPortType = DataLogger.iPortType.Serial;
+            loggerProtocol = DataLogger.LoggingProtocol.VPW;
             SerialServerPort = 22222;
             SerialServerBaudRate = 115200;
 
@@ -244,14 +244,17 @@ namespace UniversalPatcher
         public bool LoggerUseJ2534 { get; set; }
         public string LoggerSerialDeviceType { get; set; }
         public string LoggerResponseMode { get; set; }
-        public iPortType LoggerPortType { get; set; }
+        public DataLogger.iPortType LoggerPortType { get; set; }
         public bool LoggerShowAdvanced { get; set; }
         public string LoggerFTDIPort { get; set; }
         public string LoggerDeviceUrl { get; set; }
 
         public int LoggerBaudRate { get; set; }
         public bool LoggerUseFilters { get; set; }
-        public bool LoggerUseVPW { get; set; }
+        //public bool LoggerUseVPW { get; set; }
+        public DataLogger.LoggingProtocol loggerProtocol { get; set; }
+        public bool LoggerStartPeriodic { get; set; }
+        public bool LoggerWakeUp { get; set; }
         public Size LoggerWindowSize { get; set; }
         public FormWindowState LoggerWindowState { get; set; }
         public Point LoggerWindowPosition { get; set; }
@@ -317,7 +320,7 @@ namespace UniversalPatcher
         public string LogImportTimeStampFormat { get; set; }
         public bool LogImportTimeStampElapsed { get; set; }
         public bool LoggerGraphDisableResample { get; set; }
-        public PidMisMatch LoggerPidMismatch { get; set; }
+        public DataLogger.PidMisMatch LoggerPidMismatch { get; set; }
         public bool LoggerPidMismatchRemember { get; set; }
         public string ControlCommandsFile { get; set; }
         public string MapSessionMapBin { get; set; }
@@ -342,7 +345,7 @@ namespace UniversalPatcher
         public int SerialServerPort { get; set; }
         public string SerialServerDevice{ get; set; }
         public string SerialServerFtdiDevice { get; set; }
-        public iPortType SerialServerDevicePortType { get; set; }
+        public DataLogger.iPortType SerialServerDevicePortType { get; set; }
         public int SerialServerBaudRate { get; set; }
         public TimeoutScenario TimeoutLoggingActive { get; set; }
         public TimeoutScenario TimeoutLoggingActiveObdlink { get; set; }

@@ -34,12 +34,6 @@ public static class LoggerUtils
 
     public static readonly string savedFiltersFile = Path.Combine(Application.StartupPath, "Logger", "savedfilters.xml");
 
-    public enum iPortType
-    {
-        Serial,
-        FTDI,
-        TcpIP
-    }
 
     public enum ControlType
     {
@@ -47,13 +41,6 @@ public static class LoggerUtils
         Set
     }
 
-    public enum PidMisMatch
-    {
-        NewCustom,
-        UseMaster,
-        UseMasterSave,
-        UseProfile,
-    }
     public class RealTimeControl
     {
         public string Control { get; set; }
