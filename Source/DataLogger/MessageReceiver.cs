@@ -172,6 +172,7 @@ namespace UniversalPatcher
                     {                   
                         LoggerBold("Device disconnected, stopping receiver");
                         device.Dispose();
+                        device = null;
                         return;
                     }
                     if (secondaryProtocol)

@@ -406,6 +406,20 @@ namespace UniversalPatcher
                                             retVal = failMessage;
                                         }
                                         break;
+                                    case j2534Command.PassthruDisconnect:
+                                        Logger("Passthru disconnect");
+                                        LogDevice.PassthruDisconnect();
+                                        break;
+                                    case j2534Command.PassthruConnect:
+                                        Logger("Passthru disconnect");
+                                        string initparms2 = Encoding.ASCII.GetString(data);
+                                        J2534InitParameters jParams2 = (J2534InitParameters)Helpers.ByteArrayToObject(data);
+                                        if (!LogDevice.PassthruConnect(jParams2))
+                                        {
+                                            Logger("Passthruconnect failed!");
+                                            retVal = failMessage;
+                                        }
+                                        break;
                                     default:
                                         LoggerBold("Unknown command!" + msg[0].ToString("X2"));
                                         retVal = failMessage;
@@ -450,6 +464,7 @@ namespace UniversalPatcher
                 DebugFileListener.CloseLog();
             }
             LogDevice.Dispose();
+            LogDevice = null;
             Application.DoEvents();
             Thread.Sleep(100);
             Application.DoEvents();

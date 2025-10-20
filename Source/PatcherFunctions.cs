@@ -512,6 +512,8 @@ public class Upatcher
         StopPeriodicMsg,
         ClearPeriodicMsg,
         Ioctl,
+        PassthruDisconnect,
+        PassthruConnect,
         quit
     }
     //

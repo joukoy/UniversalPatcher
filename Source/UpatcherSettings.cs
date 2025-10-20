@@ -102,10 +102,11 @@ namespace UniversalPatcher
             AnalyzerNumMessages = 1;
             LoggerLoggingMessagesPerRequest = 1;
             LoggerRestartAfterSeconds = 30;
-            WBCanID = 0x7E6;
+            WBCanID = "7E6";
             WBCanBaudrate = 115200;
             WBDebug = false;
             WBCanBytePosition = 2;
+            WBCanByteCount = 1;
             WBCanAfrFactor = 0.01;
 
             TimeoutLoggingActive = TimeoutScenario.DataLogging3;
@@ -308,6 +309,7 @@ namespace UniversalPatcher
         public string LoggerFilterRxStatusCustom { get; set; }
         public string LoggerLastFilterOS { get; set; }
         public ushort LoggerCanPcmAddress { get; set; }
+        public J2534DotNet.ConnectFlag LoggerConnectFlag { get; set; }
         public int LoggerTesterPresentInterval { get; set; }
         public int LoggerConsoleDisplayInterval { get; set; }
         public int LoggerCANWaitSecondsStopMessages { get; set; }
@@ -365,11 +367,13 @@ namespace UniversalPatcher
 
         public WideBand.WBType Wbtype { get; set; }
         public string WBSerial { get; set; }
-        public ushort WBCanID { get; set; }
+        public string WBCanID { get; set; }
         public ushort WBCanBytePosition { get; set; }
+        public ushort WBCanByteCount { get; set; }
         public double WBCanAfrFactor { get; set; }
         public int WBCanBaudrate { get; set; }
         public bool WBDebug { get; set; }
+        public bool WBSkipLeadingZero { get; set; }
         public int UpxLastBaudrate { get; set; }
         public bool IsoTpDebug { get; set; }
         //public int TimeoutLoggingWrite { get; set; }

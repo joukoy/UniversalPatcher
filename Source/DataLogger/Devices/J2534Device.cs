@@ -38,7 +38,7 @@ namespace UniversalPatcher
         private int DeviceID;
         private int ChannelID;
         private int ChannelID2;
-        private ProtocolID Protocol;
+        //private ProtocolID Protocol;
         private ProtocolID Protocol2;
         public bool IsProtocolOpen;
         private const string PortName = "J2534";
@@ -230,7 +230,7 @@ namespace UniversalPatcher
                     Logger("Baudrate: " + j2534Init.Baudrate);
                     Logger("Connectflag: " + j2534Init.Connectflag.ToString());                    
                     */
-                    m = ConnectToProtocol(j2534Init.Protocol, (BaudRate)Enum.Parse(typeof(BaudRate), j2534Init.Baudrate), j2534Init.Connectflag, ref ChannelID);
+                    m = ConnectToProtocol(j2534Init.Protocol,  j2534Init.Baudrate, j2534Init.Connectflag, ref ChannelID);
                     if (m.Status != ResponseStatus.Success)
                     {
                         Logger("Failed to set protocol, J2534 error: " + m.ToString());
@@ -556,6 +556,7 @@ namespace UniversalPatcher
                 }
                 if (string.IsNullOrEmpty(j2534Init.PassFilters))
                 {
+                    /*
                     Debug.WriteLine("Setting filters");
                     byte[] mask = new byte[] { 0 };
                     byte[] pattern = new byte[] { 0 };
@@ -565,6 +566,7 @@ namespace UniversalPatcher
                         LoggerBold("Failed to set filter, J2534 error: " + m.ToString());
                         return false;
                     }
+                    */
                     this.CurrentFilter = FilterMode.None;
                 }
                 else
@@ -1087,6 +1089,7 @@ namespace UniversalPatcher
             get 
             {
                 if (J2534Port.Functions == null)
+                if (J2534Port.Functions == null)
                     return false;
                 return J2534Port.Functions.isDllLoaded(); 
             }
@@ -1143,6 +1146,12 @@ namespace UniversalPatcher
                     J2534Port.Functions.StopPeriodicMsg(ChannelID, pMsg.Value);
                 }
                 periodicMsgIds1.Clear();
+                foreach (KeyValuePair<string, int> pMsg in periodicMsgIds2)
+                {
+                    Logger("Stopping perodic message, id: " + pMsg.Value.ToString());
+                    J2534Port.Functions.StopPeriodicMsg(ChannelID2, pMsg.Value);
+                }
+                periodicMsgIds2.Clear();
                 if (AppSettings.ClearFuncAddrOnDisconnect)
                 {
                     Logger("Clearing functional address table (primary protocol)");
@@ -1154,8 +1163,15 @@ namespace UniversalPatcher
                     var item = protocol_channel.First(x => x.Value == ChannelID);
                     protocol_channel.Remove(item.Key);
                 }
+                if (ChannelID2 > -1 && ChannelID != ChannelID2)
+                {
+                    OBDError = J2534Port.Functions.Disconnect((int)ChannelID2);
+                }
                 OBDError = J2534Port.Functions.Disconnect((int)ChannelID);
                 ChannelID = -1;
+                ChannelID2 = -1;
+                Filters.Clear();
+                Filters2.Clear();
                 if (OBDError != J2534Err.STATUS_NOERROR) return Response.Create(ResponseStatus.Error, OBDError);
                 IsProtocolOpen = false;
                 return Response.Create(ResponseStatus.Success, OBDError);
@@ -1170,6 +1186,26 @@ namespace UniversalPatcher
                 LoggerBold("Error, j2534Device line " + line + ": " + ex.Message);
             }
             return Response.Create(ResponseStatus.Error, J2534Err.ERR_FAILED);
+        }
+        public override void PassthruDisconnect()
+        {
+            //J2534Port.Functions.Disconnect((int)ChannelID);
+            DisconnectFromProtocol();
+            Connected = false;
+        }
+        public override bool PassthruConnect(J2534InitParameters initParameters)
+        {
+            Response<J2534Err> jErr = ConnectToProtocol(initParameters.Protocol, initParameters.Baudrate, initParameters.Connectflag, ref ChannelID);
+            if (jErr.Status != ResponseStatus.Success) return false;
+            Protocol = initParameters.Protocol;
+            IsProtocolOpen = true;
+            Connected = true;
+            if (!SetConfigParams(initParameters, ChannelID))
+            {
+                Logger("Failed to set parameters");
+                return false;
+            }
+            return true;
         }
 
         public override void Disconnect()
@@ -1201,8 +1237,11 @@ namespace UniversalPatcher
                 if (ChannelID != ChannelID2)
                 {
                     OBDError = J2534Port.Functions.Disconnect((int)ChannelID2);
-                    var item = protocol_channel.First(x => x.Value == ChannelID2);
-                    protocol_channel.Remove(item.Key);
+                    KeyValuePair<String,int> item = protocol_channel.FirstOrDefault(x => x.Value == ChannelID2);
+                    if (item.Key != null)
+                    {
+                        protocol_channel.Remove(item.Key);
+                    }
                 }
                 ChannelID2 = -1;
                 if (OBDError != J2534Err.STATUS_NOERROR)
@@ -1268,19 +1307,25 @@ namespace UniversalPatcher
                     }
                     if (OBDError != J2534Err.STATUS_NOERROR)
                     {
-                        LoggerBold("Failed to set filter, J2534 error: " + OBDError.ToString());
+                        LoggerBold("Failed to set filter, J2534 error: " + OBDError.ToString() + ", Protocol: " + Proto.ToString());
                         return null;
                     }
                     newFiltes.Add(filterId);
                     if (Secondary)
                     {
-                        Filters2.Add(filterId);
+                        if (!Filters2.Contains(filterId))
+                        {
+                            Filters2.Add(filterId);
+                        }
                     }
                     else
                     {
-                        Filters.Add(filterId);
+                        if (!Filters.Contains(filterId))
+                        {
+                            Filters.Add(filterId);
+                        }
                     }
-                    Logger("Added filter, ID: " + filterId.ToString());
+                    Logger("Added filter, ID: " + filterId.ToString() +", Protocol: " + Proto.ToString());
                     Debug.WriteLine("Filter set");
                 }
                 return newFiltes.ToArray(); 
@@ -1378,7 +1423,10 @@ namespace UniversalPatcher
                 OBDError = J2534Port.Functions.StartMsgFilter(ChID, Filtertype, maskMsg, patternMsg, ref tempfilter);
                 if (OBDError != J2534Err.STATUS_NOERROR) 
                     return Response.Create(ResponseStatus.Error, OBDError);
-                Filters.Add(tempfilter);
+                if (!Filters.Contains(tempfilter))
+                {
+                    Filters.Add(tempfilter);
+                }
                 return Response.Create(ResponseStatus.Success, OBDError);
             }
             catch (Exception ex)
@@ -1568,7 +1616,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        OBDError = J2534Port.Functions.Connect((int)DeviceID, j2534Init.Protocol, j2534Init.Connectflag, (BaudRate)Enum.Parse(typeof(BaudRate), j2534Init.Baudrate), ref ChID);
+                        OBDError = J2534Port.Functions.Connect((int)DeviceID, j2534Init.Protocol, j2534Init.Connectflag,  j2534Init.Baudrate, ref ChID);
                         if (OBDError != J2534Err.STATUS_NOERROR)
                         {
                             LoggerBold("Error setting protocol: " + OBDError.ToString());

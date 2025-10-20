@@ -126,6 +126,7 @@ namespace UniversalPatcher
             {
                 port.ClosePort();
                 port.Dispose();
+                port = null;
             }
             Debug.WriteLine("Port closed");
         }

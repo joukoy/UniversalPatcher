@@ -16,6 +16,7 @@ namespace UniversalPatcher
         public int DiagID { get; set; }
         public byte ModuleID { get; set; }
         public string ModuleDescription { get; set; }
+        public DataLogger.LoggingProtocol Subnet { get; set; }
 
         public override string ToString()
         {

@@ -784,3 +784,8 @@
 - Logger: Fixed multiple message handling bug in J2534 driver
 - Logger: Fixed bug: Protocol selection was available for devices which don't support CAN
 
+0.23.3
+- Logger: Added selection for Connectflag
+- Logger: Bug fixes for Query CAN devices
+- Logger: Bug fixes for ELM327 CAN driver
+- Logger: Bug fixes for Serial VB

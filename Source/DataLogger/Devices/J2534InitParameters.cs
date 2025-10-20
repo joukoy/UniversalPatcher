@@ -13,7 +13,6 @@ namespace UniversalPatcher
         {
             this.VPWLogger = false;
             Protocol = ProtocolID.J1850VPW;
-            Baudrate = "";
             Sconfigs = "";
             Kinit = KInit.None;
             InitBytes = "";
@@ -28,7 +27,6 @@ namespace UniversalPatcher
         {
             this.VPWLogger = VpwLogger;
             Protocol = ProtocolID.J1850VPW; 
-            Baudrate = "";
             Sconfigs = "";
             Kinit = KInit.None;
             InitBytes = "";
@@ -42,7 +40,7 @@ namespace UniversalPatcher
         public bool VPWLogger { get; set; }
         public bool Secondary { get; set; }
         public ProtocolID Protocol { get; set; }
-        public string Baudrate { get; set; }
+        public BaudRate Baudrate { get; set; }
         public string Sconfigs { get; set; }
         public KInit Kinit { get; set; }
         public string InitBytes { get; set; }

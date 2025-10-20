@@ -948,52 +948,60 @@ namespace UniversalPatcher
             List<byte> retVal = new List<byte>();
             try
             {
+                if (waitanswer)
+                {
+                    Logger("Waiting for devices", false);
+                }
                 Debug.WriteLine("Devices on bus?");
                 //LogDevice.ClearMessageBuffer();
                 LogDevice.ClearMessageQueue();
                 //LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
-                byte[] queryMsg = { Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x20 };
-                bool m = LogDevice.SendMessage(new OBDMessage(queryMsg) ,100);
-                if (m)
+                OBDMessage queryMsg1 = new OBDMessage(new  byte[]{ Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x20 });
+                OBDMessage queryMsg2 = new OBDMessage(new byte[] { Priority.Physical0, DeviceId.Broadcast, DeviceId.Tool, 0x28, 0x00 });
+                OBDMessage[] querys = { queryMsg1, queryMsg2 };
+                foreach (OBDMessage queryMsg in querys)
                 {
-                    //Debug.WriteLine("OK" );
-                }
-                else
-                {
-                    Logger("No respond to Query devices message");
-                    Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
-                    //Receiver.SetReceiverPaused(false);
-                    return new Response<List<byte>>(ResponseStatus.Error,retVal);
-                }
-                if (waitanswer)
-                {
-                    Logger("Waiting for devices", false);
-                    for (int wait = 0; wait < 3; wait++)
+                    bool m = LogDevice.SendMessage(queryMsg, 100);
+                    if (m)
                     {
-                        Thread.Sleep(100);
-                        DateTime startTime = DateTime.Now;
-                        OBDMessage resp;
-                        do
-                        {
-                            resp = LogDevice.ReceiveMessage(true);
-                            if (resp != null && resp.Length > 3 && resp[1] == DeviceId.Tool && resp[3] == 0x60)
-                            {
-                                byte module = resp[2];
-                                if (!retVal.Contains(module))
-                                    retVal.Add(module);
-                                Debug.WriteLine("Response: " + resp.ToString());
-                            }
-                            if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(300))
-                            {
-                                Debug.WriteLine("Timeout waiting for null message");
-                                break;
-                            }
-                        } while (resp != null);
-                        Logger(".", false);
-                        Application.DoEvents();
+                        //Debug.WriteLine("OK" );
                     }
-                    Logger(" [Done]");
+                    else
+                    {
+                        Logger("No respond to Query devices message");
+                        Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg.Data, b => b.ToString("X2"))));
+                        //Receiver.SetReceiverPaused(false);
+                        return new Response<List<byte>>(ResponseStatus.Error, retVal);
+                    }
+                    if (waitanswer)
+                    {
+                        for (int wait = 0; wait < 3; wait++)
+                        {
+                            Thread.Sleep(100);
+                            DateTime startTime = DateTime.Now;
+                            OBDMessage resp;
+                            do
+                            {
+                                resp = LogDevice.ReceiveMessage(true);
+                                if (resp != null && resp.Length > 3 && resp[1] == DeviceId.Tool && resp[3] == 0x60)
+                                {
+                                    byte module = resp[2];
+                                    if (!retVal.Contains(module))
+                                        retVal.Add(module);
+                                    Debug.WriteLine("Response: " + resp.ToString());
+                                }
+                                if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(300))
+                                {
+                                    Debug.WriteLine("Timeout waiting for null message");
+                                    break;
+                                }
+                            } while (resp != null);
+                            Logger(".", false);
+                            Application.DoEvents();
+                        }
+                    }
                 }
+                Logger("[Done]");
                 //Receiver.SetReceiverPaused(false);
                 return new Response<List<byte>>(ResponseStatus.Success, retVal);
             }
@@ -1491,6 +1499,7 @@ namespace UniversalPatcher
             {
                 logwriter = null;
                 LogDevice.Dispose();
+                LogDevice = null;
                 var st = new StackTrace(ex, true);
                 // Get the top stack frame
                 var frame = st.GetFrame(st.FrameCount - 1);

@@ -639,6 +639,14 @@ namespace UniversalPatcher
         {
             return false;
         }
+        public virtual void PassthruDisconnect()
+        {
+            return;
+        }
+        public virtual bool PassthruConnect(J2534InitParameters initParameters)
+        {
+            return true;
+        }
         public virtual Response<int> Ioctl(int ioctlID, int input)
         {
             return new Response<int>(ResponseStatus.Refused,0);

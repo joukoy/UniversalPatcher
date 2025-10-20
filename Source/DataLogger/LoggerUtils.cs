@@ -746,4 +746,402 @@ public static class LoggerUtils
         }
     }
 
+    public static List<CANDevice> SearchAllDevicesOnBus(Device LogDevice)
+    {
+        List<CANDevice> retVal = new List<CANDevice>();
+        List<CANDevice> CanNodes = new List<CANDevice>();
+        Logger("Query devices on bus, High Speed CAN");
+        CanNodes = QueryConnectedCanDevices(false, LoggingProtocol.HSCAN, LogDevice);
+        if (CanNodes.Count > 0)
+        {
+            retVal.AddRange(CanNodes);
+            Logger("Found " + CanNodes.Count.ToString() + " nodes (HSCAN)");
+        }
+        Logger("Query devices on bus, Low Speed CAN");
+        //DisconnectCan();
+        CanNodes = QueryConnectedCanDevices(false, LoggingProtocol.LSCAN, LogDevice);
+        if (CanNodes.Count > 0)
+        {
+            retVal.AddRange(CanNodes);
+            Logger("Found " + CanNodes.Count.ToString() + " nodes (LSCAN)");
+        }
+
+        Logger("Query devices on bus, VPW");
+        CanNodes = QueryConnectedCanDevices(false, LoggingProtocol.VPW, LogDevice);
+        if (CanNodes.Count > 0)
+        {
+            retVal.AddRange(CanNodes);
+            Logger("Found " + CanNodes.Count.ToString() + " nodes (VPW)");
+        }
+
+
+        Logger("Found " + retVal.Count.ToString() + " nodes (total)");
+
+        return retVal;
+    }
+
+    public static List<CANDevice> QueryConnectedCanDevices(bool RunExtra, LoggingProtocol protocol, Device LogDevice)
+    {
+        int[] ExpectedMsg;
+        List<CANDevice> retVal = new List<CANDevice>();
+        try
+        {
+            Logger("Query CAN devices on bus");
+            if (LogDevice != null && LogDevice.Connected)
+            {
+                //LogDevice.Disconnect();
+                Logger("Disconnecting previous connection");
+                LogDevice.PassthruDisconnect();
+            }
+            if (protocol == LoggingProtocol.HSCAN)
+            {
+                J2534InitParameters jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.CAN;
+                jParms.Baudrate = BaudRate.ISO15765_500000;
+                jParms.Connectflag = ConnectFlag.NONE;
+                jParms.PassFilters = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine;
+                jParms.PassFilters += "Mask: 0000FFE0,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                jParms.PassFilters += "Pattern:00000640" + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                if (!LogDevice.PassthruConnect(jParms))
+                {
+                    LoggerBold("Error connecting");
+                    return retVal;
+                }
+                Application.DoEvents();
+                //Use manual keepalive in preutil
+                //string pMsg = "00 00 01 01 FE 3E:1600:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
+                //LogDevice.StartPeriodicMsg(pMsg, false);
+                //LogDevice.SetWriteTimeout(AppSettings.TimeoutJ2534Write);
+                //Filter2
+                string filter2 = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine +
+                    "Mask: 0000FFF8,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine +
+                    "Pattern:0000" + datalogger.CanDevice.ResID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE";
+                int[] fltrs = LogDevice.SetupFilters(filter2, false, false);
+                if (fltrs == null || fltrs.Length == 0)
+                {
+                    return retVal;
+                }
+            }
+            else if (protocol == LoggingProtocol.LSCAN)
+            {
+                J2534InitParameters jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.SW_CAN_PS;
+                jParms.Baudrate = BaudRate.ISO15765_33K3;
+                jParms.Connectflag = ConnectFlag.NONE;
+                jParms.Sconfigs = "J1962_PINS=$00000100";
+                jParms.PassFilters = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine;
+                jParms.PassFilters += "Mask: 0000FFE0,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                jParms.PassFilters += "Pattern:00000640" + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                if (!LogDevice.PassthruConnect(jParms))
+                {
+                    LoggerBold("Error connecting");
+                    return retVal;
+                }
+                //LogDevice.SetJ2534Configs("J1962_PINS=$00000100", false);
+                //NO mixed format for SW_CAN_PS
+                //LogDevice.SetJ2534Configs("CAN_MIXED_FORMAT=1", false);
+                /*
+                string PassFilters = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine;
+                PassFilters += "Mask: 0000FFE0,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                PassFilters += "Pattern:00000640" + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                int[] fltrs = LogDevice.SetupFilters(PassFilters, false, true);
+                if (fltrs == null || fltrs.Length == 0)
+                {
+                    return retVal;
+                }
+                */
+                //LogDevice.SetJ2534Configs("CAN_MIXED_FORMAT=1", false);
+                byte[] preMsg = new byte[] { 0x00, 0x00, 0x01, 0x00 };
+                OBDMessage preObd = new OBDMessage(preMsg);
+                preObd.Txflag = TxFlag.SW_CAN_HV_TX;
+                if (LogDevice.SendMessage(preObd, 0))
+                {
+                    Thread.Sleep(500);
+                    preMsg = new byte[] { 0x00, 0x00, 0x01, 0x01, 0xFD, 0x02, 0x10, 0x04, 0x00, 0x00, 0x00, 0x00 };
+                    preObd = new OBDMessage(preMsg);
+
+                    LogDevice.SendMessage(preObd, 1);
+                    ExpectedMsg = new int[] { -1 };
+                    byte[] response = ReceiveResponse(LogDevice,ExpectedMsg, ": ", true, true, false, true);
+                    if (response == null)
+                    {
+                        Logger("No response with SW_CAN_HV_RX");
+                        return retVal;
+                    }
+                }
+                else
+                {
+                    return retVal;
+                }
+            }
+            else if (protocol == LoggingProtocol.VPW)
+            {
+                J2534InitParameters jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.J1850VPW;
+                jParms.Baudrate = BaudRate.J1850VPW;
+                jParms.Connectflag = ConnectFlag.NONE;
+                if (!LogDevice.PassthruConnect(jParms))
+                {
+                    LoggerBold("Error connecting");
+                    return retVal;
+                }
+                LogDevice.SetAnalyzerFilter();
+                Response<List<byte>> modules = datalogger.QueryDevicesOnBus(true);
+                for (int m = 0; m < modules.Value.Count; m++)
+                {
+                    byte b = modules.Value[m];
+                    CANDevice vpwDev = new CANDevice();
+                    vpwDev.ModuleID = b;
+                    vpwDev.Subnet = LoggingProtocol.VPW;
+                    if (analyzer.PhysAddresses.ContainsKey(b))
+                    {
+                        vpwDev.ModuleName = analyzer.PhysAddresses[b];
+                    }
+                    else
+                    {
+                        vpwDev.ModuleName = b.ToString("X2");
+                    }
+                    retVal.Add(vpwDev);
+                }
+                return retVal;
+
+            }
+
+            Logger("Sending module iD command 1a B0");
+            byte[] Msg = new byte[] { 0x00, 0x00, 0x01, 0x01, 0xFE, 0x02, 0x1A, 0xB0, 0x00, 0x00, 0x00, 0x00 };
+            OBDMessage oMsg = new OBDMessage(Msg);
+            if (!LogDevice.SendMessage(oMsg, 3))
+            {
+                return retVal;
+            }
+            ExpectedMsg = new int[] { 0x00, 0x00, 0x07, 0xE8, 0x03, 0x5A, 0xB0, -1, 0xAA, 0xAA, 0xAA, 0xAA };
+            while (true)
+            {
+                byte[] response = ReceiveResponse(LogDevice,ExpectedMsg, "Query CAN devices on bus: ", true, true);
+                if (response != null && response.Length > 7 && response[5] == 0x5A)
+                {
+                    //CANDevice device = CanModules.Where(X => X.ModuleID == response[7]).FirstOrDefault();
+                    CANDevice device = CanModules.Where(X => X.ResID == (response[2] << 8 | response[3])).FirstOrDefault();
+                    if (device != null)
+                    {
+                        CANDevice newDev = device.ShallowCopy();
+                        newDev.Subnet = protocol;
+                        CANDevice prevDev = retVal.Where(X => X.ModuleID == response[7] && X.Subnet == newDev.Subnet).FirstOrDefault();
+                        if (prevDev == null)
+                        {
+                            retVal.Add(newDev);
+                            Logger("Response from: " + device.ModuleName + " [" + device.ModuleID.ToString("X2") + "][" + device.ResID.ToString("X4") + "]");
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if (retVal.Count == 0 && protocol == LoggingProtocol.LSCAN)
+            {
+                Logger("No answer, setting new filter");
+                string PassFilters = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine;
+                PassFilters += "Mask: 00000700,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                PassFilters += "Pattern:00000300" + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                LogDevice.SetupFilters(PassFilters, false, true);
+                Msg = new byte[] { 0x00, 0x00, 0x01, 0x01, 0xFE, 0x01, 0xA2, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                oMsg = new OBDMessage(Msg);
+                LogDevice.SendMessage(oMsg, 3);
+                ExpectedMsg = new int[] { 0x00, 0x00, 0x03, 0x60, 0x02, 0xE2, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                byte[] response = ReceiveResponse(LogDevice, ExpectedMsg, "Query CAN devices on bus: ", true, true);
+                if (response != null && response.Length > 7 && response[5] == 0xE2)
+                {
+                    Logger("Answer ok");
+                }
+                else
+                {
+                    Logger("Unknown answer, continue anyway??");
+                }
+
+                Logger("Sending module iD command 1a B0 (Second try)");
+                Msg = new byte[] { 0x00, 0x00, 0x01, 0x01, 0xFE, 0x02, 0x1A, 0xB0, 0x00, 0x00, 0x00, 0x00 };
+                oMsg = new OBDMessage(Msg);
+                if (LogDevice.SendMessage(oMsg, 0x03))
+                {
+                    ExpectedMsg = new int[] { 0x00, 0x00, 0x07, 0xE8, 0x03, 0x5A, 0xB0, -1, 0xAA, 0xAA, 0xAA, 0xAA };
+                    while (true)
+                    {
+                        byte[] resp = ReceiveResponse(LogDevice, ExpectedMsg, "Query CAN devices on bus: ", true, true);
+                        if (resp != null && resp.Length > 7 && resp[5] == 0x5A)
+                        {
+                            //CANDevice device = CanModules.Where(X => X.ModuleID == response[7]).FirstOrDefault();
+                            CANDevice device = CanModules.Where(X => X.ResID == (resp[2] << 8 | resp[3])).FirstOrDefault();
+                            if (device != null)
+                            {
+                                CANDevice newDev = device.ShallowCopy();
+                                newDev.Subnet = LoggingProtocol.LSCAN;
+                                CANDevice prevDev = retVal.Where(X => X.ModuleID == resp[7] && X.Subnet == newDev.Subnet).FirstOrDefault();
+                                if (prevDev == null)
+                                {
+                                    retVal.Add(newDev);
+                                    Logger("Response from: " + device.ModuleName + " [" + device.ModuleID.ToString("X2") + "][" + device.ResID.ToString("X4") + "]");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    return retVal;
+                }
+
+            }
+            return retVal;
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("LoggerUtils, line " + line + ": " + ex.Message);
+        }
+        return retVal;
+    }
+
+    public static  byte[] ReceiveResponse(Device LogDevice, int[] ExpectedMsg, string question, bool Preutil, bool BlockMsg, bool StopOn78 = false, bool waifor_HV_RX = false)
+    {
+        byte[] retVal = null;
+        try
+        {
+            int ReadTimeout = 300;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < ExpectedMsg.Length; i++)
+            {
+                if (ExpectedMsg[i] == -1)
+                {
+                    sb.Append("XX");
+                }
+                else if (ExpectedMsg[i] == -2)
+                {
+                    sb.Append("(XX)");
+                }
+                else if (ExpectedMsg[i] == -3)
+                {
+                    sb.Append("ID" + i.ToString());
+                }
+                else
+                {
+                    sb.Append(ExpectedMsg[i].ToString("X2"));
+                }
+                sb.Append(" ");
+            }
+            Logger("Expecting value: " + sb.ToString().Trim());
+            DateTime startTime = DateTime.Now;
+            bool done = false;
+            retVal = new byte[0];
+            byte statusPos = 4;
+            if (Preutil)
+            {
+                statusPos = 5;
+            }
+            do
+            {
+                OBDMessage oMsg = LogDevice.ReceiveMessage(true);
+                if (oMsg != null && oMsg.Length > statusPos)
+                {
+                    byte statusByte = (byte)ExpectedMsg[statusPos];
+                    byte[] resp = oMsg.GetBytes();
+                    retVal = resp;
+                    if (waifor_HV_RX)
+                    {
+                        if (oMsg.Rxstatus == J2534DotNet.RxStatus.SW_CAN_HV_RX || AppSettings.LoggerJ2534Device.ToLower().Contains("sim"))
+                        {
+                            done = true;
+                            break;
+                        }
+                    }
+                    else if (resp[statusPos] == statusByte)
+                    {
+                        BlockMsg = false;
+                        if (statusByte == 0x76 && resp.Length > statusPos + 2)
+                        {
+                            if (resp[statusPos + 2] == 0x78 || resp[statusPos + 2] == 0x6F)
+                            {
+                                if (StopOn78)
+                                {
+                                    done = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    Debug.WriteLine("Device busy, waiting for more messages");
+                                    startTime = DateTime.Now;
+                                    Thread.Sleep(100);
+                                }
+                            }
+                            else if (resp[statusPos + 2] == 0x65 || resp[statusPos + 2] == 0x73 || resp[statusPos + 2] == 0x86)
+                            {
+                                Debug.WriteLine("Receive success (" + resp[statusPos + 2].ToString("X2") + ")");
+                                done = true;
+                                break;
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Receive error (" + resp[statusPos + 2].ToString("X2") + ")");
+                                done = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Receive success (" + resp[statusPos].ToString("X2") + ")");
+                            done = true;
+                            break;
+                        }
+                    }
+                    else if (resp[statusPos] == 0x7F)
+                    {
+                        BlockMsg = false;
+                        if (resp.Length > statusPos + 2 && (resp[statusPos + 2] == 0x78 || resp[statusPos + 2] == 0x23))
+                        {
+                            Debug.WriteLine("Device busy, waiting for more messages (" + resp[statusPos + 2].ToString("X2") + ")");
+                            startTime = DateTime.Now;
+                            Thread.Sleep(100);
+                        }
+                        else if (resp.Length > statusPos + 2)
+                        {
+                            byte errByte = resp[statusPos + 2];
+                            Debug.WriteLine("Device returned error " + errByte.ToString("X2") + ": " + PcmResponses[errByte]);
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Device returned error, stop listening");
+                            done = true;
+                            break;
+                        }
+                    }
+                }
+                if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(ReadTimeout))
+                {
+                    Logger("Timeout [" + ReadTimeout.ToString() + "]  waiting for: " + sb.ToString());
+                    break;
+                }
+            } while (!done);
+            return retVal;
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            Logger("Error, LoggerUtils line " + line + ": " + ex.Message);
+            return null;
+        }
+    }
+
 }

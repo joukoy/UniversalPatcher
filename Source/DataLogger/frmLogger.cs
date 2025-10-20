@@ -209,6 +209,7 @@ namespace UniversalPatcher
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             //comboPidEditorType.ValueMember = "Value";
             //comboPidEditorType.DisplayMember = "Name";
+            comboConnectFlag.DataSource = Enum.GetValues(typeof(ConnectFlag));
             comboPidEditorType.DataSource = Enum.GetValues(typeof(LogParam.DefineBy));
             comboPidEditorDatatype.DataSource = Enum.GetValues(typeof(LogParam.ProfileDataType));
             if (!string.IsNullOrEmpty(datalogger.OS))
@@ -1792,7 +1793,7 @@ namespace UniversalPatcher
                         j2534DeviceList.Text = jDevList.FirstOrDefault().Name;
                         comboJ2534DLL.Text = jDevList.FirstOrDefault().Name;
                     }
-                    j2534RadioButton.Checked = AppSettings.LoggerUseJ2534;
+                    //j2534RadioButton.Checked = AppSettings.LoggerUseJ2534;
                     //groupProtocol.Enabled = AppSettings.LoggerUseJ2534;
                 }
                 LoadJ2534Protocols();
@@ -2074,6 +2075,7 @@ namespace UniversalPatcher
                 }
 
                 txtTstampFormat.Text = AppSettings.LoggerTimestampFormat;
+                j2534RadioButton.Checked = AppSettings.LoggerUseJ2534;
                 if (AppSettings.LoggerPortType == iPortType.Serial)
                 {
                     radioRS232.Checked = true;
@@ -2100,7 +2102,7 @@ namespace UniversalPatcher
 
                 comboSerialDeviceType.Text = AppSettings.LoggerSerialDeviceType;
 
-                txtWBCanId.Text = AppSettings.WBCanID.ToString("X");
+                txtWBCanId.Text = AppSettings.WBCanID;
                 comboWBType.DataSource = Enum.GetValues(typeof(WideBand.WBType));
                 comboWBType.Text = AppSettings.Wbtype.ToString();
                 if (AppSettings.Wbtype == WideBand.WBType.Elm327_CAN)
@@ -2131,6 +2133,7 @@ namespace UniversalPatcher
                 numRetryTimes.Value = AppSettings.RetryWriteTimes;
                 j2534OptionsGroupBox.Enabled = AppSettings.LoggerUseJ2534;
                 txtPcmAddress.Text = AppSettings.LoggerCanPcmAddress.ToString("X4");
+                comboConnectFlag.Text = AppSettings.LoggerConnectFlag.ToString();
                 numAnalyzerNumMessages.Value = AppSettings.AnalyzerNumMessages;
                 if (AppSettings.LoggerRestartAfterSeconds > 0)
                     chkRestartLogging.Checked = true;
@@ -2141,19 +2144,19 @@ namespace UniversalPatcher
                 if (AppSettings.loggerProtocol == LoggingProtocol.HSCAN)
                 {
                     radioHSCAN.Checked = true;
-                    txtPcmAddress.Enabled = false;
+                    groupCanParams.Enabled = true;
                 }
                 else if (AppSettings.loggerProtocol == LoggingProtocol.LSCAN)
                 {
                     radioLSCan.Checked = true;
-                    txtPcmAddress.Enabled = false;
+                    groupCanParams.Enabled = true;
                 }
                 else if (AppSettings.loggerProtocol == LoggingProtocol.VPW)
                 {
                     radioVPW.Checked = true;
-                    txtPcmAddress.Enabled = true;
+                    groupCanParams.Enabled = false;
                 }
-                chkStartPeiodic.Checked = AppSettings.LoggerStartPeriodic;
+                chkStartPeriodic.Checked = AppSettings.LoggerStartPeriodic;
                 chkWakeUp.Checked = AppSettings.LoggerWakeUp;
 
                 comboStartLoggingKey.Items.Clear();
@@ -2429,6 +2432,7 @@ namespace UniversalPatcher
                     }
                     //Disconnect(true);
                     datalogger.LogDevice.Dispose();
+                    datalogger.LogDevice = null;
                 }
                 if (jConsole != null && jConsole.JDevice != null && jConsole.Connected)
                 {
@@ -2827,11 +2831,12 @@ namespace UniversalPatcher
                 AppSettings.loggerProtocol = LoggingProtocol.HSCAN;
             else if (radioLSCan.Checked)
                 AppSettings.loggerProtocol = LoggingProtocol.LSCAN;
-            AppSettings.LoggerStartPeriodic = chkStartPeiodic.Checked;
+            AppSettings.LoggerStartPeriodic = chkStartPeriodic.Checked;
             AppSettings.LoggerWakeUp = chkWakeUp.Checked;
             chkTestPidCompatibility.Checked = chkTestPidCompatibility.Checked;
             if (HexToUshort(txtPcmAddress.Text, out ushort pcmaddr))
                 AppSettings.LoggerCanPcmAddress = pcmaddr;
+            AppSettings.LoggerConnectFlag = (ConnectFlag)comboConnectFlag.SelectedValue;
             AppSettings.Save();
 
         }
@@ -2883,6 +2888,8 @@ namespace UniversalPatcher
                 {
                     Logger("Connecting (VPW)...");
                     datalogger.useVPWFilters = chkVPWFilters.Checked;
+                    //Set for default values:
+                    datalogger.CanDevice = CANQuery.GetDeviceAddresses(AppSettings.LoggerCanPcmAddress);
                 }
                 else
                 {
@@ -2940,7 +2947,7 @@ namespace UniversalPatcher
                 {
                     jParams = new J2534InitParameters(true);
                     jParams.Protocol = ProtocolID.J1850VPW;
-                    jParams.Baudrate = "J1850VPW_10400";
+                    jParams.Baudrate =  BaudRate.J1850VPW_10400;
                 }
                 else
                 {
@@ -2950,19 +2957,21 @@ namespace UniversalPatcher
                     {
                         jParams.Sconfigs = "CAN_MIXED_FORMAT=1";
                         jParams.Protocol = ProtocolID.ISO15765;
-                        jParams.Baudrate = "ISO15765_500000";
+                        jParams.Baudrate = BaudRate.ISO15765_500000;
                     }
                     else
                     {
                         //jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
                         jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
                         jParams.Protocol = ProtocolID.SW_ISO15765_PS;
-                        jParams.Baudrate = "ISO15765_33K3";
+                        jParams.Baudrate = BaudRate.ISO15765_33K3;
                     }
+                    jParams.CanPCM = datalogger.CanDevice;
+                    jParams.Connectflag = (ConnectFlag)comboConnectFlag.SelectedValue;
                     jParams.PassFilters = "Type:FLOW_CONTROL_FILTER,Name:CANFlasherFlow" + Environment.NewLine;
                     jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "Pattern:0000" + datalogger.CanDevice.ResID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "FlowControl:0000" + datalogger.CanDevice.RequestID.ToString("X4") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:" + datalogger.CanDevice.ResID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "FlowControl:" + datalogger.CanDevice.RequestID.ToString("X8") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
                 }
                 if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text), jParams))
                 {
@@ -2972,6 +2981,7 @@ namespace UniversalPatcher
                         datalogger.port.Dispose();
                     }
                     datalogger.LogDevice.Dispose();
+                    datalogger.LogDevice = null;
                     return false;
                 }
                 if (Oscript == null)
@@ -3002,20 +3012,20 @@ namespace UniversalPatcher
                     if (radioHSCAN.Checked)
                     {
                         jParams.Protocol = ProtocolID.CAN;
-                        jParams.Baudrate = "ISO15765_500000";
+                        jParams.Baudrate = BaudRate.ISO15765_500000;
                     }
                     else
                     {
                         //datalogger.LogDevice.SetJ2534Configs( "J1962_PINS=$00000100",false);
                         jParams.Protocol = ProtocolID.SW_CAN_PS;
-                        jParams.Baudrate = "ISO15765_33K3";
+                        jParams.Baudrate = BaudRate.ISO15765_33K3;
                     }
                     jParams.Secondary = true;
                     jParams.SeparateProtoByChannel = true;
                     jParams.UsePrimaryChannel = true;
-                    jParams.PassFilters = "Type:PASS_FILTER,Name:CANFlasherPass" + Environment.NewLine;
+                    jParams.PassFilters = "Type:PASS_FILTER,Name:CANLoggerPass" + Environment.NewLine;
                     jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "Pattern:0000" + datalogger.CanDevice.DiagID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:" + datalogger.CanDevice.DiagID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                     datalogger.LogDevice.ConnectSecondaryProtocol(jParams);
                     if(radioLSCan.Checked && chkWakeUp.Checked)
                     {
@@ -3026,7 +3036,7 @@ namespace UniversalPatcher
                         datalogger.LogDevice.SendMessage(wMsg, 0);
                         Thread.Sleep(500);
                     }
-                    if (chkStartPeiodic.Checked)
+                    if (chkStartPeriodic.Checked)
                     {
                         string pMsg = "00 00 01 01 FE 3E:2500:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
                         datalogger.LogDevice.StartPeriodicMsg(pMsg, false);
@@ -3082,6 +3092,121 @@ namespace UniversalPatcher
                 return false;
             }
         }
+        public bool ReConnect()
+        {
+            try
+            {
+
+                J2534InitParameters jParams;
+                jParams = new J2534InitParameters();
+                jParams.SeparateProtoByChannel = true;
+                if (radioVPW.Checked)
+                {
+                    jParams.Protocol = ProtocolID.J1850VPW;
+                    jParams.Baudrate = BaudRate.J1850VPW_10400;
+                }
+                else
+                {
+                    if (radioHSCAN.Checked)
+                    {
+                        jParams.Sconfigs = "CAN_MIXED_FORMAT=1";
+                        jParams.Protocol = ProtocolID.ISO15765;
+                        jParams.Baudrate = BaudRate.ISO15765_500000;
+                    }
+                    else
+                    {
+                        //jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
+                        jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
+                        jParams.Protocol = ProtocolID.SW_ISO15765_PS;
+                        jParams.Baudrate = BaudRate.ISO15765_33K3;
+                    }
+                    jParams.CanPCM = datalogger.CanDevice;
+                    jParams.Connectflag = (ConnectFlag)comboConnectFlag.SelectedValue;
+                    jParams.PassFilters = "Type:FLOW_CONTROL_FILTER,Name:CANFlasherFlow" + Environment.NewLine;
+                    jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:0000" + datalogger.CanDevice.ResID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "FlowControl:0000" + datalogger.CanDevice.RequestID.ToString("X4") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
+                }
+                if (!datalogger.LogDevice.PassthruConnect(jParams))
+                {
+                    if (datalogger.port != null)
+                    {
+                        datalogger.port.ClosePort();
+                        datalogger.port.Dispose();
+                    }
+                    datalogger.LogDevice.Dispose();
+                    datalogger.LogDevice = null;
+                    return false;
+                }
+                datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
+
+                datalogger.LogDevice.SetWriteTimeout(AppSettings.TimeoutJ2534Write);
+                datalogger.LogDevice.SetReadTimeout(AppSettings.TimeoutReceive);
+
+                jParams = new J2534InitParameters();
+                if (radioVPW.Checked)
+                {
+                    if (datalogger.AnalyzerRunning)
+                    {
+                        datalogger.LogDevice.SetAnalyzerFilter();
+                    }
+                    else
+                    {
+                        datalogger.LogDevice.SetLoggingFilter();
+                    }
+                }
+                else
+                {
+                    if (radioHSCAN.Checked)
+                    {
+                        jParams.Protocol = ProtocolID.CAN;
+                        jParams.Baudrate = BaudRate.ISO15765_500000;
+                    }
+                    else
+                    {
+                        //datalogger.LogDevice.SetJ2534Configs( "J1962_PINS=$00000100",false);
+                        jParams.Protocol = ProtocolID.SW_CAN_PS;
+                        jParams.Baudrate = BaudRate.ISO15765_33K3;
+                    }
+                    jParams.Secondary = true;
+                    jParams.SeparateProtoByChannel = true;
+                    jParams.UsePrimaryChannel = true;
+                    jParams.PassFilters = "Type:PASS_FILTER,Name:CANFlasherPass" + Environment.NewLine;
+                    jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:0000" + datalogger.CanDevice.DiagID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    datalogger.LogDevice.ConnectSecondaryProtocol(jParams);
+                    if (radioLSCan.Checked && chkWakeUp.Checked)
+                    {
+                        byte[] wakeMsg = new byte[] { 00, 00, 01, 00 };
+                        OBDMessage wMsg = new OBDMessage(wakeMsg);
+                        wMsg.Txflag = TxFlag.SW_CAN_HV_TX;
+                        wMsg.SecondaryProtocol = true;
+                        datalogger.LogDevice.SendMessage(wMsg, 0);
+                        Thread.Sleep(500);
+                    }
+                    if (chkStartPeriodic.Checked)
+                    {
+                        string pMsg = "00 00 01 01 FE 3E:2500:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
+                        datalogger.LogDevice.StartPeriodicMsg(pMsg, false);
+                    }
+                }
+                datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false, datalogger.AnalyzerRunning);
+                Logger("Connected");
+                Application.DoEvents();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+                LoggerBold("Connection failed. Check settings");
+                return false;
+            }
+        }
 
         private J2534InitParameters CreateJ2534InitParameters()
         {
@@ -3107,7 +3232,7 @@ namespace UniversalPatcher
                 initParameters.Sconfigs += txtJConsoleConfigs.Text;
             }
             initParameters.Protocol = (ProtocolID)Enum.Parse(typeof(ProtocolID), comboJ2534Protocol.Text);
-            initParameters.Baudrate = comboJ2534Baudrate.Text;
+            initParameters.Baudrate = (BaudRate)Enum.Parse(typeof(BaudRate), comboJ2534Baudrate.Text);
             if (comboJ2534Connectflag.Text.Length > 0)
             {
                 initParameters.Connectflag = (ConnectFlag)Enum.Parse(typeof(ConnectFlag), comboJ2534Connectflag.Text);
@@ -3142,7 +3267,7 @@ namespace UniversalPatcher
                 initParameters.Sconfigs += txtJConsoleConfigs2.Text;
             }
             initParameters.Protocol = (ProtocolID)Enum.Parse(typeof(ProtocolID), comboJ2534Protocol2.Text);
-            initParameters.Baudrate = comboJ2534Baudrate2.Text;
+            initParameters.Baudrate = (BaudRate)Enum.Parse(typeof(BaudRate),comboJ2534Baudrate2.Text);
             if (comboJ2534Connectflag2.Text.Length > 0)
             {
                 initParameters.Connectflag = (ConnectFlag)Enum.Parse(typeof(ConnectFlag), comboJ2534Connectflag2.Text);
@@ -3166,7 +3291,7 @@ namespace UniversalPatcher
             txtJ2534SetPins.Text = "";
             comboJ2534Init.Text = initParameters.Kinit.ToString();
             txtJConsoleConfigs.Text = initParameters.Sconfigs;
-            comboJ2534Baudrate.Text = initParameters.Baudrate;
+            comboJ2534Baudrate.Text = initParameters.Baudrate.ToString();
             comboJ2534Connectflag.Text = initParameters.Connectflag.ToString();
             txtJ2534InitBytes.Text = initParameters.InitBytes;
             txtJ2534PeriodicMsg.Text = initParameters.PerodicMsg;
@@ -3185,7 +3310,7 @@ namespace UniversalPatcher
             Application.DoEvents();
             comboJ2534Init2.Text = initParameters.Kinit.ToString();
             txtJConsoleConfigs2.Text = initParameters.Sconfigs;
-            comboJ2534Baudrate2.Text = initParameters.Baudrate;
+            comboJ2534Baudrate2.Text = initParameters.Baudrate.ToString();
             comboJ2534Connectflag2.Text = initParameters.Connectflag.ToString();
             txtJ2534InitBytes2.Text = initParameters.InitBytes;
             txtJ2534PeriodicMsg2.Text = initParameters.PerodicMsg;
@@ -3217,8 +3342,8 @@ namespace UniversalPatcher
                 else
                 {
                     initParameters = InitParms;
-                    LoadJ2534InitParameters(initParameters);
                 }
+                LoadJ2534InitParameters(initParameters);
                 J2534DotNet.J2534Device dev = jDevList[comboJ2534DLL.SelectedIndex];
                 if (AppSettings.LoggerStartJ2534Process)
                     jConsole.JDevice = new J2534Client(comboJ2534DLL.SelectedIndex);
@@ -3230,6 +3355,7 @@ namespace UniversalPatcher
                 if (!jConsole.JDevice.Initialize(0, initParameters))
                 {
                     jConsole.JDevice.Dispose();
+                    jConsole.JDevice = null;
                     return false;
                 }
                 jConsole.JDevice.Enable4xReadWrite = chkJConsole4x.Checked;
@@ -3257,6 +3383,34 @@ namespace UniversalPatcher
                     J2534InitParameters JSettings2 = CreateJ2534InitParameters2();
                     ConnectJConsole2(JSettings2);
                 }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+                LoggerBold("Connection failed. Check Jconsole settings");
+                return false;
+            }
+        }
+
+        public bool ReConnectJConsole()
+        {
+            try
+            {
+                J2534InitParameters initParameters = CreateJ2534InitParameters();
+                LoadJ2534InitParameters(initParameters);
+                
+                if (!jConsole.JDevice.PassthruConnect(initParameters))
+                {
+                    jConsole.JDevice.Dispose();
+                    jConsole.JDevice = null;
+                    return false;
+                }
+                jConsole.JDevice.Enable4xReadWrite = chkJConsole4x.Checked;
+                labelJconsoleConnected.Text = "Connected";
+                jConsole.Connected = true;
+                Application.DoEvents();
+                //groupJ2534Options.Enabled = false;
                 return true;
             }
             catch (Exception ex)
@@ -3433,13 +3587,14 @@ namespace UniversalPatcher
 
         private void serialRadioButton_CheckedChanged(object sender, EventArgs e)
         {
+            queryCANDevicesMainConnectionToolStripMenuItem.Enabled = !serialRadioButton.Checked;
             if (serialRadioButton.Checked)
             {
                 serialOptionsGroupBox.Enabled = true;
                 j2534OptionsGroupBox.Enabled = false;
                 if (comboSerialDeviceType.Text.Contains("CAN"))
                 {
-                    groupProtocol.Enabled = true;
+                    groupProtocol.Enabled = true;                    
                 }
                 else
                 {
@@ -3464,31 +3619,42 @@ namespace UniversalPatcher
 
         private void comboSerialDeviceType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (j2534RadioButton.Checked)
+            {
+                groupProtocol.Enabled = true;
+                groupCanParams.Enabled = true;
+                return;
+            }
             if (comboSerialDeviceType.Text== ScanToolDeviceImplementation.DeviceType 
                 || comboSerialDeviceType.Text == LegacyElmDeviceImplementation.DeviceType )
             {
                 //comboResponseMode.Text = "SendOnce";
                 //comboResponseMode.Enabled = false;
                 groupProtocol.Enabled = false;
+                groupCanParams.Enabled = false;
                 radioVPW.Checked = true;
             }
             else if (comboSerialDeviceType.Text == AvtDevice.DeviceType)
             {
                 groupProtocol.Enabled = false;
+                groupCanParams.Enabled = false;
                 radioVPW.Checked = true;
                 comboBaudRate.Text = "57600";
             }
             else if (comboSerialDeviceType.Text == UPX_OBD.DeviceType)
             {
                 groupProtocol.Enabled = true;
+                groupCanParams.Enabled = true;
             }
             else if (comboSerialDeviceType.Text == Elm327Device.DeviceType)
             {
                 groupProtocol.Enabled = true;
+                groupCanParams.Enabled = true;
             }
             else
             {
                 groupProtocol.Enabled = false;
+                groupCanParams.Enabled = false;
                 radioVPW.Checked = true;
                 //comboResponseMode.Enabled = true;
                 //comboResponseMode.Text = "SendFast";
@@ -3987,6 +4153,7 @@ namespace UniversalPatcher
                     StopAnalyzer();
                 }
                 datalogger.LogDevice.Dispose();
+                datalogger.LogDevice = null;
                 datalogger.Connected = false;
                 if (string.IsNullOrEmpty(datalogger.OS))
                     labelConnected.Text = "Disconnected";
@@ -5058,6 +5225,18 @@ namespace UniversalPatcher
             try
             {
                 //CANqueryCounter = 0;
+                bool restoreConnection = false;
+                if (jConsole != null && jConsole.Connected)
+                {
+                    restoreConnection = true;
+                    //DisconnectJConsole(true);
+                }
+                else if (string.IsNullOrEmpty(comboJ2534Protocol.Text))
+                {
+                    comboJ2534Protocol.Text = ProtocolID.ISO15765.ToString();
+                    comboJ2534Baudrate.Text = BaudRate.ISO15765_500000.ToString();
+                    Application.DoEvents();
+                }
                 if (!ConnectJConsole(null,null))
                 {
                     return;
@@ -5065,11 +5244,29 @@ namespace UniversalPatcher
                 canQuietResponses = 0;
                 canDeviceResponses = -1;
                 lastResponseTime = DateTime.Now;
-                timerKeepBusQuiet.Enabled = true;
-                timerWaitCANQuery.Enabled = true;
-                canDevs = new List<CANDevice>();
+                //timerKeepBusQuiet.Enabled = true;
+                //timerWaitCANQuery.Enabled = true;
+                //canDevs = new List<CANDevice>();
                 dataGridCANDevices.DataSource = null;
-                jConsole.SetCANBusQuiet();
+                canDevs = SearchAllDevicesOnBus(jConsole.JDevice);
+                dataGridCANDevices.DataSource = canDevs;
+                dataGridCANDevices.Columns[0].DefaultCellStyle.Format = "X4";
+                dataGridCANDevices.Columns[1].DefaultCellStyle.Format = "X4";
+                dataGridCANDevices.Columns[2].DefaultCellStyle.Format = "X4";
+                dataGridCANDevices.Columns[3].DefaultCellStyle.Format = "X2";
+                if (restoreConnection)
+                {
+                    Logger("Restoring original connection");
+                    jConsole.JDevice.PassthruDisconnect();
+                    ReConnectJConsole();
+                }
+                else
+                {
+                    DisconnectJConsole(true);
+                }
+
+                Logger("Done");
+                //jConsole.SetCANBusQuiet();
             }
             catch (Exception ex)
             {
@@ -6385,8 +6582,8 @@ namespace UniversalPatcher
 
         private void radioVPW_CheckedChanged(object sender, EventArgs e)
         {
-            chkStartPeiodic.Enabled = !radioVPW.Checked;
-            txtPcmAddress.Enabled = !radioVPW.Checked;
+            groupCanParams.Enabled = !radioVPW.Checked;
+            //serialRadioButton.Checked = !radioVPW.Checked;
             chkCombinePids.Enabled = !radioVPW.Checked;
             if (radioVPW.Checked)
             {
@@ -6517,32 +6714,51 @@ namespace UniversalPatcher
             if (AppSettings.Wbtype == WideBand.WBType.Elm327_CAN)
             {
                 txtWBCanId.Enabled = true;
-                if (HexToUshort(txtWBCanId.Text, out ushort canid))
-                {
-                    AppSettings.WBCanID = canid;
-                }
+                AppSettings.WBCanID = txtWBCanId.Text;
             }
             else
             {
                 txtWBCanId.Enabled = false;
             }
-            RestartWB();
+            //RestartWB();
         }
 
         private void RestartWB()
         {
-            AppSettings.Save();
-            if (WB != null)
+            try
             {
-                WB.Discard();
+                AppSettings.WBSerial = comboWBport.Text;
+                AppSettings.Wbtype = (WideBand.WBType)comboWBType.SelectedItem;
+                if (AppSettings.Wbtype == WideBand.WBType.Elm327_CAN)
+                {
+                    txtWBCanId.Enabled = true;
+                    AppSettings.WBCanID = txtWBCanId.Text;
+                }
+                else
+                {
+                    txtWBCanId.Enabled = false;
+                }
+                AppSettings.Save();
+                if (WB != null)
+                {
+                    WB.Discard();
+                    WB = null;
+                }
+                WB = new WideBand();
             }
-            WB = new WideBand();
+            catch (Exception ex)
+            {
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLogger line " + line + ": " + ex.Message);
+            }
         }
 
         private void comboWBport_SelectedIndexChanged(object sender, EventArgs e)
         {
             AppSettings.WBSerial = comboWBport.Text;
-            RestartWB();
+            //RestartWB();
         }
 
         private void chkJConsoleTimestamps_CheckedChanged(object sender, EventArgs e)
@@ -6590,6 +6806,11 @@ namespace UniversalPatcher
             if (createDebugLogToolStripMenuItem.Checked)
             {
                 string fName = SelectSaveFile(DebuglogFilter);
+                if (string.IsNullOrEmpty(fName))
+                {
+                    createDebugLogToolStripMenuItem.Checked = false;
+                    return;
+                }
                 DebugFileListener = new FileTraceListener(fName);
                 Debug.Listeners.Add(DebugFileListener);
             }
@@ -7900,11 +8121,8 @@ namespace UniversalPatcher
 
         private void txtWBCanId_TextChanged(object sender, EventArgs e)
         {
-            if (HexToUshort(txtWBCanId.Text, out ushort canid))
-            {
-                AppSettings.WBCanID = canid;
-                RestartWB();
-            }
+            AppSettings.WBCanID = txtWBCanId.Text;
+            RestartWB();
         }
 
         private void btnWbMoreSettings_Click(object sender, EventArgs e)
@@ -8036,6 +8254,71 @@ namespace UniversalPatcher
         private void chkCombinePids_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void queryCANDevicesMainConnectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //CANqueryCounter = 0;
+                bool RestoreConnection = datalogger.Connected;
+                if (!Connect(radioVPW.Checked, false,false,oscript))
+                {
+                    return;
+                }
+                datalogger.Receiver.StopReceiveLoop();
+                dataGridCANDevices.DataSource = null;
+                canDevs = SearchAllDevicesOnBus(datalogger.LogDevice);
+                dataGridCANDevices.DataSource = canDevs;
+                Application.DoEvents();
+                dataGridCANDevices.Columns[1].DefaultCellStyle.Format = "X4";
+                dataGridCANDevices.Columns[2].DefaultCellStyle.Format = "X4";
+                dataGridCANDevices.Columns[3].DefaultCellStyle.Format = "X4";
+                dataGridCANDevices.Columns[4].DefaultCellStyle.Format = "X4";
+                if (RestoreConnection)
+                {
+                    Logger("Restoring original connection");
+                    datalogger.LogDevice.PassthruDisconnect();
+                    if (!ReConnect())
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    Disconnect(true);
+                }
+                Logger("Done");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+        }
+
+        private void btnWBApply_Click(object sender, EventArgs e)
+        {
+            RestartWB();
+
+        }
+
+        private void tabSettings_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnWbInitCmds_Click(object sender, EventArgs e)
+        {
+            string wbInitFile = Path.Combine(Application.StartupPath, "XML", "wbinit.txt");
+            try
+            {
+                System.Diagnostics.Process.Start(wbInitFile);
+            }
+            catch(Exception ex)
+            {
+                LoggerBold(wbInitFile + ": " + ex.Message);
+            }
         }
     }
 }

@@ -865,6 +865,17 @@ namespace UniversalPatcher
             }
             return false;
         }
+        public override void PassthruDisconnect()
+        {
+            PipeSendAndReceive(j2534Command.PassthruDisconnect, null);
+        }
+        public override bool PassthruConnect(J2534InitParameters j2534Init)
+        {
+            Debug.WriteLine("Client Passthru connect");
+            byte[] param = Helpers.ObjectToByteArray(j2534Init);
+            byte[] readBuf = PipeSendAndReceive(j2534Command.PassthruConnect, param);
+            return Convert.ToBoolean(readBuf[0]);
+        }
 
 
         public override bool SetLoggingFilter()

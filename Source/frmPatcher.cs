@@ -4699,6 +4699,11 @@ namespace UniversalPatcher
             if (chkDebugToLogfile.Checked)
             {
                 string fName = SelectSaveFile(DebuglogFilter);
+                if (string.IsNullOrEmpty(fName))
+                {
+                    chkDebugToLogfile.Checked = false;
+                    return;
+                }
                 DebugFileListener = new FileTraceListener(fName);
                 Debug.Listeners.Add(DebugFileListener);
             }

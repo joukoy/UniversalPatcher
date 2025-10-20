@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static Helpers;
 using static Upatcher;
 
@@ -33,7 +36,7 @@ namespace UniversalPatcher
         }
         public double RAW { get { return raw; } }
         private double raw;
-        private ushort CanId;
+        private string CanId;
         private SerialPort port;
         private PlxParserState plxState;
         private int plxPartialValue = 0;
@@ -43,7 +46,7 @@ namespace UniversalPatcher
         ushort innovateLambda = 0;
         //private List<DateTime> ValSetTimes = new List<DateTime>();
         Hertz hertz = new Hertz();
-
+        DateTime LastCanData;
         public double AFR 
         { 
             get 
@@ -113,16 +116,21 @@ namespace UniversalPatcher
                 {
                     if (port.IsOpen)
                         port.Close();
-                    port.Dispose();
+                    while (port.IsOpen)
+                    {
+                        Thread.Sleep(10);
+                        Debug.WriteLine("Waiting port closing...");
+                    }
+                    //port.Dispose();
+                    port = null;
+                    Thread.Sleep(1000);
                 }
             }
             catch (Exception ex)
             {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
             }
         }
@@ -134,6 +142,7 @@ namespace UniversalPatcher
         {
             try
             {
+                this.port = null;
                 string[] pParts = AppSettings.WBSerial.Split(':');
                 string PortName = pParts[0];
                 this.port = new SerialPort(PortName);
@@ -150,12 +159,10 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
+                LoggerBold("Error, WideBand line " + line + ": " + ex.Message);
                 return false;
             }
 
@@ -188,11 +195,9 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
             }
         }
@@ -277,11 +282,9 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
             }
         }
@@ -391,54 +394,131 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
             }
         }
 
-        static void SendCommand(SerialPort port, string command)
+        static bool SendCommand(SerialPort port, string command, string expectedAnswer = "")
         {
-            port.Write(command + "\r");
-            while (port.BytesToRead == 0)
+            bool answerOK = false;
+            try
             {
-                System.Threading.Thread.Sleep(10);
-            }
-            while (port.BytesToRead > 0)
-            {
-                string portdata = port.ReadExisting();
                 if (AppSettings.WBDebug)
                 {
-                    Debug.Write(portdata);
+                    Debug.WriteLine("W:" + command);
                 }
-
+                port.Write(command + Environment.NewLine);
+                Thread.Sleep(20);
+                for (int x = 0; x < 100; x++)
+                {
+                    if (port.BytesToRead > 1)
+                    {
+                        break;
+                    }
+                    System.Threading.Thread.Sleep(10);
+                }
+                while (port.BytesToRead > 1)
+                {
+                    string portdata = port.ReadExisting();
+                    if (AppSettings.WBDebug)
+                    {
+                        Debug.Write("R:" + portdata);
+                    }
+                    if (string.IsNullOrEmpty(expectedAnswer) || portdata.ToLower().Contains(expectedAnswer.ToLower()))
+                    {
+                        answerOK = true;
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
+            }
+            return answerOK;
         }
         private void StartCAN()
         {
-            if (string.IsNullOrEmpty(AppSettings.WBSerial))
+            try
             {
-                return;
+                if (string.IsNullOrEmpty(AppSettings.WBSerial))
+                {
+                    return;
+                }
+                if (port != null && port.IsOpen)
+                {
+                    port.Close();
+                }
+                port = null;
+                if (OpenSerialPort(AppSettings.WBCanBaudrate))
+                {
+                    for (int retry = 0; retry < 5; retry++)
+                    {
+                        if (SendCommand(port, "ATZ", "ELM327"))
+                        {
+                            break;
+                        }
+                        if (retry > 3)
+                        {
+                            LoggerBold("Error resetting WB device");
+                            return;
+                        }
+                    }
+                    //Thread.Sleep(300);
+                    SendCommand(port, "ATL1");    // Linefeed on
+                    SendCommand(port, "ATE0");    // Echo off
+                    this.CanId = AppSettings.WBCanID;
+                    string wbInitFile = Path.Combine(Application.StartupPath, "XML", "wbinit.txt");
+                    if (File.Exists(wbInitFile))
+                    {
+                        string[] initContent = File.ReadAllLines(wbInitFile);
+                        foreach (string initRow in initContent)
+                        {
+                            if (string.IsNullOrWhiteSpace(initRow) || !initRow.Contains(";"))
+                            {
+                                continue;
+                            }
+                            string[] parts = initRow.Split(';');
+                            if (parts.Length < 2)
+                            {
+                                LoggerBold("Error in wbinit, line: " + initRow);
+                                LoggerBold("Rows must be in format: command;response[;comment]");
+                                continue;
+                            }
+                            if (!SendCommand(port,parts[0],parts[1]))
+                            {
+                                LoggerBold("CAN WB init error");
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        SendCommand(port, "ATSP6");   // Set protocol to ISO 15765-4 (500 kbps)
+                        SendCommand(port, "ATDP");   // Query current protocol
+                        SendCommand(port, "ATSTFF");   // Set timeout to maximum
+                    }
+                    SendCommand(port, "ATCRA" + CanId);  //Filter with CanID
+                    port.Write("00\r");    // Read data
+                    this.port.ErrorReceived += Port_ErrorReceived;
+                    this.port.DataReceived += CAN_DataReceived;
+                    //port.Write("00 00 00 00");    // Read data
+                    LastCanData = DateTime.Now;
+                    Task.Factory.StartNew(() => CanDataWatchDog());
+                    Logger("WB CAN started");
+                }
             }
-            if (port != null &&  port.IsOpen)
+            catch (Exception ex)
             {
-                port.Close();
-            }
-            if (OpenSerialPort(AppSettings.WBCanBaudrate))
-            {
-                this.CanId = AppSettings.WBCanID;
-                SendCommand(port, "ATZ");     // Reset
-                SendCommand(port, "ATE0");    // Echo off
-                SendCommand(port, "ATL1");    // Linefeed on
-                SendCommand(port, "ATSP6");   // Set protocol to ISO 15765-4 (500 kbps)
-                SendCommand(port, "ATSTFF");   // Set timeout to maximum
-                SendCommand(port, "ATCRA" + CanId.ToString("X"));  //Receive only CanID frames
-                SendCommand(port, "00");    // Read data
-                this.port.ErrorReceived += Port_ErrorReceived;
-                this.port.DataReceived += CAN_DataReceived; ;
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
             }
         }
 
@@ -447,6 +527,8 @@ namespace UniversalPatcher
             try
             {
                 string line = port.ReadLine();
+                LastCanData = DateTime.Now;
+                //string line = port.ReadExisting();
                 if (!string.IsNullOrWhiteSpace(line))
                 {
                     if (AppSettings.WBDebug)
@@ -454,34 +536,43 @@ namespace UniversalPatcher
                         Debug.WriteLine("CANWB Raw: " + line.Trim());
                     }
                     // Parse lines like: "810 04 0F A0 0F F8 ..." (hex values)
-                    if (line.StartsWith(">"))
+                    if (line.Contains(">") || line.Contains("NO DATA"))
                     {
                         port.Write("00\r");
                     }
-                    else 
+                    //Example: 0: 74 0F 78 67 8F 35 (Not valid values)
+                    int bytepos = AppSettings.WBCanBytePosition;
+                    int byteCount = AppSettings.WBCanByteCount;
+                    if (AppSettings.WBSkipLeadingZero)
                     {
-                        //Example: 0: 74 0F 78 67 8F 35 (Not valid values)
-                        int bytepos = AppSettings.WBCanBytePosition + 1; //Skip 0:
-                        string[] parts = line.Trim().Split(' ');
-                        if (parts.Length >= bytepos + 1)
+                        bytepos++;
+                    }
+                    string[] parts = line.Trim().Split(' ');
+                    string rawStr = "";
+                    for (int p=0;p<byteCount && (p + bytepos) < parts.Length; p++)
+                    {
+                        rawStr += parts[bytepos + p];
+                    }
+                    if (!string.IsNullOrEmpty(rawStr))
+                    {
+                        raw = Convert.ToInt32(rawStr, 16);
+                        hertz.AddTime();
+                        if (AppSettings.WBDebug)
                         {
-                            raw = Convert.ToUInt16(parts[bytepos] + parts[bytepos+1], 16);
-                            hertz.AddTime();
-                            if (AppSettings.WBDebug)
-                            {
-                                Debug.WriteLine($"CANWB AFR: {AFR:F2}");
-                            }
+                            Debug.WriteLine($"CANWB AFR: {AFR:F2}");
                         }
                     }
+                }
+                else
+                {
+                    port.Write("00\r");
                 }
             }
             catch (Exception ex)
             {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
             }
         }
@@ -489,6 +580,28 @@ namespace UniversalPatcher
         private void Port_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
             Debug.WriteLine(e.ToString());
+        }
+
+        private void CanDataWatchDog()
+        {
+            try
+            {
+                while (port != null && port.IsOpen)
+                {
+                    Thread.Sleep(1000);
+                    if (DateTime.Now.Subtract(LastCanData).TotalMilliseconds > 1000)
+                    {
+                        port.Write("00\r");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                StackTrace st = new StackTrace(ex, true);
+                StackFrame frame = st.GetFrame(st.FrameCount - 1);
+                int line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, WideBand line " + line + ": " + ex.Message);
+            }
         }
 
     }
