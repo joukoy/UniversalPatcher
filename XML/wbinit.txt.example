@@ -1,0 +1,4 @@
+atpbc001;OK;command is pb , setting 2 bytes first is can option second is baud rate divisor 500000/X ,60=can29, 01=500k
+atspB;OK;use protocol B
+atdp;(CAN 11/500);Query current settings
+ATAL;OK;

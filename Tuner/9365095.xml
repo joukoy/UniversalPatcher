@@ -1,0 +1,5984 @@
+<?xml version="1.0"?>
+<ArrayOfTableData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableData>
+    <addrInt>54880</addrInt>
+    <TableName>Maximum Knock Retard</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D660</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X-120)/2</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-60</Min>
+    <Max>68</Max>
+    <Decimals>0</Decimals>
+    <Columns>22</Columns>
+    <Rows>15</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0 ,5 ,10 ,15 ,20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70 ,75 ,80, 85, 90, 95, 100,Empty</ColumnHeaders>
+    <RowHeaders>400 ,800, 1200, 1600, 2000, 2400, 2800 ,3200, 3600, 4000, 4400, 4800, 5200, 5600 ,6000</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>53128</addrInt>
+    <TableName>EGR Spark Advance Correction</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000CF88</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X-120)/2</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-60</Min>
+    <Max>68</Max>
+    <Decimals>2</Decimals>
+    <Columns>12</Columns>
+    <Rows>12</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>40, 50, 60, 70, 80, 83, 85, 88 ,90 ,93 ,95, 98</ColumnHeaders>
+    <RowHeaders>400 ,800 ,1200, 1600, 2000 ,2400, 2800, 3200, 3600, 4000, 4400, 4800</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>78108</addrInt>
+    <TableName>Upshift Pressure Modifer 1-&gt;2</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0001311C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X/64</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-96</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>17</Columns>
+    <Rows>5</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>-40 ,-18, 3, 25, 46, 68, 90, 111 ,133, 154, 176, 198, 219 ,241, 262, 284, 306</ColumnHeaders>
+    <RowHeaders>0,160,320,480,640</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>78278</addrInt>
+    <TableName>Upshift Pressure Modifer 2-&gt;3</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000131C6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X/64</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-96</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>17</Columns>
+    <Rows>5</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>-40 ,-18, 3, 25, 46, 68, 90, 111 ,133, 154, 176, 198, 219 ,241, 262, 284, 306</ColumnHeaders>
+    <RowHeaders>0,160,320,480,640</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>78448</addrInt>
+    <TableName>Upshift Pressure Modifer 3-&gt;4</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00013270</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X/64</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-96</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>17</Columns>
+    <Rows>5</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>-40 ,-18, 3, 25, 46, 68, 90, 111 ,133, 154, 176, 198, 219 ,241, 262, 284, 306</ColumnHeaders>
+    <RowHeaders>0,160,320,480,640</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>78618</addrInt>
+    <TableName>Downshift Pressure Modifer 2-&gt;1</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0001331A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X/64</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-96</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>17</Columns>
+    <Rows>5</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>-40 ,-18, 3, 25, 46, 68, 90, 111 ,133, 154, 176, 198, 219 ,241, 262, 284, 306</ColumnHeaders>
+    <RowHeaders>0,160,320,480,640</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>78788</addrInt>
+    <TableName>Downshift Pressure Modifer 3-&gt;2</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000133C4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X/64</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-96</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>17</Columns>
+    <Rows>5</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>-40 ,-18, 3, 25, 46, 68, 90, 111 ,133, 154, 176, 198, 219 ,241, 262, 284, 306</ColumnHeaders>
+    <RowHeaders>0,160,320,480,640</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>78958</addrInt>
+    <TableName>Downshift Pressure Modifer 4-&gt;3</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0001346E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X/64</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-96</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>17</Columns>
+    <Rows>5</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>-40 ,-18, 3, 25, 46, 68, 90, 111 ,133, 154, 176, 198, 219 ,241, 262, 284, 306</ColumnHeaders>
+    <RowHeaders>0,160,320,480,640</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73020</addrInt>
+    <TableName>Part Throttle, Normal</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Part Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011D3C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>6</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4 ,2-&gt;1,3-&gt;2,4-&gt;3</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100	</RowHeaders>
+    <ExtraCategories>Transmission - Part Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73674</addrInt>
+    <TableName>Part Throttle, Drive 2</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Part Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011FCA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>4</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,2-&gt;1,3-&gt;2</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100	</RowHeaders>
+    <ExtraCategories>Transmission - Part Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73810</addrInt>
+    <TableName>Part Throttle, Drive Low</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Part Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012052</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>4</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,2-&gt;1,3-&gt;2</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100	</RowHeaders>
+    <ExtraCategories>Transmission - Part Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73470</addrInt>
+    <TableName>Part Throttle, Cruise</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Part Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011EFE</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>6</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4 ,2-&gt;1,3-&gt;2,4-&gt;3</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100	</RowHeaders>
+    <ExtraCategories>Transmission - Part Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73946</addrInt>
+    <TableName>Part Throttle, Eco</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Part Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000120DA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>6</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4 ,2-&gt;1,3-&gt;2,4-&gt;3</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100	</RowHeaders>
+    <ExtraCategories>Transmission - Part Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73224</addrInt>
+    <TableName>Part Throttle, Hot</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Part Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011E08</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>6</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4 ,2-&gt;1,3-&gt;2,4-&gt;3</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100	</RowHeaders>
+    <ExtraCategories>Transmission - Part Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73428</addrInt>
+    <TableName>Full Throttle, Normal</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Full Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011ED4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>6</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>1-&gt;2,2-&gt;3,3-&gt;4 ,2-&gt;1,3-&gt;2,4-&gt;3</RowHeaders>
+    <ExtraCategories>Transmission - Full Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73446</addrInt>
+    <TableName>Full Throttle, Hot Trans</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Full Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011EE6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>6</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>1-&gt;2,2-&gt;3,3-&gt;4 ,2-&gt;1,3-&gt;2,4-&gt;3</RowHeaders>
+    <ExtraCategories>Transmission - Full Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73458</addrInt>
+    <TableName>Full Throttle, Hot Engine</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Full Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011EF2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>6</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>1-&gt;2,2-&gt;3,3-&gt;4 ,2-&gt;1,3-&gt;2,4-&gt;3</RowHeaders>
+    <ExtraCategories>Transmission - Full Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>73440</addrInt>
+    <TableName>Full Throttle, 4WD Low</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Full Throttle Shift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011EE0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>3</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>1-&gt;2,2-&gt;3,3-&gt;4</RowHeaders>
+    <ExtraCategories>Transmission - Full Throttle Shift</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61756</addrInt>
+    <TableName>First Gear Ratio</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Gear Ratios</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F13C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0002441</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>First Gear Ratio</RowHeaders>
+    <ExtraCategories>Transmission - Gear Ratios</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61758</addrInt>
+    <TableName>Second Gear Ratio</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Gear Ratios</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F13E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0002441</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>Second Gear Ratio</RowHeaders>
+    <ExtraCategories>Transmission - Gear Ratios</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>62344</addrInt>
+    <TableName>Third Gear Ratio</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Gear Ratios</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F388</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0002441</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>Third Gear Ratio</RowHeaders>
+    <ExtraCategories>Transmission - Gear Ratios</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>62346</addrInt>
+    <TableName>Fourth Gear Ratio</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Gear Ratios</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F38A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0002441</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>Fourth Gear Ratio</RowHeaders>
+    <ExtraCategories>Transmission - Gear Ratios</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61760</addrInt>
+    <TableName>Reverse Gear Ratio</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Gear Ratios</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F140</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0002441</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>Reverse Gear Ratio</RowHeaders>
+    <ExtraCategories>Transmission - Gear Ratios</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>84215</addrInt>
+    <TableName>Shift Pattern Switch Available</TableName>
+    <ExtraTableName />
+    <Category>Transmission - General</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000148F7</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SBYTE</DataType>
+    <Math>X</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:None  ,1:Performance</Values>
+    <ColumnHeaders />
+    <RowHeaders>Shift Pattern Switch Available</RowHeaders>
+    <ExtraCategories>Transmission - General</ExtraCategories>
+    <TableDescription>These options enable the various shift pattern modes within the PCM. 'None' = Performance mode via a switch is not functional. 'Performance Switch' = Performance mode via a switch can be activated</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>84214</addrInt>
+    <TableName>Torque Converter Clutch Solenoid Enabler</TableName>
+    <ExtraTableName />
+    <Category>Transmission - General</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000148F6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SBYTE</DataType>
+    <Math>X</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:No  ,1:Yes</Values>
+    <ColumnHeaders />
+    <RowHeaders>Torque Converter Clutch Solenoid Enabler</RowHeaders>
+    <ExtraCategories>Transmission - General</ExtraCategories>
+    <TableDescription>This should never be touched unless you change your transmission type from a 4l60e to 4l80e.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>84213</addrInt>
+    <TableName>Transmission Type</TableName>
+    <ExtraTableName />
+    <Category>Transmission - General</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000148F5</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SBYTE</DataType>
+    <Math>X</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:Automatic ,1:Manual</Values>
+    <ColumnHeaders />
+    <RowHeaders>Transmission Type</RowHeaders>
+    <ExtraCategories>Transmission - General</ExtraCategories>
+    <TableDescription>If this parameter is Manual then the transmission is a manual gear, If it is Automatic then it is an automatic transmission. Note: This calibration should only be used as a reference, it is recommended you do not alter the value. Only the following values may be entered into this table: - Automatic - Manual</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>72984</addrInt>
+    <TableName>Torque Limiting</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Limiting</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00011D18</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*.25</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>15</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Ft/Lbs</ColumnHeaders>
+    <RowHeaders>2wd Torque Limit 1st Gear,2wd Torque Limit 2nd Gear,2wd Torque Limit 3rd Gear,2wd Torque Limit 4th Gear,2wd Torque Limit Reverse,4wd Low Torque Limit 1st Gear,4wd Low Torque Limit 2nd Gear,4wd Low Torque Limit 3rd Gear,4wd Low Torque Limit 4th Gear,4wd Low Torque Limit Reverse,4wd High Torque Limit 1st Gear,4wd High Torque Limit 2nd Gear,4wd High Torque Limit 3rd Gear,4wd High Torque Limit 4th Gear,4wd High Torque Limit Reverse</RowHeaders>
+    <ExtraCategories>Transmission - Torque Limiting</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43472</addrInt>
+    <TableName>Abuse Vehicle Speed Threshold</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9D0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00390625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Abuse Vehicle Speed Threshold</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>If the vehicle speed is above this value, then abuse management is disabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43474</addrInt>
+    <TableName>Abuse Management TPS Upper Threshold</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9D2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>Abuse Vehicle Speed Threshold</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>If the throttle is above this value "Abuse Management (in Gear) Upper RPM Threshold"), then abuse mode is enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43475</addrInt>
+    <TableName>Abuse Management TPS Lower Threshold</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9D3</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>Abuse Vehicle Speed Threshold</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>If abuse management is active, then the throttle must fall below this value to disable abuse management</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43488</addrInt>
+    <TableName>Abuse Management In P/N Upper RPM</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9E0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>3</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>2WD,4WL,4WH</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>Time that the drive train abuse remains enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43494</addrInt>
+    <TableName>Abuse Management In P/N Lower RPM</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9E6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>3</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>2WD,4WL,4WH</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>If abuse management is active and the transmission is in P/N, then engine RPM must fall below this value to disable abuse management once active.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43500</addrInt>
+    <TableName>Abuse Management In Gear Upper RPM</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9EC</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>3</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>2WD,4WL,4WH</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>Time that the drive train abuse remains enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43506</addrInt>
+    <TableName>Abuse Management In Gear Lower RPM</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9F2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>3</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>2WD,4WL,4WH</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>If abuse management is active and the transmission is in P/N, then engine RPM must fall below this value to disable abuse management once active.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43476</addrInt>
+    <TableName>Abuse Time</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9D4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>5</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>-40,-28,-16,-4,7</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>Time that the drive train abuse remains enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>57868</addrInt>
+    <TableName>Torque Management Min Temp To Enable</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E20C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X/0.75602)-40</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>Torque Management Min Temp To Enable</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>Temp of engine has to be higher than this value for TM to become active.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>80250</addrInt>
+    <TableName>Abuse Mode Max Time In Drive</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0001397A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>Abuse Mode Max Time In Drive</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>Max time for Abuse Mode to be active when in drive.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>80284</addrInt>
+    <TableName>Abuse Mode Max Time In Reverse</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0001399C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>Abuse Mode Max Time In Reverse</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>Max time for Abuse Mode to be active when in reverse.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>71602</addrInt>
+    <TableName>RPM Abuse Limit Enabler</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000117B2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*.25</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>RPM Abuse Limit Enabler</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>When engine speed (RPM) is greater than this value, transmission abuse management can be enabled. Vehicle speed must also be less than Abuse Mode Speed Enable" to enable abuse mode.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>71610</addrInt>
+    <TableName>Abuse Mode Speed Enable</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000117BA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00390625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Abuse Mode Speed Enable</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>If vehicle speed is greater than this value then transmission abuse management will not be enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>71612</addrInt>
+    <TableName>Abuse Mode Torque Reduction</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Abuse</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000117BC</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0030517</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800	</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Abuse</ExtraCategories>
+    <TableDescription>This is the percentage of torque reduction to use when in an Abuse mode condition.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>80522</addrInt>
+    <TableName>Torque Reduction,Downshift</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Downshift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00013A8A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0030517580874873</Math>
+    <Units>Percent</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2-&gt;1,3-&gt;2,4-&gt;3</ColumnHeaders>
+    <RowHeaders>0 ,40, 80, 120, 160, 200, 240, 280, 320 ,360 ,400 ,440, 480, 520, 560, 600, 640</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Downshift</ExtraCategories>
+    <TableDescription>The PCM will attempt to reduce the engine torque by this amount upon execution of a 2-&gt;1 downshift.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>80318</addrInt>
+    <TableName>Torque Reduction,Normal</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Upshift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000139BE</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0030517580874873</Math>
+    <Units>Percent</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4</ColumnHeaders>
+    <RowHeaders>0 ,40, 80, 120, 160, 200, 240, 280, 320 ,360 ,400 ,440, 480, 520, 560, 600, 640</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Upshift</ExtraCategories>
+    <TableDescription>The PCM will attempt to reduce the engine torque by this amount upon execution of a 1-&gt;2 upshift.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>80420</addrInt>
+    <TableName>Torque Reduction,Economy</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Torque Reduction - Upshift</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00013A24</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0030517580874873</Math>
+    <Units>Percent</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4</ColumnHeaders>
+    <RowHeaders>0 ,40, 80, 120, 160, 200, 240, 280, 320 ,360 ,400 ,440, 480, 520, 560, 600, 640</RowHeaders>
+    <ExtraCategories>Transmission - Torque Reduction - Upshift</ExtraCategories>
+    <TableDescription>The PCM will attempt to reduce the engine torque by this amount upon execution of a 1-&gt;2 upshift.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>74740</addrInt>
+    <TableName>WOT Shift RPM</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Shift At RPM</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000123F4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*.25</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8000</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>3</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>1-&gt;2,2-&gt;3,3-&gt;4</RowHeaders>
+    <ExtraCategories>Transmission - Shift At RPM</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>77100</addrInt>
+    <TableName>Desired Shift Time,Normal</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Desired Shift Time</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012D2C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>400</Max>
+    <Decimals>4</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-2,2-3,3-4</ColumnHeaders>
+    <RowHeaders>0,30,59,89,118,148,177,207,236,266,295,325,354,384,413,443,472</RowHeaders>
+    <ExtraCategories>Transmission - Desired Shift Time</ExtraCategories>
+    <TableDescription>Determine the desired 1-2 shift times for the transmission adapt values.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>77202</addrInt>
+    <TableName>Desired Shift Time,Economy</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Desired Shift Time</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012D92</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>400</Max>
+    <Decimals>4</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-2,2-3,3-4</ColumnHeaders>
+    <RowHeaders>0,30,59,89,118,148,177,207,236,266,295,325,354,384,413,443,472</RowHeaders>
+    <ExtraCategories>Transmission - Desired Shift Time</ExtraCategories>
+    <TableDescription>Determine the desired 1-2 shift times for the transmission adapt values.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>77910</addrInt>
+    <TableName>Base Pressure,Economy</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00013056</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/64</Math>
+    <Units>PSI</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>33</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4</ColumnHeaders>
+    <RowHeaders>0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500,520,540,560,580,600,620,640</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription>The pressure offset to be used on the Force Motor Current table axis. Increasing these values firms the shift.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>77712</addrInt>
+    <TableName>Base Pressure,Normal</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012F90</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/64</Math>
+    <Units>PSI</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>33</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4</ColumnHeaders>
+    <RowHeaders>0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500,520,540,560,580,600,620,640</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription>The pressure offset to be used on the Force Motor Current table axis. Increasing these values firms the shift.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>77604</addrInt>
+    <TableName>High Pressure Adjust</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012F24</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SBYTE</DataType>
+    <Math>X*.25</Math>
+    <Units>PSI</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>18</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4</ColumnHeaders>
+    <RowHeaders>0,30,59,89,118,148,177,207,236,266,295,325,354,384,413,443,472,Empty</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>77658</addrInt>
+    <TableName>Low Pressure Adjust</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Transmission Pressure</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012F5A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SBYTE</DataType>
+    <Math>X*.25</Math>
+    <Units>PSI</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>96</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>18</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1-&gt;2,2-&gt;3,3-&gt;4</ColumnHeaders>
+    <RowHeaders>0,30,59,89,118,148,177,207,236,266,295,325,354,384,413,443,472,Empty</RowHeaders>
+    <ExtraCategories>Transmission - Transmission Pressure</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>75236</addrInt>
+    <TableName>TCC Apply Speed,Normal</TableName>
+    <ExtraTableName />
+    <Category>Transmission - TCC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000125E4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2nd,3rd,4th</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100</RowHeaders>
+    <ExtraCategories>Transmission - TCC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>75644</addrInt>
+    <TableName>TCC Apply Speed,Economy</TableName>
+    <ExtraTableName />
+    <Category>Transmission - TCC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0001277C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2nd,3rd,4th</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100</RowHeaders>
+    <ExtraCategories>Transmission - TCC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>76488</addrInt>
+    <TableName>TCC Apply Speed,Hot</TableName>
+    <ExtraTableName />
+    <Category>Transmission - TCC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012AC8</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2nd,3rd,4th</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100</RowHeaders>
+    <ExtraCategories>Transmission - TCC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>75440</addrInt>
+    <TableName>TCC Apply Speed,Cruise</TableName>
+    <ExtraTableName />
+    <Category>Transmission - TCC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000126B0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2nd,3rd,4th</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100</RowHeaders>
+    <ExtraCategories>Transmission - TCC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>75338</addrInt>
+    <TableName>TCC Release Speed,Normal</TableName>
+    <ExtraTableName />
+    <Category>Transmission - TCC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0001264A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2nd,3rd,4th</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100</RowHeaders>
+    <ExtraCategories>Transmission - TCC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>75746</addrInt>
+    <TableName>TCC Release Speed,Economy</TableName>
+    <ExtraTableName />
+    <Category>Transmission - TCC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000127E2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2nd,3rd,4th</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100</RowHeaders>
+    <ExtraCategories>Transmission - TCC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>75542</addrInt>
+    <TableName>TCC Release Speed,Hot</TableName>
+    <ExtraTableName />
+    <Category>Transmission - TCC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012716</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2nd,3rd,4th</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100</RowHeaders>
+    <ExtraCategories>Transmission - TCC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>76386</addrInt>
+    <TableName>TCC Release Speed,Cruise</TableName>
+    <ExtraTableName />
+    <Category>Transmission - TCC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00012A62</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>3</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>2nd,3rd,4th</ColumnHeaders>
+    <RowHeaders>0,6,12,18,25,31,37,43,50,56,62,68,75,81,87,93,100</RowHeaders>
+    <ExtraCategories>Transmission - TCC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>62674</addrInt>
+    <TableName>Force Motor Current,Positive</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Force Motor</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F4D2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*4.8828125</Math>
+    <Units>mA</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1245</Max>
+    <Decimals>2</Decimals>
+    <Columns>18</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0 ,6 ,12, 18, 24, 30, 36 ,42 ,48, 54, 60, 66, 72, 78, 84, 90, 96, 100</ColumnHeaders>
+    <RowHeaders>-40 ,-18, 3, 25, 46 ,68, 90, 111, 133, 154, 176, 198, 219, 241, 262, 284, 306</RowHeaders>
+    <ExtraCategories>Transmission - Force Motor</ExtraCategories>
+    <TableDescription> Determines how much current is applied to achieve the desired line pressure in relation to transmission temperature.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>62980</addrInt>
+    <TableName>Force Motor Current,Negative</TableName>
+    <ExtraTableName />
+    <Category>Transmission - Force Motor</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F604</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*4.8828125</Math>
+    <Units>mA</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1245</Max>
+    <Decimals>2</Decimals>
+    <Columns>18</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0 ,6 ,12, 18, 24, 30, 36 ,42 ,48, 54, 60, 66, 72, 78, 84, 90, 96, 100</ColumnHeaders>
+    <RowHeaders>-40 ,-18, 3, 25, 46 ,68, 90, 111, 133, 154, 176, 198, 219, 241, 262, 284, 306</RowHeaders>
+    <ExtraCategories>Transmission - Force Motor</ExtraCategories>
+    <TableDescription> Determines how much current is applied to achieve the desired line pressure in relation to transmission temperature.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34656</addrInt>
+    <TableName>BTM MPH In 4WD Low Activation</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008760</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00390625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>BTM MPH In 4WD Low Activation</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>BTM can be active in 4WD low if the vehicle speed is above this value.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34658</addrInt>
+    <TableName>BTM MPH In 4WD Low Hysteris</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008762</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00390625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>BTM MPH In 4WD Low Hysteris</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>BTM can remain active in 4WD low if the vehicle speed is above this value.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34660</addrInt>
+    <TableName>BTM MPH In 2WD Enabler</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008764</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00390625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>BTM MPH In 2WD Enabler</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>Min engine speed to allow Brake Torque Management to become active.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34662</addrInt>
+    <TableName>BTM MPH In 2WD Low Hysteris</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008766</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00390625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>BTM MPH In 2WD Low Hysteris</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>BTM can remain active in 2WD if the vehicle speed is above this value.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34664</addrInt>
+    <TableName>BTM Enable RPM</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008768</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8000</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>BTM Enable RPM</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>Engine RPM must be this much above Idle speed before Brake Torque Management (BTM) can become active. Brake Torque Management (BTM) is used to reduce engine power by cutting cylinders and reducing the pedal opening on ETC vehicles when your foot is held on the brake in gear and the accelerator is pressed (stalling up the vehicle).</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34666</addrInt>
+    <TableName>BTM Closed Throttle Max TPS</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000876A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*0.39062</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>99</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>BTM Closed Throttle Max TPS</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>Max TPS % allowed to show that vehicle has a closed throttle.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34667</addrInt>
+    <TableName>BTM Closed Throttle Min TPS</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000876B</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*0.39062</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>99</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>BTM Closed Throttle Min TPS</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>Min TPS % allowed to show that vehicle has a closed throttle.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34668</addrInt>
+    <TableName>BTM Apply Rate</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000876C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>65535</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Ft/Lbs</ColumnHeaders>
+    <RowHeaders>BTM Apply Rate</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>Rate of applying Torque managment when all perameters have been met.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34670</addrInt>
+    <TableName>Max Torque Of Engine</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000876E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0030517</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>Max Torque Value Of Engine</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>Max Torque reported thru drivetrain.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34672</addrInt>
+    <TableName>BTM Idle Limit</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008770</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*.25</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>15000</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>15</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Ft/Lbs</ColumnHeaders>
+    <RowHeaders>0.0,0.7,1.5	,2.2	,2.9	,3.6	,4.4	,5.1	,5.8	,6.5	,7.3	,8.0	,8.7	,9.4	,10.2	</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>BTM max during Idle.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34702</addrInt>
+    <TableName>BTM No Idle Condition Max</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000878E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*.25</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>15000</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>15</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Ft/Lbs</ColumnHeaders>
+    <RowHeaders>0.0,0.7,1.5	,2.2	,2.9	,3.6	,4.4	,5.1	,5.8	,6.5	,7.3	,8.0	,8.7	,9.4	,10.2	</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription>BTM max when not idleing.</ExtraDescription>
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34732</addrInt>
+    <TableName>Transfer Case Gear Ratio</TableName>
+    <ExtraTableName />
+    <Category>Engine - Torque Reduction</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000087AC</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/4096</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>3</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>2WD,4WL,4WH</RowHeaders>
+    <ExtraCategories>Engine - Torque Reduction</ExtraCategories>
+    <TableDescription>Used for BTM system to set up torque values.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50228</addrInt>
+    <TableName>Commanded Amperage From Alternator</TableName>
+    <ExtraTableName />
+    <Category />
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C434</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>13</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Amps</ColumnHeaders>
+    <RowHeaders>500,550,600,650,700,750,800,850,900,950,1000,1050,1100	</RowHeaders>
+    <TableDescription>Tells the ecm how much amps to ask for via engine RPMs.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44768</addrInt>
+    <TableName>DFCO Temp Enable</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Cutoff/DFCO</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AEE0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SBYTE</DataType>
+    <Math>X/1.03335878</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>DFCO Temp Enable</RowHeaders>
+    <ExtraCategories>Engine - Fuel - DFCO</ExtraCategories>
+    <TableDescription>Engine coolant temperature must be above this to enable DFCO. When all of the DFCO enablers are met, hitting any DFCO activate level will turn on DFCO. After DFCO has been enabled hitting any DFCO disabler or hitting every DFCO deactivate will turn off DFCO.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44770</addrInt>
+    <TableName>DFCO Vehicle Speed Enable Upper</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Cutoff/DFCO</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AEE2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>DFCO Vehicle Speed Enable Upper</RowHeaders>
+    <ExtraCategories>Engine - Fuel - DFCO</ExtraCategories>
+    <TableDescription>Vehicle speed must be above this to enable DFCO.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44772</addrInt>
+    <TableName>DFCO Vehicle Speed Enable Lower</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Cutoff/DFCO</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AEE4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>DFCO Vehicle Speed Enable Lower</RowHeaders>
+    <ExtraCategories>Engine - Fuel - DFCO</ExtraCategories>
+    <TableDescription>Vehicle speed must remain above this to keep DFCO active.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44782</addrInt>
+    <TableName>DFCO RPM Enable Upper</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Cutoff/DFCO</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AEEE</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8000</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>DFCO RPM Enable Upper</RowHeaders>
+    <ExtraCategories>Engine - Fuel - DFCO</ExtraCategories>
+    <TableDescription>RPM must be above this to enable DFCO.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44784</addrInt>
+    <TableName>DFCO RPM Enable Lower</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Cutoff/DFCO</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AEF0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8000</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>DFCO RPM Enable Lower</RowHeaders>
+    <ExtraCategories>Engine - Fuel - DFCO</ExtraCategories>
+    <TableDescription>RPM must remain above this to keep DFCO active.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44778</addrInt>
+    <TableName>DFCO MAP Enable Upper</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Cutoff/DFCO</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AEEA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*0.1827</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>15</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>PSI</ColumnHeaders>
+    <RowHeaders>DFCO MAP Enable Upper</RowHeaders>
+    <ExtraCategories>Engine - Fuel - DFCO</ExtraCategories>
+    <TableDescription>Manifold pressure must be above this to enable DFCO.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44780</addrInt>
+    <TableName>DFCO MAP Enable Lower</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Cutoff/DFCO</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AEEC</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*0.1827</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>15</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>PSI</ColumnHeaders>
+    <RowHeaders>DFCO MAP Enable Lower</RowHeaders>
+    <ExtraCategories>Engine - Fuel - DFCO</ExtraCategories>
+    <TableDescription>Manifold pressure must remain above this to keep DFCO active.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>52380</addrInt>
+    <TableName>Spark ECT Table</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000CC9C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X - 120)/2</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>22</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0,5,10,15 ,20 ,25 ,30 ,35, 40 ,45 ,50 ,55 ,60 ,65 ,70 ,75 ,80 ,85 ,90 ,95 ,100 ,105</ColumnHeaders>
+    <RowHeaders>-18.4 ,3.2, 24.8, 46.4, 68.0, 89.6, 111.2, 132.8, 154.4, 176.0, 197.6, 208.4, 219.2 ,230.0, 240.8, 251.6, 262.4</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Provides engine coolant temperature correction to spark timing.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>52754</addrInt>
+    <TableName>Spark ECT Table, Closed Throttle</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000CE12</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X - 120)/2</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>22</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0,5,10,15 ,20 ,25 ,30 ,35, 40 ,45 ,50 ,55 ,60 ,65 ,70 ,75 ,80 ,85 ,90 ,95 ,100 ,105</ColumnHeaders>
+    <RowHeaders>-18.4 ,3.2, 24.8, 46.4, 68.0, 89.6, 111.2, 132.8, 154.4, 176.0, 197.6, 208.4, 219.2 ,230.0, 240.8, 251.6, 262.4</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Provides engine coolant temperature correction to spark timing when the throttle is closed.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>53626</addrInt>
+    <TableName>Spark IAT Table</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D17A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X - 120)/2</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>14</Columns>
+    <Rows>29</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200</ColumnHeaders>
+    <RowHeaders>-40.0 ,-29.2 ,-18.4, -7.6, 3.2, 14.0, 24.8, 35.6, 46.4, 57.2, 68.0, 78.8, 89.6, 100.4, 111.2, 122.0, 132.8, 143.6, 154.4, 165.2, 176.0, 186.8, 197.6, 208.4, 219.2, 230.0, 240.8, 251.6, 262.4</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Provides intake air temperature correction to spark timing.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>54032</addrInt>
+    <TableName>Spark IAT Load Multiplier</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D310</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/2048</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>3</Decimals>
+    <Columns>14</Columns>
+    <Rows>21</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200</ColumnHeaders>
+    <RowHeaders>0 ,5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Any value in  "Spark IAT Table" will be multiplied by this amount before being summed in the final spark advance calculation. This table can be used to turn off IAT spark correction when the engine is in any load cell.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>53278</addrInt>
+    <TableName>Fuel Mixture Spark Correction</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D01E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X - 120)/2</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>16</Columns>
+    <Rows>15</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0.800,0.850,0.900,0.950,1.000,1.050,1.100,1.150,1.200,1.250,1.300,1.350,1.400,1.450,1.500,1.550</ColumnHeaders>
+    <RowHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Provides fuel mixture correction to spark timing.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>56554</addrInt>
+    <TableName>Catalytic Converter Light-off</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000DCEA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>2</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Park/Neutral,Drive</ColumnHeaders>
+    <RowHeaders>-40,-18,3,25,46,68,90,111,133,154,176,198,219,241,262,284,306</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Spark retard to assist in catalytic converter light-off on start up.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>57718</addrInt>
+    <TableName>Optimal Timing</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E176</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X/2)-38</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>15</Columns>
+    <Rows>10</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600</ColumnHeaders>
+    <RowHeaders>2.2,3.6,5.1,6.5,8.0,9.4,10.9,12.3,13.8</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>This table is used as a reference for what would be best timing, which is then used for various torque calculations.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>55836</addrInt>
+    <TableName>Minimum Spark Advance</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000DA1C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X - 120)/2</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>8</Columns>
+    <Rows>15</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>15,30,45,60,75,90,105,Empty</ColumnHeaders>
+    <RowHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>The minimum spark timing permitted at any time, the PCM will not allow spark advance to be reduced below this level.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>56772</addrInt>
+    <TableName>Fuel Mixture Spark Correction Multiplier</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000DDC4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/2048</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>19</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>2.2,2.9,3.6,4.4,5.1,5.8,6.5,7.3,8.0,8.7,9.4,10.2,10.9,11.6,12.3,13.1,13.8,14.5,15.2</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Provides fuel mixture correction to spark timing multiplication of table B5908 based off of engine load.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>56622</addrInt>
+    <TableName>Cat Light-Off Load Multiplier</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000DD2E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/2048</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>19</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>2.2,2.9,3.6,4.4,5.1,5.8,6.5,7.3,8.0,8.7,9.4,10.2,10.9,11.6,12.3,13.1,13.8,14.5,15.2</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Multiplier for the catalytic converter light-off table. * EXAMPLES *  0.0 = No Correction applied from catalytic converter light-off spark table.  1.0 = Use the full value defined in catalytic converter light-off spark table.  0.5 = Use 50% of the value defined in catalytic converter light-off spark table</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>53518</addrInt>
+    <TableName>Piston Protection Correction</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D10E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X - 120)/2</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>15</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>When in Piston Protection Mode, this is the amount of spark that will be pulled for safety.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>55610</addrInt>
+    <TableName>Spark Timing When Cranking</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D93A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>-40,-18,3,25,46,68,90,111,133,154,176,198,219,241,262,284,306</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Timing values used when the engine is cranking.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>57652</addrInt>
+    <TableName>Minimum Spark Advance Traction Control Active</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E134</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>14</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>The minimum spark timing permitted at any time with traction control active.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>57682</addrInt>
+    <TableName>Spark Reduction Torque Loss</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E152</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.003052</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>0,3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Sets the spark retard required to cause the desired engine torque loss.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51644</addrInt>
+    <TableName>Minimum Dwell Allowed</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C9BC</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00001766</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>6</Decimals>
+    <Columns>1</Columns>
+    <Rows>7</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>0,400,800,1200,1600,2000,2400</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Min dwell coil charge time.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>55957</addrInt>
+    <TableName>Main Dwell</TableName>
+    <ExtraTableName />
+    <Category>? - Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000DA95</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>6</Decimals>
+    <Columns>1</Columns>
+    <Rows>61</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>0	    ,100	,200	,300	,400	,500	,600	,700	,800	,900	,1000	,1100	,1200	,1300	,1400	,1500	,1600	,1700	,1800	,1900	,2000	,2100	,2200	,2300	,2400	,2500	,2600	,2700	,2800	,2900	,3000	,3100	,3200	,3300	,3400	,3500	,3600	,3700	,3800	,3900	,4000	,4100	,4200	,4300	,4400	,4500	,4600	,4700	,4800	,4900	,5000	,5100	,5200	,5300	,5400	,5500	,5600	,5700	,5800	,5900	,6000	</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>This is the main dwell table for the coil.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>55588</addrInt>
+    <TableName>High Idle Spark Correction</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D924</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>11</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>50,70,90,110,130,150,170,190,210,230,250	</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Spark will adjust itself by this amount to try to keep the desired idle.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>55544</addrInt>
+    <TableName>Low Idle Spark Correction</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D8F8</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>11</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>-250,-230,-210,-190,-170,-150,-130,-110,-90,-70,-50	</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Spark will adjust itself by this amount to try to keep the desired idle.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>55566</addrInt>
+    <TableName>Fine Tune Idle Spark Correction</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000D90E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>11</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>-50,-40,-30,-20,-10,0,10,20,30,40,50	</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Spark will adjust itself by this amount to try to keep the desired idle.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51690</addrInt>
+    <TableName>Idle Spark Speed Enable</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C9EA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Idle Spark Speed Enable</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Vehicle Speed threshold for Idle Spark Advance.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51594</addrInt>
+    <TableName>MAP Cutoff For Spark Learning</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C98A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*0.18</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>PSI</ColumnHeaders>
+    <RowHeaders>MAP Cutoff For Spark Learning</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Lowest MAP value for octane scaler adjustments.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51604</addrInt>
+    <TableName>Spark MAP Learning Hysteresis</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C994</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*0.18</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>PSI</ColumnHeaders>
+    <RowHeaders>Spark MAP Learning Hysteresis</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>MAP hysteresis for octane scaler adjustments.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51575</addrInt>
+    <TableName>PE Mode Spark Learn</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C977</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:No,1:Yes</Values>
+    <ColumnHeaders />
+    <RowHeaders>PE Mode Spark Learn</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51636</addrInt>
+    <TableName>Maximum Spark Advance Limit</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C9B4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>Maximum Spark Advance Limit</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>The Max Spark Value allowed by any table.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51566</addrInt>
+    <TableName>Spark At Cutoff</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C96E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>Spark At Cutoff</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>When RPMs are being limited, the computer will use this spark value.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51376</addrInt>
+    <TableName>Max Spark At Idle</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C8B0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degrees</ColumnHeaders>
+    <RowHeaders>Max Spark At Idle</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Spark can not go higher than this amount when in idle mode.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47688</addrInt>
+    <TableName>IAC Motor Steps</TableName>
+    <ExtraTableName />
+    <Category>Engine - Idle</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000BA48</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>400</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Steps</ColumnHeaders>
+    <RowHeaders>0,6,13,19,25,31,38,44,50,56,63,69,75,81,88,94,100</RowHeaders>
+    <ExtraCategories>Engine - Idle</ExtraCategories>
+    <TableDescription>Used to convert effective area (which the PCM calculates from the desired idle airflow) into actual IAC motor steps.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>48370</addrInt>
+    <TableName>IAC Correction Drive Too High</TableName>
+    <ExtraTableName />
+    <Category>Engine - Idle</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000BCF2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00289855</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>25</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>11</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>0,13,25,38,50,100,150,200,300,400,500</RowHeaders>
+    <ExtraCategories>Engine - Idle</ExtraCategories>
+    <TableDescription>Correction added to the IAC airflow when in drive. The pcm uses this table to correct for the airflow needed if the engine rpm is running too high.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>48326</addrInt>
+    <TableName>IAC Correction P/N Too High</TableName>
+    <ExtraTableName />
+    <Category>Engine - Idle</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000BCC6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00289855</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>25</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>11</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>0,13,25,38,50,100,150,200,300,400,500</RowHeaders>
+    <ExtraCategories>Engine - Idle</ExtraCategories>
+    <TableDescription>Correction added to the IAC airflow when in park or neutral. The pcm uses this table to correct for the airflow needed if the engine rpm is running too high.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>48348</addrInt>
+    <TableName>IAC Correction Drive Too Low</TableName>
+    <ExtraTableName />
+    <Category>Engine - Idle</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000BCDC</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00289855</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>25</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>11</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>0,13,25,38,50,100,150,200,300,400,500</RowHeaders>
+    <ExtraCategories>Engine - Idle</ExtraCategories>
+    <TableDescription>Correction added to the IAC airflow when in Drive. The pcm uses this table to correct for the airflow needed if the engine rpm is running too low.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>48304</addrInt>
+    <TableName>IAC Correction P/N Too Low</TableName>
+    <ExtraTableName />
+    <Category>Engine - Idle</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000BCB0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00289855</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>25</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>11</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>0,13,25,38,50,100,150,200,300,400,500</RowHeaders>
+    <ExtraCategories>Engine - Idle</ExtraCategories>
+    <TableDescription>Correction added to the IAC airflow when in park or neutral. The pcm uses this table to correct for the airflow needed if the engine rpm is running too low.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>42806</addrInt>
+    <TableName>EGR Minimum Vehicle Speed</TableName>
+    <ExtraTableName />
+    <Category />
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A736</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>EGR Minimum Vehicle Speed</RowHeaders>
+    <TableDescription>Minimum vehicle speed required to allow the EGR system to be enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>42430</addrInt>
+    <TableName>Diagnostic Tests</TableName>
+    <ExtraTableName />
+    <Category />
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A5BE</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Int</OutputType>
+    <Min>0</Min>
+    <Max>256</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>8</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:No,1:Yes</Values>
+    <ColumnHeaders />
+    <RowHeaders>Cat Monitor,Cat Heater Monitor,Evap System,Air Pump,AC System,O2 Sensor,O2 Heat,EGR</RowHeaders>
+    <TableDescription>Tells the computer what tests are allowed to be run. Only the following values may be entered into this table: 0 = No   1 = Yes</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50497</addrInt>
+    <TableName>PE Throttle Hysteresis</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Power Enrichment</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C541</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 100</Values>
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>PE Throttle Hysteresis</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Power Enrichment</ExtraCategories>
+    <TableDescription>Throttle must not fall this much below "PE Throttle TPS Threshold" to keep Power Enrichment fueling mode enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50838</addrInt>
+    <TableName>PE Delay RPM Bypass</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Power Enrichment</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C696</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 12000</Values>
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>PE Delay RPM Bypass</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Power Enrichment</ExtraCategories>
+    <TableDescription>Bypass the power enrichment delay if above this RPM.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50828</addrInt>
+    <TableName>PE Delay</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Power Enrichment</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C68C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*.05</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 300</Values>
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>PE Delay</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Power Enrichment</ExtraCategories>
+    <TableDescription>Amount of time the PE (Power Enrichment) conditions must exist before entering into PE (Power Enrichment) fueling mode.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>46006</addrInt>
+    <TableName>Ratio of Air to Fuel for Stoichiometry</TableName>
+    <ExtraTableName />
+    <Category>Engine - General</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000B3B6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.000390625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 25</Values>
+    <ColumnHeaders>AFR</ColumnHeaders>
+    <RowHeaders>Ratio of Air to Fuel for Stoichiometry</RowHeaders>
+    <ExtraCategories>Engine - General</ExtraCategories>
+    <TableDescription>The air-fuel ratio (AFR) considered to be stoichiometric. This value is used by the PCM to determine the AFR of EQ ratio 1.0. AFR values for EQ ratios are calculated by dividing this value by the specified EQ ratio.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50476</addrInt>
+    <TableName>PE RPM Threshold</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Power Enrichment</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C52C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12000</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>5</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0-12000</Values>
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>8.0,9.4,10.9,12.3,13.8</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Power Enrichment</ExtraCategories>
+    <TableDescription>RPM must be higher than this value to enable Power Enrichment fueling mode.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50486</addrInt>
+    <TableName>PE Throttle TPS Threshold</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Power Enrichment</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C536</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>11</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0-100</Values>
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>0,400,800,1200,1600,2000,2400,2800,3200,3600,4000</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Power Enrichment</ExtraCategories>
+    <TableDescription>Throttle % must be greater than this value to enable Power Enrichment fueling mode.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50498</addrInt>
+    <TableName>PE Delay Reduction By Throttle</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Power Enrichment</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C542</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*.05</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>15</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0-300</Values>
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>0,400,800,1200,1600,2000,2400,2800,3200,4000,4400,4800,5200,5600</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Power Enrichment</ExtraCategories>
+    <TableDescription>If Power Enrichment fueling criteria have been met yet the delay is still present, this table allows the delay to count down faster based on the throttle position.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43469</addrInt>
+    <TableName>Number Of Cylinders</TableName>
+    <ExtraTableName />
+    <Category>Engine - General</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9CD</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255</Values>
+    <ColumnHeaders>Cylinders</ColumnHeaders>
+    <RowHeaders />
+    <ExtraCategories>Engine - General</ExtraCategories>
+    <TableDescription>Number of cylinders for this engine application.</TableDescription>
+    <ExtraDescription>** DO NOT CHANGE ***If you need to change this, swap the whole calibration block for a proper one.Defines the number of cylinders in the calibration.</ExtraDescription>
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44356</addrInt>
+    <TableName>Initial Fuel Prime</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Crank/Start</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AD44</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>(X *6.103286)/100000</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255</Values>
+    <ColumnHeaders>Grams</ColumnHeaders>
+    <RowHeaders>-40 ,-18, 3, 25, 46, 68, 90, 111, 133, 154, 176, 198, 219, 241, 262, 284, 306</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Crank/Start</ExtraCategories>
+    <TableDescription>When the ignition key is first turned to the on position the PCM will deliver a prime pulse of fuel.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44390</addrInt>
+    <TableName>Stall Fuel Pulse</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Crank/Start</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AD66</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>(X *6.103286)/100000</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255</Values>
+    <ColumnHeaders>Grams</ColumnHeaders>
+    <RowHeaders>-40 ,-18, 3, 25, 46, 68, 90, 111, 133, 154, 176, 198, 219, 241, 262, 284, 306</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Crank/Start</ExtraCategories>
+    <TableDescription>After a stall condition, this is the amount of fuel injected into the intake.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>51740</addrInt>
+    <TableName>Main Spark Advance</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000CA1C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X / 2) - 60</Math>
+    <Units>Deg SA</Units>
+    <OutputType>Float</OutputType>
+    <Min>-60</Min>
+    <Max>60</Max>
+    <Decimals>2</Decimals>
+    <Columns>20</Columns>
+    <Rows>16</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>15 ,20 ,25 ,30 ,35, 40 ,45 ,50 ,55 ,60 ,65 ,70 ,75 ,80 ,85 ,90 ,95 ,100 ,105,Empty</ColumnHeaders>
+    <RowHeaders>0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Base Spark Advance. </TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>52060</addrInt>
+    <TableName>Main Spark Advance,Closed throttle</TableName>
+    <ExtraTableName />
+    <Category>Engine - Spark</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000CB5C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X / 2) - 60</Math>
+    <Units>Deg SA</Units>
+    <OutputType>Float</OutputType>
+    <Min>-60</Min>
+    <Max>60</Max>
+    <Decimals>2</Decimals>
+    <Columns>20</Columns>
+    <Rows>16</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>15 ,20 ,25 ,30 ,35, 40 ,45 ,50 ,55 ,60 ,65 ,70 ,75 ,80 ,85 ,90 ,95 ,100 ,105,Empty</ColumnHeaders>
+    <RowHeaders>0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000</RowHeaders>
+    <ExtraCategories>Engine - Spark</ExtraCategories>
+    <TableDescription>Base Spark Advance,Closed throttle </TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50850</addrInt>
+    <TableName>EQ Ratio</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Power Enrichment</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C6A2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/4096</Math>
+    <Units>Ratio</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>31.999023</Max>
+    <Decimals>6</Decimals>
+    <Columns>1</Columns>
+    <Rows>17</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 31.30</Values>
+    <ColumnHeaders>Ratio</ColumnHeaders>
+    <RowHeaders>0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Power Enrichment</ExtraCategories>
+    <TableDescription>This is the main table that is used to tune WOT fuel. The values in this table are Fuel/Air multipliers (or Equivalence Ratio) ie. values greater than 1 are richer, values less than one are leaner. The values relate directly to the Stoich AFR and the resulting commanded AFR is Stoich divided by this PE multiplier. Eg. if the multiplier is 1.1 then the commanded AFR will be 14.7/1.1 or 13.36.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>49614</addrInt>
+    <TableName>Base Idle Speed</TableName>
+    <ExtraTableName />
+    <Category>Engine - Idle</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C1CE</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/5.12</Math>
+    <Units>RPM</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12800</Max>
+    <Decimals>0</Decimals>
+    <Columns>4</Columns>
+    <Rows>19</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 12000</Values>
+    <ColumnHeaders>P/N AC Off,P/N AC On,In Gear AC Off,In Gear AC On</ColumnHeaders>
+    <RowHeaders>-40,-18,3.2,24.8,46.4,68,89.6,111.2,132.8,154.4,176,197.6,208.4,219.2,230,240.8,251.6,262.4,273.2</RowHeaders>
+    <ExtraCategories>Engine - Idle</ExtraCategories>
+    <TableDescription>Desired Idle Speeds.  Based on various Transmission and Air Conditioner combinations.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>33014</addrInt>
+    <TableName>Primary Ve </TableName>
+    <ExtraTableName />
+    <Category>Engine - Airflow</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000080F6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>(X/5.12)/1000</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>6</Decimals>
+    <Columns>13</Columns>
+    <Rows>19</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200</ColumnHeaders>
+    <RowHeaders>15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105</RowHeaders>
+    <ExtraCategories>Engine - General - Airflow</ExtraCategories>
+    <TableDescription>Used to determine airmass per cylinder in case of MAF failure and also to provide a base airflow value to check for MAF failure. It is also used to provide transient condition correction to the VCM main airmass calculations</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>32780</addrInt>
+    <TableName>Secondary Ve </TableName>
+    <ExtraTableName />
+    <Category>Engine - Airflow</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000800C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>(X/5.12)/1000</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>6</Decimals>
+    <Columns>13</Columns>
+    <Rows>9</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200</ColumnHeaders>
+    <RowHeaders>20,30,40,50,60,70,80,90,100</RowHeaders>
+    <ExtraCategories>Engine - General - Airflow</ExtraCategories>
+    <TableDescription>Used in some code variations when MAF failure is detected.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>50242</addrInt>
+    <TableName>MAF Sensor Calibration</TableName>
+    <ExtraTableName />
+    <Category>Engine - Airflow</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000C442</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.012206</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>511</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>77</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Grams/Second</ColumnHeaders>
+    <RowHeaders>1488 ,1616 ,1744 ,1872 ,2000 ,2128 ,2256 ,2384 ,2512 ,2640 ,2768 ,2896 ,3024 ,3152 ,3280 ,3408 ,3536 ,3664 ,3792 ,3920 ,4048 ,4176 ,4304 ,4432 ,4560 ,4688 ,4816 ,4944 ,5072 ,5200 ,5328 ,5456 ,5584 ,5712 ,5840 ,5968 ,6096 ,6224 ,6352 ,6480 ,6608 ,6736 ,6864 ,6992 ,7120 ,7248 ,7376 ,7504 ,7632 ,7760 ,7888 ,8016 ,8144 ,8272 ,8400 ,8528 ,8656 ,8784 ,8912 ,9040 ,9168 ,9296 ,9424 ,9552 ,9680 ,9808 ,9936 ,10064 ,10192 ,10320 ,10448 ,10576 ,10704 ,10832 ,10960 ,11088 ,11216 </RowHeaders>
+    <ExtraCategories>Engine - Airflow</ExtraCategories>
+    <TableDescription>This table defines the MAF measured Air Flow Rates (grams per second) versus the Frequency Output (Hz) to the PCM.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>34020</addrInt>
+    <TableName>Air Pump</TableName>
+    <ExtraTableName />
+    <Category>System - Air Injection</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000084E4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:Yes,1:No</Values>
+    <ColumnHeaders />
+    <RowHeaders>Air Pump Injection</RowHeaders>
+    <ExtraCategories>System - Air Injection</ExtraCategories>
+    <TableDescription>Use to shut off the air pump diagnostics. Should only be changed if removed from vehicle.  It helps with Cat light off.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>42453</addrInt>
+    <TableName>DTC.DTC_Enable</TableName>
+    <ExtraTableName />
+    <Category>DTC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A5D5</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Int</OutputType>
+    <Min>0</Min>
+    <Max>3</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>150</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:1 Trip (MIL IMMEDIATELY),1:2 Trips (MIL if DTC active two drive cycles),2:(No MIL store DTC),3:Not Reported (DTC Disabled)</Values>
+    <ColumnHeaders />
+    <RowHeaders>P0101,P0102,P0103,P0106,P0107,P0108,P0111,P0112,P0113,P0117,P0118,P0121,P0122,P0123,P0125,P0131,P0132,P0133,P0134,P0135,P0137,P0138,P0140,P0141,P0143,P0144,P0146,P0147,P0151,P0152,P0153,P0154,P0155,P0157,P0158,P0160,P0161,P0167,P0171,P0172,P0174,P0175,P0218,P0300,P0325,P0327,P0336,P0337,P0338,P0339,P0340,P0341,P0401,P0404,P0405,P0410,P0420,P0430,P0440,P0441,P0442,P0446,P0452,P0453,P0461,P0462,P0463,P0480,P0500,P0502,P0503,P0506,P0507,P0560,P0601,P0602,P0603,P0604,P0605,P0704,P0705,P0706,P0711,P0712,P0713,P0716,P0717,P0719,P0724,P0730,P0740,P0741,P0742,P0748,P0751,P0753,P0756,P0758,P0785,P1106,P1107,P1111,P1112,P1114,P1115,P1121,P1122,P1133,P1134,P1135,P1136,P1153,P1154,P1155,P1156,P1336,P1345,P1351,P1361,P1380,P1381,P1404,P1415,P1416,P1441,P1442,P1445,P1508,P1509,P1543,P1544,P1621,P1626,P1630,P1631,P1637,P1640,P1810,P1811,P1814,P1860,P1870,P1875,P1887,U1026,U1041,U1042,U1064,U1192,U1193</RowHeaders>
+    <ExtraCategories>DTC</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>42605</addrInt>
+    <TableName>DTC.MIL_Enable</TableName>
+    <ExtraTableName />
+    <Category>DTC</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A66D</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units>Boolean</Units>
+    <OutputType>Flag</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>150</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders />
+    <RowHeaders>P0101,P0102,P0103,P0106,P0107,P0108,P0111,P0112,P0113,P0117,P0118,P0121,P0122,P0123,P0125,P0131,P0132,P0133,P0134,P0135,P0137,P0138,P0140,P0141,P0143,P0144,P0146,P0147,P0151,P0152,P0153,P0154,P0155,P0157,P0158,P0160,P0161,P0167,P0171,P0172,P0174,P0175,P0218,P0300,P0325,P0327,P0336,P0337,P0338,P0339,P0340,P0341,P0401,P0404,P0405,P0410,P0420,P0430,P0440,P0441,P0442,P0446,P0452,P0453,P0461,P0462,P0463,P0480,P0500,P0502,P0503,P0506,P0507,P0560,P0601,P0602,P0603,P0604,P0605,P0704,P0705,P0706,P0711,P0712,P0713,P0716,P0717,P0719,P0724,P0730,P0740,P0741,P0742,P0748,P0751,P0753,P0756,P0758,P0785,P1106,P1107,P1111,P1112,P1114,P1115,P1121,P1122,P1133,P1134,P1135,P1136,P1153,P1154,P1155,P1156,P1336,P1345,P1351,P1361,P1380,P1381,P1404,P1415,P1416,P1441,P1442,P1445,P1508,P1509,P1543,P1544,P1621,P1626,P1630,P1631,P1637,P1640,P1810,P1811,P1814,P1860,P1870,P1875,P1887,U1026,U1041,U1042,U1064,U1192,U1193</RowHeaders>
+    <ExtraCategories>DTC</ExtraCategories>
+    <TableDescription>Uncheck = No MIL (Lamp always off) Check = MIL (Lamp may be commanded on by PCM)</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>131076</addrInt>
+    <TableName>Operating System</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Segment ID</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00020004</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>INT32</DataType>
+    <Math>X*1</Math>
+    <Units>Calibration #</Units>
+    <OutputType>Int</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Calibration #</ColumnHeaders>
+    <RowHeaders>Operating System</RowHeaders>
+    <ExtraCategories>Calibration Info - Segment ID</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>32772</addrInt>
+    <TableName>Engine Cal</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Segment ID</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008004</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>INT32</DataType>
+    <Math>X*1</Math>
+    <Units>Calibration #</Units>
+    <OutputType>Int</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Calibration #</ColumnHeaders>
+    <RowHeaders>Engine Cal</RowHeaders>
+    <ExtraCategories>Calibration Info - Segment ID</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61710</addrInt>
+    <TableName>Trans Cal</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Segment ID</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F10E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>INT32</DataType>
+    <Math>X*1</Math>
+    <Units>Calibration #</Units>
+    <OutputType>Int</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Calibration #</ColumnHeaders>
+    <RowHeaders>Trans Cal</RowHeaders>
+    <ExtraCategories>Calibration Info - Segment ID</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>58966</addrInt>
+    <TableName>Fuel System</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Segment ID</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E656</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>INT32</DataType>
+    <Math>X*1</Math>
+    <Units>Calibration #</Units>
+    <OutputType>Int</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Calibration #</ColumnHeaders>
+    <RowHeaders>Fuel System</RowHeaders>
+    <ExtraCategories>Calibration Info - Segment ID</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61336</addrInt>
+    <TableName>System</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Segment ID</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000EF98</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>INT32</DataType>
+    <Math>X*1</Math>
+    <Units>Calibration #</Units>
+    <OutputType>Int</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Calibration #</ColumnHeaders>
+    <RowHeaders>System</RowHeaders>
+    <ExtraCategories>Calibration Info - Segment ID</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61654</addrInt>
+    <TableName>Speedometer</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Segment ID</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0D6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>INT32</DataType>
+    <Math>X*1</Math>
+    <Units>Calibration #</Units>
+    <OutputType>Int</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Calibration #</ColumnHeaders>
+    <RowHeaders>Speedometer</RowHeaders>
+    <ExtraCategories>Calibration Info - Segment ID</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>131072</addrInt>
+    <TableName>Operating System</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Checksum</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00020000</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units>Checksum</Units>
+    <OutputType>Hex</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Checksum</ColumnHeaders>
+    <RowHeaders>Operating System</RowHeaders>
+    <ExtraCategories>Calibration Info - Checksum</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>32768</addrInt>
+    <TableName>Engine Cal</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Checksum</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008000</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units>Checksum</Units>
+    <OutputType>Hex</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Checksum</ColumnHeaders>
+    <RowHeaders>Engine Cal</RowHeaders>
+    <ExtraCategories>Calibration Info - Checksum</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61706</addrInt>
+    <TableName>Trans Cal</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Checksum</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F10A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units>Checksum</Units>
+    <OutputType>Hex</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Checksum</ColumnHeaders>
+    <RowHeaders>Trans Cal</RowHeaders>
+    <ExtraCategories>Calibration Info - Checksum</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>58962</addrInt>
+    <TableName>Fuel System</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Checksum</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E652</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units>Checksum</Units>
+    <OutputType>Hex</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Checksum</ColumnHeaders>
+    <RowHeaders>Fuel System</RowHeaders>
+    <ExtraCategories>Calibration Info - Checksum</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61332</addrInt>
+    <TableName>System</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Checksum</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000EF94</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units>Checksum</Units>
+    <OutputType>Hex</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Checksum</ColumnHeaders>
+    <RowHeaders>System</RowHeaders>
+    <ExtraCategories>Calibration Info - Checksum</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61650</addrInt>
+    <TableName>Speedometer</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info - Checksum</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0D2</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units>Checksum</Units>
+    <OutputType>Hex</OutputType>
+    <Min>10</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Checksum</ColumnHeaders>
+    <RowHeaders>Speedometer</RowHeaders>
+    <ExtraCategories>Calibration Info - Checksum</ExtraCategories>
+    <TableDescription>*** DO NOT HAND EDIT *** Displayed for information only!</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>84232</addrInt>
+    <TableName>VIN</TableName>
+    <ExtraTableName />
+    <Category>Calibration Info</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00014908</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units>VIN char</Units>
+    <OutputType>Hex</OutputType>
+    <Min>48</Min>
+    <Max>90</Max>
+    <Decimals>2</Decimals>
+    <Columns>17</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17</ColumnHeaders>
+    <RowHeaders>VIN</RowHeaders>
+    <ExtraCategories>Calibration Info</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61630</addrInt>
+    <TableName>VATS (Vehicle Anti Theft System)</TableName>
+    <ExtraTableName />
+    <Category>System - Theft</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0BE</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:Class 2 ,1:Disabled</Values>
+    <ColumnHeaders />
+    <RowHeaders>VATS</RowHeaders>
+    <ExtraCategories>System - Theft</ExtraCategories>
+    <TableDescription>Shuts the vehicle anti-theft system on and off.   When off the PCM can not shut off fuel to the engine if the VATS key has not been sent.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61616</addrInt>
+    <TableName>Disable RPM</TableName>
+    <ExtraTableName />
+    <Category>System - A/C</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0B0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/5.12</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12800</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>Disable RPM</RowHeaders>
+    <ExtraCategories>System - A/C</ExtraCategories>
+    <TableDescription>RPM at which the A/C system will be disabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61624</addrInt>
+    <TableName>Disable TPS</TableName>
+    <ExtraTableName />
+    <Category>System - A/C</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0B8</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>Disable TPS</RowHeaders>
+    <ExtraCategories>System - A/C</ExtraCategories>
+    <TableDescription>Throttle Position at which the A/C system will be disabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61625</addrInt>
+    <TableName>Re-Enable TPS</TableName>
+    <ExtraTableName />
+    <Category>System - A/C</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0B9</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders>Re-Enable TPS</RowHeaders>
+    <ExtraCategories>System - A/C</ExtraCategories>
+    <TableDescription>Throttle Position at which the A/C system will be re-enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61668</addrInt>
+    <TableName>Speed Limit Cutoff</TableName>
+    <ExtraTableName />
+    <Category>Speedometer</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0E4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Speed Limit Cutoff</RowHeaders>
+    <ExtraCategories>Speedometer</ExtraCategories>
+    <TableDescription>Maximum allowed vehicle speed before fuel is shutoff on vehicles without Electronic Throttle Control (ETC).</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61670</addrInt>
+    <TableName>Speed Limit Resume</TableName>
+    <ExtraTableName />
+    <Category>Speedometer</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0E6</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units>MPH</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Speed Limit Resume</RowHeaders>
+    <ExtraCategories>Speedometer</ExtraCategories>
+    <TableDescription>If the fuel has been shutoff due to the maximum allowed speed being reached, the speed must fall by this much before fuel will be re-enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61664</addrInt>
+    <TableName>VSS Pulses Per Mile</TableName>
+    <ExtraTableName />
+    <Category>Speedometer</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0E0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*3.90625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255996.09375</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255000</Values>
+    <ColumnHeaders>Pulses/Mile</ColumnHeaders>
+    <RowHeaders>VSS Pulses Per Mile</RowHeaders>
+    <ExtraCategories>Speedometer</ExtraCategories>
+    <TableDescription>This value is used to calculate the speed value for the engine routines and gauge cluster. It is the number of pulses received from the VSS sensor per mile/kilometer traveled. If you know your gear, tire and location of your VSS sensor you can calculate this value manually.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61664</addrInt>
+    <TableName>Tire Size</TableName>
+    <ExtraTableName />
+    <Category />
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0E0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>(63360 * 3.42 * 40) / (X*3.90625 * 3.14)</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255996.09375</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255000</Values>
+    <ColumnHeaders>In</ColumnHeaders>
+    <RowHeaders>Tire Size</RowHeaders>
+    <ExtraCategories />
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61662</addrInt>
+    <TableName>Pulses Per Mile-ABS</TableName>
+    <ExtraTableName />
+    <Category>Speedometer</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0DE</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*3.90625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255996.09375</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255000</Values>
+    <ColumnHeaders>Pulses/Mile</ColumnHeaders>
+    <RowHeaders>Pulses Per Mile-ABS</RowHeaders>
+    <ExtraCategories>Speedometer</ExtraCategories>
+    <TableDescription>Number of pulses of the output shaft sensor per mile/kilometer. Used to control the ABS on some vehicles.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61674</addrInt>
+    <TableName>Final Drive Ratio</TableName>
+    <ExtraTableName />
+    <Category>Speedometer</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0EA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/8192 </Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>15.999756</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 15</Values>
+    <ColumnHeaders />
+    <RowHeaders>Final Drive Ratio</RowHeaders>
+    <ExtraCategories>Speedometer</ExtraCategories>
+    <TableDescription>Axle gear ratio for calibration application, Units: Multiplier_0_to_16</TableDescription>
+    <ExtraDescription>This value is used by the torque subsystem to estimate the axle torque.It is not used by the PCM for calculating either the speedometer or the transmission shift speeds.On many vehicles (especially corvettes) it is set incorrectly, usually to the default value of 2.73 regardless of the actual differential ratio.</ExtraDescription>
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61664</addrInt>
+    <TableName>Trans Output Revs/Mile</TableName>
+    <ExtraTableName />
+    <Category>Speedometer</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0E0</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>(X*3.90625)/40</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255</Values>
+    <ColumnHeaders>Pulses/Rev</ColumnHeaders>
+    <RowHeaders>Trans Output Revs/Mile</RowHeaders>
+    <ExtraCategories>Speedometer</ExtraCategories>
+    <TableDescription>The number of trans output shaft revolutions per mile. This value is used to calculate the speed that is used for shift and TCC calculations. (A tire sanity check value is provided alongside so you can check the trans tire size calibration against the speedo tire size calibration. This is also useful for troubleshooting accurate speedo but trans shifting strangely issues)</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61610</addrInt>
+    <TableName>Fan Type</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0AA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0:No,1:Yes</Values>
+    <ColumnHeaders />
+    <RowHeaders>Fan Type</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Fan outputs will be used when A/C is active if enabled.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61608</addrInt>
+    <TableName>Air Conditioning Available</TableName>
+    <ExtraTableName />
+    <Category>System - A/C</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000F0A8</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>Enum: 0: No,1:Yes</Values>
+    <ColumnHeaders />
+    <RowHeaders>Air Conditioning Available</RowHeaders>
+    <ExtraCategories>System - A/C</ExtraCategories>
+    <TableDescription>Shuts on or off A/C system in PCM.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61156</addrInt>
+    <TableName>Capacity</TableName>
+    <ExtraTableName />
+    <Category>Fuel System</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000EEE4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0018396</Math>
+    <Units>Gallons</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>200</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 200</Values>
+    <ColumnHeaders>Gallons</ColumnHeaders>
+    <RowHeaders>Capacity</RowHeaders>
+    <ExtraCategories>Fuel System</ExtraCategories>
+    <TableDescription>Maximum Fuel Tank volume as rated by GMUTS and/or the platform., Units: Gallons</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>59116</addrInt>
+    <TableName>Gauge Output</TableName>
+    <ExtraTableName />
+    <Category>Fuel System</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E6EC</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units>Percent</Units>
+    <OutputType>Float</OutputType>
+    <Min>-200</Min>
+    <Max>200</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>26</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>-200 - 200</Values>
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders> 0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100</RowHeaders>
+    <ExtraCategories>Fuel System</ExtraCategories>
+    <TableDescription>Fuel Gauge Output vs. Level: This is the PWM duty cycle for the fuel gauge output versus remaining fuel level.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61308</addrInt>
+    <TableName>Sender Max A/D</TableName>
+    <ExtraTableName />
+    <Category>Fuel System</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000EF7C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units>Counts</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255</Values>
+    <ColumnHeaders>Counts</ColumnHeaders>
+    <RowHeaders>Sender Max A/D</RowHeaders>
+    <ExtraCategories>Fuel System</ExtraCategories>
+    <TableDescription>If the fuel level reading is equal to or above this value then it is considered a fault., Units: A/D Counts</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>61307</addrInt>
+    <TableName>Sender Min A/D</TableName>
+    <ExtraTableName />
+    <Category>Fuel System</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000EF7B</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*1</Math>
+    <Units>Counts</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 255</Values>
+    <ColumnHeaders>Counts</ColumnHeaders>
+    <RowHeaders>Sender Min A/D</RowHeaders>
+    <ExtraCategories>Fuel System</ExtraCategories>
+    <TableDescription>If the fuel level reading is equal to or below this value then it is considered a fault., Units: A/D Counts</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>59206</addrInt>
+    <TableName>Primary Volume</TableName>
+    <ExtraTableName />
+    <Category>Fuel System</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E746</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units>Percent</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1023.984375</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>41</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 1000</Values>
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders> 0,	2.5,	5,	7.5,	10,	12.5,	15,	17.5,	20,	22.5,	25,	27.5,	30,	32.5,	35,	37.5,	40,	42.5,	45,	47.5,	50,	52.5,	55,	57.5,	60,	62.5,	65,	67.5,	70,	72.5,	75,	77.5,	80,	82.5,	85,	87.5,	90,	92.5,	95,	97.5,	100	</RowHeaders>
+    <ExtraCategories>Fuel System</ExtraCategories>
+    <TableDescription> Fuel Primary Volume % vs. Level: This is the remaining percentage of fuel volume versus remaining fuel level from the sender.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>59154</addrInt>
+    <TableName>Primary Volume Gauge</TableName>
+    <ExtraTableName />
+    <Category>Fuel System</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000E712</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X/2.56</Math>
+    <Units>Percent</Units>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1023.984375</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>41</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>0 - 1000</Values>
+    <ColumnHeaders>Percent</ColumnHeaders>
+    <RowHeaders> 0,	2.5,	5,	7.5,	10,	12.5,	15,	17.5,	20,	22.5,	25,	27.5,	30,	32.5,	35,	37.5,	40,	42.5,	45,	47.5,	50,	52.5,	55,	57.5,	60,	62.5,	65,	67.5,	70,	72.5,	75,	77.5,	80,	82.5,	85,	87.5,	90,	92.5,	95,	97.5,	100</RowHeaders>
+    <ExtraCategories>Fuel System</ExtraCategories>
+    <TableDescription>Fuel Primary Gauge Volume % vs. Level: This is the remaining percentage of fuel volume versus remaining fuel level from the sender, used for the fuel gauge.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47621</addrInt>
+    <TableName>Fan Enable Temp</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA05</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X/.743)-40</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-40</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>-40 - 285</Values>
+    <ColumnHeaders>Degree F</ColumnHeaders>
+    <RowHeaders>Fan Enable Temp</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Cooling Fan will turn on if the engine coolant temperature is above this value.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47620</addrInt>
+    <TableName>Fan Disable Temp</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA04</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X/.743)-40</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-40</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>-40 - 285</Values>
+    <ColumnHeaders>Degree F</ColumnHeaders>
+    <RowHeaders>Fan Disable Temp</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Cooling Fan will turn off if the engine coolant temperature is below this value.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47626</addrInt>
+    <TableName>Fan Off Speed</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA0A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>-40 - 285</Values>
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Fan Off Speed</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>If AC is on, fan will disable above this speed</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47632</addrInt>
+    <TableName>Fan On Shutdown Coolant</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA10</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X/.743)-40</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-40</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>-40 - 285</Values>
+    <ColumnHeaders>Degree F</ColumnHeaders>
+    <RowHeaders>Fan On Shutdown Coolant</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription> If engine coolant temperature is above this value when ignition is switched off, fans will run for Run Time</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47638</addrInt>
+    <TableName>Fan Shutdown Run Time</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA16</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*3.226</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-40</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values>-40 - 285</Values>
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>Fan Shutdown Run Time</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>If AC is on, fan will disable above this speed</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47622</addrInt>
+    <TableName>Fan Delay</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA06</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*3.226</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>Fan Delay</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Fan enable delay after enable conditions are met.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47624</addrInt>
+    <TableName>Fan Min Run Time</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA08</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*3.226</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>Fan Min Run Time</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Minimum time that Fan must be commanded 'on'.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47628</addrInt>
+    <TableName>Fan Off Shutdown Temp Enable</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA0C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>(X/.743)-40</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>-40</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Degree F</ColumnHeaders>
+    <RowHeaders>Fan Off Shutdown temp enable</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Coolant Temp below which Fan is disabled if ignition is off.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47630</addrInt>
+    <TableName>Fan On Speed</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA0E</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Fan On Speed</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Vehicle speed below which Fan can be enabled due to high coolant temp.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47634</addrInt>
+    <TableName>Fan Recirculation Off Speed</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA12</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Fan Recirculation Off Speed</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Vehicle speed above which Fan is disabled if enabled by high pressure switch.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>47636</addrInt>
+    <TableName>Fan Recirculation On Speed</TableName>
+    <ExtraTableName />
+    <Category>System - Fans</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Imperial</DispUnits>
+    <Address>0000BA14</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X/256</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>300</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>MPH</ColumnHeaders>
+    <RowHeaders>Fan Recirculation On Speed</RowHeaders>
+    <ExtraCategories>System - Fans</ExtraCategories>
+    <TableDescription>Vehicle speed below which Fan can be enabled due to high pressure.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>33508</addrInt>
+    <TableName>Cylinder Volume</TableName>
+    <ExtraTableName />
+    <Category>Engine - General</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>000082E4</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*0.0039175824</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Liters</ColumnHeaders>
+    <RowHeaders>Cylinder Volume</RowHeaders>
+    <ExtraCategories>Engine - General</ExtraCategories>
+    <TableDescription>Volume of each cylinder in the engine.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44890</addrInt>
+    <TableName>Injector Flow Rate </TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Injectors</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AF5A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.007749</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>511</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Lb/Hr</ColumnHeaders>
+    <RowHeaders>Injector Flow Rate </RowHeaders>
+    <ExtraCategories>Engine - Fuel - Injectors</ExtraCategories>
+    <TableDescription>Flow rate of the fuel injectors</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44892</addrInt>
+    <TableName>Injector Voltage Correction</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Injectors</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AF5C</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.0004884</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8</Max>
+    <Decimals>3</Decimals>
+    <Columns>1</Columns>
+    <Rows>14</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Volts</ColumnHeaders>
+    <RowHeaders>4,5,6,7,8,9,10,11,12,13,14,15,16,17</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Injectors</ExtraCategories>
+    <TableDescription>Injector Flow compensation based on Fuel Pump Voltage.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44948</addrInt>
+    <TableName>Minimum Injector Pulse Width </TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Injectors</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AF94</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.000890</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Millisecs</ColumnHeaders>
+    <RowHeaders>Minimum Injector Pulse Width </RowHeaders>
+    <ExtraCategories>Engine - Fuel - Injectors</ExtraCategories>
+    <TableDescription>This is the Minimum Injector Pulse Width (milliseconds) the PCM can command for a given RPM.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44952</addrInt>
+    <TableName>Minimum Injector Shut Off Timer </TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Injectors</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AF98</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*.0001</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>1</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>Minimum Injector Shut Off Timer </RowHeaders>
+    <ExtraCategories>Engine - Fuel - Injectors</ExtraCategories>
+    <TableDescription>Injector will stay shut for this amount of time when PCM commands no fuel.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44920</addrInt>
+    <TableName>Injector Hardware Correction </TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Injectors</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AF78</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UBYTE</DataType>
+    <Math>X*0.0000117625</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>6</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Seconds</ColumnHeaders>
+    <RowHeaders>Injector Hardware Correction </RowHeaders>
+    <ExtraCategories>Engine - Fuel - Injectors</ExtraCategories>
+    <TableDescription>Timer for injection compensation due to PCM hardware timing</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44856</addrInt>
+    <TableName>Small Pulse Threshold </TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Injectors</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AF38</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.00001179</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <Decimals>4</Decimals>
+    <Columns>1</Columns>
+    <Rows>1</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>false</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Millisecs</ColumnHeaders>
+    <RowHeaders>Small Pulse Threshold </RowHeaders>
+    <ExtraCategories>Engine - Fuel - Injectors</ExtraCategories>
+    <TableDescription>If the commanded injector on time is less than this value the PCM assumes this to be a 'small pulse', in which case the values from table "Small Pulse Adjust" will also be added onto the final pulse width.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>44858</addrInt>
+    <TableName>Small Pulse Adjust</TableName>
+    <ExtraTableName />
+    <Category>Engine - Fuel - Injectors</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000AF3A</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>SWORD</DataType>
+    <Math>X*0.00001176</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <Decimals>6</Decimals>
+    <Columns>1</Columns>
+    <Rows>16</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Millisecs</ColumnHeaders>
+    <RowHeaders>0.00,0.20,0.40,0.60,0.80,1.00,1.20,1.40,1.60,1.80,2.00,2.20,2.40,2.60,2.80,3.00	</RowHeaders>
+    <ExtraCategories>Engine - Fuel - Injectors</ExtraCategories>
+    <TableDescription>When a very short injector on time is commanded (between 0 - 4mS) the PCM will add the values in this table onto the injector on time.</TableDescription>
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>43514</addrInt>
+    <TableName>Rev Limiter</TableName>
+    <ExtraTableName />
+    <Category>Engine - General</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>0000A9FA</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*0.1953125</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8000</Max>
+    <Decimals>0</Decimals>
+    <Columns>1</Columns>
+    <Rows>2</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>RPM</ColumnHeaders>
+    <RowHeaders>Cutoff,Resume</RowHeaders>
+    <ExtraCategories>Engine - General</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+  <TableData>
+    <addrInt>35592</addrInt>
+    <TableName>MAF Frequency Fail</TableName>
+    <ExtraTableName />
+    <Category>Engine - Airflow</Category>
+    
+    <OS>9365095</OS>
+    <DispUnits>Undefined</DispUnits>
+    <Address>00008B08</Address>
+    <Offset>0</Offset>
+    <ExtraOffset>0</ExtraOffset>
+    <DataType>UWORD</DataType>
+    <Math>X*1</Math>
+    <Units />
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>0</Max>
+    <Decimals>2</Decimals>
+    <Columns>1</Columns>
+    <Rows>2</Rows>
+    <ByteOrder>PlatformOrder</ByteOrder>
+    <BitMask />
+    <RowMajor>true</RowMajor>
+    <Origin>xml</Origin>
+    <Values />
+    <ColumnHeaders>Hz</ColumnHeaders>
+    <RowHeaders>MAF Frequency Fail High,MAF Frequency Fail Low</RowHeaders>
+    <ExtraCategories>Engine - Airflow</ExtraCategories>
+    <TableDescription />
+    <ExtraDescription />
+    <CompatibleOS />
+  </TableData>
+</ArrayOfTableData>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <Name>VATS</Name>
+    <Description>Disable</Description>
+    <XmlFile>blackbox.xml</XmlFile>
+    <Segment>System</Segment>
+    <CompatibleOS>16265175:F158</CompatibleOS>
+    <Data>01</Data>
+  </XmlPatch>
+</ArrayOfXmlPatch>

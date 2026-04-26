@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<LogConverter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <AddressSource>Datarow</AddressSource>
+  <BlockSizeSource>Requestrow</BlockSizeSource>
+  <AddressOffset>6</AddressOffset>
+  <LenOffset>6</LenOffset>
+  <AddressBytes>3</AddressBytes>
+  <LenBytes>2</LenBytes>
+  <FixedLength>0</FixedLength>
+  <DataOffset>9</DataOffset>
+  <RequestBytes>
+    <int>0</int>
+    <int>0</int>
+    <int>7</int>
+    <int>224</int>
+    <int>53</int>
+    <int>-1</int>
+  </RequestBytes>
+  <DataBytes>
+    <int>0</int>
+    <int>0</int>
+    <int>7</int>
+    <int>232</int>
+    <int>54</int>
+    <int>-1</int>
+  </DataBytes>
+</LogConverter>
