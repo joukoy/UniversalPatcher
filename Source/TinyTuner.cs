@@ -179,6 +179,31 @@ namespace UniversalPatcher
             }
             return mapNr;
         }
+        private string GetMapNumberByTableSeek(OleDbConnection cnn, PcmFile PCM)
+        {
+            FoundTable ftMAF = PCM.foundTables.Where(X => X.Name == "MAF").FirstOrDefault();
+            if (ftMAF == null)
+            {
+                return "";
+            }
+            FoundTable ftVE = PCM.foundTables.Where(X => X.Name == "VE").FirstOrDefault();
+            if (ftVE == null)
+            {
+                return "";
+            }
+            string query = "Select MapNumber from OSIDData where MAFLoc='" + ftMAF.addrInt.ToString("X8") +"' AND VELoc='" + ftVE.addrInt.ToString("X8") +"'";
+            OleDbCommand selectCommand = new OleDbCommand(query, cnn);
+            DataTable table = new DataTable();
+            OleDbDataAdapter adapter = new OleDbDataAdapter();
+            adapter.SelectCommand = selectCommand;
+            adapter.Fill(table);
+            string mapNr = "";
+            foreach (DataRow row in table.Rows)
+            {
+                mapNr = row["MapNumber"].ToString();
+            }
+            return mapNr;
+        }
 
         public string ReadTinyDBtoTableData(PcmFile PCM, List<TableData> tdList)
         {
@@ -228,6 +253,16 @@ namespace UniversalPatcher
                                 LoggerBold("Warning! Tables may not be 100% compatible");
                                 break;
                             }
+                        }
+                        if (string.IsNullOrEmpty(mapNr))
+                        {
+                            mapNr = GetMapNumberByTableSeek(cnn,PCM);
+                            if (!string.IsNullOrEmpty(mapNr))
+                            {
+                                Logger("Loading compatible OS data: " + PCM.OS);
+                                LoggerBold("Warning! Tables may not be 100% compatible");
+                            }
+
                         }
                         if (string.IsNullOrEmpty(mapNr))
                         {

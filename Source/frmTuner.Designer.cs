@@ -73,12 +73,19 @@ namespace UniversalPatcher
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mirrorSegmentsFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resetTunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showOnlyMappedTablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showTablesWithEmptyAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sortColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.treeviewSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.unitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.sortColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveColumnsPresetAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadColumnsPresetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetTunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resizeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resizeNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoresizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autosaveColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.currentFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -183,6 +190,7 @@ namespace UniversalPatcher
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabCategory = new System.Windows.Forms.TabPage();
             this.tabMultiTree = new System.Windows.Forms.TabPage();
@@ -190,6 +198,15 @@ namespace UniversalPatcher
             this.tabValueType = new System.Windows.Forms.TabPage();
             this.tabSegments = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioColorsOff = new System.Windows.Forms.RadioButton();
+            this.radioColorsUseTableValues = new System.Windows.Forms.RadioButton();
+            this.radioColorsUseTableSettings = new System.Windows.Forms.RadioButton();
+            this.btnColorMid = new System.Windows.Forms.Button();
+            this.btnColorMax1 = new System.Windows.Forms.Button();
+            this.btnColorMax2 = new System.Windows.Forms.Button();
+            this.btnColorMin2 = new System.Windows.Forms.Button();
+            this.btnColorMin1 = new System.Windows.Forms.Button();
             this.groupNavigator = new System.Windows.Forms.GroupBox();
             this.numNaviMaxTablesTotal = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
@@ -205,7 +222,7 @@ namespace UniversalPatcher
             this.tabFileInfo = new System.Windows.Forms.TabPage();
             this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
-            this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
+            this.treeView1 = new UniversalPatcher.TreeViewMS();
             this.contextMenuStripListTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -213,7 +230,6 @@ namespace UniversalPatcher
             this.collapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addSegmentOffsetNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
             this.imageList2 = new System.Windows.Forms.ImageList(this.components);
             this.imageList4 = new System.Windows.Forms.ImageList(this.components);
@@ -245,7 +261,6 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
-            this.treeView1 = new UniversalPatcher.TreeViewMS();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -257,17 +272,18 @@ namespace UniversalPatcher
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerListMode)).BeginInit();
+            this.splitContainerListMode.Panel1.SuspendLayout();
+            this.splitContainerListMode.Panel2.SuspendLayout();
+            this.splitContainerListMode.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabSettings.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.groupNavigator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numNaviMaxTablesTotal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numNaviMaxTablesPerNode)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
             this.tabFileInfo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerListMode)).BeginInit();
-            this.splitContainerListMode.Panel1.SuspendLayout();
-            this.splitContainerListMode.Panel2.SuspendLayout();
-            this.splitContainerListMode.SuspendLayout();
             this.contextMenuStripListTree.SuspendLayout();
             this.contextMenuStripTree.SuspendLayout();
             this.contextMenuStripPatch.SuspendLayout();
@@ -299,7 +315,7 @@ namespace UniversalPatcher
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(671, 409);
+            this.dataGridView1.Size = new System.Drawing.Size(544, 409);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
@@ -536,12 +552,17 @@ namespace UniversalPatcher
             this.fontToolStripMenuItem,
             this.mirrorSegmentsFromCompareToolStripMenuItem,
             this.moreSettingsToolStripMenuItem,
-            this.resetTunerModeColumnsToolStripMenuItem,
             this.showOnlyMappedTablesToolStripMenuItem,
             this.showTablesWithEmptyAddressToolStripMenuItem,
-            this.sortColumnsToolStripMenuItem,
             this.treeviewSettingsToolStripMenuItem,
-            this.unitsToolStripMenuItem});
+            this.unitsToolStripMenuItem,
+            this.toolStripSeparator8,
+            this.sortColumnsToolStripMenuItem,
+            this.saveColumnsPresetAsToolStripMenuItem,
+            this.loadColumnsPresetToolStripMenuItem,
+            this.resetTunerModeColumnsToolStripMenuItem,
+            this.resizeColumnsToolStripMenuItem,
+            this.autosaveColumnsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -621,13 +642,6 @@ namespace UniversalPatcher
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
             // 
-            // resetTunerModeColumnsToolStripMenuItem
-            // 
-            this.resetTunerModeColumnsToolStripMenuItem.Name = "resetTunerModeColumnsToolStripMenuItem";
-            this.resetTunerModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.resetTunerModeColumnsToolStripMenuItem.Text = "Reset tuner mode columns";
-            this.resetTunerModeColumnsToolStripMenuItem.Click += new System.EventHandler(this.resetTunerModeColumnsToolStripMenuItem_Click);
-            // 
             // showOnlyMappedTablesToolStripMenuItem
             // 
             this.showOnlyMappedTablesToolStripMenuItem.Name = "showOnlyMappedTablesToolStripMenuItem";
@@ -642,13 +656,6 @@ namespace UniversalPatcher
             this.showTablesWithEmptyAddressToolStripMenuItem.Text = "Show tables with empty address";
             this.showTablesWithEmptyAddressToolStripMenuItem.Click += new System.EventHandler(this.showTablesWithEmptyAddressToolStripMenuItem_Click);
             // 
-            // sortColumnsToolStripMenuItem
-            // 
-            this.sortColumnsToolStripMenuItem.Name = "sortColumnsToolStripMenuItem";
-            this.sortColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.sortColumnsToolStripMenuItem.Text = "Sort Columns";
-            this.sortColumnsToolStripMenuItem.Click += new System.EventHandler(this.sortColumnsToolStripMenuItem_Click);
-            // 
             // treeviewSettingsToolStripMenuItem
             // 
             this.treeviewSettingsToolStripMenuItem.Name = "treeviewSettingsToolStripMenuItem";
@@ -662,6 +669,69 @@ namespace UniversalPatcher
             this.unitsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.unitsToolStripMenuItem.Text = "Units";
             this.unitsToolStripMenuItem.Click += new System.EventHandler(this.unitsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(240, 6);
+            // 
+            // sortColumnsToolStripMenuItem
+            // 
+            this.sortColumnsToolStripMenuItem.Name = "sortColumnsToolStripMenuItem";
+            this.sortColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.sortColumnsToolStripMenuItem.Text = "Select/Sort Columns";
+            this.sortColumnsToolStripMenuItem.Click += new System.EventHandler(this.sortColumnsToolStripMenuItem_Click);
+            // 
+            // saveColumnsPresetAsToolStripMenuItem
+            // 
+            this.saveColumnsPresetAsToolStripMenuItem.Name = "saveColumnsPresetAsToolStripMenuItem";
+            this.saveColumnsPresetAsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.saveColumnsPresetAsToolStripMenuItem.Text = "Save columns preset as...";
+            this.saveColumnsPresetAsToolStripMenuItem.Click += new System.EventHandler(this.saveColumnsPresetAsToolStripMenuItem_Click);
+            // 
+            // loadColumnsPresetToolStripMenuItem
+            // 
+            this.loadColumnsPresetToolStripMenuItem.Name = "loadColumnsPresetToolStripMenuItem";
+            this.loadColumnsPresetToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.loadColumnsPresetToolStripMenuItem.Text = "Load columns preset";
+            this.loadColumnsPresetToolStripMenuItem.Click += new System.EventHandler(this.loadColumnsPresetToolStripMenuItem_Click);
+            // 
+            // resetTunerModeColumnsToolStripMenuItem
+            // 
+            this.resetTunerModeColumnsToolStripMenuItem.Name = "resetTunerModeColumnsToolStripMenuItem";
+            this.resetTunerModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.resetTunerModeColumnsToolStripMenuItem.Text = "Reset columns";
+            this.resetTunerModeColumnsToolStripMenuItem.Click += new System.EventHandler(this.resetTunerModeColumnsToolStripMenuItem_Click);
+            // 
+            // resizeColumnsToolStripMenuItem
+            // 
+            this.resizeColumnsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resizeNowToolStripMenuItem,
+            this.autoresizeToolStripMenuItem});
+            this.resizeColumnsToolStripMenuItem.Name = "resizeColumnsToolStripMenuItem";
+            this.resizeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.resizeColumnsToolStripMenuItem.Text = "Resize columns";
+            // 
+            // resizeNowToolStripMenuItem
+            // 
+            this.resizeNowToolStripMenuItem.Name = "resizeNowToolStripMenuItem";
+            this.resizeNowToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.resizeNowToolStripMenuItem.Text = "Resize now";
+            this.resizeNowToolStripMenuItem.Click += new System.EventHandler(this.resizeNowToolStripMenuItem_Click);
+            // 
+            // autoresizeToolStripMenuItem
+            // 
+            this.autoresizeToolStripMenuItem.Name = "autoresizeToolStripMenuItem";
+            this.autoresizeToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.autoresizeToolStripMenuItem.Text = "Autoresize";
+            this.autoresizeToolStripMenuItem.Click += new System.EventHandler(this.autoresizeToolStripMenuItem_Click);
+            // 
+            // autosaveColumnsToolStripMenuItem
+            // 
+            this.autosaveColumnsToolStripMenuItem.Name = "autosaveColumnsToolStripMenuItem";
+            this.autosaveColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.autosaveColumnsToolStripMenuItem.Text = "Autosave columns";
+            this.autosaveColumnsToolStripMenuItem.Click += new System.EventHandler(this.autosaveColumnsToolStripMenuItem_Click);
             // 
             // currentFileToolStripMenuItem
             // 
@@ -1499,7 +1569,6 @@ namespace UniversalPatcher
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.tabControl1);
             this.splitContainer2.Panel1.Controls.Add(this.splitContainerListMode);
             // 
             // splitContainer2.Panel2
@@ -1508,6 +1577,24 @@ namespace UniversalPatcher
             this.splitContainer2.Size = new System.Drawing.Size(1021, 502);
             this.splitContainer2.SplitterDistance = 409;
             this.splitContainer2.TabIndex = 22;
+            // 
+            // splitContainerListMode
+            // 
+            this.splitContainerListMode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerListMode.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerListMode.Name = "splitContainerListMode";
+            // 
+            // splitContainerListMode.Panel1
+            // 
+            this.splitContainerListMode.Panel1.Controls.Add(this.tabControl1);
+            this.splitContainerListMode.Panel1.Controls.Add(this.treeView1);
+            // 
+            // splitContainerListMode.Panel2
+            // 
+            this.splitContainerListMode.Panel2.Controls.Add(this.dataGridView1);
+            this.splitContainerListMode.Size = new System.Drawing.Size(1021, 409);
+            this.splitContainerListMode.SplitterDistance = 473;
+            this.splitContainerListMode.TabIndex = 3;
             // 
             // tabControl1
             // 
@@ -1520,10 +1607,10 @@ namespace UniversalPatcher
             this.tabControl1.Controls.Add(this.tabPatches);
             this.tabControl1.Controls.Add(this.tabFileInfo);
             this.tabControl1.ImageList = this.imageList3;
-            this.tabControl1.Location = new System.Drawing.Point(176, 105);
+            this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(449, 281);
+            this.tabControl1.Size = new System.Drawing.Size(449, 403);
             this.tabControl1.TabIndex = 1;
             this.tabControl1.Visible = false;
             // 
@@ -1532,7 +1619,7 @@ namespace UniversalPatcher
             this.tabCategory.ImageKey = "category.ico";
             this.tabCategory.Location = new System.Drawing.Point(4, 31);
             this.tabCategory.Name = "tabCategory";
-            this.tabCategory.Size = new System.Drawing.Size(441, 246);
+            this.tabCategory.Size = new System.Drawing.Size(441, 368);
             this.tabCategory.TabIndex = 2;
             this.tabCategory.UseVisualStyleBackColor = true;
             this.tabCategory.Click += new System.EventHandler(this.tabCategory_Click);
@@ -1542,7 +1629,7 @@ namespace UniversalPatcher
             this.tabMultiTree.ImageKey = "listmode.ico";
             this.tabMultiTree.Location = new System.Drawing.Point(4, 31);
             this.tabMultiTree.Name = "tabMultiTree";
-            this.tabMultiTree.Size = new System.Drawing.Size(441, 246);
+            this.tabMultiTree.Size = new System.Drawing.Size(441, 368);
             this.tabMultiTree.TabIndex = 7;
             this.tabMultiTree.UseVisualStyleBackColor = true;
             // 
@@ -1552,7 +1639,7 @@ namespace UniversalPatcher
             this.tabDimensions.Location = new System.Drawing.Point(4, 31);
             this.tabDimensions.Name = "tabDimensions";
             this.tabDimensions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDimensions.Size = new System.Drawing.Size(441, 246);
+            this.tabDimensions.Size = new System.Drawing.Size(441, 368);
             this.tabDimensions.TabIndex = 0;
             this.tabDimensions.UseVisualStyleBackColor = true;
             // 
@@ -1562,7 +1649,7 @@ namespace UniversalPatcher
             this.tabValueType.Location = new System.Drawing.Point(4, 31);
             this.tabValueType.Name = "tabValueType";
             this.tabValueType.Padding = new System.Windows.Forms.Padding(3);
-            this.tabValueType.Size = new System.Drawing.Size(441, 246);
+            this.tabValueType.Size = new System.Drawing.Size(441, 368);
             this.tabValueType.TabIndex = 1;
             this.tabValueType.UseVisualStyleBackColor = true;
             // 
@@ -1571,12 +1658,13 @@ namespace UniversalPatcher
             this.tabSegments.ImageKey = "segments.ico";
             this.tabSegments.Location = new System.Drawing.Point(4, 31);
             this.tabSegments.Name = "tabSegments";
-            this.tabSegments.Size = new System.Drawing.Size(441, 246);
+            this.tabSegments.Size = new System.Drawing.Size(441, 368);
             this.tabSegments.TabIndex = 3;
             this.tabSegments.UseVisualStyleBackColor = true;
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupBox1);
             this.tabSettings.Controls.Add(this.groupNavigator);
             this.tabSettings.Controls.Add(this.btnExplorerFont);
             this.tabSettings.Controls.Add(this.chkShowTableCount);
@@ -1587,9 +1675,110 @@ namespace UniversalPatcher
             this.tabSettings.ImageKey = "modify.ico";
             this.tabSettings.Location = new System.Drawing.Point(4, 31);
             this.tabSettings.Name = "tabSettings";
-            this.tabSettings.Size = new System.Drawing.Size(441, 246);
+            this.tabSettings.Size = new System.Drawing.Size(441, 368);
             this.tabSettings.TabIndex = 5;
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.radioColorsOff);
+            this.groupBox1.Controls.Add(this.radioColorsUseTableValues);
+            this.groupBox1.Controls.Add(this.radioColorsUseTableSettings);
+            this.groupBox1.Controls.Add(this.btnColorMid);
+            this.groupBox1.Controls.Add(this.btnColorMax1);
+            this.groupBox1.Controls.Add(this.btnColorMax2);
+            this.groupBox1.Controls.Add(this.btnColorMin2);
+            this.groupBox1.Controls.Add(this.btnColorMin1);
+            this.groupBox1.Location = new System.Drawing.Point(11, 214);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(416, 153);
+            this.groupBox1.TabIndex = 34;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Table conditional formatting";
+            // 
+            // radioColorsOff
+            // 
+            this.radioColorsOff.AutoSize = true;
+            this.radioColorsOff.Location = new System.Drawing.Point(8, 68);
+            this.radioColorsOff.Name = "radioColorsOff";
+            this.radioColorsOff.Size = new System.Drawing.Size(39, 17);
+            this.radioColorsOff.TabIndex = 8;
+            this.radioColorsOff.TabStop = true;
+            this.radioColorsOff.Text = "Off";
+            this.radioColorsOff.UseVisualStyleBackColor = true;
+            this.radioColorsOff.CheckedChanged += new System.EventHandler(this.radioColorsOff_CheckedChanged);
+            // 
+            // radioColorsUseTableValues
+            // 
+            this.radioColorsUseTableValues.AutoSize = true;
+            this.radioColorsUseTableValues.Location = new System.Drawing.Point(8, 45);
+            this.radioColorsUseTableValues.Name = "radioColorsUseTableValues";
+            this.radioColorsUseTableValues.Size = new System.Drawing.Size(104, 17);
+            this.radioColorsUseTableValues.TabIndex = 7;
+            this.radioColorsUseTableValues.TabStop = true;
+            this.radioColorsUseTableValues.Text = "Use table values";
+            this.radioColorsUseTableValues.UseVisualStyleBackColor = true;
+            this.radioColorsUseTableValues.CheckedChanged += new System.EventHandler(this.radioColorsUseTableValues_CheckedChanged);
+            // 
+            // radioColorsUseTableSettings
+            // 
+            this.radioColorsUseTableSettings.AutoSize = true;
+            this.radioColorsUseTableSettings.Location = new System.Drawing.Point(8, 22);
+            this.radioColorsUseTableSettings.Name = "radioColorsUseTableSettings";
+            this.radioColorsUseTableSettings.Size = new System.Drawing.Size(113, 17);
+            this.radioColorsUseTableSettings.TabIndex = 6;
+            this.radioColorsUseTableSettings.TabStop = true;
+            this.radioColorsUseTableSettings.Text = "Use Table settings";
+            this.radioColorsUseTableSettings.UseVisualStyleBackColor = true;
+            this.radioColorsUseTableSettings.CheckedChanged += new System.EventHandler(this.radioColorsUseTableSettings_CheckedChanged);
+            // 
+            // btnColorMid
+            // 
+            this.btnColorMid.Location = new System.Drawing.Point(72, 91);
+            this.btnColorMid.Name = "btnColorMid";
+            this.btnColorMid.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMid.TabIndex = 5;
+            this.btnColorMid.UseVisualStyleBackColor = true;
+            this.btnColorMid.Click += new System.EventHandler(this.btnColorMid_Click);
+            // 
+            // btnColorMax1
+            // 
+            this.btnColorMax1.Location = new System.Drawing.Point(104, 91);
+            this.btnColorMax1.Name = "btnColorMax1";
+            this.btnColorMax1.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMax1.TabIndex = 4;
+            this.btnColorMax1.UseVisualStyleBackColor = true;
+            this.btnColorMax1.Click += new System.EventHandler(this.btnColorMax1_Click);
+            // 
+            // btnColorMax2
+            // 
+            this.btnColorMax2.Location = new System.Drawing.Point(137, 91);
+            this.btnColorMax2.Name = "btnColorMax2";
+            this.btnColorMax2.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMax2.TabIndex = 3;
+            this.btnColorMax2.UseVisualStyleBackColor = true;
+            this.btnColorMax2.Click += new System.EventHandler(this.btnColorMax2_Click);
+            // 
+            // btnColorMin2
+            // 
+            this.btnColorMin2.Location = new System.Drawing.Point(40, 91);
+            this.btnColorMin2.Name = "btnColorMin2";
+            this.btnColorMin2.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMin2.TabIndex = 2;
+            this.btnColorMin2.UseVisualStyleBackColor = true;
+            this.btnColorMin2.Click += new System.EventHandler(this.btnColorMin2_Click);
+            // 
+            // btnColorMin1
+            // 
+            this.btnColorMin1.Location = new System.Drawing.Point(8, 91);
+            this.btnColorMin1.Name = "btnColorMin1";
+            this.btnColorMin1.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMin1.TabIndex = 1;
+            this.btnColorMin1.UseVisualStyleBackColor = true;
+            this.btnColorMin1.Click += new System.EventHandler(this.btnColorMin1_Click);
             // 
             // groupNavigator
             // 
@@ -1740,7 +1929,7 @@ namespace UniversalPatcher
             this.tabPatches.ImageKey = "patch.ico";
             this.tabPatches.Location = new System.Drawing.Point(4, 31);
             this.tabPatches.Name = "tabPatches";
-            this.tabPatches.Size = new System.Drawing.Size(441, 246);
+            this.tabPatches.Size = new System.Drawing.Size(441, 368);
             this.tabPatches.TabIndex = 4;
             this.tabPatches.UseVisualStyleBackColor = true;
             // 
@@ -1750,7 +1939,7 @@ namespace UniversalPatcher
             this.tabFileInfo.ImageKey = "info.ico";
             this.tabFileInfo.Location = new System.Drawing.Point(4, 31);
             this.tabFileInfo.Name = "tabFileInfo";
-            this.tabFileInfo.Size = new System.Drawing.Size(441, 246);
+            this.tabFileInfo.Size = new System.Drawing.Size(441, 368);
             this.tabFileInfo.TabIndex = 6;
             this.tabFileInfo.UseVisualStyleBackColor = true;
             // 
@@ -1817,22 +2006,21 @@ namespace UniversalPatcher
             this.imageList3.Images.SetKeyName(48, "valuetype.ico");
             this.imageList3.Images.SetKeyName(49, "Modify.ico");
             // 
-            // splitContainerListMode
+            // treeView1
             // 
-            this.splitContainerListMode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerListMode.Location = new System.Drawing.Point(0, 0);
-            this.splitContainerListMode.Name = "splitContainerListMode";
-            // 
-            // splitContainerListMode.Panel1
-            // 
-            this.splitContainerListMode.Panel1.Controls.Add(this.treeView1);
-            // 
-            // splitContainerListMode.Panel2
-            // 
-            this.splitContainerListMode.Panel2.Controls.Add(this.dataGridView1);
-            this.splitContainerListMode.Size = new System.Drawing.Size(1021, 409);
-            this.splitContainerListMode.SplitterDistance = 346;
-            this.splitContainerListMode.TabIndex = 3;
+            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.HideSelection = false;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
+            this.treeView1.Size = new System.Drawing.Size(473, 409);
+            this.treeView1.TabIndex = 2;
             // 
             // contextMenuStripListTree
             // 
@@ -1932,13 +2120,6 @@ namespace UniversalPatcher
             this.imageList1.Images.SetKeyName(46, "trans.ico");
             this.imageList1.Images.SetKeyName(47, "transdiag.ico");
             this.imageList1.Images.SetKeyName(48, "valuetype.ico");
-            // 
-            // contextMenuStrip2
-            // 
-            this.contextMenuStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
-            this.contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
             // 
             // timerFilter
             // 
@@ -2338,22 +2519,6 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
             // 
-            // treeView1
-            // 
-            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Indent = 20;
-            this.treeView1.ItemHeight = 18;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
-            this.treeView1.Size = new System.Drawing.Size(346, 409);
-            this.treeView1.TabIndex = 2;
-            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2395,19 +2560,21 @@ namespace UniversalPatcher
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.splitContainerListMode.Panel1.ResumeLayout(false);
+            this.splitContainerListMode.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerListMode)).EndInit();
+            this.splitContainerListMode.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
             this.tabSettings.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupNavigator.ResumeLayout(false);
             this.groupNavigator.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numNaviMaxTablesTotal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numNaviMaxTablesPerNode)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).EndInit();
             this.tabFileInfo.ResumeLayout(false);
-            this.splitContainerListMode.Panel1.ResumeLayout(false);
-            this.splitContainerListMode.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerListMode)).EndInit();
-            this.splitContainerListMode.ResumeLayout(false);
             this.contextMenuStripListTree.ResumeLayout(false);
             this.contextMenuStripTree.ResumeLayout(false);
             this.contextMenuStripPatch.ResumeLayout(false);
@@ -2445,7 +2612,6 @@ namespace UniversalPatcher
         private SplitContainer splitContainer1;
         private SplitContainer splitContainer2;
         private RichTextBox txtDescription;
-        private ContextMenuStrip contextMenuStrip2;
         private ToolStripMenuItem resetTunerModeColumnsToolStripMenuItem;
         private ToolStripMenuItem loadBINToolStripMenuItem;
         private ToolStripMenuItem currentFileToolStripMenuItem;
@@ -2633,5 +2799,21 @@ namespace UniversalPatcher
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripMenuItem createDebugLogToolStripMenuItem;
         private ToolStripMenuItem swapTablenameExtratablenameToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator8;
+        private ToolStripMenuItem loadColumnsPresetToolStripMenuItem;
+        private ToolStripMenuItem saveColumnsPresetAsToolStripMenuItem;
+        private ToolStripMenuItem resizeColumnsToolStripMenuItem;
+        private ToolStripMenuItem resizeNowToolStripMenuItem;
+        private ToolStripMenuItem autoresizeToolStripMenuItem;
+        private ToolStripMenuItem autosaveColumnsToolStripMenuItem;
+        private GroupBox groupBox1;
+        private Button btnColorMid;
+        private Button btnColorMax1;
+        private Button btnColorMax2;
+        private Button btnColorMin2;
+        private Button btnColorMin1;
+        private RadioButton radioColorsUseTableValues;
+        private RadioButton radioColorsUseTableSettings;
+        private RadioButton radioColorsOff;
     }
 }

@@ -59,7 +59,10 @@ namespace UniversalPatcher
         int canQuietResponses;
         int canDeviceResponses;
         DateTime lastResponseTime;
-        List<CANDevice> canDevs;
+        private List<CANDevice> CanDevsJconsole;
+        public List<CANDevice> CanDevsMain;
+        private LoggingProtocol CurrentSubnet = LoggingProtocol.VPW;
+        private bool QueryModulesDone = false;
         private frmLoggerGraphics GraphicsForm;
         private frmHistogram HstForm;
         private ToolTip ScrollTip = new ToolTip();
@@ -78,7 +81,6 @@ namespace UniversalPatcher
         private BindingList<LogParam.PidParameter> pidparams;
         private string PidParamFile;
         private bool DisableConversionChanges = false;
-        private ushort DtcCurrentModule;
         private string sortBy_Profile = "";
         private int sortIndex_Profile = 0;
         SortOrder strSortOrder_Profile = SortOrder.Ascending;
@@ -96,6 +98,8 @@ namespace UniversalPatcher
         private DateTime DisconnectTime = DateTime.MaxValue;
         private bool RequestRestartLogging = false;
         private bool floodTestActive = false;
+        private Simulator simu;
+        private string simuFile;
 
         [DllImport("user32.dll")]
         public static extern bool LockWindowUpdate(IntPtr hWndLock);
@@ -205,13 +209,36 @@ namespace UniversalPatcher
             this.KeyUp += FrmLogger_KeyUp;
             logTexts = new List<LogText>();
             jconsolelogTexts = new List<LogText>();
-            datalogger = new DataLogger(radioVPW.Checked);
+            datalogger = new DataLogger();
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             //comboPidEditorType.ValueMember = "Value";
             //comboPidEditorType.DisplayMember = "Name";
-            comboConnectFlag.DataSource = Enum.GetValues(typeof(ConnectFlag));
             comboPidEditorType.DataSource = Enum.GetValues(typeof(LogParam.DefineBy));
             comboPidEditorDatatype.DataSource = Enum.GetValues(typeof(LogParam.ProfileDataType));
+            foreach(var cf in Enum.GetValues(typeof(ConnectFlag)))
+            {
+                ToolStripMenuItem mi = new ToolStripMenuItem();
+                mi.Text = cf.ToString();
+                mi.Tag = (int)cf;
+                mi.Click += ConnFlags_Click; 
+                contextMenuConnectFlags.Items.Add(mi);
+            }
+            foreach (var cf in Enum.GetValues(typeof(ConnectFlag)))
+            {
+                ToolStripMenuItem mi = new ToolStripMenuItem();
+                mi.Text = cf.ToString();
+                mi.Tag = (int)cf;
+                mi.Click += ConnFlags2_Click;
+                contextMenuConnectFlags2.Items.Add(mi);
+            }
+            foreach (var cf in Enum.GetValues(typeof(ConnectFlag)))
+            {
+                ToolStripMenuItem mi = new ToolStripMenuItem();
+                mi.Text = cf.ToString();
+                mi.Tag = (int)cf;
+                mi.Click += ConnectFlagsMain_Click; 
+                contextMenuConnectFlagsMain.Items.Add(mi);
+            }
             if (!string.IsNullOrEmpty(datalogger.OS))
             {
                 labelConnected.Text = "Disconnected - OS: " + datalogger.OS;
@@ -305,6 +332,91 @@ namespace UniversalPatcher
             }
         }
 
+        private void ConnectFlagsMain_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            if (menuitem.Text == "NONE")
+            {
+                txtConnectFlag.Text = "";
+                foreach (ToolStripMenuItem mi in contextMenuConnectFlagsMain.Items)
+                {
+                    mi.Checked = false;
+                }
+
+            }
+            else
+            {
+                menuitem.Checked = !menuitem.Checked;
+                txtConnectFlag.Text = "";
+                foreach (ToolStripMenuItem mi in contextMenuConnectFlagsMain.Items)
+                {
+                    if (mi.Checked && mi.Text != "NONE")
+                    {
+                        txtConnectFlag.Text += mi.Text + ", ";
+                    }
+                }
+                txtConnectFlag.Text = txtConnectFlag.Text.Trim(' ');
+                txtConnectFlag.Text = txtConnectFlag.Text.Trim(',');
+                txtConnectFlag.Text = txtConnectFlag.Text.Trim(' ');
+            }
+        }
+
+        private void ConnFlags_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            if (menuitem.Text == "NONE")
+            {
+                txtJ2534ConnectFlags.Text = "";
+                foreach (ToolStripMenuItem mi in contextMenuConnectFlags.Items)
+                {
+                    mi.Checked = false;
+                }
+
+            }
+            else
+            {
+                menuitem.Checked = !menuitem.Checked;
+                txtJ2534ConnectFlags.Text = "";
+                foreach (ToolStripMenuItem mi in contextMenuConnectFlags.Items)
+                {
+                    if (mi.Checked && mi.Text != "NONE")
+                    {
+                        txtJ2534ConnectFlags.Text += mi.Text + ", ";
+                    }
+                }
+                txtJ2534ConnectFlags.Text = txtJ2534ConnectFlags.Text.Trim(' ');
+                txtJ2534ConnectFlags.Text = txtJ2534ConnectFlags.Text.Trim(',');
+                txtJ2534ConnectFlags.Text = txtJ2534ConnectFlags.Text.Trim(' ');
+            }
+        }
+        private void ConnFlags2_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            if (menuitem.Text == "NONE")
+            {
+                txtJ2534ConnectFlags2.Text = "";
+                foreach (ToolStripMenuItem mi in contextMenuConnectFlags2.Items)
+                {
+                    mi.Checked = false;
+                }
+
+            }
+            else
+            {
+                menuitem.Checked = !menuitem.Checked;
+                txtJ2534ConnectFlags2.Text = "";
+                foreach (ToolStripMenuItem mi in contextMenuConnectFlags2.Items)
+                {
+                    if (mi.Checked && mi.Text != "NONE")
+                    {
+                        txtJ2534ConnectFlags2.Text += mi.Text + ", ";
+                    }
+                }
+                txtJ2534ConnectFlags2.Text = txtJ2534ConnectFlags2.Text.Trim(' ');
+                txtJ2534ConnectFlags2.Text = txtJ2534ConnectFlags2.Text.Trim(',');
+                txtJ2534ConnectFlags2.Text = txtJ2534ConnectFlags2.Text.Trim(' ');
+            }
+        }
 
         private void ShowSelectedPassivePid()
         {
@@ -809,7 +921,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (Connect(radioVPW.Checked, true, true, oscript))
+                if (Connect(null, true, true, oscript))
                 {
                     dataGridSelectedPids.Columns["Value"].Visible = true;
                     datalogger.Receiver.SetReceiverPaused(true);
@@ -1060,7 +1172,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    datalogger.LogDevice.SendMessage(oMsg, 1);
+                    MainConnection.ObdDevice.SendMessage(oMsg, 1);
                 }
             }
             catch (Exception ex)
@@ -1258,7 +1370,7 @@ namespace UniversalPatcher
 
         private void AppendLogText(Color Color, string LogTxt, long TimeStamp)
         {
-            LogText lt = new LogText(Color, LogTxt, TimeStamp);
+            LogText lt = new LogText(Color, LogTxt.Trim(), TimeStamp);
             logTexts.Add(lt);
             //logTexts.Sort((s1, s2) => s1.TimeStamp.CompareTo(s2.TimeStamp));
             if (chkVpwToScreen.Checked && !chkVpwBuffered.Checked)
@@ -1385,7 +1497,7 @@ namespace UniversalPatcher
                     vpwConsoleStream.WriteLine("\\cf1 " + sMsg.ToString() + "\\par");
                 }
 
-                if (e.Msg.Length > 3 && datalogger.UseVPW())
+                if (e.Msg.Length > 3 && MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
                     byte[] rcv = e.Msg.GetBytes();
                     if (rcv[1] == 0xfe && rcv[3] == 0xa0)
@@ -1397,7 +1509,7 @@ namespace UniversalPatcher
                     {
                         waiting4x = false;
                         Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
-                        if (datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX))
+                        if (MainConnection.ObdDevice.SetVpwSpeed(VpwSpeed.FourX))
                             Debug.WriteLine("Switched to 4X");
                         else
                             Debug.WriteLine("Switch to 4X failed");
@@ -1492,7 +1604,7 @@ namespace UniversalPatcher
                                 CANDevice cDev = CANQuery.DecodeMsg(rcv);
                                 if (cDev != null)
                                 {
-                                    canDevs.Add(cDev);
+                                    CanDevsJconsole.Add(cDev);
                                     //richJConsole.AppendText(cDev.ToString() + Environment.NewLine);
                                     AppendJconsoleLogText(Color.Black, cDev.ToString() + Environment.NewLine, e.Msg.TimeStamp);
                                 }
@@ -1610,12 +1722,12 @@ namespace UniversalPatcher
             {
                 if (e.KeyChar == '\r')
                 {
-                    if (!Connect(radioVPW.Checked, true, true,null))
+                    if (!Connect(null, true, true,null))
                     {
                         return;
                     }
                     oscript.stopscript = false;
-                    HandleConsoleCommand(datalogger.LogDevice, datalogger.Receiver, txtSendBus.Text, oscript);
+                    HandleConsoleCommand(MainConnection.ObdDevice, datalogger.Receiver, txtSendBus.Text, oscript);
                     e.Handled = true;
                     richVPWmessages.AppendText(Environment.NewLine);
                 }
@@ -1774,13 +1886,25 @@ namespace UniversalPatcher
                     comboJ2534DLL.Items.Add(device.Name);
                 }
 
-                comboJConsoleConfig.Items.Clear();
-                comboJConsoleConfig2.Items.Clear();
-                foreach (string cfg in Enum.GetNames(typeof(ConfigParameter)))
+                contextMenuConfigs.Items.Clear();
+                foreach (var cp in Enum.GetValues(typeof(ConfigParameter)))
                 {
-                    comboJConsoleConfig.Items.Add(cfg);
-                    comboJConsoleConfig2.Items.Add(cfg);
+                    ToolStripMenuItem mi = new ToolStripMenuItem();
+                    mi.Text = cp.ToString();
+                    mi.Tag = (int)cp;
+                    mi.Click += Configs_Click;
+                    contextMenuConfigs.Items.Add(mi);
                 }
+                contextMenuConfigs2.Items.Clear();
+                foreach (var cp in Enum.GetValues(typeof(ConfigParameter)))
+                {
+                    ToolStripMenuItem mi = new ToolStripMenuItem();
+                    mi.Text = cp.ToString();
+                    mi.Tag = (int)cp;
+                    mi.Click += Configs2_Click;
+                    contextMenuConfigs2.Items.Add(mi);
+                }
+
                 //if (LoadDefaults)
                 {
                     if (!string.IsNullOrEmpty(AppSettings.LoggerJ2534Device))
@@ -1797,15 +1921,6 @@ namespace UniversalPatcher
                     //groupProtocol.Enabled = AppSettings.LoggerUseJ2534;
                 }
                 LoadJ2534Protocols();
-                //comboJ2534Connectflag.DataSource = Enum.GetValues(typeof(J2534DotNet.ConnectFlag));
-                comboJ2534Connectflag.Items.Clear();
-                comboJ2534Connectflag2.Items.Clear();
-                foreach (string item in Enum.GetNames(typeof(J2534DotNet.ConnectFlag)))
-                {
-                    comboJ2534Connectflag.Items.Add(item);
-                    comboJ2534Connectflag2.Items.Add(item);
-                }
-                //comboJ2534Connectflag.SelectedIndex = 0;
                 if (!String.IsNullOrEmpty(AppSettings.LoggerJ2534SettingsFile))
                 {
                     J2534InitParameters JSettings = LoadJ2534Settings(AppSettings.LoggerJ2534SettingsFile);
@@ -1825,6 +1940,104 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, LoadPorts line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void Configs_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            if (menuitem.Text == "NONE")
+            {
+                txtJConsoleConfigs.Text = "";
+                foreach (ToolStripMenuItem mi in contextMenuConfigs.Items)
+                {
+                    mi.Checked = false;
+                }
+            }
+            else
+            {
+                menuitem.Checked = !menuitem.Checked;
+                if (menuitem.Checked)
+                {
+                    txtJConsoleConfigs.Text += ", " + menuitem.Text + "=1";
+                }
+                else
+                {
+                    int pos1 = txtJConsoleConfigs.Text.IndexOf(menuitem.Text);
+                    if (pos1 >= 0)
+                    {
+                        int pos2 = txtJConsoleConfigs.Text.IndexOf(",", pos1);
+                        if (pos2 < 0)
+                        {
+                            pos2 = txtJConsoleConfigs.Text.IndexOf("]", pos1);
+                        }
+                        if (pos2 < 0)
+                        {
+                            pos2 = txtJConsoleConfigs.Text.Length;
+                        }
+                        string tmp = txtJConsoleConfigs.Text;
+                        if (pos1 > 2)
+                        {
+                            txtJConsoleConfigs.Text = tmp.Substring(0, pos1 - 2);
+                        }
+                        if (pos2 > pos1)
+                        {
+                            txtJConsoleConfigs.Text = tmp.Substring(pos2);
+                        }
+                    }
+                }
+                txtJConsoleConfigs.Text = txtJConsoleConfigs.Text.Trim(' ');
+                txtJConsoleConfigs.Text = txtJConsoleConfigs.Text.Trim(',');
+                txtJConsoleConfigs.Text = txtJConsoleConfigs.Text.Trim(' ');
+            }
+        }
+        private void Configs2_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            if (menuitem.Text == "NONE")
+            {
+                txtJConsoleConfigs2.Text = "";
+                foreach (ToolStripMenuItem mi in contextMenuConfigs2.Items)
+                {
+                    mi.Checked = false;
+                }
+
+            }
+            else
+            {
+                menuitem.Checked = !menuitem.Checked;
+                if (menuitem.Checked)
+                {
+                    txtJConsoleConfigs2.Text += ", " + menuitem.Text + "=1";
+                }
+                else
+                {
+                    int pos1 = txtJConsoleConfigs2.Text.IndexOf(menuitem.Text);
+                    if (pos1 >= 0)
+                    {
+                        int pos2 = txtJConsoleConfigs2.Text.IndexOf(",", pos1);
+                        if (pos2 < 0)
+                        {
+                            pos2 = txtJConsoleConfigs2.Text.IndexOf("]", pos1);
+                        }
+                        if (pos2 < 0)
+                        {
+                            pos2 = txtJConsoleConfigs2.Text.Length;
+                        }
+                        string tmp = txtJConsoleConfigs2.Text;
+                        if (pos1 > 2)
+                        {
+                            txtJConsoleConfigs2.Text = tmp.Substring(0, pos1 - 2);
+                        }
+                        if (pos2 > pos1)
+                        {
+                            txtJConsoleConfigs2.Text = tmp.Substring(pos2);
+                        }
+                    }
+                }
+                txtJConsoleConfigs2.Text = txtJConsoleConfigs2.Text.Trim(' ');
+                txtJConsoleConfigs2.Text = txtJConsoleConfigs2.Text.Trim(',');
+                txtJConsoleConfigs2.Text = txtJConsoleConfigs2.Text.Trim(' ');
             }
         }
 
@@ -1996,13 +2209,20 @@ namespace UniversalPatcher
             try
             {
                 comboJ2534Baudrate.Items.Clear();
-                foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)))
+                string baudkey = "CAN";
+                foreach (string bk in new string[] { "ISO9141", "ISO14230", "J1850PWM", "J1850VPW", "CAN", "ISO15765" } )
                 {
-                    if (item.StartsWith(comboJ2534Protocol.Text.Replace("_PS", "").Replace("SW_","")))
+                    if (comboJ2534Protocol.Text.Contains(bk))
                     {
-                        comboJ2534Baudrate.Items.Add(item);
+                        baudkey = bk;
+                        break;
                     }
                 }
+                foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)).Where(X=>X.Contains(baudkey)))
+                {
+                    comboJ2534Baudrate.Items.Add(item);
+                }
+
                 if (comboJ2534Baudrate.Items.Count > 0)
                 {
                     comboJ2534Baudrate.SelectedIndex = 0;
@@ -2028,12 +2248,18 @@ namespace UniversalPatcher
             try
             {
                 comboJ2534Baudrate2.Items.Clear();
-                foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)))
+                string baudkey = "CAN";
+                foreach (string bk in new string[] { "ISO9141", "ISO14230", "J1850PWM", "J1850VPW", "CAN", "ISO15765" })
                 {
-                    if (item.StartsWith(comboJ2534Protocol2.Text.Replace("_PS", "").Replace("SW_", "")))
+                    if (comboJ2534Protocol2.Text.Contains(bk))
                     {
-                        comboJ2534Baudrate2.Items.Add(item);
+                        baudkey = bk;
+                        break;
                     }
+                }
+                foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)).Where(X => X.Contains(baudkey)))
+                {
+                    comboJ2534Baudrate2.Items.Add(item);
                 }
                 if (comboJ2534Baudrate2.Items.Count > 0)
                 {
@@ -2132,8 +2358,7 @@ namespace UniversalPatcher
                 numRetryDelay.Value = AppSettings.RetryWriteDelay;
                 numRetryTimes.Value = AppSettings.RetryWriteTimes;
                 j2534OptionsGroupBox.Enabled = AppSettings.LoggerUseJ2534;
-                txtPcmAddress.Text = AppSettings.LoggerCanPcmAddress.ToString("X4");
-                comboConnectFlag.Text = AppSettings.LoggerConnectFlag.ToString();
+                txtConnectFlag.Text = AppSettings.LoggerConnectFlag;
                 numAnalyzerNumMessages.Value = AppSettings.AnalyzerNumMessages;
                 if (AppSettings.LoggerRestartAfterSeconds > 0)
                     chkRestartLogging.Checked = true;
@@ -2145,16 +2370,19 @@ namespace UniversalPatcher
                 {
                     radioHSCAN.Checked = true;
                     groupCanParams.Enabled = true;
+                    txtPcmAddress.Text = AppSettings.LoggerCanPcmAddress.ToString("X4");
                 }
                 else if (AppSettings.loggerProtocol == LoggingProtocol.LSCAN)
                 {
                     radioLSCan.Checked = true;
                     groupCanParams.Enabled = true;
+                    txtPcmAddress.Text = AppSettings.LoggerCanPcmAddress.ToString("X4");
                 }
                 else if (AppSettings.loggerProtocol == LoggingProtocol.VPW)
                 {
                     radioVPW.Checked = true;
                     groupCanParams.Enabled = false;
+                    txtPcmAddress.Text = "10";
                 }
                 chkStartPeriodic.Checked = AppSettings.LoggerStartPeriodic;
                 chkWakeUp.Checked = AppSettings.LoggerWakeUp;
@@ -2224,24 +2452,38 @@ namespace UniversalPatcher
 
         private void LoadModuleList()
         {
+            if (QueryModulesDone)
+            {
+                //Don't load default list if we have query modules done
+                return;
+            }
             analyzer = new Analyzer();
 
             if (radioVPW.Checked)
             {
                 //comboModule.DataSource = new BindingSource(analyzer.PhysAddresses, null);
-                List<KeyValuePair<byte, string>> modules = analyzer.PhysAddresses.ToList(); 
+                //List<KeyValuePair<byte, string>> modules = analyzer.PhysAddresses.ToList();
+                List<KeyValuePair<CANDevice, string>> modules = new List<KeyValuePair<CANDevice, string>>();
+                foreach (KeyValuePair<byte, string> itm in analyzer.PhysAddresses)
+                {
+                    CANDevice vpwDev = new CANDevice(itm.Key, LoggingProtocol.VPW);
+                    KeyValuePair<CANDevice, string> item = new KeyValuePair<CANDevice, string>(vpwDev, "[VPW] " + itm.Value);
+                    modules.Add(item);
+                }
+
                 comboModule.DataSource = modules;
                 comboModule.DisplayMember = "Value";
                 comboModule.ValueMember = "Key";
                 comboModule.Text = "ECU";
                 labelProtocol.Text = "VPW";
+                CanDevsMain = new List<CANDevice>();
             }
             else
             {
-                List<KeyValuePair<ushort, string>> modules = new List<KeyValuePair<ushort, string>>();
+                List<KeyValuePair<CANDevice, string>> modules = new List<KeyValuePair<CANDevice, string>>();
                 for (int c=0; c< CanModules.Count; c++)
                 {
-                    KeyValuePair<ushort, string> item = new KeyValuePair<ushort, string>((ushort)CanModules[c].RequestID, CanModules[c].ModuleName + " [" + CanModules[c].RequestID.ToString("X4") + "]");
+                    KeyValuePair<CANDevice, string> item = new KeyValuePair<CANDevice, string>(CanModules[c], CanModules[c].ModuleName + " [" + CanModules[c].RequestID.ToString("X4") + "]");
                     modules.Add(item);
                 }
                 comboModule.DataSource = modules;
@@ -2249,6 +2491,7 @@ namespace UniversalPatcher
                 comboModule.ValueMember = "Key";
                 comboModule.Text = "ECM [07E0]";
                 labelProtocol.Text = "CAN";
+                CanDevsMain = CanModules.OrderBy(X => X.ModuleID).ToList(); 
             }
         }
 
@@ -2420,7 +2663,7 @@ namespace UniversalPatcher
                 }
                 Debug.WriteLine("Closing frmLogger");
                 WB.Discard();
-                if (datalogger != null && datalogger.LogDevice != null)
+                if (datalogger != null && MainConnection.ObdDevice != null)
                 {
                     if (datalogger.Receiver != null)
                     {
@@ -2431,8 +2674,8 @@ namespace UniversalPatcher
                         datalogger.StopLogging();
                     }
                     //Disconnect(true);
-                    datalogger.LogDevice.Dispose();
-                    datalogger.LogDevice = null;
+                    MainConnection.ObdDevice.Dispose();
+                    MainConnection.ObdDevice = null;
                 }
                 if (jConsole != null && jConsole.JDevice != null && jConsole.Connected)
                 {
@@ -2475,7 +2718,7 @@ namespace UniversalPatcher
                 if (Reconnect)
                 {
                     Disconnect(true);
-                    Connect(radioVPW.Checked, false, false, oscript);
+                    Connect(null, false, false, oscript);
                     Debug.WriteLine("1s sleep between connect & logging...");
                     Thread.Sleep(1000);
                     StartLogging(false);
@@ -2825,18 +3068,15 @@ namespace UniversalPatcher
             AppSettings.LoggerStartJ2534Process = chkStartJ2534Process.Checked;
             AppSettings.LoggerJ2534ProcessVisible = chkJ2534ServerVisible.Checked;
             AppSettings.LoggerAutoDisconnect = chkAutoDisconnect.Checked;
-            if (radioVPW.Checked)
-                AppSettings.loggerProtocol = LoggingProtocol.VPW;
-            else if (radioHSCAN.Checked)
-                AppSettings.loggerProtocol = LoggingProtocol.HSCAN;
-            else if (radioLSCan.Checked)
-                AppSettings.loggerProtocol = LoggingProtocol.LSCAN;
+            AppSettings.loggerProtocol = CurrentSubnet;
             AppSettings.LoggerStartPeriodic = chkStartPeriodic.Checked;
             AppSettings.LoggerWakeUp = chkWakeUp.Checked;
             chkTestPidCompatibility.Checked = chkTestPidCompatibility.Checked;
-            if (HexToUshort(txtPcmAddress.Text, out ushort pcmaddr))
+            if (!radioVPW.Checked && HexToUshort(txtPcmAddress.Text, out ushort pcmaddr))
+            { 
                 AppSettings.LoggerCanPcmAddress = pcmaddr;
-            AppSettings.LoggerConnectFlag = (ConnectFlag)comboConnectFlag.SelectedValue;
+            }
+            AppSettings.LoggerConnectFlag = txtConnectFlag.Text;
             AppSettings.Save();
 
         }
@@ -2866,7 +3106,7 @@ namespace UniversalPatcher
                 //btnGetVINCode.Enabled = true;
                 if (!disconnect && StartReceiver)
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false,datalogger.AnalyzerRunning);
+                    datalogger.Receiver.StartReceiveLoop(MainConnection.ObdDevice, MainConnection.port, false,datalogger.AnalyzerRunning);
                 }               
             }
             catch (Exception ex)
@@ -2875,27 +3115,22 @@ namespace UniversalPatcher
             }
         }
 
-        public bool Connect(bool UseVPW, bool StartReceiver, bool ShowOs, OBDScript Oscript)
+        private OBDConnection SetupMainConnection()
         {
+            OBDConnection MainConn = new OBDConnection();
             try
             {
-
-                if (datalogger.Connected)
+                J2534InitParameters jParams = new J2534InitParameters();
+                if (radioVPW.Checked)
                 {
-                    return true;
-                }
-                if (UseVPW)
-                {
-                    Logger("Connecting (VPW)...");
-                    datalogger.useVPWFilters = chkVPWFilters.Checked;
-                    //Set for default values:
-                    datalogger.CanDevice = CANQuery.GetDeviceAddresses(AppSettings.LoggerCanPcmAddress);
+                    MainConn.LoggingProto = LoggingProtocol.VPW;
+                    datalogger.CanDevice = new CANDevice(DeviceId.Pcm, LoggingProtocol.VPW);
+                    jParams = new J2534InitParameters(true);
+                    MainConn.Protocols.Add(jParams);
                 }
                 else
                 {
-                    Logger("Connecting (CAN)...");
-                    datalogger.useVPWFilters = false;
-
+                    J2534InitParameters jParams2 = new J2534InitParameters();
                     if (HexToUshort(txtPcmAddress.Text, out ushort canid))
                     {
                         datalogger.CanDevice = CANQuery.GetDeviceAddresses(canid);
@@ -2904,25 +3139,116 @@ namespace UniversalPatcher
                     {
                         datalogger.CanDevice = CANQuery.GetDeviceAddresses(AppSettings.LoggerCanPcmAddress);
                     }
+                    jParams.SeparateProtoByChannel = true;
+                    if (radioHSCAN.Checked)
+                    {
+                        MainConn.LoggingProto = LoggingProtocol.HSCAN;
+                        jParams.Sconfigs = "CAN_MIXED_FORMAT=1";
+                        jParams.Protocol = ProtocolID.ISO15765;
+                        jParams.Baudrate = BaudRate.ISO15765_500000;
+
+                        jParams2.Protocol = ProtocolID.CAN;
+                        jParams2.Baudrate = BaudRate.ISO15765_500000;
+
+                    }
+                    else if (radioLSCan.Checked)
+                    {
+                        MainConn.LoggingProto = LoggingProtocol.VPW;
+                        jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
+                        jParams.Protocol = ProtocolID.SW_ISO15765_PS;
+                        jParams.Baudrate = BaudRate.ISO15765_33K3;
+
+                        jParams2.Protocol = ProtocolID.SW_CAN_PS;
+                        jParams2.Baudrate = BaudRate.ISO15765_33K3;
+                    }
+                    jParams.CanPCM = datalogger.CanDevice;
+                    jParams.Connectflag = txtConnectFlag.Text.Replace("|", ",");
+                    jParams.PassFilters = "Type:FLOW_CONTROL_FILTER,Name:CANFlow" + Environment.NewLine;
+                    jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "Pattern:" + datalogger.CanDevice.ResID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams.PassFilters += "FlowControl:" + datalogger.CanDevice.RequestID.ToString("X8") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
+
+                    jParams2.Secondary = true;
+                    jParams2.SeparateProtoByChannel = true;
+                    jParams2.UsePrimaryChannel = true;
+                    jParams2.PassFilters = "Type:PASS_FILTER,Name:CANLoggerPass" + Environment.NewLine;
+                    jParams2.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                    jParams2.PassFilters += "Pattern:" + datalogger.CanDevice.DiagID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+
+                    MainConn.Protocols.Add(jParams);
+                    MainConn.Protocols.Add(jParams2);
                 }
-                Application.DoEvents();
                 if (serialRadioButton.Checked)
                 {
-                    iPortType portType = iPortType.Serial;
+                    MainConn.PortType = iPortType.Serial;
+                    MainConn.SerialportDeviceType = comboSerialDeviceType.Text;
+                    MainConn.BaudRate = Convert.ToInt32(comboBaudRate.Text);
                     if (radioTCPIP.Checked)
                     {
-                        portType = iPortType.TcpIP;
-                        datalogger.LogDevice = datalogger.CreateSerialDevice(comboSerialPort.Text, comboSerialDeviceType.Text, portType);
+                        MainConn.PortType = iPortType.TcpIP;
+                        MainConn.PortName = comboSerialPort.Text;
                     }
                     else
                     {
                         if (radioFTDI.Checked)
                         {
-                            portType = iPortType.FTDI;
+                            MainConn.PortType = iPortType.FTDI;
                         }
-                        CurrentPortName = comboSerialPort.Text;
-                        datalogger.LogDevice = datalogger.CreateSerialDevice(CurrentPortName, comboSerialDeviceType.Text, portType);
+                        MainConn.PortName = comboSerialPort.Text;
                     }
+                    MainConn.WriteTimeout = AppSettings.TimeoutSerialPortWrite;
+                    MainConn.ReadTimeout = AppSettings.TimeoutSerialPortRead;
+                }
+                else
+                {
+                    MainConn.PortType = iPortType.J2534;
+                    MainConn.J2534Dev = jDevList[j2534DeviceList.SelectedIndex];
+                    MainConn.J2534DevIndex = j2534DeviceList.SelectedIndex;
+                    MainConn.WriteTimeout = AppSettings.TimeoutJ2534Write;
+                    MainConn.ReadTimeout = AppSettings.TimeoutReceive;
+                }
+                MainConn.Enable4xReadWrite = chkConsole4x.Checked;
+                MainConn.StartPeriodic = chkStartPeriodic.Checked;
+                if (radioLSCan.Checked && chkWakeUp.Checked)
+                {
+                    MainConn.WakeUp = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+            return MainConn;
+        }
+        public bool Connect(OBDConnection ObdConn, bool StartReceiver, bool ShowOs, OBDScript Oscript)
+        {
+            try
+            {
+
+                if (datalogger.Connected)
+                {
+                    return true;
+                }
+                if (ObdConn == null)
+                {
+                    MainConnection = SetupMainConnection();
+                }
+                else
+                {
+                    MainConnection = ObdConn;
+                }
+                Logger("Connecting ("+MainConnection.LoggingProto.ToString()+")...");
+                Application.DoEvents();
+                if (serialRadioButton.Checked)
+                {
+                    IPort port = null;
+                    MainConnection.ObdDevice = datalogger.CreateSerialDevice(MainConnection.PortName, MainConnection.SerialportDeviceType, MainConnection.PortType, ref port);
+                    MainConnection.port = port;
                 }
                 else
                 {
@@ -2931,117 +3257,60 @@ namespace UniversalPatcher
                         LoggerBold("Device in use");
                         return false;
                     }
-                    J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
-                    //passThru.LoadLibrary(dev);
                     if (chkStartJ2534Process.Checked)
-                        datalogger.LogDevice = new J2534Client(j2534DeviceList.SelectedIndex);
-                    else
-                        datalogger.LogDevice = new J2534Device(dev);
-                    //datalogger.LogDevice.SetReadTimeout(100);
-                }
-                datalogger.LogDevice.MsgReceived += LogDevice_DTC_MsgReceived;
-                datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
-                datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
-                J2534InitParameters jParams;
-                if (UseVPW)
-                {
-                    jParams = new J2534InitParameters(true);
-                    jParams.Protocol = ProtocolID.J1850VPW;
-                    jParams.Baudrate =  BaudRate.J1850VPW_10400;
-                }
-                else
-                {
-                    jParams = new J2534InitParameters();
-                    jParams.SeparateProtoByChannel = true;
-                    if (radioHSCAN.Checked)
                     {
-                        jParams.Sconfigs = "CAN_MIXED_FORMAT=1";
-                        jParams.Protocol = ProtocolID.ISO15765;
-                        jParams.Baudrate = BaudRate.ISO15765_500000;
+                        MainConnection.ObdDevice = new J2534Client(MainConnection.J2534DevIndex);
                     }
                     else
                     {
-                        //jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
-                        jParams.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
-                        jParams.Protocol = ProtocolID.SW_ISO15765_PS;
-                        jParams.Baudrate = BaudRate.ISO15765_33K3;
+                        MainConnection.ObdDevice = new J2534Device(MainConnection.J2534Dev);
                     }
-                    jParams.CanPCM = datalogger.CanDevice;
-                    jParams.Connectflag = (ConnectFlag)comboConnectFlag.SelectedValue;
-                    jParams.PassFilters = "Type:FLOW_CONTROL_FILTER,Name:CANFlasherFlow" + Environment.NewLine;
-                    jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "Pattern:" + datalogger.CanDevice.ResID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "FlowControl:" + datalogger.CanDevice.RequestID.ToString("X8") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
                 }
-                if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text), jParams))
+                MainConnection.ObdDevice.MsgReceived += LogDevice_DTC_MsgReceived;
+                MainConnection.ObdDevice.MsgSent += LogDevice_MsgSent;
+                MainConnection.ObdDevice.MsgReceived += LogDevice_MsgReceived;
+                if (!MainConnection.ObdDevice.Initialize(MainConnection.BaudRate, MainConnection.Protocols[0]))
                 {
-                    if (datalogger.port != null)
+                    if (MainConnection.port != null)
                     {
-                        datalogger.port.ClosePort();
-                        datalogger.port.Dispose();
+                        MainConnection.port.ClosePort();
+                        MainConnection.port.Dispose();
                     }
-                    datalogger.LogDevice.Dispose();
-                    datalogger.LogDevice = null;
+                    MainConnection.ObdDevice.Dispose();
+                    MainConnection.ObdDevice = null;
                     return false;
                 }
                 if (Oscript == null)
                 {
-                    oscript = new OBDScript(datalogger.LogDevice, null);
+                    oscript = new OBDScript(MainConnection.ObdDevice, null);
                 }
                 else
                 {
                     oscript = Oscript;
-                    oscript.device = datalogger.LogDevice;
+                    oscript.device = MainConnection.ObdDevice;
                 }
-                datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
+                MainConnection.ObdDevice.Enable4xReadWrite = MainConnection.Enable4xReadWrite;
+                MainConnection.ObdDevice.SetWriteTimeout(MainConnection.WriteTimeout);
+                MainConnection.ObdDevice.SetReadTimeout(MainConnection.ReadTimeout);
 
-                if (serialRadioButton.Checked)
+                if (MainConnection.Protocols.Count > 1)
                 {
-                    datalogger.LogDevice.SetWriteTimeout(AppSettings.TimeoutSerialPortWrite);
-                    datalogger.LogDevice.SetReadTimeout(AppSettings.TimeoutSerialPortRead);
-                }
-                else
-                {
-                    datalogger.LogDevice.SetWriteTimeout(AppSettings.TimeoutJ2534Write);
-                    datalogger.LogDevice.SetReadTimeout(AppSettings.TimeoutReceive);
-                }
-
-                if (!UseVPW)
-                {
-                    jParams = new J2534InitParameters();
-                    if (radioHSCAN.Checked)
-                    {
-                        jParams.Protocol = ProtocolID.CAN;
-                        jParams.Baudrate = BaudRate.ISO15765_500000;
-                    }
-                    else
-                    {
-                        //datalogger.LogDevice.SetJ2534Configs( "J1962_PINS=$00000100",false);
-                        jParams.Protocol = ProtocolID.SW_CAN_PS;
-                        jParams.Baudrate = BaudRate.ISO15765_33K3;
-                    }
-                    jParams.Secondary = true;
-                    jParams.SeparateProtoByChannel = true;
-                    jParams.UsePrimaryChannel = true;
-                    jParams.PassFilters = "Type:PASS_FILTER,Name:CANLoggerPass" + Environment.NewLine;
-                    jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    jParams.PassFilters += "Pattern:" + datalogger.CanDevice.DiagID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    datalogger.LogDevice.ConnectSecondaryProtocol(jParams);
-                    if(radioLSCan.Checked && chkWakeUp.Checked)
+                    MainConnection.ObdDevice.ConnectSecondaryProtocol(MainConnection.Protocols[1]);
+                    if(MainConnection.WakeUp)
                     {
                         byte[] wakeMsg = new byte[] { 00, 00, 01, 00 };
                         OBDMessage wMsg = new OBDMessage(wakeMsg);
                         wMsg.Txflag = TxFlag.SW_CAN_HV_TX;
-                        wMsg.SecondaryProtocol = true;
-                        datalogger.LogDevice.SendMessage(wMsg, 0);
+                        wMsg.SecondaryProtocol = false;
+                        MainConnection.ObdDevice.SendMessage(wMsg, 0);
                         Thread.Sleep(500);
                     }
-                    if (chkStartPeriodic.Checked)
+                    if (MainConnection.StartPeriodic)
                     {
                         string pMsg = "00 00 01 01 FE 3E:2500:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
-                        datalogger.LogDevice.StartPeriodicMsg(pMsg, false);
+                        MainConnection.ObdDevice.StartPeriodicMsg(pMsg, false);
                     }
-                    if (datalogger.LogDevice.LogDeviceType == DataLogger.LoggingDevType.Elm)
+                    if (MainConnection.ObdDevice.LogDeviceType == DataLogger.LoggingDevType.Elm)
                     {
                         Logger("Message filtering enabled for CAN ELM device. Functions limited");
                         // return;
@@ -3070,11 +3339,12 @@ namespace UniversalPatcher
                 SaveSettings();
                 if (StartReceiver)
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false,datalogger.AnalyzerRunning);
+                    datalogger.Receiver.StartReceiveLoop(MainConnection.ObdDevice, MainConnection.port, false,datalogger.AnalyzerRunning);
                 }
                 Application.DoEvents();
                 groupHWSettings.Enabled = false;
                 groupProtocol.Enabled = false;
+                txtPcmAddress.Enabled = false;
                 j2534OptionsGroupBox.Enabled = false;
                 timerDeviceStatus.Enabled = true;
                 timerShowLogTxt.Interval = AppSettings.LoggerConsoleDisplayInterval;
@@ -3121,38 +3391,38 @@ namespace UniversalPatcher
                         jParams.Baudrate = BaudRate.ISO15765_33K3;
                     }
                     jParams.CanPCM = datalogger.CanDevice;
-                    jParams.Connectflag = (ConnectFlag)comboConnectFlag.SelectedValue;
+                    jParams.Connectflag = txtConnectFlag.Text.Replace("|",",");
                     jParams.PassFilters = "Type:FLOW_CONTROL_FILTER,Name:CANFlasherFlow" + Environment.NewLine;
                     jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                     jParams.PassFilters += "Pattern:0000" + datalogger.CanDevice.ResID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                     jParams.PassFilters += "FlowControl:0000" + datalogger.CanDevice.RequestID.ToString("X4") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
                 }
-                if (!datalogger.LogDevice.PassthruConnect(jParams))
+                if (!MainConnection.ObdDevice.PassthruConnect(jParams))
                 {
-                    if (datalogger.port != null)
+                    if (MainConnection.port != null)
                     {
-                        datalogger.port.ClosePort();
-                        datalogger.port.Dispose();
+                        MainConnection.port.ClosePort();
+                        MainConnection.port.Dispose();
                     }
-                    datalogger.LogDevice.Dispose();
-                    datalogger.LogDevice = null;
+                    MainConnection.ObdDevice.Dispose();
+                    MainConnection.ObdDevice = null;
                     return false;
                 }
-                datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
+                MainConnection.ObdDevice.Enable4xReadWrite = chkConsole4x.Checked;
 
-                datalogger.LogDevice.SetWriteTimeout(AppSettings.TimeoutJ2534Write);
-                datalogger.LogDevice.SetReadTimeout(AppSettings.TimeoutReceive);
+                MainConnection.ObdDevice.SetWriteTimeout(AppSettings.TimeoutJ2534Write);
+                MainConnection.ObdDevice.SetReadTimeout(AppSettings.TimeoutReceive);
 
                 jParams = new J2534InitParameters();
                 if (radioVPW.Checked)
                 {
                     if (datalogger.AnalyzerRunning)
                     {
-                        datalogger.LogDevice.SetAnalyzerFilter();
+                        MainConnection.ObdDevice.SetAnalyzerFilter();
                     }
                     else
                     {
-                        datalogger.LogDevice.SetLoggingFilter();
+                        MainConnection.ObdDevice.SetLoggingFilter();
                     }
                 }
                 else
@@ -3164,7 +3434,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        //datalogger.LogDevice.SetJ2534Configs( "J1962_PINS=$00000100",false);
+                        //MainConnection.ObdDevice.SetJ2534Configs( "J1962_PINS=$00000100",false);
                         jParams.Protocol = ProtocolID.SW_CAN_PS;
                         jParams.Baudrate = BaudRate.ISO15765_33K3;
                     }
@@ -3174,23 +3444,23 @@ namespace UniversalPatcher
                     jParams.PassFilters = "Type:PASS_FILTER,Name:CANFlasherPass" + Environment.NewLine;
                     jParams.PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                     jParams.PassFilters += "Pattern:0000" + datalogger.CanDevice.DiagID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                    datalogger.LogDevice.ConnectSecondaryProtocol(jParams);
+                    MainConnection.ObdDevice.ConnectSecondaryProtocol(jParams);
                     if (radioLSCan.Checked && chkWakeUp.Checked)
                     {
                         byte[] wakeMsg = new byte[] { 00, 00, 01, 00 };
                         OBDMessage wMsg = new OBDMessage(wakeMsg);
                         wMsg.Txflag = TxFlag.SW_CAN_HV_TX;
                         wMsg.SecondaryProtocol = true;
-                        datalogger.LogDevice.SendMessage(wMsg, 0);
+                        MainConnection.ObdDevice.SendMessage(wMsg, 0);
                         Thread.Sleep(500);
                     }
                     if (chkStartPeriodic.Checked)
                     {
                         string pMsg = "00 00 01 01 FE 3E:2500:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
-                        datalogger.LogDevice.StartPeriodicMsg(pMsg, false);
+                        MainConnection.ObdDevice.StartPeriodicMsg(pMsg, false);
                     }
                 }
-                datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false, datalogger.AnalyzerRunning);
+                datalogger.Receiver.StartReceiveLoop(MainConnection.ObdDevice, MainConnection.port, false, datalogger.AnalyzerRunning);
                 Logger("Connected");
                 Application.DoEvents();
                 return true;
@@ -3221,22 +3491,16 @@ namespace UniversalPatcher
             }
             if (txtJ2534SetPins.Text.Length > 0)
             {
-                initParameters.Sconfigs = "J1962_PINS = " + txtJ2534SetPins.Text;
+                initParameters.SetPins = txtJ2534SetPins.Text;
             }
             if (txtJConsoleConfigs.Text.Length > 0)
             {
-                if (!string.IsNullOrEmpty(initParameters.Sconfigs))
-                {
-                    initParameters.Sconfigs += " | ";
-                }
-                initParameters.Sconfigs += txtJConsoleConfigs.Text;
+                initParameters.Sconfigs = txtJConsoleConfigs.Text;
             }
+            initParameters.Sconfigs = initParameters.Sconfigs.Trim(new char[] { '\n', '\r' });
             initParameters.Protocol = (ProtocolID)Enum.Parse(typeof(ProtocolID), comboJ2534Protocol.Text);
             initParameters.Baudrate = (BaudRate)Enum.Parse(typeof(BaudRate), comboJ2534Baudrate.Text);
-            if (comboJ2534Connectflag.Text.Length > 0)
-            {
-                initParameters.Connectflag = (ConnectFlag)Enum.Parse(typeof(ConnectFlag), comboJ2534Connectflag.Text);
-            }
+            initParameters.Connectflag = txtJ2534ConnectFlags.Text.Replace("|",",");
             initParameters.PerodicMsg = txtJ2534PeriodicMsg.Text;
             initParameters.PeriodicInterval = (int)numJ2534PeriodicMsgInterval.Value;
             initParameters.PassFilters = jConsoleFilters;
@@ -3256,22 +3520,16 @@ namespace UniversalPatcher
             }
             if (txtJ2534SetPins2.Text.Length > 0)
             {
-                initParameters.Sconfigs = "J1962_PINS = " + txtJ2534SetPins2.Text;
+                initParameters.SetPins = txtJ2534SetPins2.Text;
             }
             if (txtJConsoleConfigs2.Text.Length > 0)
             {
-                if (!string.IsNullOrEmpty(initParameters.Sconfigs))
-                {
-                    initParameters.Sconfigs += " | ";
-                }
-                initParameters.Sconfigs += txtJConsoleConfigs2.Text;
+                initParameters.Sconfigs = txtJConsoleConfigs2.Text;
             }
+            initParameters.Sconfigs = initParameters.Sconfigs.Trim(new char[] { '\n', '\r' });
             initParameters.Protocol = (ProtocolID)Enum.Parse(typeof(ProtocolID), comboJ2534Protocol2.Text);
             initParameters.Baudrate = (BaudRate)Enum.Parse(typeof(BaudRate),comboJ2534Baudrate2.Text);
-            if (comboJ2534Connectflag2.Text.Length > 0)
-            {
-                initParameters.Connectflag = (ConnectFlag)Enum.Parse(typeof(ConnectFlag), comboJ2534Connectflag2.Text);
-            }
+            initParameters.Connectflag = txtJ2534ConnectFlags2.Text.Replace("|",",");
             initParameters.PerodicMsg = txtJ2534PeriodicMsg2.Text;
             initParameters.PeriodicInterval = (int)numJ2534PeriodicMsgInterval2.Value;
             initParameters.PassFilters = jConsoleFilters2;
@@ -3288,11 +3546,11 @@ namespace UniversalPatcher
             }
             comboJ2534Protocol.Text = initParameters.Protocol.ToString();
             Application.DoEvents();
-            txtJ2534SetPins.Text = "";
+            txtJ2534SetPins.Text = initParameters.SetPins;
             comboJ2534Init.Text = initParameters.Kinit.ToString();
-            txtJConsoleConfigs.Text = initParameters.Sconfigs;
+            txtJConsoleConfigs.Text = initParameters.Sconfigs.Replace("[", "").Replace("]", Environment.NewLine); 
             comboJ2534Baudrate.Text = initParameters.Baudrate.ToString();
-            comboJ2534Connectflag.Text = initParameters.Connectflag.ToString();
+            txtJ2534ConnectFlags.Text = initParameters.Connectflag;
             txtJ2534InitBytes.Text = initParameters.InitBytes;
             txtJ2534PeriodicMsg.Text = initParameters.PerodicMsg;
             numJ2534PeriodicMsgInterval.Value = initParameters.PeriodicInterval;
@@ -3305,13 +3563,13 @@ namespace UniversalPatcher
             {
                 initParameters = new J2534InitParameters();
             }
-            txtJ2534SetPins2.Text = "";
+            txtJ2534SetPins2.Text = initParameters.SetPins;
             comboJ2534Protocol2.Text = initParameters.Protocol.ToString();
             Application.DoEvents();
             comboJ2534Init2.Text = initParameters.Kinit.ToString();
-            txtJConsoleConfigs2.Text = initParameters.Sconfigs;
+            txtJConsoleConfigs2.Text = initParameters.Sconfigs.Replace("[", "").Replace("]", Environment.NewLine); 
             comboJ2534Baudrate2.Text = initParameters.Baudrate.ToString();
-            comboJ2534Connectflag2.Text = initParameters.Connectflag.ToString();
+            txtJ2534ConnectFlags2.Text = initParameters.Connectflag;
             txtJ2534InitBytes2.Text = initParameters.InitBytes;
             txtJ2534PeriodicMsg2.Text = initParameters.PerodicMsg;
             numJ2534PeriodicMsgInterval2.Value = initParameters.PeriodicInterval;
@@ -3342,8 +3600,8 @@ namespace UniversalPatcher
                 else
                 {
                     initParameters = InitParms;
+                    LoadJ2534InitParameters(initParameters);
                 }
-                LoadJ2534InitParameters(initParameters);
                 J2534DotNet.J2534Device dev = jDevList[comboJ2534DLL.SelectedIndex];
                 if (AppSettings.LoggerStartJ2534Process)
                     jConsole.JDevice = new J2534Client(comboJ2534DLL.SelectedIndex);
@@ -3455,7 +3713,7 @@ namespace UniversalPatcher
                     Logger("No profile configured");
                     return false;
                 }
-                if (!Connect(radioVPW.Checked, false,true, null))
+                if (!Connect(null, false,true, null))
                 {
                     return false;
                 }
@@ -3490,6 +3748,10 @@ namespace UniversalPatcher
                     if (datalogger.SelectedPids.Count == 0)
                     {
                         LoggerBold("All pids removed, restoring backup. Logging stopped");
+                        if (serialRadioButton.Checked && comboSerialDeviceType.Text == OBDXProDevice.DeviceType)
+                        {
+                            LoggerBold("Please install and use J2534 driver, we have problems with OBDX Pro serialport driver !");
+                        }
                         datalogger.SelectedPids = LogParamFile.LoadProfile(bakFile);
                         return false;
                     }
@@ -3509,7 +3771,7 @@ namespace UniversalPatcher
                         return false;
                     }
                 }
-                if (datalogger.StartLogging(radioVPW.Checked))
+                if (datalogger.StartLogging())
                 {
                     timerShowData.Enabled = true;
                     btnStartStop.Text = "Stop logging (" + comboStartLoggingKey.Text + ")";
@@ -3518,7 +3780,7 @@ namespace UniversalPatcher
                     //btnGetVINCode.Enabled = false;
                     datalogger.LogRunning = true;
                     dataGridSelectedPids.Columns["Value"].Visible = true;
-                    if (datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm)
+                    if (MainConnection.ObdDevice.LogDeviceType == LoggingDevType.Elm)
                     {
                         //groupDTC.Enabled = false;
                     }
@@ -3549,7 +3811,7 @@ namespace UniversalPatcher
             {
                 if (!StartLogging(chkTestPidCompatibility.Checked))
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false, datalogger.AnalyzerRunning);
+                    datalogger.Receiver.StartReceiveLoop(MainConnection.ObdDevice, MainConnection.port, false, datalogger.AnalyzerRunning);
                 }
             }
             btnStartStop.Enabled = true;
@@ -3565,6 +3827,7 @@ namespace UniversalPatcher
             if (!string.IsNullOrEmpty(comboSerialPort.Text))
             {
                 btnStartStop.Enabled = true;
+                CurrentPortName = comboSerialPort.Text;
             }
         }
 
@@ -3737,11 +4000,11 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!Connect(radioVPW.Checked, false, true, null))
+                if (!Connect(null, false, true, null))
                 {
                     return;
                 }
-                datalogger.LogDevice.SetAnalyzerFilter();
+                MainConnection.ObdDevice.SetAnalyzerFilter();
                 dataGridAnalyzer.SelectionChanged -= DataGridAnalyzer_SelectionChanged; //Avoid duplicates and disable for original analyzer
                 dataGridAnalyzer.Columns.Clear();
                 splitAnalyzer.Panel2Collapsed = true;
@@ -3769,8 +4032,8 @@ namespace UniversalPatcher
                     //dataGridAnalyzer.DataSource = null;
                     //dataGridAnalyzer.DataSource = blPassiveCanDatas;
                     //dataGridAnalyzer.DataBindingComplete += DataGridAnalyzer_DataBindingComplete;
-                    //datalogger.LogDevice.RemoveFilters(null);
-                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived1_PassivePids;
+                    //MainConnection.ObdDevice.RemoveFilters(null);
+                    MainConnection.ObdDevice.MsgReceived += LogDevice_MsgReceived1_PassivePids;
                     dataGridAnalyzer.SelectionChanged += DataGridAnalyzer_SelectionChanged;
                     Application.DoEvents();
                     timerAnalyzerCombined.Enabled = true;
@@ -3795,7 +4058,7 @@ namespace UniversalPatcher
                 btnStartStopAnalyzer.Text = "Stop Analyzer";
                 if (!datalogger.Receiver.ReceiveLoopRunning)
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false, true);
+                    datalogger.Receiver.StartReceiveLoop(MainConnection.ObdDevice, MainConnection.port, false, true);
                 }
                 //groupDTC.Enabled = false;
             }
@@ -3851,9 +4114,9 @@ namespace UniversalPatcher
         {
             try
             {
-                if (radioVPW.Checked)
+                if (AppSettings.loggerProtocol == LoggingProtocol.VPW)
                 {
-                    datalogger.LogDevice.SetLoggingFilter();
+                    MainConnection.ObdDevice.SetLoggingFilter();
                 }
                 else
                 {
@@ -3865,7 +4128,7 @@ namespace UniversalPatcher
                 }
                 if (chkCombinePids.Checked)
                 {
-                    datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived1_PassivePids;
+                    MainConnection.ObdDevice.MsgReceived -= LogDevice_MsgReceived1_PassivePids;
                     dataGridAnalyzer.DataBindingComplete -= DataGridAnalyzer_DataBindingComplete;
                     timerAnalyzerCombined.Enabled = false;
                 }
@@ -3943,45 +4206,75 @@ namespace UniversalPatcher
 */
         }
 
-        private void getDtcCodes(byte mode)
+        private List<CANDevice> GetSelectedCanDevicesDtc(bool AllDevs)
+        {
+            List<CANDevice> modules = new List<CANDevice>();
+            KeyValuePair<CANDevice, string> itm = (KeyValuePair<CANDevice, string>)comboModule.SelectedItem;
+            datalogger.DtcCurrentModule = itm.Key;
+            if (AllDevs)
+            {
+                modules.AddRange(CanDevsMain);
+            }
+            else
+            {
+                modules.Add(datalogger.DtcCurrentModule);
+            }
+            /*
+            bool vpw = (datalogger.DtcCurrentModule.Subnet == LoggingProtocol.VPW);
+            if (modules.Count > 0)
+            {
+                vpw = (modules[0].Subnet == LoggingProtocol.VPW);
+            }
+            */
+            if (!Connect(null, true, true, null))
+            {
+                return null;
+            }
+            return modules;
+        }
+        public void getDtcCodes(bool history, bool allDevs)
         {
             dataGridDtcCodes.Rows.Clear();
             dataGridDtcCodes.Columns["Conversion"].Visible = false;
             dataGridDtcCodes.Columns["Scaling"].Visible = false;
-            if (!Connect(radioVPW.Checked, true, true, null))
-            {
-                return;
-            }
             Thread.Sleep(100);
-            //List<DTCCodeStatus> codelist = new List<DTCCodeStatus>();
-            if (radioVPW.Checked)
+            List<CANDevice> modules = GetSelectedCanDevicesDtc(allDevs);
+            LoggingProtocol currentProto = CurrentSubnet;
+            int currentId = datalogger.CanDevice.ModuleID;
+            foreach (CANDevice module in modules)
             {
-                if (chkDtcAllModules.Checked)
+                if (module.Subnet != currentProto)
                 {
-                    DtcCurrentModule = DeviceId.Broadcast;
-                    //codelist = datalogger.RequestDTCCodes(module, mode);
+                    ChangeProtocol(MainConnection.ObdDevice, module.Subnet);
+                    currentProto = module.Subnet;
+                }
+                if (datalogger.LogRunning)
+                {
+                    datalogger.QueueDtcRequest(module, history);
                 }
                 else
                 {
-                    DtcCurrentModule = Convert.ToByte(comboModule.SelectedValue);
-                    //codelist = datalogger.RequestDTCCodes(module, mode); 
+                    int[] fltrs1 = new int[0];
+                    int[] fltrs2 = new int[0];
+                    if (module.Subnet != LoggingProtocol.VPW && currentId != module.ModuleID)
+                    {
+                        MainConnection.ObdDevice.RemoveFilters2(null);
+                        MainConnection.ObdDevice.RemoveFilters(null);
+                        AddFilterForDevice(MainConnection.ObdDevice, module, ref fltrs1, ref fltrs2);
+                    }
+                    datalogger.RequestDTCCodes(module, history, true);
+                    if (module.Subnet != LoggingProtocol.VPW && currentId != module.ModuleID)
+                    {
+                        MainConnection.ObdDevice.RemoveFilters(fltrs1);
+                        MainConnection.ObdDevice.RemoveFilters2(fltrs2);
+                    }
                 }
+                currentId = module.ModuleID;
             }
-            else
+            if (currentProto != CurrentSubnet)
             {
-                DtcCurrentModule = Convert.ToUInt16(comboModule.SelectedValue);
-                if (mode == 2)
-                {
-                    mode = 0xa9;
-                }
-            }
-            if (datalogger.LogRunning)
-            {
-                datalogger.QueueDtcRequest(DtcCurrentModule, mode);
-            }
-            else
-            {
-                datalogger.RequestDTCCodes(DtcCurrentModule, mode, true);
+                MainConnection.ObdDevice.PassthruDisconnect();
+                ReConnect();
             }
         }
 
@@ -3995,11 +4288,15 @@ namespace UniversalPatcher
                     {
                         return;
                     }
-                    if (radioVPW.Checked)
+                    if (datalogger.DtcCurrentModule == null)
+                    {
+                        return;
+                    }
+                    if (datalogger.DtcCurrentModule.Subnet == LoggingProtocol.VPW)
                     {
                         if (e.Msg.Length > 6 && e.Msg[1] == DeviceId.Tool && e.Msg[3] == 0x59)
                         {
-                            DTCCodeStatus dcs = datalogger.DecodeDTCstatus(e.Msg.GetBytes(),0);
+                            DTCCodeStatus dcs = datalogger.DecodeDTCstatus(e.Msg.GetBytes(), datalogger.DtcCurrentModule);
                             if (!string.IsNullOrEmpty(dcs.Module))
                             {
                                 int r = dataGridDtcCodes.Rows.Add();
@@ -4013,27 +4310,19 @@ namespace UniversalPatcher
                     else //CAN
                     {
                         //ushort module = Convert.ToUInt16(comboModule.SelectedValue);
-                        if (datalogger.ValidateQueryResponse(e.Msg, DtcCurrentModule) && e.Msg[4] == 0x81)
+                        if (datalogger.ValidateQueryResponse(e.Msg, (ushort)datalogger.DtcCurrentModule.RequestID) && e.Msg[4] == 0x81)
                         {
 
-                            DTCCodeStatus dcs = datalogger.DecodeDTCstatus(e.Msg.GetBytes(), DtcCurrentModule);
+                            DTCCodeStatus dcs = datalogger.DecodeDTCstatus(e.Msg.GetBytes(), datalogger.DtcCurrentModule);
                             if (!string.IsNullOrEmpty(dcs.Module))
                             {
                                 int r = dataGridDtcCodes.Rows.Add();
                                 //dataGridDtcCodes.Rows[r].Cells[0].Value = dcs.Module;
-                                dataGridDtcCodes.Rows[r].Cells[0].Value = DtcCurrentModule.ToString("X4");
+                                dataGridDtcCodes.Rows[r].Cells[0].Value = datalogger.DtcCurrentModule.RequestID.ToString("X4");
                                 dataGridDtcCodes.Rows[r].Cells[1].Value = dcs.Code;
                                 dataGridDtcCodes.Rows[r].Cells[2].Value = dcs.Description;
                                 dataGridDtcCodes.Rows[r].Cells[3].Value = dcs.Status;
                             }
-                            /*                            
-                                int r = dataGridDtcCodes.Rows.Add();
-
-                                    string data = "";
-                                for (int i = 5; i < e.Msg.Length; i++)
-                                    data += e.Msg[i].ToString("X2") + " ";
-                                dataGridDtcCodes.Rows[r].Cells[1].Value = data;
-                            */
                         }
                     }
                 });
@@ -4051,39 +4340,52 @@ namespace UniversalPatcher
 
         private void btnCurrentDTC_Click(object sender, EventArgs e)
         {
-            if (radioVPW.Checked)
-                getDtcCodes(2);//2 = Current data
-            else
-                getDtcCodes(0x1a);//0x1a = Current data
+            getDtcCodes(false, chkDtcAllModules.Checked);
         }
 
         private void btnHistoryDTC_Click(object sender, EventArgs e)
         {
-            getDtcCodes(0x10);
+            getDtcCodes(true, chkDtcAllModules.Checked);
         }
 
         private void btnClearCodes_Click(object sender, EventArgs e)
         {
-            if (!radioVPW.Checked)
+            List<CANDevice> modules = GetSelectedCanDevicesDtc(chkDtcAllModules.Checked);
+            LoggingProtocol currentProto = CurrentSubnet;
+            int currentId = datalogger.CanDevice.ModuleID;
+            foreach (CANDevice module in modules)
             {
-                LoggerBold("Not implemented for CAN");
-                //return;
+                if (module.Subnet != currentProto)
+                {
+                    ChangeProtocol(MainConnection.ObdDevice,  module.Subnet);
+                    currentProto = module.Subnet;
+                }
+                if (datalogger.LogRunning && MainConnection.ObdDevice.LogDeviceType == LoggingDevType.Elm && radioVPW.Checked)
+                {
+                    OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, (byte)module.ModuleID, DeviceId.Tool, 0x20, 0x00 });
+                    datalogger.QueueCustomCmd(msg, "Clear DTC codes");
+                }
+                else
+                {
+                    int[] fltrs1 = new int[0];
+                    int[] fltrs2 = new int[0];
+                    if (module.Subnet != LoggingProtocol.VPW && currentId != module.ModuleID)
+                    {
+                        AddFilterForDevice(MainConnection.ObdDevice, module, ref fltrs1, ref fltrs2);
+                    }
+                    datalogger.ClearTroubleCodes(module);
+                    if (module.Subnet != LoggingProtocol.VPW && currentId != module.ModuleID)
+                    {
+                        MainConnection.ObdDevice.RemoveFilters(fltrs1);
+                        MainConnection.ObdDevice.RemoveFilters2(fltrs2);
+                    }
+                    currentId = module.ModuleID;
+                }
             }
-            Connect(radioVPW.Checked, true, true, null);
-
-            ushort module = Convert.ToUInt16(comboModule.SelectedValue);
-            if (chkDtcAllModules.Checked)
+            if (currentProto != CurrentSubnet)
             {
-                module = DeviceId.Broadcast;
-            }
-            if (datalogger.LogRunning && datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm && radioVPW.Checked)
-            {
-                OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, (byte)module, DeviceId.Tool, 0x20, 0x00 });
-                datalogger.QueueCustomCmd(msg, "Clear DTC codes");
-            }
-            else
-            {
-                datalogger.ClearTroubleCodes(module);
+                MainConnection.ObdDevice.PassthruDisconnect();
+                ReConnect();
             }
         }
 
@@ -4095,7 +4397,7 @@ namespace UniversalPatcher
                 {
                     return;
                 }
-                Connect(radioVPW.Checked, true,true, null);
+                Connect(null, true,true, null);
                 datalogger.Receiver.SetReceiverPaused(true);
                 dataGridSelectedPids.Columns["Value"].Visible = true;
                 for (int s = 0; s < dataGridSelectedPids.SelectedCells.Count; s++)
@@ -4135,14 +4437,14 @@ namespace UniversalPatcher
                 {
                     oscript.stopscript = true;
                 }
-                datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
-                datalogger.LogDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
+                MainConnection.ObdDevice.MsgReceived -= LogDevice_MsgReceived;
+                MainConnection.ObdDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
 
                 if (datalogger.Receiver.ReceiveLoopRunning)
                 {
                     datalogger.Receiver.StopReceiveLoop();
-                    datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
-                    datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
+                    MainConnection.ObdDevice.MsgReceived -= LogDevice_MsgReceived;
+                    MainConnection.ObdDevice.MsgSent -= LogDevice_MsgSent;
                 }
                 if (datalogger.LogRunning)
                 {
@@ -4152,14 +4454,15 @@ namespace UniversalPatcher
                 {
                     StopAnalyzer();
                 }
-                datalogger.LogDevice.Dispose();
-                datalogger.LogDevice = null;
+                MainConnection.ObdDevice.Dispose();
+                MainConnection.ObdDevice = null;
                 datalogger.Connected = false;
                 if (string.IsNullOrEmpty(datalogger.OS))
                     labelConnected.Text = "Disconnected";
                 else
                     labelConnected.Text = "Disconnected - OS: " + datalogger.OS;
                 groupHWSettings.Enabled = true;
+                txtPcmAddress.Enabled = true;
                 if (j2534RadioButton.Checked)
                 {
                     groupProtocol.Enabled = true;
@@ -4216,7 +4519,7 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect(radioVPW.Checked,true,true, null);
+                Connect(null,true,true, null);
             }
             btnConnect.Enabled = true;
             btnConnect.Enabled = true;
@@ -4238,22 +4541,61 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect(radioVPW.Checked,true,true, null);
+                Connect(null,true,true, null);
+            }
+        }
+
+        public string RequestVINCode(CANDevice canDev)
+        {
+            Connect(null, true, true, null);
+            if (datalogger.LogRunning)
+            {
+                datalogger.QueueVINRequest(canDev);
+                return "";
+            }
+            else
+            {
+                return datalogger.QueryVIN(canDev);
             }
         }
 
         private void btnGetVINCode_Click(object sender, EventArgs e)
         {
-            Connect(radioVPW.Checked,true, true, null);
-            if (datalogger.LogRunning)
+            List<CANDevice> modules = GetSelectedCanDevicesDtc(chkDtcAllModules.Checked);
+            Debug.WriteLine(datalogger.CanDevice.RequestID.ToString("X2"));
+            if (modules.Count == 1 && modules[0].RequestID == datalogger.CanDevice.RequestID)
             {
-                datalogger.QueueVINRequest();
+                RequestVINCode(modules[0]);
             }
             else
-            {                
-                datalogger.QueryVIN();
+            {
+                LoggingProtocol currentProto = CurrentSubnet;
+                foreach (CANDevice module in modules)
+                {
+                    if (module.Subnet != currentProto)
+                    {
+                        ChangeProtocol(MainConnection.ObdDevice, module.Subnet);
+                        currentProto = module.Subnet;
+                    }
+                    int[] fltrs1 = new int[0];
+                    int[] fltrs2 = new int[0];
+                    if (module.Subnet != LoggingProtocol.VPW)
+                    {
+                        AddFilterForDevice(MainConnection.ObdDevice, module, ref fltrs1, ref fltrs2);
+                    }
+                    RequestVINCode(module);
+                    if (module.Subnet != LoggingProtocol.VPW)
+                    {
+                        MainConnection.ObdDevice.RemoveFilters(fltrs1);
+                        MainConnection.ObdDevice.RemoveFilters2(fltrs2);
+                    }
+                }
+                if (currentProto != CurrentSubnet)
+                {
+                    MainConnection.ObdDevice.PassthruDisconnect();
+                    ReConnect();
+                }
             }
-
         }
 
         private void btnClearAnalyzerGrid_Click(object sender, EventArgs e)
@@ -4307,7 +4649,7 @@ namespace UniversalPatcher
             AppSettings.LoggerUseFilters = chkVPWFilters.Checked;
             if (datalogger.Connected && radioVPW.Checked)
             {
-                datalogger.LogDevice.SetLoggingFilter();
+                MainConnection.ObdDevice.SetLoggingFilter();
             }
         }
 
@@ -4401,14 +4743,14 @@ namespace UniversalPatcher
             if (fName.Length == 0)
                 return;
             AppSettings.LastScriptFile = fName;
-            if (!Connect(radioVPW.Checked,true, true, null))
+            if (!Connect(null,true, true, null))
             {
                 return;
             }
             
             Logger("Sending file: " + fName);
-            oscript = new OBDScript(datalogger.LogDevice, null);
-            //datalogger.LogDevice.ClearMessageBuffer();
+            oscript = new OBDScript(MainConnection.ObdDevice, null);
+            //MainConnection.ObdDevice.ClearMessageBuffer();
             datalogger.Receiver.SetReceiverPaused(true);
             Task.Factory.StartNew(() =>
             {
@@ -4426,10 +4768,12 @@ namespace UniversalPatcher
         private void btnDtcCustom_Click(object sender, EventArgs e)
         {
             byte mode;
-            DtcCurrentModule = Convert.ToUInt16(comboModule.SelectedValue); 
-            if (txtDtcCustomModule.Text.Length > 0)
+
+            KeyValuePair<CANDevice, string> itm = (KeyValuePair<CANDevice, string>)comboModule.SelectedItem;
+            datalogger.DtcCurrentModule = itm.Key;
+            if (txtDtcCustomModule.Text.Length > 0 && HexToUshort(txtDtcCustomModule.Text, out ushort modAddr))
             {
-                HexToUshort(txtDtcCustomModule.Text, out DtcCurrentModule);
+                datalogger.DtcCurrentModule = new CANDevice(modAddr, AppSettings.loggerProtocol);
             }
             if (!HexToByte(txtDtcCustomMode.Text,out mode))
             {
@@ -4438,14 +4782,26 @@ namespace UniversalPatcher
             }
 
             dataGridDtcCodes.Rows.Clear();
-            Connect(radioVPW.Checked,true, true, null);
+            Connect(null,true, true, null);
+
+            int[] fltrs1 = new int[0];
+            int[] fltrs2 = new int[0];
             if (datalogger.LogRunning)
             {
-                datalogger.QueueDtcRequest(DtcCurrentModule, mode);
+                datalogger.QueueDtcRequest(datalogger.DtcCurrentModule, false, mode);
             }
             else
             {
-                datalogger.RequestDTCCodes(DtcCurrentModule, mode, true);
+                if (datalogger.DtcCurrentModule.Subnet != LoggingProtocol.VPW)
+                {
+                    AddFilterForDevice(MainConnection.ObdDevice, datalogger.DtcCurrentModule, ref fltrs1, ref fltrs2);
+                }
+                datalogger.RequestDTCCodes(datalogger.DtcCurrentModule, false, true, mode);
+                if (datalogger.DtcCurrentModule.Subnet != LoggingProtocol.VPW)
+                {
+                    MainConnection.ObdDevice.RemoveFilters(fltrs1);
+                    MainConnection.ObdDevice.RemoveFilters2(fltrs2);
+                }
             }
         }
 
@@ -4471,7 +4827,7 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect(radioVPW.Checked,true,true, null);
+                Connect(null, true, true, null);
             }
             btnConnect.Enabled = true;
             btnConnect.Enabled = true;
@@ -4486,7 +4842,7 @@ namespace UniversalPatcher
         {
             if (datalogger != null && datalogger.Connected)
             {
-                datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
+                MainConnection.ObdDevice.Enable4xReadWrite = chkConsole4x.Checked;
             }
         }
 
@@ -4498,7 +4854,7 @@ namespace UniversalPatcher
                 {
                     return;
                 }
-                datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
+                datalogger.Receiver.StartReceiveLoop(MainConnection.ObdDevice, datalogger.port);
             }
             else
             {
@@ -4559,6 +4915,10 @@ namespace UniversalPatcher
             try
             {
                 string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xml");
+                if (!string.IsNullOrEmpty(AppSettings.LoggerJ2534SettingsFile))
+                {
+                    defName = AppSettings.LoggerJ2534SettingsFile;
+                }
                 string FileName = SelectSaveFile(JProfileFilter, defName);
                 if (FileName.Length == 0)
                     return;
@@ -4758,7 +5118,7 @@ namespace UniversalPatcher
         private void btnGenerateAlgo_Click(object sender, EventArgs e)
         {
             string fName = SelectFile();
-            byte[] seedData = ReadBin(fName);
+            byte[] seedData = File.ReadAllBytes(fName);
             int a = 0;
             StringBuilder sb = new StringBuilder();
             while (a < seedData.Length)
@@ -4776,7 +5136,7 @@ namespace UniversalPatcher
                 sb.Append("}," + Environment.NewLine);
             }
             fName = fName.Replace("bin", "txt");
-            WriteTextFile(fName, sb.ToString());
+            File.WriteAllText(fName, sb.ToString());
         }
 
         private ushort EecvAlgoTest()
@@ -5008,16 +5368,6 @@ namespace UniversalPatcher
             ConnectJConsole2(JSettings2);
         }
 
-        private void btnJConsoleAddConfig_Click(object sender, EventArgs e)
-        {
-            if (txtJConsoleConfigs.Text.Length> 0)
-            {
-                txtJConsoleConfigs.AppendText(" | ");
-            }
-            txtJConsoleConfigs.AppendText(comboJConsoleConfig.Text + " = 1");
-        }
-
-
 
         private void parseBinfileToScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -5030,6 +5380,10 @@ namespace UniversalPatcher
             try
             {
                 string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile2.xml");
+                if (!string.IsNullOrEmpty(AppSettings.LoggerJ2534SettingsFile2))
+                {
+                    defName = AppSettings.LoggerJ2534SettingsFile2;
+                }
                 string FileName = SelectSaveFile(JProfileFilter, defName);
                 if (FileName.Length == 0)
                     return;
@@ -5120,15 +5474,6 @@ namespace UniversalPatcher
             LoadJ2534InitParameters2(null);
         }
 
-        private void btnJConsoleAddConfig2_Click(object sender, EventArgs e)
-        {
-            if (txtJConsoleConfigs2.Text.Length > 0)
-            {
-                txtJConsoleConfigs2.AppendText(" | ");
-            }
-            txtJConsoleConfigs2.AppendText(comboJConsoleConfig2.Text + " = 1");
-
-        }
         private void DisconnectSecondaryProto()
         {
             if (jConsole.Connected2)
@@ -5248,8 +5593,8 @@ namespace UniversalPatcher
                 //timerWaitCANQuery.Enabled = true;
                 //canDevs = new List<CANDevice>();
                 dataGridCANDevices.DataSource = null;
-                canDevs = SearchAllDevicesOnBus(jConsole.JDevice);
-                dataGridCANDevices.DataSource = canDevs;
+                CanDevsJconsole = SearchAllDevicesOnBus(jConsole.JDevice);
+                dataGridCANDevices.DataSource = CanDevsJconsole;
                 dataGridCANDevices.Columns[0].DefaultCellStyle.Format = "X4";
                 dataGridCANDevices.Columns[1].DefaultCellStyle.Format = "X4";
                 dataGridCANDevices.Columns[2].DefaultCellStyle.Format = "X4";
@@ -5301,7 +5646,7 @@ namespace UniversalPatcher
                 {
                     timerWaitCANQuery.Enabled = false;
                     timerKeepBusQuiet.Enabled = false;
-                    dataGridCANDevices.DataSource = canDevs;
+                    dataGridCANDevices.DataSource = CanDevsJconsole;
                     dataGridCANDevices.Columns[0].DefaultCellStyle.Format = "X4";
                     dataGridCANDevices.Columns[1].DefaultCellStyle.Format = "X4";
                     dataGridCANDevices.Columns[2].DefaultCellStyle.Format = "X4";
@@ -5543,7 +5888,7 @@ namespace UniversalPatcher
 
         private int QueryDevsOnBus()
         {
-            if (!Connect(radioVPW.Checked, true, true, null))
+            if (!Connect(null, true, true, null))
             {
                 return 0;
             }
@@ -5581,7 +5926,9 @@ namespace UniversalPatcher
 
         private void QueryCanModules()
         {
-            Response<List<OBDMessage>> msgs = datalogger.QueryCANModules((ushort)comboModule.SelectedValue);
+            KeyValuePair<CANDevice, string> itm = (KeyValuePair<CANDevice, string>)comboModule.SelectedItem;
+            CANDevice canDev = itm.Key;
+            Response<List<OBDMessage>> msgs = datalogger.QueryCANModules((ushort)canDev.ModuleID);
             datalogger.Receiver.SetReceiverPaused(false);
             if (msgs.Status != ResponseStatus.Success)
             {
@@ -5612,7 +5959,7 @@ namespace UniversalPatcher
 
         private void btnQueryModules_Click(object sender, EventArgs e)
         {
-            if (!Connect(radioVPW.Checked,true, true, null))
+            if (!Connect(null,true, true, null))
             {
                 return;
             }
@@ -5679,184 +6026,190 @@ namespace UniversalPatcher
 
         private void btnGetFreezeFrames_Click(object sender, EventArgs e)
         {
-            ushort module;
             dataGridDtcCodes.Rows.Clear();
             dataGridDtcCodes.Columns["Conversion"].Visible = true;
             dataGridDtcCodes.Columns["Scaling"].Visible = true;
-            if (!Connect(radioVPW.Checked, true, true, null))
-            {
-                return;
-            }
-            Thread.Sleep(100);
-            //List<DTCCodeStatus> codelist = new List<DTCCodeStatus>();
-            if (radioVPW.Checked)
-            {
-                if (chkDtcAllModules.Checked)
-                {
-                    module = DeviceId.Broadcast;
-                    //codelist = datalogger.RequestDTCCodes(module, mode);
-                }
-                else
-                {
-                    module = (byte)comboModule.SelectedValue;
-                    //codelist = datalogger.RequestDTCCodes(module, mode); 
-                }
-            }
-            else //CAN
-            {
-                module = Convert.ToUInt16(comboModule.SelectedValue);
-            }
-            Response<List<OBDMessage>> msgs = datalogger.QueryFreezeFrames(module);
-            if (msgs.Status != ResponseStatus.Success)
-            {
-                return;
-            }
-            byte recNr = 0;
-            byte lastRecNr = 0xFF;
-            for (int m = 0; m < msgs.Value.Count; m++)
-            {
-                int r = dataGridDtcCodes.Rows.Add();
-                OBDMessage msg = msgs.Value[m];
-                byte[] data = msg.GetBytes();
-                recNr = data[4];
-                ushort dtcNr;
-                ushort pid;
-                ushort pidData;
-                PidInfo pidInfo;
-                string status = "";
-                if (analyzer.PhysAddresses.ContainsKey(data[2]))
-                {
-                    dataGridDtcCodes.Rows[r].Cells[0].Value = analyzer.PhysAddresses[data[2]];
-                }
-                else
-                {
-                    dataGridDtcCodes.Rows[r].Cells[0].Value = data[2];
-                }
-                if (data.Length == 8 || data.Length == 9)
-                {
-                    if (recNr != lastRecNr)
-                    {
-                        //First row for this record number
-                        status = "Record number: " + recNr.ToString("X2");
-                        dtcNr = (ushort)(data[7] << 8 | data[8]);
-                        //status += " Dtc: " + DtcSearch.DecodeDTC(dtcNr.ToString("X4"));
-                        string dtcCode = DtcSearch.DecodeDTC(dtcNr.ToString("X4"));
-                        dataGridDtcCodes.Rows[r].Cells["Code"].Value = dtcCode;
-                        dataGridDtcCodes.Rows[r].Cells["Description"].Value = DtcSearch.GetDtcDescription(dtcCode);
-                    }
-                    else 
-                    {
-                        status = recNr.ToString() + " - ";
-                        pid = (ushort)(data[5] << 8 | data[6]);
-                        pidInfo = PidDescriptions.Where(x => x.PidNumber == pid).FirstOrDefault();
-                        if (pidInfo == null)
-                            pidInfo = new PidInfo();
-                        dataGridDtcCodes.Rows[r].Cells["Code"].Value = pid.ToString("X4");
-                        dataGridDtcCodes.Rows[r].Cells["Description"].Value = pidInfo.PidName;
-                        dataGridDtcCodes.Rows[r].Cells["Scaling"].Value = pidInfo.Scaling;
-                        //status += " PID: " + pidInfo.PidName;
-                        if (data.Length == 9)
-                            pidData = (ushort)(data[7] << 8 | data[8]);
-                        else
-                            pidData = data[7];
+            List<CANDevice> modules = GetSelectedCanDevicesDtc(chkDtcAllModules.Checked);
 
-                        string unit = "";
-                        if (!string.IsNullOrEmpty(pidInfo.Unit))
+            LoggingProtocol currentProto = CurrentSubnet;
+
+            foreach (CANDevice module in modules)
+            {
+                if (module.Subnet != currentProto)
+                {
+                    ChangeProtocol(MainConnection.ObdDevice, module.Subnet);
+                    currentProto = module.Subnet;
+                }
+                int[] fltrs1 = new int[0];
+                int[] fltrs2 = new int[0];
+                if (module.Subnet != LoggingProtocol.VPW)
+                {
+                    AddFilterForDevice(MainConnection.ObdDevice, module, ref fltrs1, ref fltrs2);
+                }
+
+                Response<List<OBDMessage>> msgs = datalogger.QueryFreezeFrames(module);
+                if (msgs.Status != ResponseStatus.Success)
+                {
+                    return;
+                }
+                byte recNr = 0;
+                byte lastRecNr = 0xFF;
+                for (int m = 0; m < msgs.Value.Count; m++)
+                {
+                    int r = dataGridDtcCodes.Rows.Add();
+                    OBDMessage msg = msgs.Value[m];
+                    byte[] data = msg.GetBytes();
+                    recNr = data[4];
+                    ushort dtcNr;
+                    ushort pid;
+                    ushort pidData;
+                    PidInfo pidInfo;
+                    string status = "";
+                    if (analyzer.PhysAddresses.ContainsKey(data[2]))
+                    {
+                        dataGridDtcCodes.Rows[r].Cells[0].Value = analyzer.PhysAddresses[data[2]];
+                    }
+                    else
+                    {
+                        dataGridDtcCodes.Rows[r].Cells[0].Value = data[2];
+                    }
+                    if (data.Length == 8 || data.Length == 9)
+                    {
+                        if (recNr != lastRecNr)
                         {
-                            unit = pidInfo.Unit.ToLower();
+                            //First row for this record number
+                            status = "Record number: " + recNr.ToString("X2");
+                            dtcNr = (ushort)(data[7] << 8 | data[8]);
+                            //status += " Dtc: " + DtcSearch.DecodeDTC(dtcNr.ToString("X4"));
+                            string dtcCode = DtcSearch.DecodeDTC(dtcNr.ToString("X4"));
+                            dataGridDtcCodes.Rows[r].Cells["Code"].Value = dtcCode;
+                            dataGridDtcCodes.Rows[r].Cells["Description"].Value = DtcSearch.GetDtcDescription(dtcCode);
                         }
-                        PidConfig pc;
-                        pc = GetConversionFromStd(pid);
-                        if (pc != null)
+                        else
                         {
-                            dataGridDtcCodes.Rows[r].Cells["Conversion"].Value = pc.Math;
-                        }
-                        else if (!string.IsNullOrEmpty(pidInfo.ConversionFactor))
-                        {
-                            pc = new PidConfig();
-                            string math = pidInfo.ConversionFactor;
-                            pc.Units = pidInfo.Unit;
-                            if (math.StartsWith("bit:"))
+                            status = recNr.ToString() + " - ";
+                            pid = (ushort)(data[5] << 8 | data[6]);
+                            pidInfo = PidDescriptions.Where(x => x.PidNumber == pid).FirstOrDefault();
+                            if (pidInfo == null)
+                                pidInfo = new PidInfo();
+                            dataGridDtcCodes.Rows[r].Cells["Code"].Value = pid.ToString("X4");
+                            dataGridDtcCodes.Rows[r].Cells["Description"].Value = pidInfo.PidName;
+                            dataGridDtcCodes.Rows[r].Cells["Scaling"].Value = pidInfo.Scaling;
+                            //status += " PID: " + pidInfo.PidName;
+                            if (data.Length == 9)
+                                pidData = (ushort)(data[7] << 8 | data[8]);
+                            else
+                                pidData = data[7];
+
+                            string unit = "";
+                            if (!string.IsNullOrEmpty(pidInfo.Unit))
                             {
-                                string bitNr = math.Substring(4, 1);
-                                math = math.Substring(5).Trim();
-                                if (byte.TryParse(bitNr, out byte b))
-                                    pc.BitIndex = b;
+                                unit = pidInfo.Unit.ToLower();
                             }
-                            string[] parts = math.Split('=');
-                            if (parts.Length == 3)
+                            PidConfig pc;
+                            pc = GetConversionFromStd(pid);
+                            if (pc != null)
                             {
-                                //Bitmapped
-                                math = math.Replace(" ", ",");
-                                pc.IsBitMapped = true;
+                                dataGridDtcCodes.Rows[r].Cells["Conversion"].Value = pc.Math;
                             }
-                            dataGridDtcCodes.Rows[r].Cells["Conversion"].Value = pidInfo.ConversionFactor;
-                            pc.Math = math;
-                        }
-                        else if (!string.IsNullOrEmpty(pidInfo.Scaling))
-                        {
-                            pc = new PidConfig();
-                            pc.Units = pidInfo.Unit;
-                            if (pidInfo.Scaling == "N/A")
+                            else if (!string.IsNullOrEmpty(pidInfo.ConversionFactor))
                             {
-                                pc.Math = "X";
-                            }
-                            else if (pidInfo.Scaling.Contains("="))
-                            {
-                                string[] parts = pidInfo.Scaling.Split('=');
+                                pc = new PidConfig();
+                                string math = pidInfo.ConversionFactor;
+                                pc.Units = pidInfo.Unit;
+                                if (math.StartsWith("bit:"))
+                                {
+                                    string bitNr = math.Substring(4, 1);
+                                    math = math.Substring(5).Trim();
+                                    if (byte.TryParse(bitNr, out byte b))
+                                        pc.BitIndex = b;
+                                }
+                                string[] parts = math.Split('=');
                                 if (parts.Length == 3)
                                 {
                                     //Bitmapped
-                                    pc.Math = pidInfo.Scaling.Replace(" ",",");
+                                    math = math.Replace(" ", ",");
                                     pc.IsBitMapped = true;
                                 }
-                                else if (parts.Length == 2 && parts[0].Trim() != "DTC")
+                                dataGridDtcCodes.Rows[r].Cells["Conversion"].Value = pidInfo.ConversionFactor;
+                                pc.Math = math;
+                            }
+                            else if (!string.IsNullOrEmpty(pidInfo.Scaling))
+                            {
+                                pc = new PidConfig();
+                                pc.Units = pidInfo.Unit;
+                                if (pidInfo.Scaling == "N/A")
                                 {
-                                    string rightSide = parts[1].ToUpper().Trim();
-                                    if (rightSide == "COUNT" || rightSide == "COUNTS" || rightSide == "STEPS" || rightSide == "SECONDS")
+                                    pc.Math = "X";
+                                }
+                                else if (pidInfo.Scaling.Contains("="))
+                                {
+                                    string[] parts = pidInfo.Scaling.Split('=');
+                                    if (parts.Length == 3)
                                     {
-                                        pc.Math = "X";
+                                        //Bitmapped
+                                        pc.Math = pidInfo.Scaling.Replace(" ", ",");
+                                        pc.IsBitMapped = true;
                                     }
-                                    else if (parts[0].Trim() != "N")
+                                    else if (parts.Length == 2 && parts[0].Trim() != "DTC")
                                     {
-                                        pc.Math = parts[1].Replace("N", "X");
-                                        pc.Math = pc.Math.Replace("Y", "X");
-                                        pc.Math = pc.Math.Replace("E", "X");
-                                        if (!string.IsNullOrEmpty(unit) && pc.Math.ToLower().Contains(unit))
+                                        string rightSide = parts[1].ToUpper().Trim();
+                                        if (rightSide == "COUNT" || rightSide == "COUNTS" || rightSide == "STEPS" || rightSide == "SECONDS")
                                         {
-                                            pc.Math = pc.Math.ToLower().Replace(unit, "");
+                                            pc.Math = "X";
+                                        }
+                                        else if (parts[0].Trim() != "N")
+                                        {
+                                            pc.Math = parts[1].Replace("N", "X");
+                                            pc.Math = pc.Math.Replace("Y", "X");
+                                            pc.Math = pc.Math.Replace("E", "X");
+                                            if (!string.IsNullOrEmpty(unit) && pc.Math.ToLower().Contains(unit))
+                                            {
+                                                pc.Math = pc.Math.ToLower().Replace(unit, "");
+                                            }
                                         }
                                     }
-                                }
-                                dataGridDtcCodes.Rows[r].Cells["Conversion"].Value = pc.Math;
+                                    dataGridDtcCodes.Rows[r].Cells["Conversion"].Value = pc.Math;
 
+                                }
+                                //string math = pidInfo.ConversionFactor.ToLower().Replace("x", pidData.ToString());
+                                //status += " Value: " + parser.Parse(math).ToString();
                             }
-                            //string math = pidInfo.ConversionFactor.ToLower().Replace("x", pidData.ToString());
-                            //status += " Value: " + parser.Parse(math).ToString();
-                        }
-                        if (pc != null && !string.IsNullOrEmpty(pc.Math))
-                        {
-                            List<SlotHandler.PidVal> PidValues = new List<SlotHandler.PidVal>();
-                            SlotHandler.PidVal pv = new SlotHandler.PidVal(pc.addr, pidData);
-                            PidValues.Add(pv);
-                            string val = pc.GetCalculatedValue(PidValues);
-                            if (string.IsNullOrEmpty(val))
-                                Logger("Bad math: " + pc.Math);
-                            else
-                                status += val +" ";
-                            status += pc.Units + " [" + pidData.ToString("X4") + "]";
+                            if (pc != null && !string.IsNullOrEmpty(pc.Math))
+                            {
+                                List<SlotHandler.PidVal> PidValues = new List<SlotHandler.PidVal>();
+                                SlotHandler.PidVal pv = new SlotHandler.PidVal(pc.addr, pidData);
+                                PidValues.Add(pv);
+                                string val = pc.GetCalculatedValue(PidValues);
+                                if (string.IsNullOrEmpty(val))
+                                    Logger("Bad math: " + pc.Math);
+                                else
+                                    status += val + " ";
+                                status += pc.Units + " [" + pidData.ToString("X4") + "]";
+                            }
                         }
                     }
+                    else
+                    {
+                        byte[] tmp = new byte[data.Length - 5];
+                        Array.Copy(data, 5, tmp, 0, data.Length - 5);
+                        status += BitConverter.ToString(tmp);
+                    }
+                    dataGridDtcCodes.Rows[r].Cells["Status"].Value = status;
+                    lastRecNr = recNr;
+                    if (module.Subnet != LoggingProtocol.VPW)
+                    {
+                        MainConnection.ObdDevice.RemoveFilters(fltrs1);
+                        MainConnection.ObdDevice.RemoveFilters2(fltrs2);
+                    }
                 }
-                else
-                {
-                    byte[] tmp = new byte[data.Length - 5];
-                    Array.Copy(data, 5, tmp, 0, data.Length - 5);
-                    status += BitConverter.ToString(tmp);
-                }
-                dataGridDtcCodes.Rows[r].Cells["Status"].Value = status;
-                lastRecNr = recNr;
             }
+            if (currentProto != CurrentSubnet)
+            {
+                MainConnection.ObdDevice.PassthruDisconnect();
+                ReConnect();
+            }
+
         }
 
         private void chkForkJ2534_CheckedChanged(object sender, EventArgs e)
@@ -5892,7 +6245,7 @@ namespace UniversalPatcher
             {
                 return;
             }
-            if (datalogger.Connected && !datalogger.LogDevice.Connected)
+            if (datalogger.Connected && !MainConnection.ObdDevice.Connected)
             {
                 Logger("Device disconnected");
                 timerDeviceStatus.Enabled = false;
@@ -6058,7 +6411,7 @@ namespace UniversalPatcher
                     {
                         LogText lt = consoleLogQueue.Dequeue();
                         richVPWmessages.SelectionColor = lt.color;
-                        richVPWmessages.AppendText(lt.Txt);
+                        richVPWmessages.AppendText(lt.Txt + Environment.NewLine);
                     }
                     Application.DoEvents();
                     return;
@@ -6078,7 +6431,7 @@ namespace UniversalPatcher
                 for (int i = start; i < logTexts.Count; i++)
                 {
                     richVPWmessages.SelectionColor = logTexts[i].color;
-                    richVPWmessages.AppendText(logTexts[i].Txt);
+                    richVPWmessages.AppendText(logTexts[i].Txt + Environment.NewLine);
                 }
                 if (logTexts.Count > displayableLines)
                 {
@@ -6118,7 +6471,7 @@ namespace UniversalPatcher
                 for (int i = start; i < (start + displayableLines); i++)
                 {
                     richVPWmessages.SelectionColor = logTexts[i].color;
-                    richVPWmessages.AppendText(logTexts[i].Txt);
+                    richVPWmessages.AppendText(logTexts[i].Txt + Environment.NewLine);
                 }
                 LockWindowUpdate(IntPtr.Zero);
                 Application.DoEvents();
@@ -6351,7 +6704,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < logTexts.Count; i++)
                 {
                     richVPWmessages.SelectionColor = logTexts[i].color;
-                    richVPWmessages.AppendText(logTexts[i].Txt);
+                    richVPWmessages.AppendText(logTexts[i].Txt + Environment.NewLine);
                 }
                 LockWindowUpdate(IntPtr.Zero);
             }
@@ -6465,7 +6818,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!Connect(radioVPW.Checked, false, true, null))
+                if (!Connect(null, false, true, null))
                 {
                     return;
                 }
@@ -6496,7 +6849,7 @@ namespace UniversalPatcher
                         {
                             sb.AppendLine(SupportedPids[p].ToString("X4"));
                         }
-                        WriteTextFile(ospidfile, sb.ToString());
+                        File.WriteAllText(ospidfile, sb.ToString());
                     }
                 }
                 ReloadPidParams(false, true);
@@ -6517,7 +6870,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!Connect(radioVPW.Checked,false,true,null))
+                if (!Connect(null,false,true,null))
                 {
                     return;
                 }
@@ -6541,11 +6894,13 @@ namespace UniversalPatcher
                 }
                 datalogger.Receiver.SetReceiverPaused(true);
                 int[] filterIds = null;
-                if (!radioVPW.Checked && (ushort)comboModule.SelectedValue != datalogger.CanDevice.ResID)
+                KeyValuePair<CANDevice, string> itm = (KeyValuePair<CANDevice, string>)comboModule.SelectedItem;
+                CANDevice canDev = itm.Key;
+                if (!radioVPW.Checked && (ushort)canDev.RequestID != datalogger.CanDevice.RequestID)
                 {
-                    filterIds = datalogger.SetCanQueryFilter((ushort)comboModule.SelectedValue);
+                    filterIds = datalogger.SetCanQueryFilter((ushort)canDev.RequestID);
                 }
-                ushort module = Convert.ToUInt16(comboModule.SelectedValue);
+                ushort module = (ushort)canDev.RequestID;
                 for (ushort p=start; p<=end;p++)
                 {
                     ReadValue rv = datalogger.QueryModulePidValue(p, module);
@@ -6556,7 +6911,7 @@ namespace UniversalPatcher
                 }
                 if (filterIds != null)
                 {
-                    datalogger.LogDevice.RemoveFilters(filterIds);
+                    MainConnection.ObdDevice.RemoveFilters(filterIds);
                 }
                 Logger("Done");
                 datalogger.Receiver.SetReceiverPaused(false);
@@ -6575,7 +6930,19 @@ namespace UniversalPatcher
 
         private void radioCAN_CheckedChanged(object sender, EventArgs e)
         {
-            datalogger.SetProtocol(radioVPW.Checked);
+            datalogger.SetProtocol();
+            if (radioVPW.Checked)
+            {
+                txtPcmAddress.Text = "10";
+            }
+            else
+            {
+                txtPcmAddress.Text = AppSettings.LoggerCanPcmAddress.ToString("X4");
+            }
+            if (radioHSCAN.Checked)
+            {
+                CurrentSubnet = LoggingProtocol.HSCAN;
+            }
             LoadModuleList();
             SetupPidEditor();
         }
@@ -6587,7 +6954,15 @@ namespace UniversalPatcher
             chkCombinePids.Enabled = !radioVPW.Checked;
             if (radioVPW.Checked)
             {
+                CurrentSubnet = LoggingProtocol.VPW;
                 chkCombinePids.Checked = false;
+                txtPcmAddress.Text = "10";
+                btnDeviceTree.Enabled = false;
+            }
+            else
+            {
+                txtPcmAddress.Text = AppSettings.LoggerCanPcmAddress.ToString("X4");
+                btnDeviceTree.Enabled = true;
             }
 
         }
@@ -6601,7 +6976,7 @@ namespace UniversalPatcher
         {
             if (datalogger.Connected)
             {
-                datalogger.LogDevice.StartIdleTraffic((int)numIdleTrafficInterval.Value);
+                MainConnection.ObdDevice.StartIdleTraffic((int)numIdleTrafficInterval.Value);
             }
         }
 
@@ -7596,7 +7971,7 @@ namespace UniversalPatcher
             else
             {
                 datalogger.Receiver.SetReceiverPaused(true);
-                Connect(radioVPW.Checked, true, true, null);
+                Connect(null, true, true, null);
                 for (int s = 0; s < dataGridProfile.SelectedCells.Count; s++)
                 {
                     int row = dataGridProfile.SelectedCells[s].RowIndex;
@@ -7612,7 +7987,7 @@ namespace UniversalPatcher
         {
             if (chkContinuousPidTest.Checked)
             {
-                if (!Connect(radioVPW.Checked, true, true, oscript))
+                if (!Connect(null, true, true, oscript))
                 {
                     chkContinuousPidTest.Checked = false;
                     return;
@@ -7658,7 +8033,7 @@ namespace UniversalPatcher
                 }
                 if (!datalogger.LogRunning)
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port, false, datalogger.AnalyzerRunning);
+                    datalogger.Receiver.StartReceiveLoop(MainConnection.ObdDevice, MainConnection.port, false, datalogger.AnalyzerRunning);
                 }
             }
             catch (Exception ex)
@@ -8200,15 +8575,15 @@ namespace UniversalPatcher
                     {
                         flBuf[f] = flByte;
                     }
-                    Connect(radioVPW.Checked, false, false, oscript);
-                    datalogger.LogDevice.SetWriteTimeout(2000);
+                    Connect(null, false, false, oscript);
+                    MainConnection.ObdDevice.SetWriteTimeout(2000);
                     if (chkFlood4x.Checked)
                     {
-                        datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX);
+                        MainConnection.ObdDevice.SetVpwSpeed(VpwSpeed.FourX);
                     }
                     else
                     {
-                        datalogger.LogDevice.SetVpwSpeed(VpwSpeed.Standard);
+                        MainConnection.ObdDevice.SetVpwSpeed(VpwSpeed.Standard);
                     }
                     Application.DoEvents();
                     floodTestActive = true;
@@ -8236,7 +8611,7 @@ namespace UniversalPatcher
             OBDMessage oMsg = new OBDMessage(flBuf);
             while (floodTestActive)
             {
-                datalogger.LogDevice.SendMessage(oMsg, 0);
+                MainConnection.ObdDevice.SendMessage(oMsg, 0);
                 Thread.Sleep(1);
                 Application.DoEvents();
             }
@@ -8246,7 +8621,19 @@ namespace UniversalPatcher
         private void radioLSCan_CheckedChanged(object sender, EventArgs e)
         {
             chkWakeUp.Enabled = radioLSCan.Checked;
-            datalogger.SetProtocol(radioVPW.Checked);
+            datalogger.SetProtocol();
+            if (radioVPW.Checked)
+            {
+                txtPcmAddress.Text = "10";
+            }
+            else
+            {
+                txtPcmAddress.Text = AppSettings.LoggerCanPcmAddress.ToString("X4");
+            }
+            if (radioLSCan.Checked)
+            {
+                CurrentSubnet = LoggingProtocol.LSCAN;
+            }
             LoadModuleList();
             SetupPidEditor();
         }
@@ -8256,21 +8643,63 @@ namespace UniversalPatcher
 
         }
 
-        private void queryCANDevicesMainConnectionToolStripMenuItem_Click(object sender, EventArgs e)
+        public void QueryCanDevicesMain()
         {
             try
             {
                 //CANqueryCounter = 0;
                 bool RestoreConnection = datalogger.Connected;
-                if (!Connect(radioVPW.Checked, false,false,oscript))
+                if (!Connect(null, false, false, oscript))
                 {
                     return;
                 }
                 datalogger.Receiver.StopReceiveLoop();
                 dataGridCANDevices.DataSource = null;
-                canDevs = SearchAllDevicesOnBus(datalogger.LogDevice);
-                dataGridCANDevices.DataSource = canDevs;
+                CanDevsMain = new List<CANDevice>();
+                List<CANDevice> tmpDevs = SearchAllDevicesOnBus(MainConnection.ObdDevice).OrderBy(X => X.ModuleID).ToList();
+                foreach (CANDevice canDev in tmpDevs.Where(X=>X.Subnet == LoggingProtocol.HSCAN))
+                {
+                    CanDevsMain.Add(canDev);
+                }
+                foreach (CANDevice canDev in tmpDevs.Where(X => X.Subnet == LoggingProtocol.LSCAN))
+                {
+                    CanDevsMain.Add(canDev);
+                }
+                foreach (CANDevice canDev in tmpDevs.Where(X => X.Subnet == LoggingProtocol.VPW))
+                {
+                    CanDevsMain.Add(canDev);
+                }
+                //CanDevsMain = SearchAllDevicesOnBus(MainConnection.ObdDevice).OrderBy(X => X.ModuleID).ToList(); 
+                dataGridCANDevices.DataSource = CanDevsMain;
+                comboCanDevices.Enabled = true;
+                string selectedPCM = txtPcmAddress.Text;
+                ushort selectedAddr = 0x7E0;
+                int selectedIdx = 0;
+                if (HexToUshort(txtPcmAddress.Text, out ushort addr))
+                {
+                    selectedAddr = addr;
+                }
+                List<KeyValuePair<CANDevice, string>> modules = new List<KeyValuePair<CANDevice, string>>();
+                for (int c = 0; c < CanDevsMain.Count; c++)
+                {
+                    KeyValuePair<CANDevice, string> item = new KeyValuePair<CANDevice, string>(CanDevsMain[c], "[" + CanDevsMain[c].Subnet.ToString() + "] " + CanDevsMain[c].ModuleName + " [" + CanDevsMain[c].RequestID.ToString("X4") + "]");
+                    modules.Add(item);
+                    if (CanDevsMain[c].RequestID == selectedAddr)
+                    {
+                        selectedIdx = c;
+                    }
+                }
+                comboCanDevices.DataSource = modules;
+                comboCanDevices.DisplayMember = "Value";
+                comboCanDevices.ValueMember = "Key";
+                comboModule.DataSource = modules;
+                comboModule.DisplayMember = "Value";
+                comboModule.ValueMember = "Key";
+
                 Application.DoEvents();
+                comboCanDevices.SelectedIndex = selectedIdx;
+                txtPcmAddress.Text = selectedPCM;
+
                 dataGridCANDevices.Columns[1].DefaultCellStyle.Format = "X4";
                 dataGridCANDevices.Columns[2].DefaultCellStyle.Format = "X4";
                 dataGridCANDevices.Columns[3].DefaultCellStyle.Format = "X4";
@@ -8278,7 +8707,7 @@ namespace UniversalPatcher
                 if (RestoreConnection)
                 {
                     Logger("Restoring original connection");
-                    datalogger.LogDevice.PassthruDisconnect();
+                    MainConnection.ObdDevice.PassthruDisconnect();
                     if (!ReConnect())
                     {
                         return;
@@ -8288,6 +8717,7 @@ namespace UniversalPatcher
                 {
                     Disconnect(true);
                 }
+                QueryModulesDone = true;
                 Logger("Done");
             }
             catch (Exception ex)
@@ -8295,6 +8725,10 @@ namespace UniversalPatcher
                 Debug.WriteLine(ex.Message);
             }
 
+        }
+        private void queryCANDevicesMainConnectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            QueryCanDevicesMain();
         }
 
         private void btnWBApply_Click(object sender, EventArgs e)
@@ -8319,6 +8753,452 @@ namespace UniversalPatcher
             {
                 LoggerBold(wbInitFile + ": " + ex.Message);
             }
+        }
+
+        private void btnQueryCanDevices_Click(object sender, EventArgs e)
+        {
+            QueryCanDevicesMain();
+        }
+
+        private void comboCanDevices_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (datalogger.Connected)
+            {
+                return;
+            }
+            KeyValuePair<CANDevice, string> module = (KeyValuePair<CANDevice, string>)comboCanDevices.SelectedItem;
+            CANDevice canDev = module.Key;
+            txtPcmAddress.Text = canDev.RequestID.ToString("X4");
+            if (canDev.Subnet == LoggingProtocol.HSCAN)
+                radioHSCAN.Checked = true;
+            else if (canDev.Subnet == LoggingProtocol.LSCAN)
+                radioLSCan.Checked = true;
+            else if (canDev.Subnet == LoggingProtocol.VPW)
+                radioVPW.Checked = true;
+          
+        }
+
+        private void btnDeviceTree_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                HexToInt(txtPcmAddress.Text, out int currentAddr);
+                CANDevice currentDev = CanDevsMain.Where(X => X.RequestID == currentAddr && X.Subnet == CurrentSubnet).FirstOrDefault();
+                if (currentDev == null)
+                {
+                    currentDev = CanDevsMain[0];
+                }
+                FrmDeviceTree fdt = new FrmDeviceTree(currentDev, false);
+                fdt.Show();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                chkFloodActive.Checked = false;
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnDtcDeviceTree_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                KeyValuePair<CANDevice, string> module = (KeyValuePair<CANDevice, string>)comboModule.SelectedItem;
+                CANDevice canDev = module.Key;
+
+                FrmDeviceTree fdt = new FrmDeviceTree(canDev, true);
+                fdt.Show();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                chkFloodActive.Checked = false;
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+        public void SelectCanDevice(CANDevice SelectedDev, bool DtcTab)
+        {
+            try
+            {
+                if (DtcTab)
+                {
+                    if (SelectedDev != null)
+                    {
+                        foreach (var d in comboModule.Items)
+                        {
+                            KeyValuePair<CANDevice, string> module = (KeyValuePair<CANDevice, string>)d;
+                            CANDevice canDev = module.Key;
+                            if (canDev.RequestID == SelectedDev.RequestID && canDev.Subnet == SelectedDev.Subnet)
+                            {
+                                comboModule.SelectedItem = d;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else //settings-tab
+                {
+                    if (SelectedDev != null)
+                    {
+                        foreach (var d in comboCanDevices.Items)
+                        {
+                            KeyValuePair<CANDevice, string> module = (KeyValuePair<CANDevice, string>)d;
+                            CANDevice canDev = module.Key;
+                            if (canDev.RequestID == SelectedDev.RequestID && canDev.Subnet == SelectedDev.Subnet)
+                            {
+                                comboCanDevices.SelectedItem = d;
+                                txtPcmAddress.Text = canDev.RequestID.ToString("X4");
+                                if (canDev.Subnet == LoggingProtocol.HSCAN)
+                                    radioHSCAN.Checked = true;
+                                else if (canDev.Subnet == LoggingProtocol.LSCAN)
+                                    radioLSCan.Checked = true;
+                                else if (canDev.Subnet == LoggingProtocol.VPW)
+                                    radioVPW.Checked = true;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                chkFloodActive.Checked = false;
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnJ2534ConnectFlags_Click(object sender, EventArgs e)
+        {
+            foreach (ToolStripMenuItem mi in contextMenuConnectFlags.Items)
+            {
+                mi.Checked = txtJ2534ConnectFlags.Text.Contains(mi.Text);
+            }
+            contextMenuConnectFlags.Show(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+        }
+
+        private void contextMenuConnectFlags_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void btnJconsoleConfigs_Click(object sender, EventArgs e)
+        {
+            frmSconfigs fs = new frmSconfigs(txtJConsoleConfigs.Text);
+            if (fs.ShowDialog() == DialogResult.OK)
+            {
+                txtJConsoleConfigs.Text = fs.SConfigs;
+            }
+            fs.Dispose();
+/*
+            foreach (ToolStripMenuItem mi in contextMenuConfigs.Items)
+            {
+                mi.Checked = txtJConsoleConfigs.Text.Contains(mi.Text);
+            }
+            contextMenuConfigs.Show(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+*/
+        }
+
+        private void btnJ2534ConnectFlags2_Click(object sender, EventArgs e)
+        {
+            foreach (ToolStripMenuItem mi in contextMenuConnectFlags2.Items)
+            {
+                mi.Checked = txtJ2534ConnectFlags2.Text.Contains(mi.Text);
+            }
+            contextMenuConnectFlags2.Show(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+        }
+
+        private void btnJconsoleConfigs2_Click(object sender, EventArgs e)
+        {
+            frmSconfigs fs = new frmSconfigs(txtJConsoleConfigs2.Text);
+            if (fs.ShowDialog() == DialogResult.OK)
+            {
+                txtJConsoleConfigs2.Text = fs.SConfigs;
+            }
+            fs.Dispose();
+/*
+            foreach (ToolStripMenuItem mi in contextMenuConfigs2.Items)
+            {
+                mi.Checked = txtJConsoleConfigs2.Text.Contains(mi.Text);
+            }
+            contextMenuConfigs2.Show(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+*/
+        }
+
+        private void btnConnectFlags_Click(object sender, EventArgs e)
+        {
+            foreach (ToolStripMenuItem mi in contextMenuConnectFlagsMain.Items)
+            {
+                mi.Checked = txtConnectFlag.Text.Contains(mi.Text);
+            }
+            contextMenuConnectFlagsMain.Show(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+
+        }
+
+        private void sub_10034CB0(string Buffer, string proto, int ch)
+        {
+            Logger(proto.Replace("%lu", ch.ToString()) + " = " + Buffer +",");
+        }
+        private void GenerateChProtocols()
+        {
+            
+            for (int ArgList = 0x907F; ArgList < 0x12000; ArgList++)
+            {
+                string Buffer = "0x" + ArgList.ToString("X");
+                if (ArgList - 0x9000 > 0x7F)
+                {
+                    if (ArgList - 0x9080 > 0x7F)
+                    {
+                        if (ArgList - 0x9160 > 0x7F)
+                        {
+                            if (ArgList - 0x9240 > 0x7F)
+                            {
+                                if (ArgList - 0x9320 > 0x7F)
+                                {
+                                    if (ArgList - 0x9400 > 0x7F)
+                                    {
+                                        if (ArgList - 0x9480 > 0x7F)
+                                        {
+                                            if (ArgList - 0x9560 > 0x7F)
+                                            {
+                                                if (ArgList - 0x9640 > 0x7F)
+                                                {
+                                                    if (ArgList - 0x9780 > 0x7F)
+                                                    {
+                                                        if (ArgList - 0x10011 > 0x7F)
+                                                        {
+                                                            if (ArgList - 0x10092 <= 0x7F)
+                                                                sub_10034CB0(Buffer, "ISO15765_FD_CH%lu", ArgList + 111);
+                                                        }
+                                                        else
+                                                        {
+                                                            sub_10034CB0(Buffer, "CAN_FD_CH%lu", ArgList - 16);
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        sub_10034CB0(Buffer, "J1708_CH%lu", ArgList - 127);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    sub_10034CB0(Buffer, "J2610_CH%lu", ArgList - 63);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                sub_10034CB0(Buffer, "SW_CAN_ISO15765_CH%lu", ArgList - 95);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            sub_10034CB0(Buffer, "SW_CAN_CAN_CH%lu", ArgList - 127);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        sub_10034CB0(Buffer, "ISO15765_CH%lu", ArgList + 1);
+                                    }
+                                }
+                                else
+                                {
+                                    sub_10034CB0(Buffer, "ISO14230_CH%lu", ArgList - 31);
+                                }
+                            }
+                            else
+                            {
+                                sub_10034CB0(Buffer, "ISO9141_CH%lu", ArgList - 63);
+                            }
+                        }
+                        else
+                        {
+                            sub_10034CB0(Buffer, "J1850PWM_CH%lu", ArgList - 95);
+                        }
+                    }
+                    else
+                    {
+                        sub_10034CB0(Buffer, "J1850VPW_CH%lu", ArgList - 127);
+                    }
+                }
+                else
+                {
+                    sub_10034CB0(Buffer, "CAN_CH%lu", ArgList + 1);
+                }
+            }
+        }
+
+        private void LoadSimulator()
+        {
+            simuFile = SelectFile("Select response file", TxtFilter);
+            if (string.IsNullOrEmpty(simuFile))
+            {
+                return;
+            }
+            simu = new Simulator(simuFile);
+            btnReloadResponseFile.Enabled = true;
+        }
+        private void btnSelectSimuFile_Click(object sender, EventArgs e)
+        {
+            LoadSimulator();
+        }
+
+        private void chkSimulatorActive_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkSimulatorActive.Checked)
+            {
+                if (!Connect(null, true,true,oscript))
+                {
+                    return;
+                }
+                if (simu == null)
+                {
+                    LoadSimulator();
+                }
+                MainConnection.ObdDevice.MsgReceived += Simulator_MsgReceived;
+            }
+            else
+            {
+                MainConnection.ObdDevice.MsgReceived -= Simulator_MsgReceived;
+            }
+        }
+
+        private void Simulator_MsgReceived(object sender, MsgEventparameter e)
+        {
+            try
+            {
+                string[] answers = simu.FindResponse(e.Msg);
+                foreach (string answ in answers)
+                {
+                    string answer = answ;
+                    string[] aParts = answer.Split(':');
+                    if (aParts.Length > 1)
+                    {
+                        if (int.TryParse(aParts[1], out int delay))
+                        {
+                            Thread.Sleep(delay);
+                        }
+                        answer = aParts[0];
+                    }
+                    Debug.WriteLine("Simulator sending message: " + answer);
+                    OBDMessage oMsg = new OBDMessage(answer.Replace(" ","").ToBytes());
+                    MainConnection.ObdDevice.SendMessage(oMsg, 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                chkFloodActive.Checked = false;
+                LoggerBold("Error, frmLogger line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnReloadResponseFile_Click(object sender, EventArgs e)
+        {
+            simu = new Simulator(simuFile);
+        }
+
+        private void customizableParserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmLogConverter flc = new frmLogConverter();
+            flc.Show();
+            flc.ReadFile();
+        }
+
+        private void ConvertConsoleLogTobin(LogToBinConverter.RMode rMode)
+        {
+            string[] logTxt;
+            if (jConsole == null)
+            {
+                logTxt = new string[logTexts.Count];
+                for (int r = 0; r < logTexts.Count; r++)
+                {
+                    logTxt[r] = logTexts[r].Txt;
+                }
+            }
+            else
+            {
+                logTxt = new string[jconsolelogTexts.Count];
+                for (int r = 0; r < jconsolelogTexts.Count; r++)
+                {
+                    logTxt[r] = jconsolelogTexts[r].Txt;
+                }
+            }
+            if (rMode == LogToBinConverter.RMode.CUSTOM)
+            {
+                frmLogConverter flc = new frmLogConverter();
+                flc.Show();
+                flc.ConvertLines(logTxt);
+            }
+            else
+            {
+                string fName = SelectSaveFile(BinFilter);
+                if (fName.Length == 0)
+                {
+                    LoggerBold("Missing filename for savebin!");
+                    return;
+                }
+
+                LogToBinConverter ltb = new LogToBinConverter(rMode);
+                Application.DoEvents();
+                ltb.ConvertLines(logTxt, fName);
+            }
+
+        }
+        private void customizableParserToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ConvertConsoleLogTobin(LogToBinConverter.RMode.CUSTOM);
+        }
+
+        private void parseVPWLogToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertConsoleLogTobin(LogToBinConverter.RMode.VPW);
+        }
+
+        private void parseCANLogToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertConsoleLogTobin(LogToBinConverter.RMode.CAN);
+        }
+
+        private void parseCAN36LogToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertConsoleLogTobin(LogToBinConverter.RMode.CAN36);
+        }
+
+        private void parseCAN23LogToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertConsoleLogTobin(LogToBinConverter.RMode.CAN23);
+        }
+
+        private void parseCAN78LogToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertConsoleLogTobin(LogToBinConverter.RMode.CAN78);
+        }
+
+        private void parseKline23LogToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ConvertConsoleLogTobin(LogToBinConverter.RMode.KLINE23);
+        }
+
+        private void chkShowJconsoleSettings_CheckedChanged(object sender, EventArgs e)
+        {
+            splitContainerJconsole.Panel1Collapsed = !chkShowJconsoleSettings.Checked;
         }
     }
 }

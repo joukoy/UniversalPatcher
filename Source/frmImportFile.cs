@@ -468,7 +468,7 @@ namespace UniversalPatcher
                         {
                             outFileName = Path.Combine(fldr, rBlocks[i].FileName);
                             Logger("Saving to file: " + outFileName, false);
-                            WriteBinToFile(outFileName, rBlocks[i].data.ToArray());
+                            File.WriteAllBytes(outFileName, rBlocks[i].data.ToArray());
                             Logger(" [OK]");
                         }                        
                     }
@@ -522,7 +522,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    WriteBinToFile(outFileName, buf);
+                    File.WriteAllBytes(outFileName, buf);
                     Logger("[OK]");
                     //this.DialogResult = DialogResult.OK;
                 }

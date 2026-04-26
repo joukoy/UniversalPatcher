@@ -34,9 +34,6 @@ namespace UniversalPatcher
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTableEditor));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.txtMath = new System.Windows.Forms.TextBox();
-            this.btnExecute = new System.Windows.Forms.Button();
-            this.labelUnits = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +44,10 @@ namespace UniversalPatcher
             this.copyFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyTableFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.smoothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.interpolateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtMath = new System.Windows.Forms.TextBox();
+            this.btnExecute = new System.Windows.Forms.Button();
+            this.labelUnits = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,10 +64,15 @@ namespace UniversalPatcher
             this.disableTooltipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberCompareSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.conditionalFormattingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.offToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showTableVisualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.offsetVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showHEXWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fwdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,6 +98,8 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -100,6 +108,11 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTuneValue)).BeginInit();
             this.groupDifference.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -107,47 +120,18 @@ namespace UniversalPatcher
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToOrderColumns = true;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
-            this.dataGridView1.Location = new System.Drawing.Point(2, 72);
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(891, 359);
+            this.dataGridView1.Size = new System.Drawing.Size(652, 374);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
-            // 
-            // txtMath
-            // 
-            this.txtMath.Location = new System.Drawing.Point(35, 50);
-            this.txtMath.Name = "txtMath";
-            this.txtMath.Size = new System.Drawing.Size(82, 20);
-            this.txtMath.TabIndex = 1;
-            this.txtMath.Text = "X*1";
-            // 
-            // btnExecute
-            // 
-            this.btnExecute.Location = new System.Drawing.Point(123, 50);
-            this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(54, 21);
-            this.btnExecute.TabIndex = 2;
-            this.btnExecute.Text = "Execute";
-            this.btnExecute.UseVisualStyleBackColor = true;
-            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
-            // 
-            // labelUnits
-            // 
-            this.labelUnits.AutoSize = true;
-            this.labelUnits.Location = new System.Drawing.Point(183, 53);
-            this.labelUnits.Name = "labelUnits";
-            this.labelUnits.Size = new System.Drawing.Size(10, 13);
-            this.labelUnits.TabIndex = 5;
-            this.labelUnits.Text = "-";
             // 
             // contextMenuStrip1
             // 
@@ -160,9 +144,10 @@ namespace UniversalPatcher
             this.searchCodeFromGoogleToolStripMenuItem,
             this.copyFromCompareToolStripMenuItem,
             this.copyTableFromCompareToolStripMenuItem,
-            this.smoothToolStripMenuItem});
+            this.smoothToolStripMenuItem,
+            this.interpolateToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 202);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 224);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // cutToolStripMenuItem
@@ -229,6 +214,40 @@ namespace UniversalPatcher
             this.smoothToolStripMenuItem.Text = "Smooth";
             this.smoothToolStripMenuItem.Click += new System.EventHandler(this.smoothToolStripMenuItem_Click);
             // 
+            // interpolateToolStripMenuItem
+            // 
+            this.interpolateToolStripMenuItem.Name = "interpolateToolStripMenuItem";
+            this.interpolateToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.interpolateToolStripMenuItem.Text = "Interpolate";
+            this.interpolateToolStripMenuItem.Click += new System.EventHandler(this.interpolateToolStripMenuItem_Click);
+            // 
+            // txtMath
+            // 
+            this.txtMath.Location = new System.Drawing.Point(35, 50);
+            this.txtMath.Name = "txtMath";
+            this.txtMath.Size = new System.Drawing.Size(82, 20);
+            this.txtMath.TabIndex = 1;
+            this.txtMath.Text = "X*1";
+            // 
+            // btnExecute
+            // 
+            this.btnExecute.Location = new System.Drawing.Point(123, 50);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(54, 21);
+            this.btnExecute.TabIndex = 2;
+            this.btnExecute.Text = "Execute";
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // labelUnits
+            // 
+            this.labelUnits.AutoSize = true;
+            this.labelUnits.Location = new System.Drawing.Point(183, 53);
+            this.labelUnits.Name = "labelUnits";
+            this.labelUnits.Size = new System.Drawing.Size(10, 13);
+            this.labelUnits.TabIndex = 5;
+            this.labelUnits.Text = "-";
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -293,7 +312,8 @@ namespace UniversalPatcher
             this.showRawHEXValuesToolStripMenuItem,
             this.disableTooltipsToolStripMenuItem,
             this.dataFontToolStripMenuItem,
-            this.rememberCompareSelectionToolStripMenuItem});
+            this.rememberCompareSelectionToolStripMenuItem,
+            this.conditionalFormattingToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -365,12 +385,45 @@ namespace UniversalPatcher
             this.rememberCompareSelectionToolStripMenuItem.Text = "Remember compare selection";
             this.rememberCompareSelectionToolStripMenuItem.Click += new System.EventHandler(this.rememberCompareSelectionToolStripMenuItem_Click);
             // 
+            // conditionalFormattingToolStripMenuItem
+            // 
+            this.conditionalFormattingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.offToolStripMenuItem,
+            this.tableSettingsToolStripMenuItem,
+            this.tableValuesToolStripMenuItem});
+            this.conditionalFormattingToolStripMenuItem.Name = "conditionalFormattingToolStripMenuItem";
+            this.conditionalFormattingToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.conditionalFormattingToolStripMenuItem.Text = "Conditional formatting";
+            this.conditionalFormattingToolStripMenuItem.Click += new System.EventHandler(this.conditionalFormattingToolStripMenuItem_Click);
+            // 
+            // offToolStripMenuItem
+            // 
+            this.offToolStripMenuItem.Name = "offToolStripMenuItem";
+            this.offToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.offToolStripMenuItem.Text = "Off";
+            this.offToolStripMenuItem.Click += new System.EventHandler(this.offToolStripMenuItem_Click);
+            // 
+            // tableSettingsToolStripMenuItem
+            // 
+            this.tableSettingsToolStripMenuItem.Name = "tableSettingsToolStripMenuItem";
+            this.tableSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tableSettingsToolStripMenuItem.Text = "Table settings";
+            this.tableSettingsToolStripMenuItem.Click += new System.EventHandler(this.tableSettingsToolStripMenuItem_Click);
+            // 
+            // tableValuesToolStripMenuItem
+            // 
+            this.tableValuesToolStripMenuItem.Name = "tableValuesToolStripMenuItem";
+            this.tableValuesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tableValuesToolStripMenuItem.Text = "Table values";
+            this.tableValuesToolStripMenuItem.Click += new System.EventHandler(this.tableValuesToolStripMenuItem_Click);
+            // 
             // graphToolStripMenuItem
             // 
             this.graphToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showGraphicToolStripMenuItem,
             this.showTableVisualizationToolStripMenuItem,
-            this.offsetVisualizerToolStripMenuItem});
+            this.offsetVisualizerToolStripMenuItem,
+            this.showHEXWindowToolStripMenuItem});
             this.graphToolStripMenuItem.Name = "graphToolStripMenuItem";
             this.graphToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.graphToolStripMenuItem.Text = "View";
@@ -395,6 +448,13 @@ namespace UniversalPatcher
             this.offsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.offsetVisualizerToolStripMenuItem.Text = "Offset visualizer";
             this.offsetVisualizerToolStripMenuItem.Click += new System.EventHandler(this.offsetVisualizerToolStripMenuItem_Click);
+            // 
+            // showHEXWindowToolStripMenuItem
+            // 
+            this.showHEXWindowToolStripMenuItem.Name = "showHEXWindowToolStripMenuItem";
+            this.showHEXWindowToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.showHEXWindowToolStripMenuItem.Text = "HEX window";
+            this.showHEXWindowToolStripMenuItem.Click += new System.EventHandler(this.showHEXWindowToolStripMenuItem_Click);
             // 
             // compareToolStripMenuItem
             // 
@@ -697,11 +757,41 @@ namespace UniversalPatcher
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(0, 75);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.dataGridView2);
+            this.splitContainer1.Size = new System.Drawing.Size(895, 374);
+            this.splitContainer1.SplitterDistance = 652;
+            this.splitContainer1.TabIndex = 19;
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView2.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.ReadOnly = true;
+            this.dataGridView2.Size = new System.Drawing.Size(239, 374);
+            this.dataGridView2.TabIndex = 0;
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(895, 450);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.chkRawHex);
             this.Controls.Add(this.groupDifference);
             this.Controls.Add(this.labelInfo);
@@ -716,7 +806,6 @@ namespace UniversalPatcher
             this.Controls.Add(this.labelUnits);
             this.Controls.Add(this.btnExecute);
             this.Controls.Add(this.txtMath);
-            this.Controls.Add(this.dataGridView1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "frmTableEditor";
@@ -734,6 +823,11 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numTuneValue)).EndInit();
             this.groupDifference.ResumeLayout(false);
             this.groupDifference.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -801,5 +895,13 @@ namespace UniversalPatcher
         private ToolStripMenuItem binaryToolStripMenuItem;
         private ToolStripMenuItem decimalToolStripMenuItem;
         private ToolStripMenuItem smoothToolStripMenuItem;
+        private ToolStripMenuItem interpolateToolStripMenuItem;
+        private SplitContainer splitContainer1;
+        private DataGridView dataGridView2;
+        private ToolStripMenuItem showHEXWindowToolStripMenuItem;
+        private ToolStripMenuItem conditionalFormattingToolStripMenuItem;
+        private ToolStripMenuItem tableSettingsToolStripMenuItem;
+        private ToolStripMenuItem tableValuesToolStripMenuItem;
+        private ToolStripMenuItem offToolStripMenuItem;
     }
 }

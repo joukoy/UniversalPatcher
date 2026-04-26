@@ -17,7 +17,7 @@ namespace UniversalPatcher
             string tbFile = Path.Combine(Application.StartupPath, "XML", "ngc3tables.txt");
             if (File.Exists(tbFile))
             {
-                string tablestr = ReadTextFile(tbFile);
+                string tablestr = File.ReadAllText(tbFile);
                 string[] lines = tablestr.Split('\n');
                 if (lines.Length > 3 )
                 {
@@ -116,7 +116,7 @@ namespace UniversalPatcher
                 tablestr += Table4[i].ToString("X4") + ",";
             }
             tablestr = tablestr.Trim(',') + Environment.NewLine;
-            WriteTextFile(fName, tablestr);
+            File.WriteAllText(fName, tablestr);
         }
     }
 }

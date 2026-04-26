@@ -120,7 +120,9 @@ namespace J2534DotNet
         CAN_29BIT_ID = 0x00000100,
         ISO15765_ADDR_TYPE = 0x00000080,
         ISO15765_FRAME_PAD = 0x00000040,
-        SW_CAN_HV_TX = 0x00000400
+        SW_CAN_HV_TX = 0x00000400,
+        FD_CAN_BRS = 0x80000,
+        FD_CAN_FORMAT = 0x100000,
     }
 
     public enum ProtocolID
@@ -176,6 +178,22 @@ namespace J2534DotNet
         FD_CAN_CH1 = 0x00009880,
         FD_ISO15765_CH1 = 0x00009900,
         ANALOG_IN_1 = 0x0000C000,
+        FT_FGA7274_PS = 0x10001,
+        UBP_PS = 0x10002,
+        //GM:
+        ISO15765_FD_PS = 0x1000C, 
+        CAN_FD_PS = 0x1000D,
+        DDL1 = 0x11005,
+        DIMM = 0x11006,
+        DCT = 0x11007,
+        CAN2 = 0x11008,
+        CAN3 = 0x11009,
+        ISO15765_CAN2 = 0x1100A,
+        ISO15765_CAN3 = 0x1100B,
+        ISO8_PS = 0x11002,
+        ETHERNET = 0x1000E,
+        ETHERNET_NDIS = 0x8013,
+
     }
 
     public enum BaudRate
@@ -200,7 +218,7 @@ namespace J2534DotNet
         CAN_125000 = 125000,
         CAN_250000 = 250000,
         CAN_500000 = 500000,
-        CAN_33K3 =  33333,
+        CAN_33K3 = 33333,
 
         ISO15765 = 500000,
         ISO15765_125000 = 125000,
@@ -281,6 +299,7 @@ namespace J2534DotNet
         W2 = 0x0F,
         W3 = 0x10,
         W4 = 0x11,
+        W4_MIN = 0x11,
         W5 = 0x12,
         TIDLE = 0x13,
         TINIL = 0x14,
@@ -300,6 +319,7 @@ namespace J2534DotNet
         BS_TX = 0x22,
         STMIN_TX = 0x23,
         ISO15765_WFT_MAX = 0x25,
+        ISO15765_N_BR_TX_MIN = 0x2A,
 
         //J2534-2
         CAN_MIXED_FORMAT = 0x00008000,
@@ -332,6 +352,7 @@ namespace J2534DotNet
         J1939_T3 = 0x00008041,
         J1939_T4 = 0x00008042,
         J1939_BRDCST_MIN_DELAY = 0x00008043,
+        SW_CAN_SUPPRESS_HIGH_VOLTAGE = 0x8041,
         TP2_0_T_BR_INT = 0x00008044,
         TP2_0_T_E = 0x00008045,
         TP2_0_MNTC = 0x00008046,
@@ -356,7 +377,15 @@ namespace J2534DotNet
         ADC_READINGS_PER_SAMPLE = 0x20000,   //Drewtech
 
         ADD_TO_FUNCT_MSG_LOOKUP_TABLE = 0x9000, //Universalpatcher
-        DELETE_FROM_FUNCT_MSG_LOOKUP_TABLE = 0x9001 //Universalpatcher
+        DELETE_FROM_FUNCT_MSG_LOOKUP_TABLE = 0x9001, //Universalpatcher
+
+        //GM 
+        SPEEDCHANGE_ENABLE = 0x10001,
+        J2534__CAN_FD_DATA_PHASE_RATE = 0x10010,
+        J2534__CAN_FD_TX_DATA_LENGTH = 0x10011,
+        J2534__CAN_FD_TERMINATION = 0x10012,
+        J2534__CAN_FD_TYPE = 0x10013,
+        J2534__N_CR_MAX = 0x10014
     }
 
     public enum J2534Err

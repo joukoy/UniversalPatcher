@@ -994,7 +994,7 @@ namespace UniversalPatcher
                     uniqId++;
                 }
                 string fName = Path.Combine(Application.StartupPath, "Templates", "xdfheader.txt");
-                StringBuilder xdfText = new StringBuilder(ReadTextFile(fName));
+                StringBuilder xdfText = new StringBuilder(File.ReadAllText(fName));
                 xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
                 xdfText.Replace("REPLACE-OSID", basefile.OS);
                 xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
@@ -1015,7 +1015,7 @@ namespace UniversalPatcher
                 
                 fName = Path.Combine(Application.StartupPath, "Templates", basefile.configFile + "-checksum.txt");
                 if (File.Exists(fName))
-                    xdfText.Append(ReadTextFile(fName));
+                    xdfText.Append(File.ReadAllText(fName));
                 else
                     LoggerBold("File not found: " + fName + " - add checksum calculation manually, if necessary.");
 
@@ -1024,7 +1024,7 @@ namespace UniversalPatcher
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
                 if (PCM.OS != null && PCM.OSSegment < PCM.segmentinfos.Length)
                 {
-                    templateTxt = ReadTextFile(fName);
+                    templateTxt = File.ReadAllText(fName);
                     tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLEID", uniqId.ToString("X")));
                     uniqId++;
                     tableText.Replace("REPLACE-LINKMATH", "");
@@ -1043,7 +1043,7 @@ namespace UniversalPatcher
                 }
                 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
-                templateTxt = ReadTextFile(fName);
+                templateTxt = File.ReadAllText(fName);
                 for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all constants
@@ -1091,7 +1091,7 @@ namespace UniversalPatcher
                 }
                 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdftable.txt");
-                templateTxt =ReadTextFile(fName);
+                templateTxt =File.ReadAllText(fName);
                 for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all tables
@@ -1224,7 +1224,7 @@ namespace UniversalPatcher
                 
                 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfFlag.txt");
-                templateTxt = ReadTextFile(fName);
+                templateTxt = File.ReadAllText(fName);
                 for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all flags
@@ -1253,7 +1253,7 @@ namespace UniversalPatcher
                 if (fileName.Length == 0)
                     return "";
                 retVal += "Writing to file: " + Path.GetFileName(fileName);
-                WriteTextFile(fileName, xdfText.ToString());
+                File.WriteAllText(fileName, xdfText.ToString());
                 retVal += " [OK]";
 
             }

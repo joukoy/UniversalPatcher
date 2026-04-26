@@ -353,12 +353,21 @@ namespace UniversalPatcher
             pcm = _pcm;
             td = _td;
             tableCells = new List<TableCell>();
+            MinVal = double.MaxValue;
+            MaxVal = double.MinValue;
         }
         public PcmFile pcm { get; set; }
         //public uint tdId { get; set; }
         public TableData td { get; set; }
         public List<TableCell> tableCells { get; set; }
         public CompareFile compareFile { get; set; }
+        //For coloring:
+        public double MinVal { get; set; }
+        public double MaxVal { get; set; }
+        public double MinEnd1 { get; set; }
+        public double MinEnd2 { get; set; }
+        public double MaxStart1 { get; set; }
+        public double MaxStart2 { get; set; }
     }
 
     public class CompareFile

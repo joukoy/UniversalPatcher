@@ -789,3 +789,17 @@
 - Logger: Bug fixes for Query CAN devices
 - Logger: Bug fixes for ELM327 CAN driver
 - Logger: Bug fixes for Serial VB
+
+0.23.4
+- Logger: Added Device selection popup (tree)
+- Logger: Added support for multiple Connectflags
+- Logger: Added more protocols, including ISO15765_FD_PS and CAN_FD_PS
+- Tuner: Added interpolation
+- Logger: GM "2 byte" key array moved from EXE to XML\2byte-keys.txt
+- Logger: Added Customizable Log to Bin converter
+- Logger: Show/hide JConsole settings
+- Tuner: Added support for some blacbox PCM https://pcmhacking.net/forums/viewtopic.php?p=135775#p135775
+- Tuner: Bug fixes for offset visualizer
+- Tuner: Save & restore columns with session
+- Tuner: Added HEX window to Table editor
+- Tuner: Customizable conditional colors: Set colors, Use table settings/use values/Off

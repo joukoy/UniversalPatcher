@@ -77,13 +77,17 @@ namespace UniversalPatcher
             this.contextMenuLogDataGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeToolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.groupPCM = new System.Windows.Forms.GroupBox();
+            this.btnDeviceTree = new System.Windows.Forms.Button();
+            this.comboCanDevices = new System.Windows.Forms.ComboBox();
+            this.txtPcmAddress = new System.Windows.Forms.TextBox();
+            this.btnQueryCanDevices = new System.Windows.Forms.Button();
             this.groupCanParams = new System.Windows.Forms.GroupBox();
-            this.comboConnectFlag = new System.Windows.Forms.ComboBox();
+            this.btnConnectFlags = new System.Windows.Forms.Button();
+            this.txtConnectFlag = new System.Windows.Forms.TextBox();
             this.label66 = new System.Windows.Forms.Label();
             this.chkWakeUp = new System.Windows.Forms.CheckBox();
-            this.txtPcmAddress = new System.Windows.Forms.TextBox();
             this.chkStartPeriodic = new System.Windows.Forms.CheckBox();
-            this.label43 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.btnWbInitCmds = new System.Windows.Forms.Button();
             this.btnWBApply = new System.Windows.Forms.Button();
@@ -245,6 +249,7 @@ namespace UniversalPatcher
             this.chkHideHeartBeat = new System.Windows.Forms.CheckBox();
             this.tabDTC = new System.Windows.Forms.TabPage();
             this.groupDTC = new System.Windows.Forms.GroupBox();
+            this.btnDtcDeviceTree = new System.Windows.Forms.Button();
             this.btnTestModulePids = new System.Windows.Forms.Button();
             this.txtPidRange = new System.Windows.Forms.TextBox();
             this.label42 = new System.Windows.Forms.Label();
@@ -261,7 +266,6 @@ namespace UniversalPatcher
             this.btnCurrentDTC = new System.Windows.Forms.Button();
             this.comboModule = new System.Windows.Forms.ComboBox();
             this.chkDtcAllModules = new System.Windows.Forms.CheckBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.btnClearCodes = new System.Windows.Forms.Button();
             this.dataGridDtcCodes = new System.Windows.Forms.DataGridView();
             this.Module = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -274,6 +278,10 @@ namespace UniversalPatcher
             this.saveCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabVPWConsole = new System.Windows.Forms.TabPage();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.btnReloadResponseFile = new System.Windows.Forms.Button();
+            this.btnSelectSimuFile = new System.Windows.Forms.Button();
+            this.chkSimulatorActive = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.label65 = new System.Windows.Forms.Label();
             this.numFloodByteCount = new System.Windows.Forms.NumericUpDown();
@@ -305,15 +313,15 @@ namespace UniversalPatcher
             this.chkJConsoleToFile = new System.Windows.Forms.CheckBox();
             this.chkJconsoleToScreen = new System.Windows.Forms.CheckBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.btnJconsoleConfigs2 = new System.Windows.Forms.Button();
+            this.btnJ2534ConnectFlags2 = new System.Windows.Forms.Button();
+            this.txtJ2534ConnectFlags2 = new System.Windows.Forms.TextBox();
             this.chkUsePrimaryChannel = new System.Windows.Forms.CheckBox();
             this.btnJconsoleEditFilters2 = new System.Windows.Forms.Button();
             this.btnJconsoleApplyFilters2 = new System.Windows.Forms.Button();
             this.btnJconsoleSecProtoDisconnect = new System.Windows.Forms.Button();
             this.btnJConsoleReset2 = new System.Windows.Forms.Button();
             this.labelJconsoleFilters2 = new System.Windows.Forms.Label();
-            this.btnJConsoleAddConfig2 = new System.Windows.Forms.Button();
-            this.label22 = new System.Windows.Forms.Label();
-            this.comboJConsoleConfig2 = new System.Windows.Forms.ComboBox();
             this.txtJConsoleConfigs2 = new System.Windows.Forms.TextBox();
             this.label23 = new System.Windows.Forms.Label();
             this.btnJConsoleConnectSecondProtocol = new System.Windows.Forms.Button();
@@ -329,13 +337,15 @@ namespace UniversalPatcher
             this.comboJ2534Init2 = new System.Windows.Forms.ComboBox();
             this.txtJ2534SetPins2 = new System.Windows.Forms.TextBox();
             this.label30 = new System.Windows.Forms.Label();
-            this.comboJ2534Connectflag2 = new System.Windows.Forms.ComboBox();
             this.label31 = new System.Windows.Forms.Label();
             this.label32 = new System.Windows.Forms.Label();
             this.comboJ2534Baudrate2 = new System.Windows.Forms.ComboBox();
             this.comboJ2534Protocol2 = new System.Windows.Forms.ComboBox();
             this.label33 = new System.Windows.Forms.Label();
             this.groupJ2534Options = new System.Windows.Forms.GroupBox();
+            this.btnJconsoleConfigs = new System.Windows.Forms.Button();
+            this.btnJ2534ConnectFlags = new System.Windows.Forms.Button();
+            this.txtJ2534ConnectFlags = new System.Windows.Forms.TextBox();
             this.btnLoadProtocols = new System.Windows.Forms.Button();
             this.btnJconsoleEditFilters = new System.Windows.Forms.Button();
             this.btnSaveProtocols = new System.Windows.Forms.Button();
@@ -343,9 +353,6 @@ namespace UniversalPatcher
             this.btnJconsoleApplyFilters = new System.Windows.Forms.Button();
             this.btnJConsoleReset = new System.Windows.Forms.Button();
             this.labelJconsoleFilters = new System.Windows.Forms.Label();
-            this.btnJConsoleAddConfig = new System.Windows.Forms.Button();
-            this.label29 = new System.Windows.Forms.Label();
-            this.comboJConsoleConfig = new System.Windows.Forms.ComboBox();
             this.txtJConsoleConfigs = new System.Windows.Forms.TextBox();
             this.btnJConsoleConnect = new System.Windows.Forms.Button();
             this.label28 = new System.Windows.Forms.Label();
@@ -361,7 +368,6 @@ namespace UniversalPatcher
             this.comboJ2534Init = new System.Windows.Forms.ComboBox();
             this.txtJ2534SetPins = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.comboJ2534Connectflag = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.comboJ2534Baudrate = new System.Windows.Forms.ComboBox();
@@ -426,14 +432,25 @@ namespace UniversalPatcher
             this.clearVPWConsoleDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filterSupportedPidsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.parseBinfileToScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseLogfileToBinToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.customizableParserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCANLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCANMode36LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCAN23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCAN78LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseKline23LogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseVPWConsoleLogToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.customizableParserToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseVPWLogToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseCANLogToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseCAN36LogToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseCAN23LogToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseCAN78LogToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseKline23LogToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.queryCANDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queryCANDevicesMainConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -466,6 +483,13 @@ namespace UniversalPatcher
             this.timerAnalyzerCombined = new System.Windows.Forms.Timer(this.components);
             this.chkLoggingStarted = new System.Windows.Forms.CheckBox();
             this.timerAnalyzer = new System.Windows.Forms.Timer(this.components);
+            this.contextMenuConnectFlags = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuConfigs = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuConnectFlags2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuConfigs2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuConnectFlagsMain = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.splitContainerJconsole = new System.Windows.Forms.SplitContainer();
+            this.chkShowJconsoleSettings = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -475,6 +499,7 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
             this.contextMenuLogDataGrid.SuspendLayout();
             this.tabSettings.SuspendLayout();
+            this.groupPCM.SuspendLayout();
             this.groupCanParams.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupProtocol.SuspendLayout();
@@ -526,6 +551,7 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDtcCodes)).BeginInit();
             this.contextMenuDtc.SuspendLayout();
             this.tabVPWConsole.SuspendLayout();
+            this.groupBox12.SuspendLayout();
             this.groupBox11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numFloodByteCount)).BeginInit();
             this.groupBox3.SuspendLayout();
@@ -549,6 +575,10 @@ namespace UniversalPatcher
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerJconsole)).BeginInit();
+            this.splitContainerJconsole.Panel1.SuspendLayout();
+            this.splitContainerJconsole.Panel2.SuspendLayout();
+            this.splitContainerJconsole.SuspendLayout();
             this.SuspendLayout();
             // 
             // timerShowData
@@ -906,6 +936,7 @@ namespace UniversalPatcher
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupPCM);
             this.tabSettings.Controls.Add(this.groupCanParams);
             this.tabSettings.Controls.Add(this.groupBox6);
             this.tabSettings.Controls.Add(this.groupProtocol);
@@ -919,33 +950,92 @@ namespace UniversalPatcher
             this.tabSettings.UseVisualStyleBackColor = true;
             this.tabSettings.Click += new System.EventHandler(this.tabSettings_Click);
             // 
+            // groupPCM
+            // 
+            this.groupPCM.Controls.Add(this.btnDeviceTree);
+            this.groupPCM.Controls.Add(this.comboCanDevices);
+            this.groupPCM.Controls.Add(this.txtPcmAddress);
+            this.groupPCM.Controls.Add(this.btnQueryCanDevices);
+            this.groupPCM.Location = new System.Drawing.Point(14, 383);
+            this.groupPCM.Name = "groupPCM";
+            this.groupPCM.Size = new System.Drawing.Size(355, 74);
+            this.groupPCM.TabIndex = 39;
+            this.groupPCM.TabStop = false;
+            this.groupPCM.Text = "PCM";
+            // 
+            // btnDeviceTree
+            // 
+            this.btnDeviceTree.Enabled = false;
+            this.btnDeviceTree.Location = new System.Drawing.Point(77, 19);
+            this.btnDeviceTree.Name = "btnDeviceTree";
+            this.btnDeviceTree.Size = new System.Drawing.Size(35, 20);
+            this.btnDeviceTree.TabIndex = 11;
+            this.btnDeviceTree.Text = "...";
+            this.btnDeviceTree.UseVisualStyleBackColor = true;
+            this.btnDeviceTree.Click += new System.EventHandler(this.btnDeviceTree_Click);
+            // 
+            // comboCanDevices
+            // 
+            this.comboCanDevices.Enabled = false;
+            this.comboCanDevices.FormattingEnabled = true;
+            this.comboCanDevices.Location = new System.Drawing.Point(5, 45);
+            this.comboCanDevices.Name = "comboCanDevices";
+            this.comboCanDevices.Size = new System.Drawing.Size(223, 21);
+            this.comboCanDevices.TabIndex = 10;
+            this.comboCanDevices.SelectedIndexChanged += new System.EventHandler(this.comboCanDevices_SelectedIndexChanged);
+            // 
+            // txtPcmAddress
+            // 
+            this.txtPcmAddress.Location = new System.Drawing.Point(6, 19);
+            this.txtPcmAddress.Name = "txtPcmAddress";
+            this.txtPcmAddress.Size = new System.Drawing.Size(65, 20);
+            this.txtPcmAddress.TabIndex = 3;
+            // 
+            // btnQueryCanDevices
+            // 
+            this.btnQueryCanDevices.Location = new System.Drawing.Point(234, 43);
+            this.btnQueryCanDevices.Name = "btnQueryCanDevices";
+            this.btnQueryCanDevices.Size = new System.Drawing.Size(101, 23);
+            this.btnQueryCanDevices.TabIndex = 9;
+            this.btnQueryCanDevices.Text = "Query devices...";
+            this.btnQueryCanDevices.UseVisualStyleBackColor = true;
+            this.btnQueryCanDevices.Click += new System.EventHandler(this.btnQueryCanDevices_Click);
+            // 
             // groupCanParams
             // 
-            this.groupCanParams.Controls.Add(this.comboConnectFlag);
+            this.groupCanParams.Controls.Add(this.btnConnectFlags);
+            this.groupCanParams.Controls.Add(this.txtConnectFlag);
             this.groupCanParams.Controls.Add(this.label66);
             this.groupCanParams.Controls.Add(this.chkWakeUp);
-            this.groupCanParams.Controls.Add(this.txtPcmAddress);
             this.groupCanParams.Controls.Add(this.chkStartPeriodic);
-            this.groupCanParams.Controls.Add(this.label43);
-            this.groupCanParams.Location = new System.Drawing.Point(149, 252);
+            this.groupCanParams.Location = new System.Drawing.Point(14, 307);
             this.groupCanParams.Name = "groupCanParams";
-            this.groupCanParams.Size = new System.Drawing.Size(220, 136);
+            this.groupCanParams.Size = new System.Drawing.Size(355, 69);
             this.groupCanParams.TabIndex = 38;
             this.groupCanParams.TabStop = false;
             this.groupCanParams.Text = "CAN parameters";
             // 
-            // comboConnectFlag
+            // btnConnectFlags
             // 
-            this.comboConnectFlag.FormattingEnabled = true;
-            this.comboConnectFlag.Location = new System.Drawing.Point(11, 105);
-            this.comboConnectFlag.Name = "comboConnectFlag";
-            this.comboConnectFlag.Size = new System.Drawing.Size(189, 21);
-            this.comboConnectFlag.TabIndex = 8;
+            this.btnConnectFlags.Location = new System.Drawing.Point(249, 41);
+            this.btnConnectFlags.Name = "btnConnectFlags";
+            this.btnConnectFlags.Size = new System.Drawing.Size(23, 22);
+            this.btnConnectFlags.TabIndex = 9;
+            this.btnConnectFlags.Text = ">";
+            this.btnConnectFlags.UseVisualStyleBackColor = true;
+            this.btnConnectFlags.Click += new System.EventHandler(this.btnConnectFlags_Click);
+            // 
+            // txtConnectFlag
+            // 
+            this.txtConnectFlag.Location = new System.Drawing.Point(81, 42);
+            this.txtConnectFlag.Name = "txtConnectFlag";
+            this.txtConnectFlag.Size = new System.Drawing.Size(162, 20);
+            this.txtConnectFlag.TabIndex = 8;
             // 
             // label66
             // 
             this.label66.AutoSize = true;
-            this.label66.Location = new System.Drawing.Point(8, 86);
+            this.label66.Location = new System.Drawing.Point(5, 45);
             this.label66.Name = "label66";
             this.label66.Size = new System.Drawing.Size(67, 13);
             this.label66.TabIndex = 7;
@@ -955,38 +1045,22 @@ namespace UniversalPatcher
             // 
             this.chkWakeUp.AutoSize = true;
             this.chkWakeUp.Enabled = false;
-            this.chkWakeUp.Location = new System.Drawing.Point(11, 66);
+            this.chkWakeUp.Location = new System.Drawing.Point(147, 19);
             this.chkWakeUp.Name = "chkWakeUp";
             this.chkWakeUp.Size = new System.Drawing.Size(96, 17);
             this.chkWakeUp.TabIndex = 6;
             this.chkWakeUp.Text = "Wake up PCM";
             this.chkWakeUp.UseVisualStyleBackColor = true;
             // 
-            // txtPcmAddress
-            // 
-            this.txtPcmAddress.Location = new System.Drawing.Point(47, 19);
-            this.txtPcmAddress.Name = "txtPcmAddress";
-            this.txtPcmAddress.Size = new System.Drawing.Size(65, 20);
-            this.txtPcmAddress.TabIndex = 3;
-            // 
             // chkStartPeriodic
             // 
             this.chkStartPeriodic.AutoSize = true;
-            this.chkStartPeriodic.Location = new System.Drawing.Point(11, 45);
+            this.chkStartPeriodic.Location = new System.Drawing.Point(8, 19);
             this.chkStartPeriodic.Name = "chkStartPeriodic";
             this.chkStartPeriodic.Size = new System.Drawing.Size(133, 17);
             this.chkStartPeriodic.TabIndex = 5;
             this.chkStartPeriodic.Text = "Start periodic message";
             this.chkStartPeriodic.UseVisualStyleBackColor = true;
-            // 
-            // label43
-            // 
-            this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(8, 22);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(33, 13);
-            this.label43.TabIndex = 2;
-            this.label43.Text = "PCM:";
             // 
             // groupBox6
             // 
@@ -1094,7 +1168,7 @@ namespace UniversalPatcher
             this.groupProtocol.Controls.Add(this.radioVPW);
             this.groupProtocol.Location = new System.Drawing.Point(10, 252);
             this.groupProtocol.Name = "groupProtocol";
-            this.groupProtocol.Size = new System.Drawing.Size(133, 93);
+            this.groupProtocol.Size = new System.Drawing.Size(359, 49);
             this.groupProtocol.TabIndex = 36;
             this.groupProtocol.TabStop = false;
             this.groupProtocol.Text = "Protocol";
@@ -1102,7 +1176,7 @@ namespace UniversalPatcher
             // radioLSCan
             // 
             this.radioLSCan.AutoSize = true;
-            this.radioLSCan.Location = new System.Drawing.Point(11, 63);
+            this.radioLSCan.Location = new System.Drawing.Point(250, 17);
             this.radioLSCan.Name = "radioLSCan";
             this.radioLSCan.Size = new System.Drawing.Size(89, 17);
             this.radioLSCan.TabIndex = 4;
@@ -1114,7 +1188,7 @@ namespace UniversalPatcher
             // radioHSCAN
             // 
             this.radioHSCAN.AutoSize = true;
-            this.radioHSCAN.Location = new System.Drawing.Point(12, 40);
+            this.radioHSCAN.Location = new System.Drawing.Point(106, 17);
             this.radioHSCAN.Name = "radioHSCAN";
             this.radioHSCAN.Size = new System.Drawing.Size(109, 17);
             this.radioHSCAN.TabIndex = 1;
@@ -1485,9 +1559,19 @@ namespace UniversalPatcher
             0,
             0,
             0});
+            this.numRetryTimes.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numRetryTimes.Name = "numRetryTimes";
             this.numRetryTimes.Size = new System.Drawing.Size(46, 20);
             this.numRetryTimes.TabIndex = 2;
+            this.numRetryTimes.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numRetryTimes.ValueChanged += new System.EventHandler(this.numRetryTimes_ValueChanged);
             // 
             // label35
@@ -2763,6 +2847,7 @@ namespace UniversalPatcher
             // 
             // groupDTC
             // 
+            this.groupDTC.Controls.Add(this.btnDtcDeviceTree);
             this.groupDTC.Controls.Add(this.btnTestModulePids);
             this.groupDTC.Controls.Add(this.txtPidRange);
             this.groupDTC.Controls.Add(this.label42);
@@ -2779,7 +2864,6 @@ namespace UniversalPatcher
             this.groupDTC.Controls.Add(this.btnCurrentDTC);
             this.groupDTC.Controls.Add(this.comboModule);
             this.groupDTC.Controls.Add(this.chkDtcAllModules);
-            this.groupDTC.Controls.Add(this.label8);
             this.groupDTC.Controls.Add(this.btnClearCodes);
             this.groupDTC.Location = new System.Drawing.Point(3, 3);
             this.groupDTC.Name = "groupDTC";
@@ -2787,11 +2871,21 @@ namespace UniversalPatcher
             this.groupDTC.TabIndex = 9;
             this.groupDTC.TabStop = false;
             // 
+            // btnDtcDeviceTree
+            // 
+            this.btnDtcDeviceTree.Location = new System.Drawing.Point(154, 34);
+            this.btnDtcDeviceTree.Name = "btnDtcDeviceTree";
+            this.btnDtcDeviceTree.Size = new System.Drawing.Size(39, 21);
+            this.btnDtcDeviceTree.TabIndex = 21;
+            this.btnDtcDeviceTree.Text = "...";
+            this.btnDtcDeviceTree.UseVisualStyleBackColor = true;
+            this.btnDtcDeviceTree.Click += new System.EventHandler(this.btnDtcDeviceTree_Click);
+            // 
             // btnTestModulePids
             // 
-            this.btnTestModulePids.Location = new System.Drawing.Point(20, 440);
+            this.btnTestModulePids.Location = new System.Drawing.Point(9, 440);
             this.btnTestModulePids.Name = "btnTestModulePids";
-            this.btnTestModulePids.Size = new System.Drawing.Size(162, 29);
+            this.btnTestModulePids.Size = new System.Drawing.Size(184, 29);
             this.btnTestModulePids.TabIndex = 20;
             this.btnTestModulePids.Text = "Query pids";
             this.btnTestModulePids.UseVisualStyleBackColor = true;
@@ -2801,7 +2895,7 @@ namespace UniversalPatcher
             // 
             this.txtPidRange.Location = new System.Drawing.Point(77, 409);
             this.txtPidRange.Name = "txtPidRange";
-            this.txtPidRange.Size = new System.Drawing.Size(104, 20);
+            this.txtPidRange.Size = new System.Drawing.Size(116, 20);
             this.txtPidRange.TabIndex = 19;
             this.txtPidRange.Text = "01-0F";
             // 
@@ -2816,9 +2910,9 @@ namespace UniversalPatcher
             // 
             // btnGetFreezeFrames
             // 
-            this.btnGetFreezeFrames.Location = new System.Drawing.Point(20, 271);
+            this.btnGetFreezeFrames.Location = new System.Drawing.Point(9, 271);
             this.btnGetFreezeFrames.Name = "btnGetFreezeFrames";
-            this.btnGetFreezeFrames.Size = new System.Drawing.Size(162, 29);
+            this.btnGetFreezeFrames.Size = new System.Drawing.Size(184, 29);
             this.btnGetFreezeFrames.TabIndex = 17;
             this.btnGetFreezeFrames.Text = "Query Freeze frames";
             this.btnGetFreezeFrames.UseVisualStyleBackColor = true;
@@ -2826,9 +2920,9 @@ namespace UniversalPatcher
             // 
             // btnQueryModules
             // 
-            this.btnQueryModules.Location = new System.Drawing.Point(20, 236);
+            this.btnQueryModules.Location = new System.Drawing.Point(9, 236);
             this.btnQueryModules.Name = "btnQueryModules";
-            this.btnQueryModules.Size = new System.Drawing.Size(162, 29);
+            this.btnQueryModules.Size = new System.Drawing.Size(184, 29);
             this.btnQueryModules.TabIndex = 16;
             this.btnQueryModules.Text = "Query modules";
             this.btnQueryModules.UseVisualStyleBackColor = true;
@@ -2836,9 +2930,9 @@ namespace UniversalPatcher
             // 
             // btnQueryDevices
             // 
-            this.btnQueryDevices.Location = new System.Drawing.Point(20, 201);
+            this.btnQueryDevices.Location = new System.Drawing.Point(9, 201);
             this.btnQueryDevices.Name = "btnQueryDevices";
-            this.btnQueryDevices.Size = new System.Drawing.Size(162, 29);
+            this.btnQueryDevices.Size = new System.Drawing.Size(184, 29);
             this.btnQueryDevices.TabIndex = 15;
             this.btnQueryDevices.Text = "Query devices on bus";
             this.btnQueryDevices.UseVisualStyleBackColor = true;
@@ -2846,7 +2940,7 @@ namespace UniversalPatcher
             // 
             // txtDtcCustomModule
             // 
-            this.txtDtcCustomModule.Location = new System.Drawing.Point(143, 332);
+            this.txtDtcCustomModule.Location = new System.Drawing.Point(154, 332);
             this.txtDtcCustomModule.Name = "txtDtcCustomModule";
             this.txtDtcCustomModule.Size = new System.Drawing.Size(39, 20);
             this.txtDtcCustomModule.TabIndex = 14;
@@ -2864,7 +2958,7 @@ namespace UniversalPatcher
             // 
             // txtDtcCustomMode
             // 
-            this.txtDtcCustomMode.Location = new System.Drawing.Point(143, 308);
+            this.txtDtcCustomMode.Location = new System.Drawing.Point(154, 308);
             this.txtDtcCustomMode.Name = "txtDtcCustomMode";
             this.txtDtcCustomMode.Size = new System.Drawing.Size(39, 20);
             this.txtDtcCustomMode.TabIndex = 12;
@@ -2873,9 +2967,9 @@ namespace UniversalPatcher
             // 
             // btnDtcCustom
             // 
-            this.btnDtcCustom.Location = new System.Drawing.Point(20, 358);
+            this.btnDtcCustom.Location = new System.Drawing.Point(9, 358);
             this.btnDtcCustom.Name = "btnDtcCustom";
-            this.btnDtcCustom.Size = new System.Drawing.Size(162, 29);
+            this.btnDtcCustom.Size = new System.Drawing.Size(184, 29);
             this.btnDtcCustom.TabIndex = 11;
             this.btnDtcCustom.Text = "Get custom DTC codes";
             this.btnDtcCustom.UseVisualStyleBackColor = true;
@@ -2892,9 +2986,9 @@ namespace UniversalPatcher
             // 
             // btnHistoryDTC
             // 
-            this.btnHistoryDTC.Location = new System.Drawing.Point(20, 96);
+            this.btnHistoryDTC.Location = new System.Drawing.Point(9, 96);
             this.btnHistoryDTC.Name = "btnHistoryDTC";
-            this.btnHistoryDTC.Size = new System.Drawing.Size(162, 29);
+            this.btnHistoryDTC.Size = new System.Drawing.Size(184, 29);
             this.btnHistoryDTC.TabIndex = 1;
             this.btnHistoryDTC.Text = "Get History DTC codes";
             this.btnHistoryDTC.UseVisualStyleBackColor = true;
@@ -2902,9 +2996,9 @@ namespace UniversalPatcher
             // 
             // btnGetVINCode
             // 
-            this.btnGetVINCode.Location = new System.Drawing.Point(20, 166);
+            this.btnGetVINCode.Location = new System.Drawing.Point(9, 166);
             this.btnGetVINCode.Name = "btnGetVINCode";
-            this.btnGetVINCode.Size = new System.Drawing.Size(162, 29);
+            this.btnGetVINCode.Size = new System.Drawing.Size(184, 29);
             this.btnGetVINCode.TabIndex = 8;
             this.btnGetVINCode.Text = "Get VIN Code";
             this.btnGetVINCode.UseVisualStyleBackColor = true;
@@ -2912,9 +3006,9 @@ namespace UniversalPatcher
             // 
             // btnCurrentDTC
             // 
-            this.btnCurrentDTC.Location = new System.Drawing.Point(20, 61);
+            this.btnCurrentDTC.Location = new System.Drawing.Point(9, 61);
             this.btnCurrentDTC.Name = "btnCurrentDTC";
-            this.btnCurrentDTC.Size = new System.Drawing.Size(162, 29);
+            this.btnCurrentDTC.Size = new System.Drawing.Size(184, 29);
             this.btnCurrentDTC.TabIndex = 0;
             this.btnCurrentDTC.Text = "Get current DTC codes";
             this.btnCurrentDTC.UseVisualStyleBackColor = true;
@@ -2923,9 +3017,9 @@ namespace UniversalPatcher
             // comboModule
             // 
             this.comboModule.FormattingEnabled = true;
-            this.comboModule.Location = new System.Drawing.Point(77, 34);
+            this.comboModule.Location = new System.Drawing.Point(9, 34);
             this.comboModule.Name = "comboModule";
-            this.comboModule.Size = new System.Drawing.Size(105, 21);
+            this.comboModule.Size = new System.Drawing.Size(139, 21);
             this.comboModule.TabIndex = 2;
             // 
             // chkDtcAllModules
@@ -2939,20 +3033,11 @@ namespace UniversalPatcher
             this.chkDtcAllModules.UseVisualStyleBackColor = true;
             this.chkDtcAllModules.CheckedChanged += new System.EventHandler(this.chkDtcAllModules_CheckedChanged);
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(23, 37);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(45, 13);
-            this.label8.TabIndex = 3;
-            this.label8.Text = "Module:";
-            // 
             // btnClearCodes
             // 
-            this.btnClearCodes.Location = new System.Drawing.Point(20, 131);
+            this.btnClearCodes.Location = new System.Drawing.Point(9, 131);
             this.btnClearCodes.Name = "btnClearCodes";
-            this.btnClearCodes.Size = new System.Drawing.Size(162, 29);
+            this.btnClearCodes.Size = new System.Drawing.Size(184, 29);
             this.btnClearCodes.TabIndex = 5;
             this.btnClearCodes.Text = "Clear DTC codes";
             this.btnClearCodes.UseVisualStyleBackColor = true;
@@ -3057,6 +3142,7 @@ namespace UniversalPatcher
             // 
             // tabVPWConsole
             // 
+            this.tabVPWConsole.Controls.Add(this.groupBox12);
             this.tabVPWConsole.Controls.Add(this.groupBox11);
             this.tabVPWConsole.Controls.Add(this.vScrollBarVpwConsole);
             this.tabVPWConsole.Controls.Add(this.richVPWmessages);
@@ -3069,6 +3155,50 @@ namespace UniversalPatcher
             this.tabVPWConsole.Text = "VPW Console";
             this.tabVPWConsole.UseVisualStyleBackColor = true;
             // 
+            // groupBox12
+            // 
+            this.groupBox12.Controls.Add(this.btnReloadResponseFile);
+            this.groupBox12.Controls.Add(this.btnSelectSimuFile);
+            this.groupBox12.Controls.Add(this.chkSimulatorActive);
+            this.groupBox12.Location = new System.Drawing.Point(5, 272);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(141, 99);
+            this.groupBox12.TabIndex = 39;
+            this.groupBox12.TabStop = false;
+            this.groupBox12.Text = "Simulator";
+            // 
+            // btnReloadResponseFile
+            // 
+            this.btnReloadResponseFile.Enabled = false;
+            this.btnReloadResponseFile.Location = new System.Drawing.Point(4, 70);
+            this.btnReloadResponseFile.Name = "btnReloadResponseFile";
+            this.btnReloadResponseFile.Size = new System.Drawing.Size(90, 23);
+            this.btnReloadResponseFile.TabIndex = 2;
+            this.btnReloadResponseFile.Text = "Reload";
+            this.btnReloadResponseFile.UseVisualStyleBackColor = true;
+            this.btnReloadResponseFile.Click += new System.EventHandler(this.btnReloadResponseFile_Click);
+            // 
+            // btnSelectSimuFile
+            // 
+            this.btnSelectSimuFile.Location = new System.Drawing.Point(4, 42);
+            this.btnSelectSimuFile.Name = "btnSelectSimuFile";
+            this.btnSelectSimuFile.Size = new System.Drawing.Size(90, 23);
+            this.btnSelectSimuFile.TabIndex = 1;
+            this.btnSelectSimuFile.Text = "Response file";
+            this.btnSelectSimuFile.UseVisualStyleBackColor = true;
+            this.btnSelectSimuFile.Click += new System.EventHandler(this.btnSelectSimuFile_Click);
+            // 
+            // chkSimulatorActive
+            // 
+            this.chkSimulatorActive.AutoSize = true;
+            this.chkSimulatorActive.Location = new System.Drawing.Point(4, 19);
+            this.chkSimulatorActive.Name = "chkSimulatorActive";
+            this.chkSimulatorActive.Size = new System.Drawing.Size(56, 17);
+            this.chkSimulatorActive.TabIndex = 0;
+            this.chkSimulatorActive.Text = "Active";
+            this.chkSimulatorActive.UseVisualStyleBackColor = true;
+            this.chkSimulatorActive.CheckedChanged += new System.EventHandler(this.chkSimulatorActive_CheckedChanged);
+            // 
             // groupBox11
             // 
             this.groupBox11.Controls.Add(this.label65);
@@ -3077,9 +3207,9 @@ namespace UniversalPatcher
             this.groupBox11.Controls.Add(this.txtFloodByte);
             this.groupBox11.Controls.Add(this.label1);
             this.groupBox11.Controls.Add(this.chkFloodActive);
-            this.groupBox11.Location = new System.Drawing.Point(5, 286);
+            this.groupBox11.Location = new System.Drawing.Point(5, 371);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(142, 113);
+            this.groupBox11.Size = new System.Drawing.Size(142, 102);
             this.groupBox11.TabIndex = 38;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Flood test";
@@ -3335,18 +3465,7 @@ namespace UniversalPatcher
             // 
             // tabJConsole
             // 
-            this.tabJConsole.Controls.Add(this.vScrollBarJConsole);
-            this.tabJConsole.Controls.Add(this.groupBox8);
-            this.tabJConsole.Controls.Add(this.groupBox7);
-            this.tabJConsole.Controls.Add(this.groupJ2534Options);
-            this.tabJConsole.Controls.Add(this.groupBox4);
-            this.tabJConsole.Controls.Add(this.numJConsoleScriptDelay);
-            this.tabJConsole.Controls.Add(this.label20);
-            this.tabJConsole.Controls.Add(this.richJConsole);
-            this.tabJConsole.Controls.Add(this.btnJconsoleStopScript);
-            this.tabJConsole.Controls.Add(this.txtJConsoleSend);
-            this.tabJConsole.Controls.Add(this.btnJConsoleUploadScript);
-            this.tabJConsole.Controls.Add(this.groupJConsoleProto);
+            this.tabJConsole.Controls.Add(this.splitContainerJconsole);
             this.tabJConsole.Location = new System.Drawing.Point(4, 22);
             this.tabJConsole.Margin = new System.Windows.Forms.Padding(2);
             this.tabJConsole.Name = "tabJConsole";
@@ -3360,9 +3479,9 @@ namespace UniversalPatcher
             this.vScrollBarJConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vScrollBarJConsole.LargeChange = 1;
-            this.vScrollBarJConsole.Location = new System.Drawing.Point(943, 3);
+            this.vScrollBarJConsole.Location = new System.Drawing.Point(483, 3);
             this.vScrollBarJConsole.Name = "vScrollBarJConsole";
-            this.vScrollBarJConsole.Size = new System.Drawing.Size(19, 409);
+            this.vScrollBarJConsole.Size = new System.Drawing.Size(19, 401);
             this.vScrollBarJConsole.TabIndex = 54;
             this.vScrollBarJConsole.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBarJConsole_Scroll);
             // 
@@ -3373,7 +3492,7 @@ namespace UniversalPatcher
             this.groupBox8.Controls.Add(this.chkJConsoleTimestamps);
             this.groupBox8.Controls.Add(this.chkJConsoleToFile);
             this.groupBox8.Controls.Add(this.chkJconsoleToScreen);
-            this.groupBox8.Location = new System.Drawing.Point(308, 10);
+            this.groupBox8.Location = new System.Drawing.Point(317, 11);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(128, 84);
             this.groupBox8.TabIndex = 53;
@@ -3439,15 +3558,15 @@ namespace UniversalPatcher
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.btnJconsoleConfigs2);
+            this.groupBox7.Controls.Add(this.btnJ2534ConnectFlags2);
+            this.groupBox7.Controls.Add(this.txtJ2534ConnectFlags2);
             this.groupBox7.Controls.Add(this.chkUsePrimaryChannel);
             this.groupBox7.Controls.Add(this.btnJconsoleEditFilters2);
             this.groupBox7.Controls.Add(this.btnJconsoleApplyFilters2);
             this.groupBox7.Controls.Add(this.btnJconsoleSecProtoDisconnect);
             this.groupBox7.Controls.Add(this.btnJConsoleReset2);
             this.groupBox7.Controls.Add(this.labelJconsoleFilters2);
-            this.groupBox7.Controls.Add(this.btnJConsoleAddConfig2);
-            this.groupBox7.Controls.Add(this.label22);
-            this.groupBox7.Controls.Add(this.comboJConsoleConfig2);
             this.groupBox7.Controls.Add(this.txtJConsoleConfigs2);
             this.groupBox7.Controls.Add(this.label23);
             this.groupBox7.Controls.Add(this.btnJConsoleConnectSecondProtocol);
@@ -3463,18 +3582,44 @@ namespace UniversalPatcher
             this.groupBox7.Controls.Add(this.comboJ2534Init2);
             this.groupBox7.Controls.Add(this.txtJ2534SetPins2);
             this.groupBox7.Controls.Add(this.label30);
-            this.groupBox7.Controls.Add(this.comboJ2534Connectflag2);
             this.groupBox7.Controls.Add(this.label31);
             this.groupBox7.Controls.Add(this.label32);
             this.groupBox7.Controls.Add(this.comboJ2534Baudrate2);
             this.groupBox7.Controls.Add(this.comboJ2534Protocol2);
             this.groupBox7.Controls.Add(this.label33);
-            this.groupBox7.Location = new System.Drawing.Point(232, 100);
+            this.groupBox7.Location = new System.Drawing.Point(238, 99);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(207, 376);
             this.groupBox7.TabIndex = 52;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Protocol 2";
+            // 
+            // btnJconsoleConfigs2
+            // 
+            this.btnJconsoleConfigs2.Location = new System.Drawing.Point(10, 260);
+            this.btnJconsoleConfigs2.Name = "btnJconsoleConfigs2";
+            this.btnJconsoleConfigs2.Size = new System.Drawing.Size(38, 20);
+            this.btnJconsoleConfigs2.TabIndex = 79;
+            this.btnJconsoleConfigs2.Text = "Edit";
+            this.btnJconsoleConfigs2.UseVisualStyleBackColor = true;
+            this.btnJconsoleConfigs2.Click += new System.EventHandler(this.btnJconsoleConfigs2_Click);
+            // 
+            // btnJ2534ConnectFlags2
+            // 
+            this.btnJ2534ConnectFlags2.Location = new System.Drawing.Point(182, 66);
+            this.btnJ2534ConnectFlags2.Name = "btnJ2534ConnectFlags2";
+            this.btnJ2534ConnectFlags2.Size = new System.Drawing.Size(20, 20);
+            this.btnJ2534ConnectFlags2.TabIndex = 79;
+            this.btnJ2534ConnectFlags2.Text = ">";
+            this.btnJ2534ConnectFlags2.UseVisualStyleBackColor = true;
+            this.btnJ2534ConnectFlags2.Click += new System.EventHandler(this.btnJ2534ConnectFlags2_Click);
+            // 
+            // txtJ2534ConnectFlags2
+            // 
+            this.txtJ2534ConnectFlags2.Location = new System.Drawing.Point(84, 65);
+            this.txtJ2534ConnectFlags2.Name = "txtJ2534ConnectFlags2";
+            this.txtJ2534ConnectFlags2.Size = new System.Drawing.Size(92, 20);
+            this.txtJ2534ConnectFlags2.TabIndex = 79;
             // 
             // chkUsePrimaryChannel
             // 
@@ -3488,7 +3633,7 @@ namespace UniversalPatcher
             // 
             // btnJconsoleEditFilters2
             // 
-            this.btnJconsoleEditFilters2.Location = new System.Drawing.Point(83, 209);
+            this.btnJconsoleEditFilters2.Location = new System.Drawing.Point(83, 214);
             this.btnJconsoleEditFilters2.Name = "btnJconsoleEditFilters2";
             this.btnJconsoleEditFilters2.Size = new System.Drawing.Size(62, 21);
             this.btnJconsoleEditFilters2.TabIndex = 77;
@@ -3498,7 +3643,7 @@ namespace UniversalPatcher
             // 
             // btnJconsoleApplyFilters2
             // 
-            this.btnJconsoleApplyFilters2.Location = new System.Drawing.Point(151, 209);
+            this.btnJconsoleApplyFilters2.Location = new System.Drawing.Point(151, 214);
             this.btnJconsoleApplyFilters2.Name = "btnJconsoleApplyFilters2";
             this.btnJconsoleApplyFilters2.Size = new System.Drawing.Size(51, 21);
             this.btnJconsoleApplyFilters2.TabIndex = 76;
@@ -3535,44 +3680,20 @@ namespace UniversalPatcher
             this.labelJconsoleFilters2.TabIndex = 72;
             this.labelJconsoleFilters2.Text = "Filters:";
             // 
-            // btnJConsoleAddConfig2
-            // 
-            this.btnJConsoleAddConfig2.Location = new System.Drawing.Point(53, 236);
-            this.btnJConsoleAddConfig2.Name = "btnJConsoleAddConfig2";
-            this.btnJConsoleAddConfig2.Size = new System.Drawing.Size(25, 21);
-            this.btnJConsoleAddConfig2.TabIndex = 69;
-            this.btnJConsoleAddConfig2.Text = "+";
-            this.btnJConsoleAddConfig2.UseVisualStyleBackColor = true;
-            this.btnJConsoleAddConfig2.Click += new System.EventHandler(this.btnJConsoleAddConfig2_Click);
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(8, 239);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(40, 13);
-            this.label22.TabIndex = 68;
-            this.label22.Text = "Config:";
-            // 
-            // comboJConsoleConfig2
-            // 
-            this.comboJConsoleConfig2.FormattingEnabled = true;
-            this.comboJConsoleConfig2.Location = new System.Drawing.Point(84, 236);
-            this.comboJConsoleConfig2.Name = "comboJConsoleConfig2";
-            this.comboJConsoleConfig2.Size = new System.Drawing.Size(118, 21);
-            this.comboJConsoleConfig2.TabIndex = 67;
-            // 
             // txtJConsoleConfigs2
             // 
-            this.txtJConsoleConfigs2.Location = new System.Drawing.Point(84, 263);
+            this.txtJConsoleConfigs2.Location = new System.Drawing.Point(85, 241);
+            this.txtJConsoleConfigs2.Multiline = true;
             this.txtJConsoleConfigs2.Name = "txtJConsoleConfigs2";
-            this.txtJConsoleConfigs2.Size = new System.Drawing.Size(118, 20);
+            this.txtJConsoleConfigs2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtJConsoleConfigs2.Size = new System.Drawing.Size(116, 45);
             this.txtJConsoleConfigs2.TabIndex = 66;
+            this.txtJConsoleConfigs2.WordWrap = false;
             // 
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(8, 269);
+            this.label23.Location = new System.Drawing.Point(8, 244);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(45, 13);
             this.label23.TabIndex = 65;
@@ -3591,7 +3712,7 @@ namespace UniversalPatcher
             // 
             // numJ2534PeriodicMsgInterval2
             // 
-            this.numJ2534PeriodicMsgInterval2.Location = new System.Drawing.Point(84, 187);
+            this.numJ2534PeriodicMsgInterval2.Location = new System.Drawing.Point(85, 190);
             this.numJ2534PeriodicMsgInterval2.Margin = new System.Windows.Forms.Padding(2);
             this.numJ2534PeriodicMsgInterval2.Maximum = new decimal(new int[] {
             65000,
@@ -3708,22 +3829,14 @@ namespace UniversalPatcher
             this.label30.TabIndex = 53;
             this.label30.Text = "Set pins:";
             // 
-            // comboJ2534Connectflag2
-            // 
-            this.comboJ2534Connectflag2.FormattingEnabled = true;
-            this.comboJ2534Connectflag2.Location = new System.Drawing.Point(84, 66);
-            this.comboJ2534Connectflag2.Name = "comboJ2534Connectflag2";
-            this.comboJ2534Connectflag2.Size = new System.Drawing.Size(118, 21);
-            this.comboJ2534Connectflag2.TabIndex = 50;
-            // 
             // label31
             // 
             this.label31.AutoSize = true;
             this.label31.Location = new System.Drawing.Point(8, 68);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(67, 13);
+            this.label31.Size = new System.Drawing.Size(72, 13);
             this.label31.TabIndex = 49;
-            this.label31.Text = "Connectflag:";
+            this.label31.Text = "Connectflags:";
             // 
             // label32
             // 
@@ -3762,6 +3875,9 @@ namespace UniversalPatcher
             // 
             // groupJ2534Options
             // 
+            this.groupJ2534Options.Controls.Add(this.btnJconsoleConfigs);
+            this.groupJ2534Options.Controls.Add(this.btnJ2534ConnectFlags);
+            this.groupJ2534Options.Controls.Add(this.txtJ2534ConnectFlags);
             this.groupJ2534Options.Controls.Add(this.btnLoadProtocols);
             this.groupJ2534Options.Controls.Add(this.btnJconsoleEditFilters);
             this.groupJ2534Options.Controls.Add(this.btnSaveProtocols);
@@ -3769,9 +3885,6 @@ namespace UniversalPatcher
             this.groupJ2534Options.Controls.Add(this.btnJconsoleApplyFilters);
             this.groupJ2534Options.Controls.Add(this.btnJConsoleReset);
             this.groupJ2534Options.Controls.Add(this.labelJconsoleFilters);
-            this.groupJ2534Options.Controls.Add(this.btnJConsoleAddConfig);
-            this.groupJ2534Options.Controls.Add(this.label29);
-            this.groupJ2534Options.Controls.Add(this.comboJConsoleConfig);
             this.groupJ2534Options.Controls.Add(this.txtJConsoleConfigs);
             this.groupJ2534Options.Controls.Add(this.btnJConsoleConnect);
             this.groupJ2534Options.Controls.Add(this.label28);
@@ -3787,18 +3900,44 @@ namespace UniversalPatcher
             this.groupJ2534Options.Controls.Add(this.comboJ2534Init);
             this.groupJ2534Options.Controls.Add(this.txtJ2534SetPins);
             this.groupJ2534Options.Controls.Add(this.label15);
-            this.groupJ2534Options.Controls.Add(this.comboJ2534Connectflag);
             this.groupJ2534Options.Controls.Add(this.label13);
             this.groupJ2534Options.Controls.Add(this.label11);
             this.groupJ2534Options.Controls.Add(this.comboJ2534Baudrate);
             this.groupJ2534Options.Controls.Add(this.comboJ2534Protocol);
             this.groupJ2534Options.Controls.Add(this.label12);
-            this.groupJ2534Options.Location = new System.Drawing.Point(5, 100);
+            this.groupJ2534Options.Location = new System.Drawing.Point(9, 101);
             this.groupJ2534Options.Name = "groupJ2534Options";
             this.groupJ2534Options.Size = new System.Drawing.Size(222, 376);
             this.groupJ2534Options.TabIndex = 50;
             this.groupJ2534Options.TabStop = false;
             this.groupJ2534Options.Text = "Protocol 1";
+            // 
+            // btnJconsoleConfigs
+            // 
+            this.btnJconsoleConfigs.Location = new System.Drawing.Point(11, 260);
+            this.btnJconsoleConfigs.Name = "btnJconsoleConfigs";
+            this.btnJconsoleConfigs.Size = new System.Drawing.Size(43, 20);
+            this.btnJconsoleConfigs.TabIndex = 78;
+            this.btnJconsoleConfigs.Text = "Edit";
+            this.btnJconsoleConfigs.UseVisualStyleBackColor = true;
+            this.btnJconsoleConfigs.Click += new System.EventHandler(this.btnJconsoleConfigs_Click);
+            // 
+            // btnJ2534ConnectFlags
+            // 
+            this.btnJ2534ConnectFlags.Location = new System.Drawing.Point(191, 67);
+            this.btnJ2534ConnectFlags.Name = "btnJ2534ConnectFlags";
+            this.btnJ2534ConnectFlags.Size = new System.Drawing.Size(20, 20);
+            this.btnJ2534ConnectFlags.TabIndex = 77;
+            this.btnJ2534ConnectFlags.Text = ">";
+            this.btnJ2534ConnectFlags.UseVisualStyleBackColor = true;
+            this.btnJ2534ConnectFlags.Click += new System.EventHandler(this.btnJ2534ConnectFlags_Click);
+            // 
+            // txtJ2534ConnectFlags
+            // 
+            this.txtJ2534ConnectFlags.Location = new System.Drawing.Point(84, 66);
+            this.txtJ2534ConnectFlags.Name = "txtJ2534ConnectFlags";
+            this.txtJ2534ConnectFlags.Size = new System.Drawing.Size(104, 20);
+            this.txtJ2534ConnectFlags.TabIndex = 76;
             // 
             // btnLoadProtocols
             // 
@@ -3869,39 +4008,15 @@ namespace UniversalPatcher
             this.labelJconsoleFilters.TabIndex = 70;
             this.labelJconsoleFilters.Text = "Filters:";
             // 
-            // btnJConsoleAddConfig
-            // 
-            this.btnJConsoleAddConfig.Location = new System.Drawing.Point(54, 241);
-            this.btnJConsoleAddConfig.Name = "btnJConsoleAddConfig";
-            this.btnJConsoleAddConfig.Size = new System.Drawing.Size(25, 21);
-            this.btnJConsoleAddConfig.TabIndex = 69;
-            this.btnJConsoleAddConfig.Text = "+";
-            this.btnJConsoleAddConfig.UseVisualStyleBackColor = true;
-            this.btnJConsoleAddConfig.Click += new System.EventHandler(this.btnJConsoleAddConfig_Click);
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(9, 244);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(40, 13);
-            this.label29.TabIndex = 68;
-            this.label29.Text = "Config:";
-            // 
-            // comboJConsoleConfig
-            // 
-            this.comboJConsoleConfig.FormattingEnabled = true;
-            this.comboJConsoleConfig.Location = new System.Drawing.Point(85, 241);
-            this.comboJConsoleConfig.Name = "comboJConsoleConfig";
-            this.comboJConsoleConfig.Size = new System.Drawing.Size(127, 21);
-            this.comboJConsoleConfig.TabIndex = 67;
-            // 
             // txtJConsoleConfigs
             // 
-            this.txtJConsoleConfigs.Location = new System.Drawing.Point(85, 268);
+            this.txtJConsoleConfigs.Location = new System.Drawing.Point(85, 243);
+            this.txtJConsoleConfigs.Multiline = true;
             this.txtJConsoleConfigs.Name = "txtJConsoleConfigs";
-            this.txtJConsoleConfigs.Size = new System.Drawing.Size(127, 20);
+            this.txtJConsoleConfigs.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtJConsoleConfigs.Size = new System.Drawing.Size(124, 43);
             this.txtJConsoleConfigs.TabIndex = 66;
+            this.txtJConsoleConfigs.WordWrap = false;
             // 
             // btnJConsoleConnect
             // 
@@ -3916,7 +4031,7 @@ namespace UniversalPatcher
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(8, 269);
+            this.label28.Location = new System.Drawing.Point(8, 244);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(45, 13);
             this.label28.TabIndex = 65;
@@ -4040,22 +4155,14 @@ namespace UniversalPatcher
             this.label15.TabIndex = 53;
             this.label15.Text = "Set pins:";
             // 
-            // comboJ2534Connectflag
-            // 
-            this.comboJ2534Connectflag.FormattingEnabled = true;
-            this.comboJ2534Connectflag.Location = new System.Drawing.Point(84, 66);
-            this.comboJ2534Connectflag.Name = "comboJ2534Connectflag";
-            this.comboJ2534Connectflag.Size = new System.Drawing.Size(127, 21);
-            this.comboJ2534Connectflag.TabIndex = 50;
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(8, 68);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(67, 13);
+            this.label13.Size = new System.Drawing.Size(72, 13);
             this.label13.TabIndex = 49;
-            this.label13.Text = "Connectflag:";
+            this.label13.Text = "Connectflags:";
             // 
             // label11
             // 
@@ -4098,9 +4205,9 @@ namespace UniversalPatcher
             this.groupBox4.Controls.Add(this.labelJconsoleConnected);
             this.groupBox4.Controls.Add(this.label14);
             this.groupBox4.Controls.Add(this.comboJ2534DLL);
-            this.groupBox4.Location = new System.Drawing.Point(5, 10);
+            this.groupBox4.Location = new System.Drawing.Point(9, 11);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(296, 84);
+            this.groupBox4.Size = new System.Drawing.Size(302, 84);
             this.groupBox4.TabIndex = 51;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "J-Console";
@@ -4151,7 +4258,7 @@ namespace UniversalPatcher
             // numJConsoleScriptDelay
             // 
             this.numJConsoleScriptDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.numJConsoleScriptDelay.Location = new System.Drawing.Point(730, 447);
+            this.numJConsoleScriptDelay.Location = new System.Drawing.Point(316, 444);
             this.numJConsoleScriptDelay.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -4166,7 +4273,7 @@ namespace UniversalPatcher
             // 
             this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(631, 451);
+            this.label20.Location = new System.Drawing.Point(226, 446);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(84, 13);
             this.label20.TabIndex = 41;
@@ -4179,10 +4286,10 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.richJConsole.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richJConsole.HideSelection = false;
-            this.richJConsole.Location = new System.Drawing.Point(446, 3);
+            this.richJConsole.Location = new System.Drawing.Point(3, 3);
             this.richJConsole.Name = "richJConsole";
             this.richJConsole.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richJConsole.Size = new System.Drawing.Size(520, 409);
+            this.richJConsole.Size = new System.Drawing.Size(477, 401);
             this.richJConsole.TabIndex = 3;
             this.richJConsole.Text = "";
             this.richJConsole.WordWrap = false;
@@ -4191,7 +4298,7 @@ namespace UniversalPatcher
             // 
             this.btnJconsoleStopScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnJconsoleStopScript.Enabled = false;
-            this.btnJconsoleStopScript.Location = new System.Drawing.Point(533, 443);
+            this.btnJconsoleStopScript.Location = new System.Drawing.Point(98, 433);
             this.btnJconsoleStopScript.Name = "btnJconsoleStopScript";
             this.btnJconsoleStopScript.Size = new System.Drawing.Size(81, 23);
             this.btnJconsoleStopScript.TabIndex = 46;
@@ -4203,17 +4310,17 @@ namespace UniversalPatcher
             // 
             this.txtJConsoleSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtJConsoleSend.Location = new System.Drawing.Point(446, 417);
+            this.txtJConsoleSend.Location = new System.Drawing.Point(2, 408);
             this.txtJConsoleSend.Margin = new System.Windows.Forms.Padding(2);
             this.txtJConsoleSend.Name = "txtJConsoleSend";
-            this.txtJConsoleSend.Size = new System.Drawing.Size(516, 20);
+            this.txtJConsoleSend.Size = new System.Drawing.Size(477, 20);
             this.txtJConsoleSend.TabIndex = 0;
             this.txtJConsoleSend.TextChanged += new System.EventHandler(this.txtJConsoleSend_TextChanged);
             // 
             // btnJConsoleUploadScript
             // 
             this.btnJConsoleUploadScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnJConsoleUploadScript.Location = new System.Drawing.Point(445, 443);
+            this.btnJConsoleUploadScript.Location = new System.Drawing.Point(10, 432);
             this.btnJConsoleUploadScript.Name = "btnJConsoleUploadScript";
             this.btnJConsoleUploadScript.Size = new System.Drawing.Size(82, 24);
             this.btnJConsoleUploadScript.TabIndex = 0;
@@ -4227,7 +4334,7 @@ namespace UniversalPatcher
             this.groupJConsoleProto.Controls.Add(this.radioJConsoleProto2);
             this.groupJConsoleProto.Controls.Add(this.radioJConsoleProto1);
             this.groupJConsoleProto.Enabled = false;
-            this.groupJConsoleProto.Location = new System.Drawing.Point(798, 435);
+            this.groupJConsoleProto.Location = new System.Drawing.Point(384, 432);
             this.groupJConsoleProto.Name = "groupJConsoleProto";
             this.groupJConsoleProto.Size = new System.Drawing.Size(94, 43);
             this.groupJConsoleProto.TabIndex = 47;
@@ -4678,8 +4785,11 @@ namespace UniversalPatcher
             this.clearVPWConsoleDataToolStripMenuItem,
             this.connectDisconnectToolStripMenuItem,
             this.filterSupportedPidsToolStripMenuItem,
+            this.toolStripSeparator6,
             this.parseBinfileToScriptToolStripMenuItem,
             this.parseLogfileToBinToolStripMenuItem1,
+            this.parseVPWConsoleLogToBinToolStripMenuItem,
+            this.toolStripSeparator7,
             this.queryCANDevicesToolStripMenuItem,
             this.queryCANDevicesMainConnectionToolStripMenuItem});
             this.actionToolStripMenuItem.Name = "actionToolStripMenuItem";
@@ -4714,6 +4824,11 @@ namespace UniversalPatcher
             this.filterSupportedPidsToolStripMenuItem.Text = "Filter pids by BIN file";
             this.filterSupportedPidsToolStripMenuItem.Click += new System.EventHandler(this.filterSupportedPidsToolStripMenuItem_Click);
             // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(264, 6);
+            // 
             // parseBinfileToScriptToolStripMenuItem
             // 
             this.parseBinfileToScriptToolStripMenuItem.Name = "parseBinfileToScriptToolStripMenuItem";
@@ -4724,6 +4839,7 @@ namespace UniversalPatcher
             // parseLogfileToBinToolStripMenuItem1
             // 
             this.parseLogfileToBinToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.customizableParserToolStripMenuItem,
             this.parseLogfileToBinToolStripMenuItem,
             this.parseCANLogfileToBinToolStripMenuItem,
             this.parseCANMode36LogfileToBinToolStripMenuItem,
@@ -4734,6 +4850,13 @@ namespace UniversalPatcher
             this.parseLogfileToBinToolStripMenuItem1.Size = new System.Drawing.Size(267, 22);
             this.parseLogfileToBinToolStripMenuItem1.Text = "Parse logfile to bin";
             this.parseLogfileToBinToolStripMenuItem1.Click += new System.EventHandler(this.parseLogfileToBinToolStripMenuItem1_Click);
+            // 
+            // customizableParserToolStripMenuItem
+            // 
+            this.customizableParserToolStripMenuItem.Name = "customizableParserToolStripMenuItem";
+            this.customizableParserToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.customizableParserToolStripMenuItem.Text = "Customizable parser";
+            this.customizableParserToolStripMenuItem.Click += new System.EventHandler(this.customizableParserToolStripMenuItem_Click);
             // 
             // parseLogfileToBinToolStripMenuItem
             // 
@@ -4776,6 +4899,74 @@ namespace UniversalPatcher
             this.parseKline23LogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.parseKline23LogfileToBinToolStripMenuItem.Text = "Parse kline23 logfile to bin";
             this.parseKline23LogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseKline23LogfileToBinToolStripMenuItem_Click);
+            // 
+            // parseVPWConsoleLogToBinToolStripMenuItem
+            // 
+            this.parseVPWConsoleLogToBinToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.customizableParserToolStripMenuItem1,
+            this.parseVPWLogToBinToolStripMenuItem,
+            this.parseCANLogToBinToolStripMenuItem,
+            this.parseCAN36LogToBinToolStripMenuItem,
+            this.parseCAN23LogToBinToolStripMenuItem,
+            this.parseCAN78LogToBinToolStripMenuItem,
+            this.parseKline23LogToBinToolStripMenuItem});
+            this.parseVPWConsoleLogToBinToolStripMenuItem.Name = "parseVPWConsoleLogToBinToolStripMenuItem";
+            this.parseVPWConsoleLogToBinToolStripMenuItem.Size = new System.Drawing.Size(267, 22);
+            this.parseVPWConsoleLogToBinToolStripMenuItem.Text = "Parse console log to bin";
+            // 
+            // customizableParserToolStripMenuItem1
+            // 
+            this.customizableParserToolStripMenuItem1.Name = "customizableParserToolStripMenuItem1";
+            this.customizableParserToolStripMenuItem1.Size = new System.Drawing.Size(196, 22);
+            this.customizableParserToolStripMenuItem1.Text = "Customizable parser";
+            this.customizableParserToolStripMenuItem1.Click += new System.EventHandler(this.customizableParserToolStripMenuItem1_Click);
+            // 
+            // parseVPWLogToBinToolStripMenuItem
+            // 
+            this.parseVPWLogToBinToolStripMenuItem.Name = "parseVPWLogToBinToolStripMenuItem";
+            this.parseVPWLogToBinToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.parseVPWLogToBinToolStripMenuItem.Text = "Parse VPW log to bin";
+            this.parseVPWLogToBinToolStripMenuItem.Click += new System.EventHandler(this.parseVPWLogToBinToolStripMenuItem_Click);
+            // 
+            // parseCANLogToBinToolStripMenuItem
+            // 
+            this.parseCANLogToBinToolStripMenuItem.Name = "parseCANLogToBinToolStripMenuItem";
+            this.parseCANLogToBinToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.parseCANLogToBinToolStripMenuItem.Text = "Parse CAN log to bin";
+            this.parseCANLogToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCANLogToBinToolStripMenuItem_Click);
+            // 
+            // parseCAN36LogToBinToolStripMenuItem
+            // 
+            this.parseCAN36LogToBinToolStripMenuItem.Name = "parseCAN36LogToBinToolStripMenuItem";
+            this.parseCAN36LogToBinToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.parseCAN36LogToBinToolStripMenuItem.Text = "Parse CAN36 log to bin";
+            this.parseCAN36LogToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN36LogToBinToolStripMenuItem_Click);
+            // 
+            // parseCAN23LogToBinToolStripMenuItem
+            // 
+            this.parseCAN23LogToBinToolStripMenuItem.Name = "parseCAN23LogToBinToolStripMenuItem";
+            this.parseCAN23LogToBinToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.parseCAN23LogToBinToolStripMenuItem.Text = "Parse CAN23 log to bin";
+            this.parseCAN23LogToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN23LogToBinToolStripMenuItem_Click);
+            // 
+            // parseCAN78LogToBinToolStripMenuItem
+            // 
+            this.parseCAN78LogToBinToolStripMenuItem.Name = "parseCAN78LogToBinToolStripMenuItem";
+            this.parseCAN78LogToBinToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.parseCAN78LogToBinToolStripMenuItem.Text = "Parse CAN78 log to bin";
+            this.parseCAN78LogToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCAN78LogToBinToolStripMenuItem_Click);
+            // 
+            // parseKline23LogToBinToolStripMenuItem
+            // 
+            this.parseKline23LogToBinToolStripMenuItem.Name = "parseKline23LogToBinToolStripMenuItem";
+            this.parseKline23LogToBinToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.parseKline23LogToBinToolStripMenuItem.Text = "Parse kline23 log to bin";
+            this.parseKline23LogToBinToolStripMenuItem.Click += new System.EventHandler(this.parseKline23LogToBinToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(264, 6);
             // 
             // queryCANDevicesToolStripMenuItem
             // 
@@ -5020,6 +5211,73 @@ namespace UniversalPatcher
             this.timerAnalyzer.Interval = 300;
             this.timerAnalyzer.Tick += new System.EventHandler(this.timerAnalyzer_Tick);
             // 
+            // contextMenuConnectFlags
+            // 
+            this.contextMenuConnectFlags.Name = "contextMenuConnectFlags";
+            this.contextMenuConnectFlags.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuConnectFlags.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuConnectFlags_Opening);
+            // 
+            // contextMenuConfigs
+            // 
+            this.contextMenuConfigs.Name = "contextMenuConfigs";
+            this.contextMenuConfigs.Size = new System.Drawing.Size(61, 4);
+            // 
+            // contextMenuConnectFlags2
+            // 
+            this.contextMenuConnectFlags2.Name = "contextMenuConnectFlags2";
+            this.contextMenuConnectFlags2.Size = new System.Drawing.Size(61, 4);
+            // 
+            // contextMenuConfigs2
+            // 
+            this.contextMenuConfigs2.Name = "contextMenuConfigs2";
+            this.contextMenuConfigs2.Size = new System.Drawing.Size(61, 4);
+            // 
+            // contextMenuConnectFlagsMain
+            // 
+            this.contextMenuConnectFlagsMain.Name = "contextMenuConnectFlagsMain";
+            this.contextMenuConnectFlagsMain.Size = new System.Drawing.Size(61, 4);
+            // 
+            // splitContainerJconsole
+            // 
+            this.splitContainerJconsole.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerJconsole.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerJconsole.Name = "splitContainerJconsole";
+            // 
+            // splitContainerJconsole.Panel1
+            // 
+            this.splitContainerJconsole.Panel1.Controls.Add(this.groupBox4);
+            this.splitContainerJconsole.Panel1.Controls.Add(this.groupBox7);
+            this.splitContainerJconsole.Panel1.Controls.Add(this.groupBox8);
+            this.splitContainerJconsole.Panel1.Controls.Add(this.groupJ2534Options);
+            // 
+            // splitContainerJconsole.Panel2
+            // 
+            this.splitContainerJconsole.Panel2.Controls.Add(this.chkShowJconsoleSettings);
+            this.splitContainerJconsole.Panel2.Controls.Add(this.richJConsole);
+            this.splitContainerJconsole.Panel2.Controls.Add(this.vScrollBarJConsole);
+            this.splitContainerJconsole.Panel2.Controls.Add(this.txtJConsoleSend);
+            this.splitContainerJconsole.Panel2.Controls.Add(this.btnJConsoleUploadScript);
+            this.splitContainerJconsole.Panel2.Controls.Add(this.btnJconsoleStopScript);
+            this.splitContainerJconsole.Panel2.Controls.Add(this.numJConsoleScriptDelay);
+            this.splitContainerJconsole.Panel2.Controls.Add(this.label20);
+            this.splitContainerJconsole.Panel2.Controls.Add(this.groupJConsoleProto);
+            this.splitContainerJconsole.Size = new System.Drawing.Size(966, 480);
+            this.splitContainerJconsole.SplitterDistance = 460;
+            this.splitContainerJconsole.TabIndex = 55;
+            // 
+            // chkShowJconsoleSettings
+            // 
+            this.chkShowJconsoleSettings.AutoSize = true;
+            this.chkShowJconsoleSettings.Checked = true;
+            this.chkShowJconsoleSettings.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowJconsoleSettings.Location = new System.Drawing.Point(10, 460);
+            this.chkShowJconsoleSettings.Name = "chkShowJconsoleSettings";
+            this.chkShowJconsoleSettings.Size = new System.Drawing.Size(92, 17);
+            this.chkShowJconsoleSettings.TabIndex = 55;
+            this.chkShowJconsoleSettings.Text = "Show settings";
+            this.chkShowJconsoleSettings.UseVisualStyleBackColor = true;
+            this.chkShowJconsoleSettings.CheckedChanged += new System.EventHandler(this.chkShowJconsoleSettings_CheckedChanged);
+            // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -5051,6 +5309,8 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).EndInit();
             this.contextMenuLogDataGrid.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
+            this.groupPCM.ResumeLayout(false);
+            this.groupPCM.PerformLayout();
             this.groupCanParams.ResumeLayout(false);
             this.groupCanParams.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -5120,6 +5380,8 @@ namespace UniversalPatcher
             this.contextMenuDtc.ResumeLayout(false);
             this.tabVPWConsole.ResumeLayout(false);
             this.tabVPWConsole.PerformLayout();
+            this.groupBox12.ResumeLayout(false);
+            this.groupBox12.PerformLayout();
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numFloodByteCount)).EndInit();
@@ -5129,7 +5391,6 @@ namespace UniversalPatcher
             this.groupBox9.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).EndInit();
             this.tabJConsole.ResumeLayout(false);
-            this.tabJConsole.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
@@ -5155,6 +5416,11 @@ namespace UniversalPatcher
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.splitContainerJconsole.Panel1.ResumeLayout(false);
+            this.splitContainerJconsole.Panel2.ResumeLayout(false);
+            this.splitContainerJconsole.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerJconsole)).EndInit();
+            this.splitContainerJconsole.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -5210,7 +5476,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.TabPage tabDTC;
         private System.Windows.Forms.Button btnCurrentDTC;
         private System.Windows.Forms.Button btnHistoryDTC;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox comboModule;
         private System.Windows.Forms.Button btnClearCodes;
         private System.Windows.Forms.Button btnQueryPid;
@@ -5256,7 +5521,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.ComboBox comboJ2534Protocol;
         private System.Windows.Forms.GroupBox groupJ2534Options;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.ComboBox comboJ2534Connectflag;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ComboBox comboJ2534DLL;
         private System.Windows.Forms.TextBox txtJ2534SetPins;
@@ -5297,17 +5561,11 @@ namespace UniversalPatcher
         private System.Windows.Forms.RadioButton radioFindKey;
         private System.Windows.Forms.TextBox txtJConsoleConfigs;
         private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Button btnJConsoleAddConfig;
-        private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.ComboBox comboJConsoleConfig;
         private System.Windows.Forms.ToolStripMenuItem parseBinfileToScriptToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupJConsoleProto;
         private System.Windows.Forms.RadioButton radioJConsoleProto2;
         private System.Windows.Forms.RadioButton radioJConsoleProto1;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.Button btnJConsoleAddConfig2;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.ComboBox comboJConsoleConfig2;
         private System.Windows.Forms.TextBox txtJConsoleConfigs2;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Button btnJConsoleConnectSecondProtocol;
@@ -5323,7 +5581,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.ComboBox comboJ2534Init2;
         private System.Windows.Forms.TextBox txtJ2534SetPins2;
         private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.ComboBox comboJ2534Connectflag2;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.ComboBox comboJ2534Baudrate2;
@@ -5408,7 +5665,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.TextBox txtPidRange;
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.TextBox txtPcmAddress;
-        private System.Windows.Forms.Label label43;
         private System.Windows.Forms.Label labelProtocol;
         private System.Windows.Forms.CheckBox chkVpwDevTimestamps;
         private System.Windows.Forms.CheckBox chkJconsoleDevTimestamps;
@@ -5577,10 +5833,44 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkWakeUp;
         private System.Windows.Forms.ToolStripMenuItem queryCANDevicesMainConnectionToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupCanParams;
-        private System.Windows.Forms.ComboBox comboConnectFlag;
         private System.Windows.Forms.Label label66;
         private System.Windows.Forms.Button btnWBApply;
         private System.Windows.Forms.Button btnWbInitCmds;
+        private System.Windows.Forms.Button btnQueryCanDevices;
+        private System.Windows.Forms.ComboBox comboCanDevices;
+        private System.Windows.Forms.GroupBox groupPCM;
+        private System.Windows.Forms.Button btnDeviceTree;
+        private System.Windows.Forms.Button btnDtcDeviceTree;
+        private System.Windows.Forms.Button btnJ2534ConnectFlags;
+        private System.Windows.Forms.TextBox txtJ2534ConnectFlags;
+        private System.Windows.Forms.ContextMenuStrip contextMenuConnectFlags;
+        private System.Windows.Forms.Button btnJconsoleConfigs;
+        private System.Windows.Forms.ContextMenuStrip contextMenuConfigs;
+        private System.Windows.Forms.ContextMenuStrip contextMenuConnectFlags2;
+        private System.Windows.Forms.ContextMenuStrip contextMenuConfigs2;
+        private System.Windows.Forms.Button btnJ2534ConnectFlags2;
+        private System.Windows.Forms.TextBox txtJ2534ConnectFlags2;
+        private System.Windows.Forms.Button btnJconsoleConfigs2;
+        private System.Windows.Forms.Button btnConnectFlags;
+        private System.Windows.Forms.TextBox txtConnectFlag;
+        private System.Windows.Forms.ContextMenuStrip contextMenuConnectFlagsMain;
+        private System.Windows.Forms.GroupBox groupBox12;
+        private System.Windows.Forms.Button btnSelectSimuFile;
+        private System.Windows.Forms.CheckBox chkSimulatorActive;
+        private System.Windows.Forms.Button btnReloadResponseFile;
+        private System.Windows.Forms.ToolStripMenuItem customizableParserToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseVPWConsoleLogToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem customizableParserToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem parseVPWLogToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseCANLogToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseCAN36LogToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseCAN23LogToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseCAN78LogToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem parseKline23LogToBinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.SplitContainer splitContainerJconsole;
+        private System.Windows.Forms.CheckBox chkShowJconsoleSettings;
     }
 }
 

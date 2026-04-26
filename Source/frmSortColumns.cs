@@ -2,96 +2,156 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static Upatcher;
 using static Helpers;
+using System.IO;
 
 namespace UniversalPatcher
 {
     public partial class frmSortColumns : Form
     {
-        public frmSortColumns(string Cols)
+        public frmSortColumns(List<ColumnOrder> cols)
         {
             InitializeComponent();
-            this.Cols = Cols;
+            columns = cols;
         }
 
-        private string Cols;
-        private void btnCancel_Click(object sender, EventArgs e)
+        public List<ColumnOrder> columns;
+        private string colsFile;
+
+        private Rectangle dragBoxFromMouseDown;
+        private int rowIndexFromMouseDown;
+        private int rowIndexOfItemUnderMouseToDrop;
+        private void frmSortColumns2_Load(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            //dataGridView1.DataSource = columns;
+            colsFile = ColumnsFile;
+            DataGridViewCheckBoxColumn checkColumn = new DataGridViewCheckBoxColumn();
+            checkColumn.Name = "Visible";
+            checkColumn.HeaderText = "Visible";
+            checkColumn.Width = 50;
+            checkColumn.ReadOnly = false;
+            dataGridView1.Columns.Add(checkColumn);
+            dataGridView1.Columns.Add("Column", "Column");
+            dataGridView1.Columns.Add("Width", "Width");
+            foreach (ColumnOrder co in columns)
+            {
+                int r = dataGridView1.Rows.Add();
+                dataGridView1.Rows[r].Cells["Visible"].Value = co.Visible;
+                dataGridView1.Rows[r].Cells["Column"].Value = co.Column;
+                dataGridView1.Rows[r].Cells["Width"].Value = co.Width;
+            }
+            dataGridView1.MouseMove += DataGridView1_MouseMove;
+            dataGridView1.MouseDown += DataGridView1_MouseDown;
+            dataGridView1.DragDrop += DataGridView1_DragDrop;
+            dataGridView1.DragOver += DataGridView1_DragOver;
         }
 
-        private void btnApply_Click(object sender, EventArgs e)
+        private void DataGridView1_DragOver(object sender, DragEventArgs e)
         {
-            StringBuilder sb = new StringBuilder();
-            for (int c=0;c<listBox1.Items.Count;c++)
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void DataGridView1_DragDrop(object sender, DragEventArgs e)
+        {
+            // The mouse locations are relative to the screen, so they must be 
+            // converted to client coordinates.
+            Point clientPoint = dataGridView1.PointToClient(new Point(e.X, e.Y));
+
+            // Get the row index of the item the mouse is below. 
+            rowIndexOfItemUnderMouseToDrop =
+                dataGridView1.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
+
+            // If the drag operation was a move then remove and insert the row.
+            if (e.Effect == DragDropEffects.Move)
             {
-                string col = listBox1.Items[c].ToString();
-                sb.Append(col + ",");
-            }            
-            if (AppSettings.WorkingMode == 2)
+                DataGridViewRow rowToMove = e.Data.GetData(
+                    typeof(DataGridViewRow)) as DataGridViewRow;
+                dataGridView1.Rows.RemoveAt(rowIndexFromMouseDown);
+                dataGridView1.Rows.Insert(rowIndexOfItemUnderMouseToDrop, rowToMove);
+
+            }
+        }
+
+        private void DataGridView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Get the index of the item the mouse is below.
+            rowIndexFromMouseDown = dataGridView1.HitTest(e.X, e.Y).RowIndex;
+            if (rowIndexFromMouseDown != -1)
             {
-                AppSettings.ConfigModeColumnOrder = sb.ToString().Trim(',');
+                // Remember the point where the mouse down occurred. 
+                // The DragSize indicates the size that the mouse can move 
+                // before a drag event should be started.                
+                Size dragSize = SystemInformation.DragSize;
+
+                // Create a rectangle using the DragSize, with the mouse position being
+                // at the center of the rectangle.
+                dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
+                                                               e.Y - (dragSize.Height / 2)),
+                                    dragSize);
             }
             else
+                // Reset the rectangle if the mouse is not over an item in the ListBox.
+                dragBoxFromMouseDown = Rectangle.Empty;
+        }
+
+        private void DataGridView1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
             {
-                AppSettings.TunerModeColumns = sb.ToString().Trim(',');
+                // If the mouse moves outside the rectangle, start the drag.
+                if (dragBoxFromMouseDown != Rectangle.Empty &&
+                    !dragBoxFromMouseDown.Contains(e.X, e.Y))
+                {
+
+                    // Proceed with the drag and drop, passing in the list item.                    
+                    DragDropEffects dropEffect = dataGridView1.DoDragDrop(
+                    dataGridView1.Rows[rowIndexFromMouseDown],
+                    DragDropEffects.Move);
+                }
             }
+        }
+
+        private void ApplyChanges()
+        {
+            columns = new List<ColumnOrder>();
+            for (int r = 0; r < dataGridView1.Rows.Count; r++)
+            {
+                ColumnOrder co = new ColumnOrder();
+                co.Column = dataGridView1.Rows[r].Cells["Column"].Value.ToString();
+                co.Visible = Convert.ToBoolean(dataGridView1.Rows[r].Cells["Visible"].Value);
+                co.Width = Convert.ToInt32(dataGridView1.Rows[r].Cells["Width"].Value);
+                columns.Add(co);
+            }
+            ColumnsFile = colsFile;
+
+        }
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            ApplyChanges();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        private void chkSelectAll_CheckedChanged(object sender, EventArgs e)
         {
-            try
+            for (int r=0;r<dataGridView1.Rows.Count;r++)
             {
-                if (listBox1.SelectedItems.Count == 0)
-                {
-                    return;
-                }
-                this.listBox1.SelectedIndexChanged -= new System.EventHandler(this.listBox1_SelectedIndexChanged);
-                string tmp = listBox1.SelectedItem.ToString();
-                listBox1.Items.RemoveAt(listBox1.SelectedIndex);
-                int pos = vScrollBar1.Value;
-                if (pos > listBox1.Items.Count)
-                {
-                    pos = listBox1.Items.Count ;
-                }
-                listBox1.Items.Insert(pos, tmp);
-                listBox1.SelectedIndex = pos;
-                this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, frmSortColumns , line " + line + ": " + ex.Message);
+                dataGridView1.Rows[r].Cells["Visible"].Value = chkSelectAll.Checked;
             }
         }
 
-        private void frmSortColumns_Load(object sender, EventArgs e)
+        private void btnSaveAs_Click(object sender, EventArgs e)
         {
-            string[] columns = Cols.Split(',');
-            foreach (string col in columns)
+            ApplyChanges();
+            if (SaveColumnsPreset(columns, null))
             {
-                listBox1.Items.Add(col);
+                colsFile = ColumnsFile;
             }
-            vScrollBar1.Minimum = 0;
-            vScrollBar1.Maximum = listBox1.Items.Count - 1;
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            vScrollBar1.Value = listBox1.SelectedIndex;
-        }
+         }
     }
 }

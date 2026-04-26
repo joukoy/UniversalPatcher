@@ -55,7 +55,8 @@ namespace UniversalPatcher
             CAN23 = 23,
             CAN36 = 36,
             CAN78 = 78,
-            KLINE23 = 3
+            KLINE23 = 3,
+            CUSTOM = 99
         }
         private RMode readMode;
         private byte[] buf;
@@ -626,7 +627,7 @@ namespace UniversalPatcher
                     }
                 }
                 Logger("Writing to file: " + FileName);
-                WriteBinToFile(FileName, buf);
+                File.WriteAllBytes(FileName, buf);
                 Logger("Done");
             }
             catch (Exception ex)
@@ -636,7 +637,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, LogToBinConverter line " + line + ": " + ex.Message);
+                LoggerBold("Error, LogToBinConverter line " + line + ": " + ex.Message);
             }
         }
         public void ConvertFile(string FileName)
@@ -657,7 +658,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    text = ReadTextFile(FileName);
+                    text = File.ReadAllText(FileName);
                 }
                 string[] lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 ConvertLines(lines, binFile);

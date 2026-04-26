@@ -450,6 +450,7 @@ namespace UniversalPatcher
         private void AutoResize()
         {
             return;
+            /*
             try
             {
                 int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) + dataGridView1.RowHeadersWidth;
@@ -475,6 +476,7 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmHistogram line " + line + ": " + ex.Message);
             }
+            */
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)

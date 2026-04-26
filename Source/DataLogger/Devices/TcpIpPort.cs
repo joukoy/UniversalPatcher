@@ -186,7 +186,6 @@ namespace UniversalPatcher
                 {
                     //Debug.WriteLine("TCPIP port timeout: " + RTimeout.ToString());
                     throw new TimeoutException();
-                    break;
                 }
                 if (receiverToken.IsCancellationRequested)
                 {
@@ -284,7 +283,7 @@ namespace UniversalPatcher
                     }
                     */
                 }
-                catch (Exception ex)
+                catch
                 {
                     //Debug.WriteLine("TCPIP Receive: " + ex.Message);
                 }

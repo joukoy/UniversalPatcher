@@ -166,6 +166,7 @@ namespace UniversalPatcher
             //Port.SetReadTimeout(AppSettings.LoggerPortReadTimeout);
             //Port.SetWriteTimeout(AppSettings.LoggerPortWriteTimeout);
             Logger("Device Successfully Initialized and Ready");
+            LoggerBold("J2534 driver recommended for OBDX Pro devices!");
             return true;
         }
         private Response<double> ReadVoltage()
@@ -814,7 +815,7 @@ namespace UniversalPatcher
 
         private bool SetToFilter(byte Val)
         {
-            if (datalogger.useVPWFilters == false)
+            if (!AppSettings.LoggerUseFilters)
             {
                 return true;
             }

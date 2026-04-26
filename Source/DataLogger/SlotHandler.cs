@@ -15,9 +15,8 @@ namespace UniversalPatcher
 {
     public class SlotHandler
     {
-        public SlotHandler(bool UseVPW)
+        public SlotHandler()
         {
-            VPWProtocol = UseVPW;
         }
         public int ReceivedRows = 0;
         public Dictionary<byte, int> SlotIndex = new Dictionary<byte, int>();
@@ -27,7 +26,6 @@ namespace UniversalPatcher
         public int CurrentSlotIndex = 0;
         private double[] newPidValues;
         public List<int> PassiveSources;
-        public bool VPWProtocol = true;
         //public PidValSetTime[] pidValSetTimes;
         public Hertz[] pidHertz;
         public class PidValSetTime
@@ -186,8 +184,7 @@ namespace UniversalPatcher
                 string PassFilters = "Type: PASS_FILTER,Name: CANloggerPass" + d.ToString() + Environment.NewLine;
                 PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                 PassFilters += "Pattern: " + PassiveSources[d].ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                datalogger.LogDevice.SetupFilters(PassFilters, true, false);
-
+                MainConnection.ObdDevice.SetupFilters(PassFilters, true, false);
             }
         }
         public void ResetFilters()
@@ -197,12 +194,12 @@ namespace UniversalPatcher
             FlowFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
             FlowFilters += "Pattern: " + datalogger.CanDevice.ResID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
             FlowFilters += "FlowControl: " + datalogger.CanDevice.RequestID.ToString("X8") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
-            datalogger.LogDevice.SetupFilters(FlowFilters, false, true);
+            MainConnection.ObdDevice.SetupFilters(FlowFilters, false, true);
 
             string PassFilters = "Type: PASS_FILTER,Name: CANloggerPass" + Environment.NewLine;
             PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
             PassFilters += "Pattern: " + datalogger.CanDevice.DiagID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-            datalogger.LogDevice.SetupFilters(PassFilters, true, true);
+            MainConnection.ObdDevice.SetupFilters(PassFilters, true, true);
             
         }
 
@@ -228,7 +225,7 @@ namespace UniversalPatcher
                     SlotNr = 0xFE;
                 }
 
-                if (!VPWProtocol)
+                if (MainConnection.LoggingProto != LoggingProtocol.VPW)
                 {
                     bytesPerSlot = 7;
                     //ResetFilters();
@@ -303,7 +300,7 @@ namespace UniversalPatcher
                 }
 
                 //Slots planned, let's create commands:
-                if (VPWProtocol)
+                if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
                     for (int s = 0; s < Slots.Count; s++)
                     {
@@ -333,13 +330,13 @@ namespace UniversalPatcher
                                 //Debug.WriteLine("ConfigByte: " + cfgByte.ToString("X"));
                             }
                             Debug.WriteLine("Pid setup msg:" + BitConverter.ToString(msg));
-                            bool resp = datalogger.LogDevice.SendMessage(new OBDMessage(msg), 1);
+                            bool resp = MainConnection.ObdDevice.SendMessage(new OBDMessage(msg), 1);
                             if (!resp)
                             {
                                 LoggerBold("Error, Pid setup failed");
                                 return false;
                             }
-                            OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage(true);
+                            OBDMessage rMsg = MainConnection.ObdDevice.ReceiveMessage(true);
                             DateTime starttime = DateTime.Now;
                             while (true)
                             {
@@ -362,7 +359,7 @@ namespace UniversalPatcher
                                     LoggerBold("Timeout in pid setup");
                                     return false;
                                 }
-                                rMsg = datalogger.LogDevice.ReceiveMessage(true);
+                                rMsg = MainConnection.ObdDevice.ReceiveMessage(true);
                             }
                             pidIndex++;
                             position += bytes;
@@ -385,13 +382,13 @@ namespace UniversalPatcher
                             pidIndex++;
                         }
                         Debug.WriteLine("Pid setup msg:" + BitConverter.ToString(msg.ToArray()));
-                        bool resp = datalogger.LogDevice.SendMessage(new OBDMessage(msg.ToArray()), 1);
+                        bool resp = MainConnection.ObdDevice.SendMessage(new OBDMessage(msg.ToArray()), 1);
                         if (!resp)
                         {
                             LoggerBold("Error, Pid setup failed");
                             return false;
                         }
-                        OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage(true);
+                        OBDMessage rMsg = MainConnection.ObdDevice.ReceiveMessage(true);
                         DateTime starttime = DateTime.Now;
                         while (true)
                         {
@@ -414,10 +411,10 @@ namespace UniversalPatcher
                                 LoggerBold("Timeout in pid setup");
                                 return false;
                             }
-                            rMsg = datalogger.LogDevice.ReceiveMessage(true);
+                            rMsg = MainConnection.ObdDevice.ReceiveMessage(true);
                         }
 
-                        //datalogger.LogDevice.ReceiveBufferedMessages();
+                        //MainConnection.ObdDevice.ReceiveBufferedMessages();
                         pidIndex++;
                         position += bytes;
                     }
@@ -463,7 +460,7 @@ namespace UniversalPatcher
         public byte[] CreateNextSlotRequestMessage(bool FirstRequest)
         {
             List<byte> msg;
-            if (VPWProtocol)
+            if (MainConnection.LoggingProto == LoggingProtocol.VPW)
             {
                 msg = new List<byte> { datalogger.priority, DeviceId.Pcm, DeviceId.Tool, Mode.SendDynamicData, datalogger.Responsetype };
             }
@@ -600,7 +597,7 @@ namespace UniversalPatcher
                 if (msg.Length > 6)
                 {
                     int pos = 5; 
-                    if (VPWProtocol)
+                    if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                     {
                         if (msg[1] != DeviceId.Tool || msg[2] != DeviceId.Pcm)
                         {

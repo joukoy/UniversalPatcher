@@ -556,7 +556,7 @@ namespace UniversalPatcher
                     return;
                 }
                 CanModules = new List<CANDevice>();
-                string content = ReadTextFile(fName);
+                string content = File.ReadAllText(fName);
                 string[] lines = content.Split('\n');
                 foreach (string line in lines)
                 {

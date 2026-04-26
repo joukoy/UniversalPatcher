@@ -224,7 +224,7 @@ namespace UniversalPatcher
                     {
                         if (datalogger.Connected)
                         {
-                            datalogger.LogDevice.SendMessage(oMsg, 1);
+                            MainConnection.ObdDevice.SendMessage(oMsg, 1);
                             Thread.Sleep(100);
                         }
                         else

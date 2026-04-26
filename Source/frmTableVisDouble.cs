@@ -576,9 +576,11 @@ namespace UniversalPatcher
             {
                 dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
                 dataGridView2.SelectionChanged -= DataGridView2_SelectionChanged;
-
+                DrawingControl.SuspendDrawing(dataGridView1);
+                DrawingControl.SuspendDrawing(dataGridView2);
                 if (vis.mouseDownCell == null || vis.mouseUpCell == null)
                 {
+                    Debug.WriteLine("Mouseupcell or mousedowncell is null");
                     return;
                 }
 
@@ -586,6 +588,7 @@ namespace UniversalPatcher
 
                 if (dgv.SelectedCells.Count == 0)
                 {
+                    Debug.WriteLine("Selected cell count = 0");
                     return;
                 }
                 DataGridViewCell firstCell = vis.mouseDownCell;
@@ -643,6 +646,8 @@ namespace UniversalPatcher
             }
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
             dataGridView2.SelectionChanged += DataGridView2_SelectionChanged;
+            DrawingControl.ResumeDrawing(dataGridView1);
+            DrawingControl.ResumeDrawing(dataGridView2);
 
         }
         private List<uint> GetSelectedAddresses(DataGridView Dgv, VisSettings vis)
@@ -694,11 +699,18 @@ namespace UniversalPatcher
             {
                 return;
             }
+            if (VisDst == null)
+            {
+                GetSelectedTables(false);
+                return;
+            }
             SelectionModified = false;
             dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
             dataGridView2.SelectionChanged -= DataGridView2_SelectionChanged;
             dataGridView1.Scroll -= DataGridView1_Scroll;
             dataGridView2.Scroll -= DataGridView2_Scroll;
+            ExtensionMethods.DrawingControl.SuspendDrawing(dataGridView1);
+            ExtensionMethods.DrawingControl.SuspendDrawing(dataGridView2);
             try
             {
                 Debug.WriteLine("SyncSelection");
@@ -743,6 +755,9 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableVisDouble, line " + line + ": " + ex.Message);
             }
+            ExtensionMethods.DrawingControl.ResumeDrawing(dataGridView1);
+            ExtensionMethods.DrawingControl.ResumeDrawing(dataGridView2);
+
             dataGridView1.Scroll += DataGridView1_Scroll;
             dataGridView2.Scroll += DataGridView2_Scroll;
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
@@ -1104,26 +1119,26 @@ namespace UniversalPatcher
                 return;
             }
             vis1.mouseDownCell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            Debug.WriteLine("Mouse down in " + vis1.mouseDownCell.RowIndex.ToString() + ", " + vis1.mouseDownCell.ColumnIndex.ToString());
+            Debug.WriteLine("Vis1 Mouse down in " + vis1.mouseDownCell.RowIndex.ToString() + ", " + vis1.mouseDownCell.ColumnIndex.ToString());
         }
 
         private void DataGridView1_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
             vis1.mouseUpCell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            Debug.WriteLine("Mouse down in " + vis1.mouseUpCell.RowIndex.ToString() + ", " + vis1.mouseUpCell.ColumnIndex.ToString());
+            Debug.WriteLine("Vis1 Mouse up in " + vis1.mouseUpCell.RowIndex.ToString() + ", " + vis1.mouseUpCell.ColumnIndex.ToString());
             ModifySelection(dataGridView1, vis1);
             SyncSelection(dataGridView1, dataGridView2, vis1, vis2);
         }
         private void DataGridView2_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            vis1.mouseDownCell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            Debug.WriteLine("Mouse down in " + vis1.mouseDownCell.RowIndex.ToString() + ", " + vis1.mouseDownCell.ColumnIndex.ToString());
+            vis2.mouseDownCell = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            Debug.WriteLine("Vis2 Mouse down in " + vis1.mouseDownCell.RowIndex.ToString() + ", " + vis1.mouseDownCell.ColumnIndex.ToString());
         }
 
         private void DataGridView2_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
             vis2.mouseUpCell = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            Debug.WriteLine("Mouse down in " + vis2.mouseUpCell.RowIndex.ToString() + ", " + vis2.mouseUpCell.ColumnIndex.ToString());
+            Debug.WriteLine("Vis2 Mouse up in " + vis2.mouseUpCell.RowIndex.ToString() + ", " + vis2.mouseUpCell.ColumnIndex.ToString());
             ModifySelection(dataGridView2, vis2);
             SyncSelection(dataGridView2, dataGridView1, vis2, vis1);
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using static Helpers;
@@ -50,6 +51,7 @@ namespace UniversalPatcher
         private bool responsematch;
         private int responsematchTimeout = 100;
         private int responsematchTotalTimeout = 2000;
+        private string previousRow;
         private void LoadFilters()
         {
             if (File.Exists(savedFiltersFile))
@@ -104,7 +106,7 @@ namespace UniversalPatcher
                 {
                     frmlogger.Disconnect(false);
                 }
-                if (!frmlogger.Connect(false, true, false,this))
+                if (!frmlogger.Connect(null, true, false,this))
                 {
                     return false;
                 }
@@ -151,6 +153,8 @@ namespace UniversalPatcher
                     return false;
                 }
                 Line = Line.Trim();
+                string prevLine = previousRow; //User prevLine if need to send command again when ECM busy
+                previousRow = Line;  
                 Debug.WriteLine("Executing line: " + Line + " Line2: " + Line2);
                 if (Line.Length > 1)
                 {
@@ -240,9 +244,38 @@ namespace UniversalPatcher
                             }
                         }
                         LogToBinConverter.RMode rMode = (LogToBinConverter.RMode)Enum.Parse(typeof(LogToBinConverter.RMode), mode.ToUpper());
-                        LogToBinConverter ltb = new LogToBinConverter(rMode);
-                        Application.DoEvents();
-                        ltb.ConvertLines(logTxt, fName);
+                        if (rMode == LogToBinConverter.RMode.CUSTOM)
+                        {
+                            frmLogConverter flc = new frmLogConverter();
+                            string cfgFile = null;
+                            if (sParts.Length > 3)
+                            {
+                                cfgFile = sParts[3];
+                                if (!File.Exists(cfgFile))
+                                {
+                                    string cfgFullPath = Path.Combine(ScriptFolder, cfgFile);
+                                    if (File.Exists(cfgFullPath))
+                                    {
+                                        cfgFile = cfgFullPath;
+                                    }
+                                    else
+                                    {
+                                        cfgFullPath = Path.Combine(Application.StartupPath, "Logger", "LogConverter", cfgFile);
+                                        if (File.Exists(cfgFullPath))
+                                        {
+                                            cfgFile = cfgFullPath;
+                                        }
+                                    }
+                                }
+                            }
+                            flc.ConvertLogTxtToBinFile(logTxt, fName, cfgFile);
+                        }
+                        else
+                        {
+                            LogToBinConverter ltb = new LogToBinConverter(rMode);
+                            Application.DoEvents();
+                            ltb.ConvertLines(logTxt, fName);
+                        }
                     }
                     else if (Line.ToLower().StartsWith("askvariable:"))
                     {
@@ -426,15 +459,124 @@ namespace UniversalPatcher
                         string[] lParts = Line.Split(':');
                         if (lParts.Length >= 2)
                         {
-                            DateTime starttime = DateTime.Now;
+                            //DateTime starttime = DateTime.Now;
                             string msg = lParts[1].Replace(" ", "");
                             OBDMessage rMsg;
-                            string rMsgStr = "";
+                            //string rMsgStr = "";
                             int timeo = 10000;
+                            int busyWait = 100;
+                            int retries = 3;
+                            List<int> waitBytes = new List<int>();
+                            List<int> busyBytes = new List<int>();
+                            string[] wParts = lParts[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            for (int b=0;b<wParts.Length;b++)
+                            {
+                                if (HexToByte(wParts[b], out byte wb))
+                                {
+                                    waitBytes.Add(wb);
+                                }
+                                else
+                                {
+                                    waitBytes.Add(-1);  //wildcard
+                                }
+                            }
                             if (lParts.Length > 2 && int.TryParse(lParts[2], out int to))
                             {
                                 timeo = to;
                             }
+                            Debug.WriteLine("Waiting for: " + lParts[1] + ", timeout: " + timeo.ToString() + " ms" );
+                            if (lParts.Length > 3)
+                            {
+                                Debug.WriteLine("If message match " + lParts[3] + ", PCM is busy, send again message: " + prevLine);
+                                string[] bParts = lParts[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                for (int b = 0; b < bParts.Length; b++)
+                                {
+                                    if (HexToByte(bParts[b], out byte wb))
+                                    {
+                                        busyBytes.Add(wb);
+                                    }
+                                    else
+                                    {
+                                        busyBytes.Add(-1);  //wildcard
+                                    }
+                                }
+                            }
+                            if (lParts.Length > 4 && int.TryParse(lParts[4], out int bto))
+                            {
+                                busyWait = bto;
+                            }
+                            if (lParts.Length > 5 && int.TryParse(lParts[5], out int ret))
+                            {
+                                retries = ret;
+                            }
+                            Debug.WriteLine("Wait " + busyWait.ToString() + " ms if busy, retry " + retries.ToString() + " times");
+                            DateTime wStart = DateTime.Now;
+                            int retry = 0;
+                            while (retry < retries)
+                            {
+                                rMsg = device.ReceiveMessage(true);
+                                if (rMsg != null)
+                                {
+                                    bool match = true;
+                                    if (rMsg.Length < waitBytes.Count || ( waitBytes.Last() >= 0 && rMsg.Length > waitBytes.Count))
+                                    {
+                                        match = false;
+                                    }
+                                    else
+                                    {
+                                        for (int b = 0; b < waitBytes.Count && b < rMsg.Length; b++)
+                                        {
+                                            if (waitBytes[b] >= 0 && rMsg[b] != waitBytes[b])
+                                            {
+                                                match = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (match)
+                                    {
+                                        Debug.WriteLine("Received message we are waiting");
+                                        break;
+                                    }
+                                    else if (busyBytes.Count > 0)
+                                    {
+                                        match = true;
+                                        if (rMsg.Length < busyBytes.Count || ( busyBytes.Last() >= 0 && rMsg.Length > busyBytes.Count))
+                                        {
+                                            match = false;
+                                        }
+                                        else
+                                        {
+                                            for (int b = 0; b < busyBytes.Count && b < rMsg.Length; b++)
+                                            {
+                                                if (busyBytes[b] >= 0 && rMsg[b] != busyBytes[b])
+                                                {
+                                                    match = false;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (match)
+                                        {
+                                            Debug.WriteLine("PCM busy waiting " + busyWait.ToString() + " ms");
+                                            Thread.Sleep(busyWait);
+                                            if (!HandleLine(prevLine, Line, ref breakloop))
+                                            {
+                                                return false;
+                                            }
+                                            wStart = DateTime.Now;
+                                            retry++;
+                                            Debug.WriteLine("Retry " + retry.ToString() + "/" + retries.ToString());
+                                        }
+                                    }
+                                }
+                                if (DateTime.Now.Subtract(wStart) > TimeSpan.FromMilliseconds(timeo))
+                                {
+                                    Debug.WriteLine("Timeout (" + timeo.ToString() + "ms)");
+                                    break;
+                                }
+                            }
+                            /*
                             do
                             {
                                 rMsg = device.ReceiveMessage(true);
@@ -454,10 +596,11 @@ namespace UniversalPatcher
                                 }
 
                             } while (rMsg == null || rMsgStr != msg);
+                            */
                         }
                         else
                         {
-                            LoggerBold("Usage: wait:<message>[:timeout]");
+                            LoggerBold("Usage: wait:<message>[:timeout][:busymessage][:waitifbusy][:retries]");
                         }
                     }
                     else if (Line.ToLower().StartsWith("programminvoltage:"))

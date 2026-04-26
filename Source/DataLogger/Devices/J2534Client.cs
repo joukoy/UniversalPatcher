@@ -923,10 +923,12 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Removing filters");
-                byte[] fIds;
-                fIds = new byte[filterIds.Length * 4];
-                Buffer.BlockCopy(filterIds, 0, fIds, 0, fIds.Length);
-
+                byte[] fIds = null;
+                if (filterIds != null)
+                {
+                    fIds = new byte[filterIds.Length * 4];
+                    Buffer.BlockCopy(filterIds, 0, fIds, 0, fIds.Length);
+                }
                 byte[] readBuf = PipeSendAndReceive(j2534Command.RemoveFilters, fIds);
                 return Convert.ToBoolean(readBuf[0]);
             }
@@ -946,10 +948,12 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Removing filters");
-                byte[] fIds;
-                fIds = new byte[filterIds.Length * 4];
-                Buffer.BlockCopy(filterIds, 0, fIds, 0, fIds.Length);
-
+                byte[] fIds = null;
+                if (filterIds != null)
+                {
+                    fIds = new byte[filterIds.Length * 4];
+                    Buffer.BlockCopy(filterIds, 0, fIds, 0, fIds.Length);
+                }
                 byte[] readBuf = PipeSendAndReceive(j2534Command.RemoveFilters2, fIds);
                 return Convert.ToBoolean(readBuf[0]);
             }

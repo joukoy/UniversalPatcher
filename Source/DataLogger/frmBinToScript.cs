@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -62,7 +63,7 @@ namespace UniversalPatcher
                 string data = ConvertToScript();
                 Logger("Done");
                 Logger("Writing file: " + txtScriptFile.Text);
-                WriteTextFile(txtScriptFile.Text, data);
+                File.WriteAllText(txtScriptFile.Text, data);
                 Logger("Done");
             }
             catch (Exception ex)
@@ -148,7 +149,7 @@ namespace UniversalPatcher
 
                 StringBuilder script = new StringBuilder();
 
-                byte[] buf = ReadBin(txtBinFile.Text);
+                byte[] buf = File.ReadAllBytes(txtBinFile.Text);                
                 List<byte[]> Rows = new List<byte[]>();
                 List<Block> blocks = ParseAddressBlocks(txtParseRange.Text, buf.Length);
                 foreach (Block b in blocks)

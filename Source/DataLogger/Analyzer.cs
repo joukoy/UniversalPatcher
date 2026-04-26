@@ -301,20 +301,20 @@ namespace UniversalPatcher
                     LoggerUtils.analyzerData = new List<OBDMessage>();
                 HideHeartBeat = hideHeartBeat;
                 Logger("Waiting data...");
-                if (datalogger.LogRunning && datalogger.UseVPW())
+                if (datalogger.LogRunning && MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
-                    datalogger.LogDevice.RemoveFilters(null);
+                    MainConnection.ObdDevice.RemoveFilters(null);
                 }
                 else
                 {
-                    datalogger.LogDevice.SetTimeout(TimeoutScenario.Maximum);
-                    datalogger.LogDevice.SetAnalyzerFilter();
+                    MainConnection.ObdDevice.SetTimeout(TimeoutScenario.Maximum);
+                    MainConnection.ObdDevice.SetAnalyzerFilter();
                 }
                 analyzerTokenSource = new CancellationTokenSource();
                 analyzerToken = analyzerTokenSource.Token;
                 Task.Factory.StartNew(() => AnalyzerLoop(), analyzerToken);
-                datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
-                datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
+                MainConnection.ObdDevice.MsgReceived += LogDevice_MsgReceived;
+                MainConnection.ObdDevice.MsgSent += LogDevice_MsgSent;
                 
             }
             catch (Exception ex)
@@ -377,8 +377,8 @@ namespace UniversalPatcher
 
         public void StopAnalyzer()
         {
-            datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
-            datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
+            MainConnection.ObdDevice.MsgReceived -= LogDevice_MsgReceived;
+            MainConnection.ObdDevice.MsgSent -= LogDevice_MsgSent;
             analyzerTokenSource.Cancel();
         }
 
@@ -515,7 +515,7 @@ namespace UniversalPatcher
                     {
                         waiting4x = false;
                         Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
-                        if (datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX))
+                        if (MainConnection.ObdDevice.SetVpwSpeed(VpwSpeed.FourX))
                             Debug.WriteLine("Switched to 4X");
                         else
                             Debug.WriteLine("Switch to 4X failed");

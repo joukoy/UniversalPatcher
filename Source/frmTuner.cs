@@ -25,7 +25,6 @@ namespace UniversalPatcher
         {
             InitializeComponent();
             DrawingControl.SetDoubleBuffered(dataGridView1);
-            contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(Cms_Opening);
 
             PCM = PCM1;
             //tableDataList = PCM.tableDatas;
@@ -47,7 +46,6 @@ namespace UniversalPatcher
             hstForm = frmH;
             InitializeComponent();
             DrawingControl.SetDoubleBuffered(dataGridView1);
-            contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(Cms_Opening);
 
             PCM = PCM1;
             //tableDataList = PCM.tableDatas;
@@ -118,6 +116,9 @@ namespace UniversalPatcher
             public SortOrder StrSortOrder { get; set; }
             public string CurrentBin { get; set; }
             public List<SessionPcm> Pcms { get; set; }
+            public List<ColumnOrder> columns { get; set; }
+            public bool ShowHexWindow { get; set; }
+            public int HexWindowWidth { get; set; }
         }
         public PcmFile PCM;
         //private List<TableData> tableDataList;
@@ -154,6 +155,8 @@ namespace UniversalPatcher
         private frmHistogram hstForm;
         public bool histogramTableSelectionEnabled;
         private FileTraceListener DebugFileListener;
+        public static List<ColumnOrder> columnorder;
+        string[] TunerModeColumns = new string[] { "id", "TableName", "Category", "Units", "Columns", "Rows", "TableDescription" };
 
         public String SessionName
         {
@@ -173,6 +176,7 @@ namespace UniversalPatcher
         private void frmTuner_Load(object sender, EventArgs e)
         {
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
+
             selectedCompareBin = "";
             SetWorkingMode();
             disableConfigAutoloadToolStripMenuItem.Checked = AppSettings.disableTunerAutoloadSettings;
@@ -184,7 +188,27 @@ namespace UniversalPatcher
             chkShowTableCount.Checked = AppSettings.TunerShowTableCount;
             radioTreeMode.Checked = AppSettings.TunerTreeMode;
             radioListMode.Checked = !AppSettings.TunerTreeMode;
+            autoresizeToolStripMenuItem.Checked = AppSettings.TunerAutoresizeColumns;
+            autosaveColumnsToolStripMenuItem.Checked = AppSettings.TunerAutoSaveColumns;
+            if (AppSettings.TunerColorsMode == ConditionalColors.Off)
+            {
+                radioColorsOff.Checked = true;
+            }
+            else if (AppSettings.TunerColorsMode == ConditionalColors.Settings)
+            {
+                radioColorsUseTableSettings.Checked = true;
+            }
+            else
+            {
+                radioColorsUseTableValues.Checked = true;
+            }
+            btnColorMin1.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin1);
+            btnColorMin2.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin2);
+            btnColorMid.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid);
+            btnColorMax1.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax1);
+            btnColorMax2.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax2);
             SelectDispMode();
+            LoadColumnPresetFiles();
 
             //LogReceivers.Add(txtResult);
 
@@ -218,28 +242,17 @@ namespace UniversalPatcher
             comboFilterBy.Items.Clear();
             TableData tdTmp = new TableData();
             comboFilterBy.Items.Add("All");
-            foreach (var prop in tdTmp.GetType().GetProperties())
+            foreach (ColumnOrder co in columnorder)
             {
-                //Add to filter by-combo
-                comboFilterBy.Items.Add(prop.Name);
-                ToolStripMenuItem menuItem = new ToolStripMenuItem(prop.Name);
-                menuItem.Name = prop.Name;
-                contextMenuStrip2.Items.Add(menuItem);
-                menuItem.Click += new EventHandler(columnSelection_Click);
-
-            }
-            string tunerCols = AppSettings.TunerModeColumns;
-            if (!tunerCols.Contains("Address"))
-                tunerCols = tunerCols.Trim(',') + ",Address";
-            string[] sortStrs = tunerCols.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string sortStr in sortStrs )
-            {
-                ToolStripMenuItem sortItem = new ToolStripMenuItem(sortStr);
-                sortItem.Name = sortStr;
-                if (sortBy == sortStr)
-                    sortItem.Checked = true;
-                sortByToolStripMenuItem.DropDownItems.Add(sortItem);
-                sortItem.Click += SortItem_Click;
+                if (co.Visible || co.Column == "Address")
+                {
+                    ToolStripMenuItem sortItem = new ToolStripMenuItem(co.Column);
+                    sortItem.Name = co.Column;
+                    if (sortBy == co.Column)
+                        sortItem.Checked = true;
+                    sortByToolStripMenuItem.DropDownItems.Add(sortItem);
+                    sortItem.Click += SortItem_Click;
+                }
             }
 
             comboFilterBy.Text = "TableName";
@@ -313,8 +326,8 @@ namespace UniversalPatcher
                             modified = true;
                             break;
                         }
-                        byte[] content1 = ReadBin(Files[f].FullName);
-                        byte[] content2 = ReadBin(tmpFiles[f].FullName);
+                        byte[] content1 = File.ReadAllBytes(Files[f].FullName);
+                        byte[] content2 = File.ReadAllBytes(tmpFiles[f].FullName);
                         if (!content1.SequenceEqual(content2))
                         {
                             modified = true;
@@ -872,59 +885,19 @@ namespace UniversalPatcher
         {
             try
             {
-                string[] tunerColumns = AppSettings.TunerModeColumns.ToLower().Split(',');
-                string[] configColumns = AppSettings.ConfigModeColumnOrder.ToLower().Split(',');
-                string[] configWidth = AppSettings.ConfigModeColumnWidth.Split(',');
-                string[] tunerWidth = AppSettings.TunerModeColumnWidth.Split(',');
-                Debug.WriteLine("Tuner order: " + AppSettings.TunerModeColumns);
-                Debug.WriteLine("Config order: " + AppSettings.ConfigModeColumnOrder);
-
-                int invisibleIndex = tunerColumns.Length;
-                for (int c = 0; c < dataGridView1.Columns.Count && c < configWidth.Length; c++)
+                for (int c=0;c<columnorder.Count;c++)
                 {
-                    if (AppSettings.WorkingMode == 2) //advanced
+                    if (dataGridView1.Columns.Count > c)
                     {
-                        dataGridView1.Columns[c].ReadOnly = false;
-                        dataGridView1.Columns[c].Visible = true;
-                        int order = Array.IndexOf(configColumns, dataGridView1.Columns[c].HeaderText.ToLower());
-                        if (order > -1 && order < dataGridView1.Columns.Count)
+                        dataGridView1.Columns[columnorder[c].Column].DisplayIndex = c;
+                        dataGridView1.Columns[columnorder[c].Column].Visible = columnorder[c].Visible;
+                        if (AppSettings.WorkingMode > 0 || AppSettings.TunerAutoresizeColumns)
                         {
-                            dataGridView1.Columns[c].DisplayIndex = order;
-                            if (c < configWidth.Length)
-                            {
-                                dataGridView1.Columns[c].Width = Convert.ToInt32(configWidth[c]);
-                            }
+                            dataGridView1.Columns[columnorder[c].Column].Width = columnorder[c].Width;
                         }
                     }
-                    else
-                    {
-                        dataGridView1.Columns[c].ReadOnly = true;
-                        if (dataGridView1.Columns[c].HeaderText.ToLower() == "id")
-                        {
-                            dataGridView1.Columns[c].DisplayIndex = 0;
-                            dataGridView1.Columns[c].Visible = true;
-                            dataGridView1.Columns[c].Width = Convert.ToInt32(tunerWidth[c]);
-                        }
-                        else if (tunerColumns.Contains(dataGridView1.Columns[c].HeaderText.ToLower()))
-                        {
-                            dataGridView1.Columns[c].Visible = true;
-                            if (c < tunerWidth.Length)
-                            {
-                                dataGridView1.Columns[c].Width = Convert.ToInt32(tunerWidth[c]);
-                            }
-                            int order = Array.IndexOf(tunerColumns, dataGridView1.Columns[c].HeaderText.ToLower());
-                            if (order > -1 && order < dataGridView1.Columns.Count)
-                                dataGridView1.Columns[c].DisplayIndex = order;
-                        }
-                        else
-                        {
-                            dataGridView1.Columns[c].DisplayIndex = invisibleIndex;
-                            invisibleIndex++;
-                            dataGridView1.Columns[c].Visible = false;
-                        }
-                    }
-                    //Debug.WriteLine("Column: " + c + ":, " + dataGridView1.Columns[c].HeaderText + ", index: ", dataGridView1.Columns[c].DisplayIndex.ToString());
                 }
+
                 if (sortIndex < dataGridView1.Columns.Count)
                 {
                     dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
@@ -1908,10 +1881,6 @@ namespace UniversalPatcher
                 strSortOrder = GetSortOrder(sortIndex);
                 SortTables();
             }
-            else if (AppSettings.WorkingMode != 2)
-            {
-                contextMenuStrip2.Show(Cursor.Position.X, Cursor.Position.Y);
-            }
         }
 
         private SortOrder GetSortOrder(int columnIndex)
@@ -2348,7 +2317,7 @@ namespace UniversalPatcher
                     csvData += Environment.NewLine;
                 }
                 Logger("Writing to file: " + fName, false);
-                WriteTextFile(fName, csvData);
+                File.WriteAllText(fName, csvData);
                 Logger(" [OK]");
             }
             catch (Exception ex)
@@ -2472,11 +2441,7 @@ namespace UniversalPatcher
             PCM.SaveTableList(fName);
         }
 
-        private struct DisplayOrder
-        {
-            public int index;
-            public string columnName;
-        }
+ 
         private void DataGridView1_ColumnDisplayIndexChanged(object sender, DataGridViewColumnEventArgs e)
         {
             //Debug.WriteLine("Displayindex: " + e.Column.HeaderText);
@@ -2531,6 +2496,26 @@ namespace UniversalPatcher
             }
         }
 
+        private List<ColumnOrder> GetColumnOrder()
+        {
+            List<ColumnOrder> cols = new List<ColumnOrder>();
+            for (int c = 0; c < dataGridView1.Columns.Count; c++)
+            {
+                for (int d = 0; d < dataGridView1.Columns.Count; d++)
+                {
+                    if (dataGridView1.Columns[d].DisplayIndex == c)
+                    {
+                        ColumnOrder co = new ColumnOrder();
+                        co.Column = dataGridView1.Columns[d].HeaderText;
+                        co.Visible = dataGridView1.Columns[d].Visible;
+                        co.Width = dataGridView1.Columns[d].Width;
+                        cols.Add(co);
+                        break;
+                    }
+                }
+            }
+            return cols;
+        }
         private void SaveGridLayout()
         {
             try
@@ -2538,51 +2523,12 @@ namespace UniversalPatcher
                 if (!columnsModified) return;
 
                 if (dataGridView1.Columns.Count < 2) return;
-                StringBuilder columnWidth = new StringBuilder();
-                int maxDispIndex = 0;
-                List<DisplayOrder> displayOrder = new List<DisplayOrder>();
-                for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                columnorder = GetColumnOrder();
+                if (AppSettings.TunerAutoSaveColumns)
                 {
-                    columnWidth.Append(dataGridView1.Columns[c].Width.ToString() + ",");
-                    if (dataGridView1.Columns[c].Visible)
-                    {
-                        DisplayOrder dispO = new DisplayOrder();
-                        dispO.columnName = dataGridView1.Columns[c].Name;
-                        dispO.index = dataGridView1.Columns[c].DisplayIndex;
-                        displayOrder.Add(dispO);
-                        if (dispO.index > maxDispIndex)
-                            maxDispIndex = dispO.index;
-                    }
+                    SaveColumnsPreset(columnorder, ColumnsFile);
                 }
 
-
-                StringBuilder order = new StringBuilder();
-                for (int i = 0; i <= maxDispIndex; i++)
-                {
-                    for (int j = 0; j < displayOrder.Count; j++)
-                    {
-                        if (displayOrder[j].index == i)
-                        {
-                            order.Append(displayOrder[j].columnName + ",");
-                            break;
-                        }
-                    }
-                }
-                Debug.WriteLine("Display order: " + order.ToString());
-                Debug.WriteLine("Column width: " + columnWidth);
-                if (AppSettings.WorkingMode == 2)
-                {
-                    //Advanced mode
-                    AppSettings.ConfigModeColumnOrder = order.ToString().Trim(',');
-                    AppSettings.ConfigModeColumnWidth = columnWidth.ToString().Trim(',');
-                }
-                else
-                {
-                    //Tuner mode
-                    AppSettings.TunerModeColumns = order.ToString().Trim(',');
-                    AppSettings.TunerModeColumnWidth = columnWidth.ToString().Trim(',');
-                }
-                AppSettings.Save();
                 columnsModified = false;
             }
             catch (Exception ex)
@@ -2595,89 +2541,19 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
             }
         }
-
-        void EnableTunerModeColumns()
-        {
-            string[] tunerModCols = AppSettings.TunerModeColumns.Split(',');
-
-            //Mark checked all visible columns
-            foreach (ToolStripMenuItem menuItem in contextMenuStrip2.Items)
-            {
-                menuItem.Checked = false;
-                for (int i = 0; i < tunerModCols.Length; i++)
-                {
-                    if (menuItem.Name == tunerModCols[i])
-                    {
-                        menuItem.Checked = true;
-                        break;
-                    }
-                }
-                dataGridView1.Columns[menuItem.Name].Visible = menuItem.Checked;
-            }
-        }
-
-        void Cms_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            EnableTunerModeColumns();
-        }
-
-        private void RemoveTunerModColumn(string col)
-        {
-            string[] tunerModCols = AppSettings.TunerModeColumns.Split(',');
-            StringBuilder sb = new StringBuilder();
-            foreach (ToolStripMenuItem menuItem in contextMenuStrip2.Items)
-            {
-                if (tunerModCols.Contains(menuItem.Name) && menuItem.Name != col)
-                {
-                    sb.Append(menuItem.Name + ",");
-                    menuItem.Checked = true;
-                }
-                else
-                {
-                    menuItem.Checked = false;
-                }
-            }
-            AppSettings.TunerModeColumns = sb.ToString().Trim(',');
-            AppSettings.Save();
-        }
-
-        void columnSelection_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
-                menuItem.Checked = !menuItem.Checked;
-                Debug.WriteLine(menuItem.Name);
-                //dataGridView1.Columns[menuItem.Name].Visible = menuItem.Checked;
-                if (AppSettings.WorkingMode != 2)
-                {
-                    RemoveTunerModColumn(menuItem.Name);
-                    columnsModified = true;
-                    dataGridView1.Columns[menuItem.Name].Visible = !dataGridView1.Columns[menuItem.Name].Visible;
-                    dataGridView1.Update();
-                    dataGridView1.Refresh();
-                    //FilterTables();
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTuner, line " + line + ": " + ex.Message);
-            }
-        }
-
         private void resetTunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppSettings.TunerModeColumns = "id,TableName,Category,Units,Columns,Rows,TableDescription";
-            AppSettings.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";
-            AppSettings.Save();
-            dataGridView1.Update();
-            dataGridView1.Refresh();
-            //FilterTables();
+            columnorder.Clear();
+            TableData tdCol = new TableData();
+            foreach (var prop in tdCol.GetType().GetProperties())
+            {
+                ColumnOrder co = new ColumnOrder();
+                co.Column = prop.Name;
+                co.Width = prop.Name.Length * 9;
+                co.Visible = TunerModeColumns.Contains(prop.Name);
+                columnorder.Add(co);
+            }
+            ReorderColumns();
         }
 
         private void OpenNewBinFile(bool asCompare, List<string> fileList = null)
@@ -2698,6 +2574,11 @@ namespace UniversalPatcher
                         PCM = newPCM;
                         SelectPCM();
                     }
+                }
+                if (AppSettings.WorkingMode == 0)
+                {
+                    Application.DoEvents();
+                    dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
                 }
             }
             catch (Exception ex)
@@ -3804,6 +3685,7 @@ namespace UniversalPatcher
         private void SetWorkingMode()
         {
             int workingMode = AppSettings.WorkingMode;
+            string colsFile = null;
 
             switch(workingMode)
             {
@@ -3858,6 +3740,14 @@ namespace UniversalPatcher
                     saveSessionAsToolStripMenuItem.Visible = false;
                     closeSessionToolStripMenuItem.Visible = false;
                     newSessionToolStripMenuItem.Visible = false;
+                    if (string.IsNullOrEmpty(AppSettings.TunerColumnsTourist))
+                    {
+                        colsFile = Path.Combine(Application.StartupPath, "XML","TunerColumns", "Columns-Tourist.xml");
+                    }
+                    else
+                    {
+                        colsFile = AppSettings.TunerColumnsTourist;
+                    }
                     break;
                 case 1: //Basic
                     basicToolStripMenuItem.Checked = true;
@@ -3901,7 +3791,7 @@ namespace UniversalPatcher
                     showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
                     showTablesWithEmptyAddressToolStripMenuItem.Checked = false;
                     unitsToolStripMenuItem.Visible = false;
-                    resetTunerModeColumnsToolStripMenuItem.Visible = false;
+                    resetTunerModeColumnsToolStripMenuItem.Visible = true;
                     groupExtraOffset.Visible = false;
                     btnFlash.Visible = false;
                     openMapSessionToolStripMenuItem.Visible = false;
@@ -3910,8 +3800,14 @@ namespace UniversalPatcher
                     saveSessionAsToolStripMenuItem.Visible = false;
                     closeSessionToolStripMenuItem.Visible = false;
                     newSessionToolStripMenuItem.Visible = false;
-
-                    EnableTunerModeColumns();
+                    if (string.IsNullOrEmpty(AppSettings.TunerColumnsBasic))
+                    {
+                        colsFile = Path.Combine(Application.StartupPath, "XML", "TunerColumns", "Columns-Basic.xml");
+                    }
+                    else
+                    {
+                        colsFile = AppSettings.TunerColumnsBasic;
+                    }
                     break;
                 case 2: //Advanced
                     basicToolStripMenuItem.Checked = false;
@@ -3965,12 +3861,53 @@ namespace UniversalPatcher
                     saveSessionAsToolStripMenuItem.Visible = true;
                     closeSessionToolStripMenuItem.Visible = true;
                     newSessionToolStripMenuItem.Visible = true;
-
+                    if (string.IsNullOrEmpty(AppSettings.TunerColumnsAdvanced))
+                    {
+                        colsFile = Path.Combine(Application.StartupPath, "XML", "TunerColumns", "Columns-Advanced.xml");
+                    }
+                    else
+                    {
+                        colsFile = AppSettings.TunerColumnsAdvanced;
+                    }
                     break;
             }
+            LoadColumnsPreset(colsFile);
             ReorderColumns();
         }
 
+        private void LoadColumnsPreset(string colsFile)
+        {
+            ColumnsFile = colsFile;
+            if (!string.IsNullOrEmpty(colsFile) && File.Exists(colsFile))
+            {
+                Debug.WriteLine("Loading column preset: " + colsFile);
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<ColumnOrder>));
+                System.IO.StreamReader file = new System.IO.StreamReader(colsFile);
+                columnorder = (List<ColumnOrder>)reader.Deserialize(file);
+                file.Close();
+            }
+            else
+            {
+                columnorder = new List<ColumnOrder>();
+                TableData tdCol = new TableData();
+                foreach (var prop in tdCol.GetType().GetProperties())
+                {
+                    if (prop.Name == "extraoffset")
+                    {
+                        continue;
+                    }
+                    ColumnOrder co = new ColumnOrder();
+                    co.Column = prop.Name;
+                    co.Width = prop.Name.Length * 9;
+                    if (AppSettings.WorkingMode == 2) //Advanced
+                        co.Visible = true;
+                    else
+                        co.Visible = TunerModeColumns.Contains(co.Column);
+                    columnorder.Add(co);
+                }
+            }
+
+        }
         private void SelectTreemode()
         {
             if (DisplayMode == DispMode.Tree)
@@ -6805,6 +6742,9 @@ namespace UniversalPatcher
                     Directory.CreateDirectory(sesPath);
                 string fName = Path.Combine(sesPath, "Session.xml");
                 SessionSettings sessionsettings = new SessionSettings();
+                sessionsettings.columns = GetColumnOrder();
+                sessionsettings.HexWindowWidth = AppSettings.TunerHexWindowWidth;
+                sessionsettings.ShowHexWindow = AppSettings.TunerShowHexWindow;
                 sessionsettings.SessionName = SessionName;
                 sessionsettings.MapSession = mapSession;
                 if (mapSession)
@@ -6825,7 +6765,7 @@ namespace UniversalPatcher
                         string newBinFile = Path.Combine(sesPath, Path.GetFileName(sPCM.FileName));
                         if (Verbose)
                             Logger("Saving " + newBinFile);
-                        WriteBinToFile(newBinFile, sPCM.buf);
+                        File.WriteAllBytes(newBinFile, sPCM.buf);
                         sessPcm.BinFile = newBinFile;
                     }
                     else
@@ -6961,6 +6901,11 @@ namespace UniversalPatcher
                     PCM.currentTableDatasList = sessPcm.CurrentTdList;
                 }
                 selectedBin = Path.Combine(sesPath, sessionsettings.CurrentBin);
+                if (sessionsettings.columns != null && sessionsettings.columns.Count > 1)
+                {
+                    columnorder = sessionsettings.columns;
+                    ReorderColumns();
+                }
                 sortBy = sessionsettings.SortBy;
                 sortIndex = sessionsettings.SortIndex;
                 strSortOrder = sessionsettings.StrSortOrder;                    
@@ -6975,6 +6920,8 @@ namespace UniversalPatcher
                     }
 
                 }
+                AppSettings.TunerShowHexWindow = sessionsettings.ShowHexWindow;
+                AppSettings.TunerHexWindowWidth = sessionsettings.HexWindowWidth;
                 Navigate(0);
                 Logger("Done");
                 return SessionName;
@@ -7076,21 +7023,31 @@ namespace UniversalPatcher
         {
             try
             {
-                List<TableData> extraOffsets = PCM.tableDatas.Where(X => X.ExtraOffset != "0").ToList();
                 List<TableData> savingTds = new List<TableData>();
-                foreach (TableData td in extraOffsets)
+                foreach (TableData td in PCM.tableDatas)
                 {
-                    TableData newTd = td.ShallowCopy(true); //Dont modify original
-                    newTd.addrInt = (uint)(td.addrInt + td.extraoffset);
-                    newTd.extraoffset = 0;
-                    savingTds.Add(newTd);
+                    if (td.ExtraOffset != "0")
+                    {
+                        TableData newTd = td.ShallowCopy(true); //Dont modify original
+                        newTd.addrInt = (uint)(td.addrInt + td.extraoffset);
+                        newTd.extraoffset = 0;
+                        savingTds.Add(newTd);
+                    }
                 }
                 dataGridView1.EndEdit();
                 string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + "-mapped.xml");
                 string fName = SelectSaveFile(TablelistFilter, defName);
                 if (string.IsNullOrEmpty(fName))
                     return;
-                PCM.SaveTableList(fName);
+                Logger("Saving file " + fName + "...", false);
+
+                using (FileStream stream = new FileStream(fName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                    writer.Serialize(stream, savingTds);
+                    stream.Close();
+                }
+                Logger(" [OK]");
             }
             catch (Exception ex)
             {
@@ -7149,14 +7106,10 @@ namespace UniversalPatcher
 
         private void sortColumnsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string cols = AppSettings.TunerModeColumns;
-            if (AppSettings.WorkingMode > 1)
+            frmSortColumns fsc = new frmSortColumns(columnorder);
+            if (fsc.ShowDialog() == DialogResult.OK)
             {
-                cols = AppSettings.ConfigModeColumnOrder;
-            }
-            frmSortColumns frmsc = new frmSortColumns(cols);
-            if (frmsc.ShowDialog() == DialogResult.OK)
-            {
+                columnorder = fsc.columns;
                 ReorderColumns();
             }
         }
@@ -7215,6 +7168,170 @@ namespace UniversalPatcher
                 }
             }
             FilterTables(true);
+        }
+
+        private void loadColumnsPresetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void saveColumnsPresetAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveGridLayout();
+            SaveColumnsPreset(columnorder, null);
+            LoadColumnPresetFiles();
+        }
+
+        private void resizeNowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+        }
+
+        private void autoresizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoresizeToolStripMenuItem.Checked = !autoresizeToolStripMenuItem.Checked;
+            AppSettings.TunerAutoresizeColumns = autoresizeToolStripMenuItem.Checked;
+            if (autoresizeToolStripMenuItem.Checked)
+            {
+                dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            }
+            AppSettings.Save();
+        }
+        private void LoadColumnPresetFiles()
+        {
+            loadColumnsPresetToolStripMenuItem.DropDownItems.Clear();
+            ToolStripMenuItem mi = new ToolStripMenuItem("Select file...");
+            mi.Name = "SelectFile";
+            mi.Click += SelectColumnsFile_Click;
+            loadColumnsPresetToolStripMenuItem.DropDownItems.Add(mi);
+            string colFolder = Path.Combine(Application.StartupPath, "XML", "TunerColumns");
+            DirectoryInfo d = new DirectoryInfo(colFolder);
+            FileInfo[] Files = d.GetFiles("*.xml", SearchOption.AllDirectories);
+            foreach (FileInfo file in Files)
+            {
+                ToolStripMenuItem mitem = new ToolStripMenuItem(file.Name);
+                mitem.Name = file.Name;
+                mitem.Tag = file.FullName;
+                loadColumnsPresetToolStripMenuItem.DropDownItems.Add(mitem);
+                mitem.Click += ColumnsFile_Click; ;
+            }
+        }
+
+        private void SelectColumnsFile_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select columns preset", XmlFilter, ColumnsFile);
+            if (string.IsNullOrEmpty(fName))
+            {
+                return;
+            }
+            LoadColumnsPreset(fName);
+            ReorderColumns();
+        }
+
+        private void ColumnsFile_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem mitem = (ToolStripMenuItem)sender;
+            LoadColumnsPreset((string)mitem.Tag);
+            ReorderColumns();
+        }
+
+        private void autosaveColumnsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autosaveColumnsToolStripMenuItem.Checked = !autosaveColumnsToolStripMenuItem.Checked;
+            AppSettings.TunerAutoSaveColumns = autosaveColumnsToolStripMenuItem.Checked;
+            AppSettings.Save();
+        }
+
+
+        private void btnColorMin1_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin1);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMin1.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMin1 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+            }
+            AppSettings.Save();
+        }
+
+        private void btnColorMin2_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin2);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMin2.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMin2 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+            }
+            AppSettings.Save();
+        }
+
+        private void btnColorMid_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMid.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMid = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+            }
+            AppSettings.Save();
+        }
+
+        private void btnColorMax1_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax1);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMax1.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMax1 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+            }
+            AppSettings.Save();
+        }
+
+        private void btnColorMax2_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax2);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMax2.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMax2 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+            }
+            AppSettings.Save();
+        }
+
+        private void radioColorsUseTableSettings_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioColorsUseTableSettings.Checked)
+            {
+                AppSettings.TunerColorsMode = ConditionalColors.Settings;
+                AppSettings.Save();
+            }
+        }
+
+        private void radioColorsOff_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioColorsOff.Checked)
+            {
+                AppSettings.TunerColorsMode = ConditionalColors.Off;
+                AppSettings.Save();
+            }
+        }
+
+        private void radioColorsUseTableValues_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioColorsUseTableValues.Checked)
+            {
+                AppSettings.TunerColorsMode = ConditionalColors.Values;
+                AppSettings.Save();
+            }
         }
     }
 }

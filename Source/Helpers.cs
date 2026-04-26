@@ -81,7 +81,7 @@ public static class Helpers
             return _processId.Value;
         }
     }
-
+    /*
     public static byte[] ReadBin(string FileName)
     {
 
@@ -107,7 +107,7 @@ public static class Helpers
         }
         return buf;
     }
-
+    
     public static void WriteBinToFile(string FileName, byte[] Buf)
     {
         using (FileStream stream = new FileStream(FileName, FileMode.Create))
@@ -119,7 +119,7 @@ public static class Helpers
             }
         }
     }
-
+    */
     public static void WriteSegmentToFile(string FileName, List<Block> Addr, byte[] Buf)
     {
         using (FileStream stream = new FileStream(FileName, FileMode.Create))
@@ -137,6 +137,7 @@ public static class Helpers
         }
     }
 
+    /*
     public static string ReadTextFile(string fileName)
     {
         StreamReader sr = new StreamReader(fileName);
@@ -152,7 +153,7 @@ public static class Helpers
             writetext.Write(fileContent);
         }
     }
-
+    */
     public static List<string> SelectMultipleFiles(string Title = "Select files", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
     {
         List<string> fileList = new List<string>();
@@ -504,6 +505,15 @@ public static class Helpers
             return (UInt16)((buf[offset + 1] << 8) | buf[offset]);
     }
 
+    public static UInt64 ReadValue(byte[] buf, int offset, int bytecount)
+    {
+        UInt64 value = buf[offset];
+        for (int i=1;i<bytecount && (offset + i) < buf.Length;i++)
+        {
+            value = value << 8 | buf[offset + i];
+        }
+        return value;
+    }
     public static int ReadInt32(byte[] buf, uint offset, bool MSB)
     {
         //Shift first byte 24 bits left, second 16bits left...

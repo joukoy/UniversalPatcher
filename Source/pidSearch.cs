@@ -193,7 +193,7 @@ namespace UniversalPatcher
                     {
                         sb.AppendLine(pidList[p].PidNumber);
                     }
-                    WriteTextFile(ospidfile, sb.ToString());
+                    File.WriteAllText(ospidfile, sb.ToString());
                 }
             }
         }

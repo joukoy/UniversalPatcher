@@ -20,9 +20,9 @@ namespace UniversalPatcher
 {
     public class DataLogger
     {
-        public DataLogger(bool UseVPW)
+        public DataLogger()
         {
-            SetProtocol(UseVPW);
+            SetProtocol();
         }
         private CancellationTokenSource logTokenSource = new CancellationTokenSource();
         private CancellationTokenSource logWriterTokenSource = new CancellationTokenSource();
@@ -30,12 +30,12 @@ namespace UniversalPatcher
         private CancellationToken logWriterToken;
         public Task logTask;
         private Task logWriterTask;
-        public IPort port;
+        //public IPort port;
         public bool Connected = false;
         public List<PidConfig> PidProfile { get; set; }
         private StreamWriter logwriter;
         private string logseparator = ";";
-        public Device LogDevice;
+        //public Device MainConnection.ObdDevice;
         public int ReceivedBytes = 0;
         public string OS;
         public SlotHandler slothandler;
@@ -60,13 +60,14 @@ namespace UniversalPatcher
         //Set these values before StartLogging()
         public DateTime LogStartTime;
         public bool writelog;
-        public  bool useVPWFilters;
+        //public  bool useVPWFilters;
         public  bool reverseSlotNumbers;
         public  byte Responsetype;
         public  int maxSlotsPerRequest = 4;   //How many Slots before asking more
         public  int maxSlotsPerMessage = 4;   //How many Slots in one Slot request message
-        private bool VPWProtocol = true;
+        //private bool VPWProtocol = true;
         public CANDevice CanDevice;
+        public CANDevice DtcCurrentModule;
 
         //public ushort CanPcmAddr;
         //public byte CanPcmAddrByte1;
@@ -90,8 +91,9 @@ namespace UniversalPatcher
         public class QueuedCommand
         {
             public QueueCmd Cmd { get; set; }
-            public ushort module { get; set; }
-            public byte mode { get; set; }
+            public CANDevice module { get; set; }
+            public bool history { get; set; }
+            public int customMode { get; set; }
             public OBDMessage CustomMsg { get; set; }
             public string Description { get; set; }
             public LogParam.PidSettings PidSettings { get; set; }
@@ -118,7 +120,8 @@ namespace UniversalPatcher
         {
             Serial,
             FTDI,
-            TcpIP
+            TcpIP,
+            J2534
         }
         public enum PidMisMatch
         {
@@ -198,7 +201,7 @@ namespace UniversalPatcher
 
         }
 
-        public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, iPortType portType)
+        public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, iPortType portType, ref IPort port)
         {
             try
             {
@@ -252,18 +255,11 @@ namespace UniversalPatcher
             }
         }
 
-        public void SetProtocol(bool UseVPW)
+        public void SetProtocol()
         {
-            VPWProtocol = UseVPW;
             Receiver = new MessageReceiver();
-            VPWProtocol = UseVPW;
             RealTimeControls = LoadRealTimeControls();
-            slothandler = new SlotHandler(UseVPW);
-
-        }
-        public bool UseVPW()
-        {
-            return VPWProtocol;
+            slothandler = new SlotHandler();
         }
         public  bool CreateLog(string path)
         {
@@ -461,7 +457,7 @@ namespace UniversalPatcher
                     PidProfile.Add(pc);
                 }
 */
-                slothandler = new SlotHandler(true);
+                slothandler = new SlotHandler();
             }
             catch (Exception ex)
             {
@@ -617,7 +613,7 @@ namespace UniversalPatcher
                 Debug.WriteLine("Pid failed, error: " + rv.ErrorText + ", run second test with 2C");
                 List<LogParam.PidSettings> tmpdPids = new List<LogParam.PidSettings>();
                 tmpdPids.Add(pidSettings);
-                slothandler = new SlotHandler(VPWProtocol);
+                slothandler = new SlotHandler();
                 if (!slothandler.CreatePidSetupMessages(tmpdPids))
                 {
                     Debug.WriteLine("Incompatible pid: " + pidSettings.Parameter.Name);
@@ -693,7 +689,7 @@ namespace UniversalPatcher
                 ushort expectedSrc;
                 OBDMessage request = null;
                 int addr = parm.Address;
-                if (VPWProtocol)
+                if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
                     expectedSrc = (ushort)(DeviceId.Tool << 8 | DeviceId.Pcm);
                     if (parm.Address > ushort.MaxValue) //RAM
@@ -717,13 +713,13 @@ namespace UniversalPatcher
                         request = new OBDMessage(new byte[] { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x22, (byte)(addr >> 8), (byte)addr });
                     }
                 }
-                LogDevice.ReceiveBufferedMessages();
-                LogDevice.ClearMessageQueue();
-                //LogDevice.SetTimeout(TimeoutScenario.ReadProperty);
-                if (LogDevice.SendMessage(request,1))
+                MainConnection.ObdDevice.ReceiveBufferedMessages();
+                MainConnection.ObdDevice.ClearMessageQueue();
+                //MainConnection.ObdDevice.SetTimeout(TimeoutScenario.ReadProperty);
+                if (MainConnection.ObdDevice.SendMessage(request,1))
                 {
                     Application.DoEvents();
-                    OBDMessage resp = LogDevice.ReceiveMessage(true);
+                    OBDMessage resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     //if (resp.GetBytes()[3] == 0x7f)
                     DateTime startTime = DateTime.Now;
                     int retry = 0;
@@ -735,7 +731,7 @@ namespace UniversalPatcher
                             rv = ParseSinglePidMessage(resp, parm);
                             if (rv.FailureCode == 0x23)
                             {
-                                LogDevice.SendMessage(request, 1);
+                                MainConnection.ObdDevice.SendMessage(request, 1);
                             }
                             else if (rv.FailureCode == 0x31)
                             {
@@ -769,7 +765,7 @@ namespace UniversalPatcher
                             return rv;
                         }
                         retry++;
-                        resp = LogDevice.ReceiveMessage(true);
+                        resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     }
                 }
             }
@@ -795,7 +791,7 @@ namespace UniversalPatcher
             {
                 OBDMessage request = null;
                 ushort expectedSrc;
-                if (VPWProtocol)
+                if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
                     expectedSrc = (ushort)(DeviceId.Tool << 8 | module);
                     if (addr > ushort.MaxValue) //RAM
@@ -821,18 +817,20 @@ namespace UniversalPatcher
                         request = new OBDMessage(new byte[] { 0x00, 0x00, moduleByte1, moduleByte2, 0x22, (byte)(addr >> 8), (byte)addr });
                     }
                 }
-                LogDevice.ReceiveBufferedMessages();
-                LogDevice.ClearMessageQueue();
-                if (LogDevice.SendMessage(request, 1))
+                MainConnection.ObdDevice.ReceiveBufferedMessages();
+                MainConnection.ObdDevice.ClearMessageQueue();
+                if (MainConnection.ObdDevice.SendMessage(request, 1))
                 {
                     Application.DoEvents();
-                    OBDMessage resp = LogDevice.ReceiveMessage(true);
+                    OBDMessage resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     //if (resp.GetBytes()[3] == 0x7f)
                     DateTime startTime = DateTime.Now;
                     int retry = 0;
                     int offset=0;
-                    if (!VPWProtocol)
+                    if (MainConnection.LoggingProto != LoggingProtocol.VPW)
+                    {
                         offset = 1;
+                    }
                     while (true)
                     {
                         //if (resp != null && resp.Length > offset + 3)
@@ -849,7 +847,7 @@ namespace UniversalPatcher
                                 else if (rv.FailureCode == 0x23)
                                 {
                                     Debug.WriteLine("Routine not ready, retry");
-                                    LogDevice.SendMessage(request, 1);
+                                    MainConnection.ObdDevice.SendMessage(request, 1);
                                 }
                                 else
                                 {
@@ -891,7 +889,7 @@ namespace UniversalPatcher
                             LoggerBold("Timeout requesting pid: " + addr.ToString("X4"));
                             return rv;
                         }
-                        resp = LogDevice.ReceiveMessage(true);
+                        resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     }
                 }
             }
@@ -912,14 +910,14 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!VPWProtocol)
+                if (MainConnection.LoggingProto != LoggingProtocol.VPW)
                 {
                     Debug.WriteLine("No bus quiet for CAN");
                     return true;
                 }
                 Debug.WriteLine("Set bus quiet");
                 byte[] quietMsg = { priority, DeviceId.Broadcast, DeviceId.Tool, Mode.ExitKernel };
-                bool m = LogDevice.SendMessage(new OBDMessage(quietMsg), 10);
+                bool m = MainConnection.ObdDevice.SendMessage(new OBDMessage(quietMsg), 10);
                 if (m)
                 {
                     //Debug.WriteLine("OK");
@@ -953,15 +951,15 @@ namespace UniversalPatcher
                     Logger("Waiting for devices", false);
                 }
                 Debug.WriteLine("Devices on bus?");
-                //LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
-                //LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                //MainConnection.ObdDevice.ClearMessageBuffer();
+                MainConnection.ObdDevice.ClearMessageQueue();
+                //MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging3);
                 OBDMessage queryMsg1 = new OBDMessage(new  byte[]{ Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x20 });
                 OBDMessage queryMsg2 = new OBDMessage(new byte[] { Priority.Physical0, DeviceId.Broadcast, DeviceId.Tool, 0x28, 0x00 });
                 OBDMessage[] querys = { queryMsg1, queryMsg2 };
                 foreach (OBDMessage queryMsg in querys)
                 {
-                    bool m = LogDevice.SendMessage(queryMsg, 100);
+                    bool m = MainConnection.ObdDevice.SendMessage(queryMsg, 100);
                     if (m)
                     {
                         //Debug.WriteLine("OK" );
@@ -982,7 +980,7 @@ namespace UniversalPatcher
                             OBDMessage resp;
                             do
                             {
-                                resp = LogDevice.ReceiveMessage(true);
+                                resp = MainConnection.ObdDevice.ReceiveMessage(true);
                                 if (resp != null && resp.Length > 3 && resp[1] == DeviceId.Tool && resp[3] == 0x60)
                                 {
                                     byte module = resp[2];
@@ -1024,7 +1022,7 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Modules?");
-                LogDevice.ClearMessageQueue();
+                MainConnection.ObdDevice.ClearMessageQueue();
                 //Receiver.SetReceiverPaused(true);
                 Logger("Querying modules", false);
                 Application.DoEvents();
@@ -1036,9 +1034,9 @@ namespace UniversalPatcher
                         return new Response<List<OBDMessage>>(ResponseStatus.Error, retVal);
                     }
                     byte[] queryMsg = { Priority.Physical0High, DeviceId.Broadcast, DeviceId.Tool, 0x3c, modId };
-                    //LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
-                    LogDevice.ReceiveBufferedMessages();
-                    LogDevice.SendMessage(new OBDMessage(queryMsg), DevCount + 5);
+                    //MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging1);
+                    MainConnection.ObdDevice.ReceiveBufferedMessages();
+                    MainConnection.ObdDevice.SendMessage(new OBDMessage(queryMsg), DevCount + 5);
                     if (modId % 10 == 0)
                     {
                         Logger(".", false);
@@ -1048,7 +1046,7 @@ namespace UniversalPatcher
                     DateTime startTime1 = DateTime.Now;
                     do
                     {
-                        resp = LogDevice.ReceiveMessage(false);
+                        resp = MainConnection.ObdDevice.ReceiveMessage(false);
                         if (resp != null && resp.Length > 5 && resp[1] == DeviceId.Tool && resp[3] == 0x7c)
                         {
                             retVal.Add(resp);
@@ -1066,7 +1064,7 @@ namespace UniversalPatcher
                 DateTime startTime2 = DateTime.Now;
                 do
                 {
-                    resp = LogDevice.ReceiveMessage(true);
+                    resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     if (resp != null && resp.Length > 5 && resp[1] == DeviceId.Tool && resp[3] == 0x7c)
                     {
                         retVal.Add(resp);
@@ -1113,7 +1111,7 @@ namespace UniversalPatcher
                 filterTxt += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                 filterTxt += "Pattern: " + cd.DiagID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                 Application.DoEvents();
-                return LogDevice.SetupFilters(filterTxt, false, false);
+                return MainConnection.ObdDevice.SetupFilters(filterTxt, false, false);
 
             }
             catch (Exception ex)
@@ -1137,8 +1135,8 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Modules?");
-                //LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
+                //MainConnection.ObdDevice.ClearMessageBuffer();
+                MainConnection.ObdDevice.ClearMessageQueue();
                 Receiver.SetReceiverPaused(true);
                 Logger("Querying modules", false);
                 Application.DoEvents();
@@ -1146,8 +1144,8 @@ namespace UniversalPatcher
                 for (byte modId = 0; modId < 0xFF; modId++)
                 {
                     byte[] queryMsg = { 0x00, 0x00, (byte)(module >> 8), (byte)module, 0x1a, modId };
-                    //LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
-                    LogDevice.SendMessage(new OBDMessage(queryMsg), 5);
+                    //MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging1);
+                    MainConnection.ObdDevice.SendMessage(new OBDMessage(queryMsg), 5);
                     if (modId % 10 == 0)
                     {
                         Logger(".", false);
@@ -1157,7 +1155,7 @@ namespace UniversalPatcher
                     DateTime startTime = DateTime.Now;
                     do
                     {
-                        resp = LogDevice.ReceiveMessage(false);
+                        resp = MainConnection.ObdDevice.ReceiveMessage(false);
                         if (resp != null && resp.Length > 5 && resp[4] == 0x5A)
                         {
                             retVal.Add(resp);
@@ -1175,7 +1173,7 @@ namespace UniversalPatcher
                 DateTime startTime2 = DateTime.Now;
                 do
                 {
-                    resp = LogDevice.ReceiveMessage(true);
+                    resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     if (resp != null && resp.Length > 5 && resp[4] == 0x5A)
                     {
                         retVal.Add(resp);
@@ -1203,64 +1201,65 @@ namespace UniversalPatcher
             {
                 if (filterIds != null)
                 {
-                    LogDevice.RemoveFilters(filterIds);
+                    MainConnection.ObdDevice.RemoveFilters(filterIds);
                 }
                 Receiver.SetReceiverPaused(false);
             }
             return new Response<List<OBDMessage>>(responseStatus, retVal);
         }
 
-        public Response<List<OBDMessage>> QueryFreezeFrames(ushort module)
+        public Response<List<OBDMessage>> QueryFreezeFrames(CANDevice module)
         {
             List<OBDMessage> retVal = new List<OBDMessage>();
             try
             {
                 Debug.WriteLine("Freeze frames?");
-                //LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
+                //MainConnection.ObdDevice.ClearMessageBuffer();
+                MainConnection.ObdDevice.ClearMessageQueue();
                 Receiver.SetReceiverPaused(true);
                 Logger("Querying freeze frames", false);
-                //LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
-                //LogDevice.SetReadTimeout(500);
+                //MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging1);
+                //MainConnection.ObdDevice.SetReadTimeout(500);
                 Application.DoEvents();
                 OBDMessage resp = null;
                 byte[] queryMsg;
                 ushort expectedSrc;
                 int offset;
-                if (VPWProtocol)
+                if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
-                    expectedSrc = (ushort)(DeviceId.Tool<<8 | (byte)module);
+                    expectedSrc = (ushort)(DeviceId.Tool<<8 | (byte)module.ModuleID);
                     offset = 0;
                 }
                 else
                 {
-                    expectedSrc = module;
+                    expectedSrc = (ushort)module.RequestID;
                     offset = 1;
                 }
                 for (byte x = 0; x < 6; x++)
                 {
 
-                    if (VPWProtocol)
+                    if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                     {
-                        queryMsg = new byte[] { Priority.Physical0High, (byte)module, DeviceId.Tool, 0x12, x, 0xFF, 0xFF };
+                        queryMsg = new byte[] { Priority.Physical0High, (byte)module.ModuleID, DeviceId.Tool, 0x12, x, 0xFF, 0xFF };
                         offset = 0;
                     }
                     else
                     {
-                        queryMsg = new byte[] { 0x00,0x00,(byte)(module >>8),(byte)module, 0x12, x, 0xFF, 0xFF };
+                        //queryMsg = new byte[] { 0x00,0x00,(byte)(module >>8),(byte)module, 0x12, x, 0xFF, 0xFF };
+                        queryMsg = new byte[] { 0x00, 0x00, (byte)(module.DiagID >> 8), (byte)module.DiagID, 0x12, x };
                         offset = 1;
                     }
-                    LogDevice.SendMessage(new OBDMessage(queryMsg), 500);
+                    MainConnection.ObdDevice.SendMessage(new OBDMessage(queryMsg), 500);
                     Logger(".", false);
                     Application.DoEvents();
                     Thread.Sleep(1000);
-                    //if (LogDevice.LogDeviceType == LoggingDevType.J2534)
+                    //if (MainConnection.ObdDevice.LogDeviceType == LoggingDevType.J2534)
                     {
-                        //LogDevice.SetReadTimeout(1000);
+                        //MainConnection.ObdDevice.SetReadTimeout(1000);
                         DateTime startTime1 = DateTime.Now;
                         do
                         {
-                            resp = LogDevice.ReceiveMessage(false);
+                            resp = MainConnection.ObdDevice.ReceiveMessage(false);
                             //if (resp != null && resp.Length > 6 && resp[2] == DeviceId.Pcm && resp[3] == 0x52)
                             if (ValidateQueryResponse(resp, expectedSrc) && resp[offset + 3] == 0x52)
                             {
@@ -1274,7 +1273,7 @@ namespace UniversalPatcher
                                 break;
                             }
                         } while (resp != null);
-                        //LogDevice.SetReadTimeout(AppSettings.TimeoutJConsoleReceive);
+                        //MainConnection.ObdDevice.SetReadTimeout(AppSettings.TimeoutJConsoleReceive);
                     }
                 }
                 Logger(" [Done]");
@@ -1283,7 +1282,7 @@ namespace UniversalPatcher
                 DateTime startTime2 = DateTime.Now;
                 do
                 {
-                    resp = LogDevice.ReceiveMessage(true);
+                    resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     //if (resp != null && resp.Length > 6 && resp[2] == DeviceId.Pcm && resp[3] == 0x52)
                     if (ValidateQueryResponse(resp, expectedSrc) && resp[offset + 3] == 0x52)
                     {
@@ -1314,23 +1313,21 @@ namespace UniversalPatcher
             return new Response<List<OBDMessage>>(ResponseStatus.Success, retVal);
         }
 
-        public void ClearTroubleCodes(ushort module)
+        public void ClearTroubleCodes(CANDevice canDev)
         {
             try
             {
                 Receiver.SetReceiverPaused(true);
-                string moduleStr = module.ToString("X2");
-                if (analyzer.PhysAddresses.ContainsKey((byte)module))
-                    moduleStr = analyzer.PhysAddresses[(byte)module];
+                string moduleStr = canDev.ModuleName;
                 Logger("Clearing codes of: " + moduleStr);
                 //OBDMessage msg = new OBDMessage(new byte[] { Priority.Functional0, 0x6A, DeviceId.Tool, Mode.ClearDiagnosticTroubleCodes });
                 OBDMessage msg;
-                if (VPWProtocol)
-                    msg = new OBDMessage(new byte[] { Priority.Physical0, (byte)module, DeviceId.Tool, 0x14 });
+                if (MainConnection.LoggingProto == LoggingProtocol.VPW)
+                    msg = new OBDMessage(new byte[] { Priority.Physical0, canDev.ModuleID, DeviceId.Tool, 0x14 });
                 else
-                    msg = new OBDMessage(new byte[] { 0x00, 0x00, (byte)(module >> 8), (byte)module, 0x04 });
-                LogDevice.SendMessage(msg, 1);
-                OBDMessage resp = LogDevice.ReceiveMessage(true);
+                    msg = new OBDMessage(new byte[] { 0x00, 0x00, (byte)(canDev.DiagID >> 8), (byte)canDev.DiagID, 0x04 });
+                MainConnection.ObdDevice.SendMessage(msg, 1);
+                OBDMessage resp = MainConnection.ObdDevice.ReceiveMessage(true);
                 if (resp != null)
                     Debug.WriteLine("Clear DTC response: " + resp.ToString());
                 Logger("Done");
@@ -1349,16 +1346,16 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("Set mode to 1");
                 byte[] Msg = { priority, DeviceId.Pcm, DeviceId.Tool, 0x01, 0x01 };
-                bool m = LogDevice.SendMessage(new OBDMessage(Msg),1);
+                bool m = MainConnection.ObdDevice.SendMessage(new OBDMessage(Msg),1);
                 if (!m)
                 {
                     Logger("Unable to set mode 1");
                     Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(Msg, b => b.ToString("X2"))));
                     return false;
                 }
-                while (LogDevice.ReceivedMessageCount > 0)
+                while (MainConnection.ObdDevice.ReceivedMessageCount > 0)
                 {
-                    OBDMessage resp = LogDevice.ReceiveMessage(true);
+                    OBDMessage resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     Debug.WriteLine("Response: " + resp.ToString());
                 }
                 Thread.Sleep(50);
@@ -1419,7 +1416,7 @@ namespace UniversalPatcher
             Application.DoEvents();
             if (passive)
             {
-                if (LogDevice.LogDeviceType != LoggingDevType.J2534 )
+                if (MainConnection.ObdDevice.LogDeviceType != LoggingDevType.J2534 )
                 {
                     //DateTime startWait = DateTime.Now;
                     //while (DateTime.Now.Subtract(lastPresent).TotalMilliseconds< 5000)
@@ -1432,33 +1429,32 @@ namespace UniversalPatcher
                     Debug.WriteLine("Logging loop finished");
                 }
             }
-            if (!VPWProtocol)
+            if (MainConnection.LoggingProto != LoggingProtocol.VPW)
             {
                 slothandler.ResetFilters();
             }
         }
 
-        public bool StartLogging(bool UseVPW)
+        public bool StartLogging()
         {
             try
             {
-                VPWProtocol = UseVPW;
                 ReceivedBytes = 0;
-                if (LogDevice == null)
+                if (MainConnection.ObdDevice == null)
                 {
                     LoggerBold("Connection failed");
                     return false;
                 }
-                if (Receiver.ReceiveLoopRunning) // && LogDevice.LogDeviceType != LoggingDevType.J2534)
+                if (Receiver.ReceiveLoopRunning) // && MainConnection.ObdDevice.LogDeviceType != LoggingDevType.J2534)
                 {
                     Receiver.StopReceiveLoop();
                 }
 
-                LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
+                MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging1);
 
-                if (AnalyzerRunning == false && UseVPW == true)
+                if (AnalyzerRunning == false && MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
-                    if (!LogDevice.SetLoggingFilter())
+                    if (!MainConnection.ObdDevice.SetLoggingFilter())
                         return false;
                 }
 /*                if (!UseVPW)
@@ -1477,7 +1473,7 @@ namespace UniversalPatcher
                 {
                     return false;
                 }
-                if (!UseVPW)
+                if (MainConnection.LoggingProto != LoggingProtocol.VPW)
                 {
                     slothandler.SetupPassivePidFilters();
                 }
@@ -1498,8 +1494,8 @@ namespace UniversalPatcher
             catch (Exception ex)
             {
                 logwriter = null;
-                LogDevice.Dispose();
-                LogDevice = null;
+                MainConnection.ObdDevice.Dispose();
+                MainConnection.ObdDevice = null;
                 var st = new StackTrace(ex, true);
                 // Get the top stack frame
                 var frame = st.GetFrame(st.FrameCount - 1);
@@ -1513,7 +1509,7 @@ namespace UniversalPatcher
         private bool RequestFirstSlots()
         {
             AllSlotsRequested = false;
-            if (VPWProtocol)
+            if (MainConnection.LoggingProto == LoggingProtocol.VPW)
             {
                 if (Responsetype == ResponseType.SendOnce)
                 {
@@ -1560,8 +1556,8 @@ namespace UniversalPatcher
             {
                 lastPresent = DateTime.Now;
                 //elmStopTreshold = 1000;
-                LogDevice.SetTimeout(AppSettings.TimeoutLoggingPassive);
-                LogDevice.ClearLogQueue();
+                MainConnection.ObdDevice.SetTimeout(AppSettings.TimeoutLoggingPassive);
+                MainConnection.ObdDevice.ClearLogQueue();
                 if (!RequestPassiveModeSlots(true))
                 {
                     LoggerBold("Error requesting Slots");
@@ -1571,15 +1567,15 @@ namespace UniversalPatcher
             else
             {
                 //elmStopTreshold = 50;
-                if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
+                if (MainConnection.ObdDevice.LogDeviceType == LoggingDevType.Obdlink)
                 {
-                    LogDevice.SetTimeout(AppSettings.TimeoutLoggingActiveObdlink);
+                    MainConnection.ObdDevice.SetTimeout(AppSettings.TimeoutLoggingActiveObdlink);
                 }
                 else
                 {
-                    LogDevice.SetTimeout(AppSettings.TimeoutLoggingActive);
+                    MainConnection.ObdDevice.SetTimeout(AppSettings.TimeoutLoggingActive);
                 }
-                LogDevice.ClearLogQueue();
+                MainConnection.ObdDevice.ClearLogQueue();
                 RequestNextSlots(true);
             }
             return true;
@@ -1593,7 +1589,7 @@ namespace UniversalPatcher
                 byte[] rq = slothandler.CreateNextSlotRequestMessage(FirstRequest);
                 msg = new OBDMessage(rq);
                 Debug.WriteLine("Requesting Slots: " + msg.ToString());
-                bool resp = LogDevice.SendMessage(msg, -maxSlotsPerRequest);
+                bool resp = MainConnection.ObdDevice.SendMessage(msg, -maxSlotsPerRequest);
                 Thread.Sleep(100);
                 Application.DoEvents();
                 return resp;
@@ -1611,11 +1607,11 @@ namespace UniversalPatcher
             {
                 Receiver.SetReceiverPaused(true);
                 Debug.WriteLine("OS?");
-                //LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
+                //MainConnection.ObdDevice.ClearMessageBuffer();
+                MainConnection.ObdDevice.ClearMessageQueue();
                 byte[] queryMsg;
                 uint pos;
-                if (VPWProtocol)
+                if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
                     queryMsg = new byte[] { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, Mode.ReadBlock, 0x0A }; //6C 10 F0 3C 0A
                     pos = 5;
@@ -1625,7 +1621,7 @@ namespace UniversalPatcher
                     queryMsg = new byte[] { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x1A, 0xC1 };
                     pos = 6;
                 }
-                bool m = LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
+                bool m = MainConnection.ObdDevice.SendMessage(new OBDMessage(queryMsg), 1);
                 if (!m)
                 {
                     //Logger("No respond to OS Query message");
@@ -1633,13 +1629,13 @@ namespace UniversalPatcher
                     return null;
                 }
                 Thread.Sleep(30);
-                OBDMessage resp = LogDevice.ReceiveMessage(true);
+                OBDMessage resp = MainConnection.ObdDevice.ReceiveMessage(true);
                 DateTime startTime = DateTime.Now;
                 while (true)
                 {
                     if (resp != null && resp.Length > 5)
                     {
-                        if (VPWProtocol)
+                        if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                         {
                             if (resp[1] == DeviceId.Tool && resp[2] == DeviceId.Pcm)
                             {
@@ -1648,11 +1644,11 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            if (resp[2] == datalogger.CanDevice.RequestByte1 && resp[3] == datalogger.CanDevice.RequestByte2 && resp[4] == 0x5A)
+                            if (resp[2] == CanDevice.RequestByte1 && resp[3] == CanDevice.RequestByte2 && resp[4] == 0x5A)
                             {
                                 break;
                             }
-                            if (resp[2] == datalogger.CanDevice.ResByte1 && resp[3] == datalogger.CanDevice.ResByte2 && resp[4] == 0x5A)
+                            if (resp[2] == CanDevice.ResByte1 && resp[3] == CanDevice.ResByte2 && resp[4] == 0x5A)
                             {
                                 break;
                             }
@@ -1663,7 +1659,7 @@ namespace UniversalPatcher
                         LoggerBold("Timeout requesting OS");
                         return null;
                     }
-                    resp = LogDevice.ReceiveMessage(true);
+                    resp = MainConnection.ObdDevice.ReceiveMessage(true);
                 }
                 uint os = ReadUint32(resp.GetBytes(), pos, true);
                 Debug.WriteLine("Response: " + resp.ToString());
@@ -1679,29 +1675,29 @@ namespace UniversalPatcher
             }
         }
 
-        public void QueryVIN()
+        public string QueryVIN(CANDevice canDev)
         {
             string vin = "";
             try
             {
                 Debug.WriteLine("VIN?");
                 Receiver.SetReceiverPaused(true);
-                LogDevice.ClearMessageQueue();
-                //LogDevice.ClearMessageBuffer();
+                MainConnection.ObdDevice.ClearMessageQueue();
+                //MainConnection.ObdDevice.ClearMessageBuffer();
                 byte[] vinbytes = new byte[3*6];
-                if (VPWProtocol)
+                if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
                     for (byte v = 0; v < 3; v++)
                     {
-                        LogDevice.ReceiveBufferedMessages();
-                        byte[] queryMsg = { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, Mode.ReadBlock, (byte)(v + 1) };
-                        bool m = LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
+                        MainConnection.ObdDevice.ReceiveBufferedMessages();
+                        byte[] queryMsg = { Priority.Physical0, canDev.ModuleID, DeviceId.Tool, Mode.ReadBlock, (byte)(v + 1) };
+                        bool m = MainConnection.ObdDevice.SendMessage(new OBDMessage(queryMsg), 1);
                         if (!m)
                         {
                             Logger("No response to VIN Query message");
                             Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
                             Receiver.SetReceiverPaused(false);
-                            return;
+                            return "";
                         }
                         //Thread.Sleep(100);
                         Application.DoEvents();
@@ -1709,12 +1705,12 @@ namespace UniversalPatcher
                         DateTime startTime = DateTime.Now;
                         while (true)
                         {
-                            resp = LogDevice.ReceiveMessage(true);
+                            resp = MainConnection.ObdDevice.ReceiveMessage(true);
                             if (resp == null)
                                 Debug.WriteLine("Null msg");
                             else
                                 Debug.WriteLine("Msg: " + resp.ToString());
-                            if (resp != null && resp.Length > 10 && resp[1] == DeviceId.Tool && resp[2] == DeviceId.Pcm && resp[3] == 0x7C && resp[4] == v + 1)
+                            if (resp != null && resp.Length > 10 && resp[1] == DeviceId.Tool && resp[2] == canDev.ModuleID && resp[3] == 0x7C && resp[4] == v + 1)
                             {
                                 Array.Copy(resp.GetBytes(), 5, vinbytes, v * 6, 6);
                                 Debug.WriteLine("Response: " + resp.ToString());
@@ -1724,28 +1720,28 @@ namespace UniversalPatcher
                             {
                                 LoggerBold("Timeout receiving VIN code");
                                 Receiver.SetReceiverPaused(false);
-                                return;
+                                return "";
                             }
                         } 
                     }
                 }
                 else //CAN
                 {
-                    byte[] queryMsg = { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x1A, 0x90 };
-                    bool m = LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
+                    byte[] queryMsg = { 0x00, 0x00, canDev.RequestByte1, canDev.RequestByte2, 0x1A, 0x90 };
+                    bool m = MainConnection.ObdDevice.SendMessage(new OBDMessage(queryMsg), 1);
                     if (!m)
                     {
                         Logger("No response to VIN Query message");
                         Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
                         Receiver.SetReceiverPaused(false);
-                        return;
+                        return "";
                     }
                     Thread.Sleep(100);
-                    OBDMessage resp = LogDevice.ReceiveMessage(true);
+                    OBDMessage resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     DateTime startTime = DateTime.Now;
                     while (true)
                     {
-                        if (resp != null && resp.Length >= 23 && ValidateQueryResponse(resp, (ushort)CanDevice.ResID)) // resp[2] == CanPcmAddrByte1 && resp[3] == 0xE8)
+                        if (resp != null && resp.Length >= 23 && ValidateQueryResponse(resp, (ushort)canDev.ResID)) // resp[2] == CanPcmAddrByte1 && resp[3] == 0xE8)
                         {                            
                             Array.Copy(resp.GetBytes(), 6, vinbytes, 1, 17);
                             break;
@@ -1753,9 +1749,9 @@ namespace UniversalPatcher
                         if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(1000))
                         {
                             LoggerBold("Timeout requesting VIN");
-                            return;
+                            return "";
                         }
-                        resp = LogDevice.ReceiveMessage(true);
+                        resp = MainConnection.ObdDevice.ReceiveMessage(true);
                     }
                 }
                 Receiver.SetReceiverPaused(false);
@@ -1769,16 +1765,17 @@ namespace UniversalPatcher
                 Debug.WriteLine("QueryVIN: " + ex.Message);
             }
             Receiver.SetReceiverPaused(false);
+            return vin;
         }
 
-        public DTCCodeStatus DecodeDTCstatus(byte[] msg, ushort module)
+        public DTCCodeStatus DecodeDTCstatus(byte[] msg, CANDevice module)
         {
             DTCCodeStatus dcs = new DTCCodeStatus();
             try
             {
                 ushort dtc;
                 ushort stat;
-                if (VPWProtocol)
+                if (module.Subnet == LoggingProtocol.VPW)
                 {
                     dtc = ReadUint16(msg, 4, true);
                     stat = msg[6];
@@ -1792,24 +1789,7 @@ namespace UniversalPatcher
                 {
                     string code = DtcSearch.DecodeDTC(dtc.ToString("X4"));
                     dcs.Code = code;
-                    if (VPWProtocol)
-                    {
-                        module = msg[2];
-                        dcs.Module = module.ToString("X2");
-                        if (analyzer.PhysAddresses.ContainsKey((byte)module))
-                            dcs.Module = analyzer.PhysAddresses[(byte)module];
-                    }
-                    else
-                    {
-                        for(int m=0;m< CanModules.Count; m++)
-                        {
-                            if (CanModules[m].RequestID == module || CanModules[m].DiagID == module || CanModules[m].ResID == module)
-                            {
-                                dcs.Module = CanModules[m].ModuleName;
-                                break;
-                            }
-                        }
-                    }
+                    dcs.Module = module.ModuleName;
                     OBD2Code descr = OBD2Codes.Where(x => x.Code == code).FirstOrDefault();
                     if (descr != null)
                         dcs.Description = descr.Description;
@@ -1878,22 +1858,24 @@ namespace UniversalPatcher
             }
         }
 
-        public void QueueDtcRequest(ushort module, byte mode)
+        public void QueueDtcRequest(CANDevice module, bool history, int custom = -1)
         {
             Logger("Adding DTC request to queue");
             QueuedCommand command = new QueuedCommand();
             command.Cmd = QueueCmd.Getdtc;
             command.module = module;
-            command.mode = mode;
+            command.customMode = custom;
+            command.history = history;
             lock(queuedCommands)
             {
                 queuedCommands.Enqueue(command);
             }
         }
-        public void QueueVINRequest()
+        public void QueueVINRequest(CANDevice module)
         {
             Logger("Adding VIN request to queue");
             QueuedCommand command = new QueuedCommand();
+            command.module = module;
             command.Cmd = QueueCmd.GetVin;
             lock (queuedCommands)
             {
@@ -1911,29 +1893,42 @@ namespace UniversalPatcher
             }
         }
 
-        public bool RequestDTCCodes(ushort module, byte mode, bool WaitAnswer)
+        public bool RequestDTCCodes(CANDevice module, bool history, bool WaitAnswer, int custom = -1)
         {
+            bool retVal = true;
             try
             {
-                string moduleStr = module.ToString("X2");
                 OBDMessage msg;
-                if (module == DeviceId.Broadcast)
+                module.DTCCodes.Clear();
+                int[] filterids1 = new int[0];
+                int[] filterids2 = new int[0];
+                if (module.Subnet == LoggingProtocol.VPW)
                 {
-                    moduleStr = "Broadcast";
-                }
-                if (VPWProtocol)
-                {
-                    msg = new OBDMessage(new byte[] { Priority.Physical0, (byte)module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
-                    if (analyzer.PhysAddresses.ContainsKey((byte)module))
-                        moduleStr = analyzer.PhysAddresses[(byte)module];
+                    byte mode = 2;
+                    if (history)
+                        mode = 0x10;
+                    if (custom > -1)
+                        mode = (byte)custom;
+                    msg = new OBDMessage(new byte[] { Priority.Physical0, (byte)module.RequestID, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
                 }
                 else
                 {
-                    msg = new OBDMessage(new byte[] { 0x00,0x00,(byte)(module >>8), (byte)(module), 0xA9, 0x81, mode });
+                    /*
+                    if (module.RequestID != CanDevice.RequestID)
+                    {
+                        AddFilterForDevice(MainConnection.ObdDevice, module, ref filterids1, ref filterids2);
+                    }
+                    */
+                    byte mode = 0x1A;
+                    if (history)
+                        mode = 0x11;
+                    if (custom > -1)
+                        mode = (byte)custom;
+                    msg = new OBDMessage(new byte[] { 0x00,0x00,module.RequestByte1, module.RequestByte2, 0xA9, 0x81, mode });
                 }
-                Logger("Requesting DTC codes for " + moduleStr);
+                Logger("Requesting DTC codes for " + module.ModuleName);
                 Receiver.SetReceiverPaused(true);
-                bool m = LogDevice.SendMessage(msg, -500);
+                bool m = MainConnection.ObdDevice.SendMessage(msg, -500);
                 if (!m)
                 {
                     Debug.WriteLine("Error sending request, continue anyway");
@@ -1948,11 +1943,27 @@ namespace UniversalPatcher
                     OBDMessage resp;
                     do
                     {
-
-                        resp = LogDevice.ReceiveMessage(true);
+                        resp = MainConnection.ObdDevice.ReceiveMessage(true);
                         if (resp != null)
                         {
                             Debug.WriteLine("DTC received message: " + resp.ToString());
+                            if (module.Subnet == LoggingProtocol.VPW)
+                            {
+                                if (resp.Length > 6 && resp[1] == DeviceId.Tool && resp[3] == 0x59)
+                                {
+                                    DTCCodeStatus dcs = datalogger.DecodeDTCstatus(resp.GetBytes(), module);
+                                    module.DTCCodes.Add(dcs);
+                                }
+                            }
+                            else //CAN
+                            {
+                                //ushort module = Convert.ToUInt16(comboModule.SelectedValue);
+                                if (datalogger.ValidateQueryResponse(resp, (ushort)module.RequestID) && resp[4] == 0x81)
+                                {
+                                    DTCCodeStatus dcs = datalogger.DecodeDTCstatus(resp.GetBytes(), module);
+                                    module.DTCCodes.Add(dcs);
+                                }
+                            }
                         }
                         if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(1000))
                         {
@@ -1961,6 +1972,8 @@ namespace UniversalPatcher
                         }
                     } while (resp != null);
                 }
+                MainConnection.ObdDevice.RemoveFilters(filterids1);
+                MainConnection.ObdDevice.RemoveFilters2(filterids2);
                 Logger("Done");
             }
             catch (Exception ex)
@@ -1971,10 +1984,11 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, RequestDTCCodes line " + line + ": " + ex.Message);
-                return false;
+                retVal = false;
+                
             }
             Receiver.SetReceiverPaused(false);
-            return true;
+            return retVal;
         }
 
 
@@ -1987,11 +2001,11 @@ namespace UniversalPatcher
                     Debug.WriteLine("Seconds since last testerpresent: " + DateTime.Now.Subtract(lastPresent));
                     {
                         byte[] presentMsg;
-                        if (VPWProtocol)
+                        if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                             presentMsg = new byte[]{ priority, DeviceId.Broadcast, DeviceId.Tool, 0x3F };
                         else
                             presentMsg = new byte[] { 0x00, 0x00, CanDevice.RequestByte1, CanDevice.RequestByte2, 0x3e };
-                        LogDevice.SendMessage(new OBDMessage(presentMsg), -maxSlotsPerRequest);
+                        MainConnection.ObdDevice.SendMessage(new OBDMessage(presentMsg), -maxSlotsPerRequest);
                         lastPresent = DateTime.Now;
                         Debug.WriteLine("Sent Tester present, force: " + force);
                     }
@@ -2011,7 +2025,7 @@ namespace UniversalPatcher
             try
             {
                 int offset = 0;
-                if (!VPWProtocol)
+                if (MainConnection.LoggingProto != LoggingProtocol.VPW)
                 {
                     offset = 1; //CAN protocol have 1 more header byte
                 }
@@ -2182,7 +2196,7 @@ namespace UniversalPatcher
             lastPresent = DateTime.Now;
             if (!RequestNextSlots(FirstRequest))
                 return false;
-            if (VPWProtocol)
+            if (MainConnection.LoggingProto == LoggingProtocol.VPW)
             {
                 if (Responsetype == ResponseType.SendFast)
                 {
@@ -2192,7 +2206,7 @@ namespace UniversalPatcher
                 {
                     Responsetype = ResponseType.SendFast;
                 }
-                if (LogDevice.LogDeviceType != LoggingDevType.Elm && LogDevice.LogDeviceType != LoggingDevType.Obdlink) //If Elm device, need to wait for prompt
+                if (MainConnection.ObdDevice.LogDeviceType != LoggingDevType.Elm && MainConnection.ObdDevice.LogDeviceType != LoggingDevType.Obdlink) //If Elm device, need to wait for prompt
                 {
                     Thread.Sleep(100);
                     if (!RequestNextSlots(FirstRequest))
@@ -2221,7 +2235,7 @@ namespace UniversalPatcher
 
                 if (!AllSlotsRequested)
                 {
-                    //LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
+                    //MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging4);
                     if (!RequestPassiveModeSlots(false))
                     {
                         LoggerBold("Error requesting Slots");
@@ -2246,27 +2260,27 @@ namespace UniversalPatcher
         {
             try
             {
-                if (LogDevice.LogDeviceType == LoggingDevType.Elm || LogDevice.LogDeviceType != LoggingDevType.Obdlink)
+                if (MainConnection.ObdDevice.LogDeviceType == LoggingDevType.Elm || MainConnection.ObdDevice.LogDeviceType != LoggingDevType.Obdlink)
                 {
                     Debug.WriteLine("Time (ms) since last elmStop: " + DateTime.Now.Subtract(lastElmStop).TotalMilliseconds);
                     //if (force || DateTime.Now.Subtract(lastPresent) >= TimeSpan.FromMilliseconds(4500) || DateTime.Now.Subtract(lastElmStop) >= TimeSpan.FromMilliseconds(elmStopTreshold))
                     {
                         //Stop current receive
                         Debug.WriteLine("Stop elm receive");
-                        port.Send(Encoding.ASCII.GetBytes("X \r"));
-/*                        if (LogDevice.LogDeviceType == LoggingDevType.Elm)
+                        MainConnection.port.Send(Encoding.ASCII.GetBytes("X \r"));
+/*                        if (MainConnection.ObdDevice.LogDeviceType == LoggingDevType.Elm)
                         {
                             Thread.Sleep(50);
                             byte[] queryMsg = { Priority.Physical0, 0x3, DeviceId.Tool, 0x3f };
-                            LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
+                            MainConnection.ObdDevice.SendMessage(new OBDMessage(queryMsg), 1);
                         }
                         Thread.Sleep(200);
 */                        //Thread.Sleep(50);
-                        OBDMessage msg = LogDevice.ReceiveMessage(true);
+                        OBDMessage msg = MainConnection.ObdDevice.ReceiveMessage(true);
                         while (msg != null && !msg.ElmPrompt)
                         {
                             Debug.WriteLine("Elm stop received msg: " + msg.ToString() + ", ElmPrompt: " + msg.ElmPrompt);
-                            msg = LogDevice.ReceiveMessage(true);
+                            msg = MainConnection.ObdDevice.ReceiveMessage(true);
                         }
                         lastElmStop = DateTime.Now;
                     }
@@ -2288,7 +2302,7 @@ namespace UniversalPatcher
                     lastSlot = slothandler.Slots.Last().Id;
                 }
                 int bytePos;
-                if (VPWProtocol)
+                if (MainConnection.LoggingProto == LoggingProtocol.VPW)
                 {
                     if (!Utility.CompareArraysPart(oMsg.GetBytes(), new byte[] { priority, DeviceId.Tool, DeviceId.Pcm }))
                     {
@@ -2358,7 +2372,7 @@ namespace UniversalPatcher
                 return false;
             }
             //Debug.WriteLine("Validating message: " + oMsg.ToString());
-            if (VPWProtocol)
+            if (MainConnection.LoggingProto == LoggingProtocol.VPW)
             {
                 if (oMsg.Length < 3)
                 {
@@ -2541,35 +2555,48 @@ namespace UniversalPatcher
                 }
 
                 Application.DoEvents();
-                datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging3);
                 switch (command.Cmd)
                 {
                     case QueueCmd.Getdtc:
-                        RequestDTCCodes(command.module, command.mode, true);
+                        int[] fltrs1 = new int[0];
+                        int[] fltrs2 = new int[0];
+
+                        if (command.module.Subnet != LoggingProtocol.VPW)
+                        {
+                            AddFilterForDevice(MainConnection.ObdDevice, command.module, ref fltrs1, ref fltrs2);
+                        }
+                        RequestDTCCodes(command.module, command.history, true, command.customMode);
+                        if (command.module.Subnet != LoggingProtocol.VPW)
+                        {
+                            MainConnection.ObdDevice.RemoveFilters(fltrs1);
+                            MainConnection.ObdDevice.RemoveFilters2(fltrs2);
+                        }
+
                         break;
                     case QueueCmd.GetVin:
-                        QueryVIN();
+                        QueryVIN(datalogger.CanDevice);
                         break;
                     case QueueCmd.QueryPid:
                         QueryPid(command.PidSettings, true);
                         break;
                     case QueueCmd.Custom:
                         Logger("Sending queued command: " + command.Description);
-                        LogDevice.SendMessage(command.CustomMsg, 1);
-                        //LogDevice.ReceiveMessage(true);
+                        MainConnection.ObdDevice.SendMessage(command.CustomMsg, 1);
+                        //MainConnection.ObdDevice.ReceiveMessage(true);
                         break;
                 }
             }
             if (passive)
             {
-                LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
+                MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging4);
                 //SendTesterPresent(false);
             }
             else
             {
-                if (LogDevice.LogDeviceType != LoggingDevType.Obdlink)
+                if (MainConnection.ObdDevice.LogDeviceType != LoggingDevType.Obdlink)
                 {
-                    LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                    MainConnection.ObdDevice.SetTimeout(TimeoutScenario.DataLogging3);
                 }
 
             }
@@ -2582,7 +2609,7 @@ namespace UniversalPatcher
             {
                 if (maxSlotsPerRequest < maxPassiveSlotsPerRequest) //Started with fewer Slots
                 {
-                    if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
+                    if (MainConnection.ObdDevice.LogDeviceType == LoggingDevType.Obdlink)
                     {
                         //Started with 4 Slots, now asking 50 more
                         RequestNextSlots(false);
@@ -2617,13 +2644,13 @@ namespace UniversalPatcher
 
                     while ( SlotCount < maxSlotsPerRequest) //Loop there until requested Slots are handled
                     {
-                        if (LogDevice == null || !Connected)
+                        if (MainConnection.ObdDevice == null || !Connected)
                         {
                             break;
                         }
                         if (logToken.IsCancellationRequested) 
                         {
-                            if (LogDevice.LogDeviceType == LoggingDevType.Obdlink || LogDevice.LogDeviceType == LoggingDevType.Elm)
+                            if (MainConnection.ObdDevice.LogDeviceType == LoggingDevType.Obdlink || MainConnection.ObdDevice.LogDeviceType == LoggingDevType.Elm)
                             {
                                 //Elm device can stop only when prompt received
                                 Debug.WriteLine("Stopping soon, waiting elm prompt");
@@ -2638,7 +2665,7 @@ namespace UniversalPatcher
                         {
                             SendQueuedCommand();
                         }
-                        if (queuedCommands.Count > 0 && !VPWProtocol)
+                        if (queuedCommands.Count > 0 && MainConnection.LoggingProto != LoggingProtocol.VPW)
                         {
                             Logger("Waiting " + AppSettings.LoggerCANWaitSecondsStopMessages.ToString() + " seconds for PCM to stop sending data");
                             Thread.Sleep(AppSettings.LoggerCANWaitSecondsStopMessages * 1000); //Wait until PCM stop sending data
@@ -2652,7 +2679,7 @@ namespace UniversalPatcher
                         }
                         
                         //Receive DATA:
-                        oMsgs = LogDevice.ReceiveLogMessages(NumMessages);
+                        oMsgs = MainConnection.ObdDevice.ReceiveLogMessages(NumMessages);
                         if (oMsgs.Count == 0)
                         {
                             //Debug.WriteLine("Received null message");
@@ -2725,21 +2752,21 @@ namespace UniversalPatcher
                     // Get the line number from the stack frame
                     var line = frame.GetFileLineNumber();
                     Debug.WriteLine("Error, logLoop line " + line + ": " + ex.Message);
-                    if (LogDevice == null || !Connected)
+                    if (MainConnection.ObdDevice == null || !Connected)
                     {
                         return;
                     }
                 }
             } //Logloop
             Logger("Logging stopped");
-            if (LogDevice != null && Connected)
+            if (MainConnection.ObdDevice != null && Connected)
             {
-                LogDevice.ClearLogQueue();
+                MainConnection.ObdDevice.ClearLogQueue();
                 SetBusQuiet();
                 SetBusQuiet();
-                LogDevice.SetTimeout(TimeoutScenario.Maximum);
-                //LogDevice.SetReadTimeout(AppSettings.TimeoutReceive);
-                //LogDevice.SetWriteTimeout(AppSettings.TimeoutScriptWrite);
+                MainConnection.ObdDevice.SetTimeout(TimeoutScenario.Maximum);
+                //MainConnection.ObdDevice.SetReadTimeout(AppSettings.TimeoutReceive);
+                //MainConnection.ObdDevice.SetWriteTimeout(AppSettings.TimeoutScriptWrite);
             }
             LogRunning = false;
             return;

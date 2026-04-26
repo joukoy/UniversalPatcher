@@ -448,7 +448,7 @@ namespace UniversalPatcher
                     //dtcTd.TableName = "DTC-P10.Status";
                     dtcTd.Units = "Boolean";
                     dtcTd.Math = "DTC.DTC_Enable";
-                    dtcTd.OutputType = OutDataType.Flag;
+                    dtcTd.OutputType = OutDataType.Bitmap;
                     if (primary)
                         dtcTd.TableName = "DTC.DTC_Enable";
                     else
@@ -521,7 +521,7 @@ namespace UniversalPatcher
                     dtcTd.Origin = "seek";
                     //td.ColumnHeaders = "MIL";
                     dtcTd.Columns = 1;
-                    dtcTd.OutputType = OutDataType.Int;
+                    dtcTd.OutputType = OutDataType.Bitmap;
                     dtcTd.Decimals = 0;
                     dtcTd.DataType = InDataType.UBYTE;
                     dtcTd.Math = "DTC.Type";
@@ -545,7 +545,7 @@ namespace UniversalPatcher
                     dtcTd.Origin = "seek";
                     //td.ColumnHeaders = "MIL";
                     dtcTd.Columns = 1;
-                    dtcTd.OutputType = OutDataType.Flag;
+                    dtcTd.OutputType = OutDataType.Bitmap;
                     dtcTd.Decimals = 0;
                     dtcTd.DataType = InDataType.UBYTE;
                     dtcTd.Math = "DTC.TypeX";

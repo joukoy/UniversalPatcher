@@ -34,6 +34,7 @@ public static class LoggerUtils
 
     public static readonly string savedFiltersFile = Path.Combine(Application.StartupPath, "Logger", "savedfilters.xml");
 
+    public static string[] j2534HexConfigs = new string[] { "NODE_ADDRESS", "J1962_PINS", "J1939_PINS", "J1708_PINS" };
 
     public enum ControlType
     {
@@ -746,12 +747,26 @@ public static class LoggerUtils
         }
     }
 
+    public static void AddFilterForDevice(Device LogDevice, CANDevice canDev, ref int[] filters1, ref int[] filters2)
+    {
+        string PassFilters = "Type:FLOW_CONTROL_FILTER,Name:CANFlow" + Environment.NewLine;
+        PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+        PassFilters += "Pattern:" + canDev.ResID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+        PassFilters += "FlowControl:" + canDev.RequestID.ToString("X8") + ",RxStatus:NONE,TxFlags:NONE" + Environment.NewLine;
+        filters1 = LogDevice.SetupFilters(PassFilters, false, false);
+
+        PassFilters = "Type: PASS_FILTER,Name: CANPass" + Environment.NewLine;
+        PassFilters += "Mask: FFFFFFFF,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+        PassFilters += "Pattern: " + canDev.DiagID.ToString("X8") + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+        filters2 = LogDevice.SetupFilters(PassFilters, true, false);
+
+    }
     public static List<CANDevice> SearchAllDevicesOnBus(Device LogDevice)
     {
         List<CANDevice> retVal = new List<CANDevice>();
-        List<CANDevice> CanNodes = new List<CANDevice>();
+        List<CANDevice> CanNodes;
         Logger("Query devices on bus, High Speed CAN");
-        CanNodes = QueryConnectedCanDevices(false, LoggingProtocol.HSCAN, LogDevice);
+        CanNodes = QueryConnectedDevices(LoggingProtocol.HSCAN, LogDevice);
         if (CanNodes.Count > 0)
         {
             retVal.AddRange(CanNodes);
@@ -759,7 +774,7 @@ public static class LoggerUtils
         }
         Logger("Query devices on bus, Low Speed CAN");
         //DisconnectCan();
-        CanNodes = QueryConnectedCanDevices(false, LoggingProtocol.LSCAN, LogDevice);
+        CanNodes = QueryConnectedDevices(LoggingProtocol.LSCAN, LogDevice);
         if (CanNodes.Count > 0)
         {
             retVal.AddRange(CanNodes);
@@ -767,7 +782,7 @@ public static class LoggerUtils
         }
 
         Logger("Query devices on bus, VPW");
-        CanNodes = QueryConnectedCanDevices(false, LoggingProtocol.VPW, LogDevice);
+        CanNodes = QueryConnectedDevices(LoggingProtocol.VPW, LogDevice);
         if (CanNodes.Count > 0)
         {
             retVal.AddRange(CanNodes);
@@ -780,28 +795,54 @@ public static class LoggerUtils
         return retVal;
     }
 
-    public static List<CANDevice> QueryConnectedCanDevices(bool RunExtra, LoggingProtocol protocol, Device LogDevice)
+    public static List<CANDevice> QueryConnectedDevices(LoggingProtocol subnet, Device LogDevice)
     {
         int[] ExpectedMsg;
         List<CANDevice> retVal = new List<CANDevice>();
         try
         {
-            Logger("Query CAN devices on bus");
+            //ChangeProtocol(LogDevice, subnet);
             if (LogDevice != null && LogDevice.Connected)
             {
                 //LogDevice.Disconnect();
                 Logger("Disconnecting previous connection");
                 LogDevice.PassthruDisconnect();
             }
-            if (protocol == LoggingProtocol.HSCAN)
+            if (subnet == LoggingProtocol.VPW)
+            {
+                J2534InitParameters jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.J1850VPW;
+                jParms.Baudrate = BaudRate.J1850VPW;
+                jParms.Connectflag = "";
+                if (!LogDevice.PassthruConnect(jParms))
+                {
+                    LoggerBold("Error connecting");
+                    return retVal;
+                }
+                LogDevice.SetAnalyzerFilter();
+
+                Logger("Query VPW devices on bus");
+                Response<List<byte>> modules = datalogger.QueryDevicesOnBus(true);
+                for (int m = 0; m < modules.Value.Count; m++)
+                {
+                    byte b = modules.Value[m];
+                    CANDevice vpwDev = new CANDevice(b, LoggingProtocol.VPW);
+                    retVal.Add(vpwDev);
+                }
+                return retVal;
+
+            }
+
+            Logger("Query CAN devices on bus");
+            if (subnet == LoggingProtocol.HSCAN)
             {
                 J2534InitParameters jParms = new J2534InitParameters();
                 jParms.Protocol = ProtocolID.CAN;
-                jParms.Baudrate = BaudRate.ISO15765_500000;
-                jParms.Connectflag = ConnectFlag.NONE;
+                jParms.Baudrate = BaudRate.CAN_500000;
+                jParms.Connectflag = "";
                 jParms.PassFilters = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine;
                 jParms.PassFilters += "Mask: 0000FFE0,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                jParms.PassFilters += "Pattern:00000640" + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                jParms.PassFilters += "Pattern:00000640,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                 if (!LogDevice.PassthruConnect(jParms))
                 {
                     LoggerBold("Error connecting");
@@ -815,41 +856,30 @@ public static class LoggerUtils
                 //Filter2
                 string filter2 = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine +
                     "Mask: 0000FFF8,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine +
-                    "Pattern:0000" + datalogger.CanDevice.ResID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE";
+                    "Pattern:000007E8,RxStatus: NONE,TxFlags: NONE";
+                    //"Pattern:0000" + datalogger.CanDevice.ResID.ToString("X4") + ",RxStatus: NONE,TxFlags: NONE";
                 int[] fltrs = LogDevice.SetupFilters(filter2, false, false);
                 if (fltrs == null || fltrs.Length == 0)
                 {
                     return retVal;
                 }
             }
-            else if (protocol == LoggingProtocol.LSCAN)
+            else if (subnet == LoggingProtocol.LSCAN)
             {
                 J2534InitParameters jParms = new J2534InitParameters();
                 jParms.Protocol = ProtocolID.SW_CAN_PS;
-                jParms.Baudrate = BaudRate.ISO15765_33K3;
-                jParms.Connectflag = ConnectFlag.NONE;
+                jParms.Baudrate = BaudRate.CAN_33K3;
+                jParms.Connectflag = "";
                 jParms.Sconfigs = "J1962_PINS=$00000100";
                 jParms.PassFilters = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine;
                 jParms.PassFilters += "Mask: 0000FFE0,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                jParms.PassFilters += "Pattern:00000640" + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
+                jParms.PassFilters += "Pattern:00000640,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
                 if (!LogDevice.PassthruConnect(jParms))
                 {
                     LoggerBold("Error connecting");
                     return retVal;
                 }
-                //LogDevice.SetJ2534Configs("J1962_PINS=$00000100", false);
                 //NO mixed format for SW_CAN_PS
-                //LogDevice.SetJ2534Configs("CAN_MIXED_FORMAT=1", false);
-                /*
-                string PassFilters = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine;
-                PassFilters += "Mask: 0000FFE0,RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                PassFilters += "Pattern:00000640" + ",RxStatus: NONE,TxFlags: NONE" + Environment.NewLine;
-                int[] fltrs = LogDevice.SetupFilters(PassFilters, false, true);
-                if (fltrs == null || fltrs.Length == 0)
-                {
-                    return retVal;
-                }
-                */
                 //LogDevice.SetJ2534Configs("CAN_MIXED_FORMAT=1", false);
                 byte[] preMsg = new byte[] { 0x00, 0x00, 0x01, 0x00 };
                 OBDMessage preObd = new OBDMessage(preMsg);
@@ -861,50 +891,23 @@ public static class LoggerUtils
                     preObd = new OBDMessage(preMsg);
 
                     LogDevice.SendMessage(preObd, 1);
-                    ExpectedMsg = new int[] { -1 };
-                    byte[] response = ReceiveResponse(LogDevice,ExpectedMsg, ": ", true, true, false, true);
+                    ExpectedMsg = new int[] { 0x00, 0x00, -1, -1, -1, -1 };
+                    byte[] response = ReceiveResponse(LogDevice, ExpectedMsg, ": ", true, true, false, true);
                     if (response == null)
                     {
                         Logger("No response with SW_CAN_HV_RX");
                         return retVal;
+                    }
+                    if (AppSettings.LoggerStartPeriodic)
+                    {
+                        string pMsg = "00 00 01 01 FE 3E:2500:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
+                        LogDevice.StartPeriodicMsg(pMsg, false);
                     }
                 }
                 else
                 {
                     return retVal;
                 }
-            }
-            else if (protocol == LoggingProtocol.VPW)
-            {
-                J2534InitParameters jParms = new J2534InitParameters();
-                jParms.Protocol = ProtocolID.J1850VPW;
-                jParms.Baudrate = BaudRate.J1850VPW;
-                jParms.Connectflag = ConnectFlag.NONE;
-                if (!LogDevice.PassthruConnect(jParms))
-                {
-                    LoggerBold("Error connecting");
-                    return retVal;
-                }
-                LogDevice.SetAnalyzerFilter();
-                Response<List<byte>> modules = datalogger.QueryDevicesOnBus(true);
-                for (int m = 0; m < modules.Value.Count; m++)
-                {
-                    byte b = modules.Value[m];
-                    CANDevice vpwDev = new CANDevice();
-                    vpwDev.ModuleID = b;
-                    vpwDev.Subnet = LoggingProtocol.VPW;
-                    if (analyzer.PhysAddresses.ContainsKey(b))
-                    {
-                        vpwDev.ModuleName = analyzer.PhysAddresses[b];
-                    }
-                    else
-                    {
-                        vpwDev.ModuleName = b.ToString("X2");
-                    }
-                    retVal.Add(vpwDev);
-                }
-                return retVal;
-
             }
 
             Logger("Sending module iD command 1a B0");
@@ -914,7 +917,10 @@ public static class LoggerUtils
             {
                 return retVal;
             }
-            ExpectedMsg = new int[] { 0x00, 0x00, 0x07, 0xE8, 0x03, 0x5A, 0xB0, -1, 0xAA, 0xAA, 0xAA, 0xAA };
+            //ExpectedMsg = new int[] { 0x00, 0x00, 0x07, 0xE8, 0x03, 0x5A, 0xB0, -1, 0xAA, 0xAA, 0xAA, 0xAA };
+            //ExpectedMsg = new int[] { 0x00, 0x00, datalogger.CanDevice.ResByte1, datalogger.CanDevice.ResByte2, 0x03, 0x5A, 0xB0, -1, 0xAA, 0xAA, 0xAA, 0xAA };
+            ExpectedMsg = new int[] { 0x00, 0x00, -1, -1, 0x03, 0x5A, 0xB0, -1, 0xAA, 0xAA, 0xAA, 0xAA };
+            //ExpectedMsg = new int[] { 0x00, 0x00, -1, -1, -1, -1 };
             while (true)
             {
                 byte[] response = ReceiveResponse(LogDevice,ExpectedMsg, "Query CAN devices on bus: ", true, true);
@@ -925,8 +931,8 @@ public static class LoggerUtils
                     if (device != null)
                     {
                         CANDevice newDev = device.ShallowCopy();
-                        newDev.Subnet = protocol;
-                        CANDevice prevDev = retVal.Where(X => X.ModuleID == response[7] && X.Subnet == newDev.Subnet).FirstOrDefault();
+                        newDev.Subnet = subnet;
+                        CANDevice prevDev = retVal.Where(X => X.ResByte1 == response[2] && X.ResByte2 == response[3] && X.Subnet == newDev.Subnet).FirstOrDefault();
                         if (prevDev == null)
                         {
                             retVal.Add(newDev);
@@ -939,7 +945,7 @@ public static class LoggerUtils
                     break;
                 }
             }
-            if (retVal.Count == 0 && protocol == LoggingProtocol.LSCAN)
+            if (retVal.Count == 0 && subnet == LoggingProtocol.LSCAN)
             {
                 Logger("No answer, setting new filter");
                 string PassFilters = "Type:PASS_FILTER,Name:PreUtil1" + Environment.NewLine;
@@ -1052,6 +1058,7 @@ public static class LoggerUtils
                 OBDMessage oMsg = LogDevice.ReceiveMessage(true);
                 if (oMsg != null && oMsg.Length > statusPos)
                 {
+                    Debug.WriteLine("Received message: " + oMsg.ToString());
                     byte statusByte = (byte)ExpectedMsg[statusPos];
                     byte[] resp = oMsg.GetBytes();
                     retVal = resp;
@@ -1142,6 +1149,105 @@ public static class LoggerUtils
             Logger("Error, LoggerUtils line " + line + ": " + ex.Message);
             return null;
         }
+    }
+    public static bool ChangeProtocol(Device LogDevice, LoggingProtocol subnet)
+    {
+        try
+        {
+            if (LogDevice != null && LogDevice.Connected)
+            {
+                //LogDevice.Disconnect();
+                Logger("Disconnecting previous connection");
+                LogDevice.PassthruDisconnect();
+            }
+            if (subnet == LoggingProtocol.HSCAN)
+            {
+                J2534InitParameters jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.ISO15765;
+                jParms.Baudrate = BaudRate.ISO15765_500000;
+                jParms.Connectflag = AppSettings.LoggerConnectFlag.Replace("|",",");
+                jParms.Sconfigs = "CAN_MIXED_FORMAT=1";
+                if (!LogDevice.PassthruConnect(jParms))
+                {
+                    LoggerBold("Error connecting");
+                    return false;
+                }
+                jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.CAN;
+                jParms.Baudrate = BaudRate.ISO15765_500000;
+                jParms.Secondary = true;
+                jParms.SeparateProtoByChannel = true;
+                jParms.UsePrimaryChannel = true;
+                LogDevice.ConnectSecondaryProtocol(jParms);
+
+                Application.DoEvents();
+                //Use manual keepalive in preutil
+                //string pMsg = "00 00 01 01 FE 3E:1600:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
+                //LogDevice.StartPeriodicMsg(pMsg, false);
+                //LogDevice.SetWriteTimeout(AppSettings.TimeoutJ2534Write);
+
+            }
+            else if (subnet == LoggingProtocol.LSCAN)
+            {
+                J2534InitParameters jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.SW_ISO15765_PS;
+                jParms.Baudrate = BaudRate.ISO15765_33K3;
+                jParms.Connectflag = "";
+                //jParms.Connectflag = AppSettings.LoggerConnectFlag;
+                jParms.Sconfigs = "J1962_PINS=$00000100|CAN_MIXED_FORMAT=1";
+                if (!LogDevice.PassthruConnect(jParms))
+                {
+                    LoggerBold("Error connecting");
+                    return false;
+                }
+                jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.SW_CAN_PS;
+                jParms.Baudrate = BaudRate.ISO15765_33K3;
+                jParms.Secondary = true;
+                jParms.SeparateProtoByChannel = true;
+                jParms.UsePrimaryChannel = true;
+                LogDevice.ConnectSecondaryProtocol(jParms);
+                if (AppSettings.LoggerWakeUp)
+                {
+                    byte[] wakeMsg = new byte[] { 00, 00, 01, 00 };
+                    OBDMessage wMsg = new OBDMessage(wakeMsg);
+                    wMsg.Txflag = TxFlag.SW_CAN_HV_TX;
+                    wMsg.SecondaryProtocol = false;
+                    LogDevice.SendMessage(wMsg, 0);
+                }
+                if (AppSettings.LoggerStartPeriodic)
+                {
+                    string pMsg = "00 00 01 01 FE 3E:2500:ISO15765_FRAME_PAD|ISO15765_ADDR_TYPE";
+                    LogDevice.StartPeriodicMsg(pMsg, false);
+                }
+            }
+            else if (subnet == LoggingProtocol.VPW)
+            {
+                J2534InitParameters jParms = new J2534InitParameters();
+                jParms.Protocol = ProtocolID.J1850VPW;
+                jParms.Baudrate = BaudRate.J1850VPW;
+                jParms.Connectflag = "";
+                if (!LogDevice.PassthruConnect(jParms))
+                {
+                    LoggerBold("Error connecting");
+                    return false;
+                }
+                LogDevice.SetAnalyzerFilter();
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("LoggerUtils, line " + line + ": " + ex.Message);
+            return false;
+        }
+
     }
 
 }

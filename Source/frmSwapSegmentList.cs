@@ -334,7 +334,7 @@ namespace UniversalPatcher
                 labelSelectedSegment.Tag = FileName;
                 uint fsize = (uint)new FileInfo(FileName).Length;
                 Logger("Reading file: " + FileName + " (0x" + fsize.ToString("X") +" B)");
-                SwapBuffer = ReadBin(FileName);
+                SwapBuffer = File.ReadAllBytes(FileName);
                 Logger("[OK]");
                 Logger("Press \"Apply\" to swap");
                 Applied = false;
@@ -444,7 +444,7 @@ namespace UniversalPatcher
                 if (fsize == TotalLength)
                 {
                     Logger(" (0x" + fsize.ToString("X") + " B)");
-                    SwapBuffer = ReadBin(FileName);
+                    SwapBuffer = File.ReadAllBytes(FileName);
                     labelSelectedSegment.Text = "Selected: " + Path.GetFileName(FileName);
                     labelSelectedSegment2.Text = "";
                     labelSelectedSegment.Tag = FileName;

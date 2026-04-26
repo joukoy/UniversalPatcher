@@ -35,11 +35,11 @@ namespace UniversalPatcher
         }
         public double Voltage { get; protected set; }
 
-        public int MaxSendSize { get; protected set; }
+        //public int MaxSendSize { get; protected set; }
 
-        public int MaxReceiveSize { get; protected set; }
+        //public int MaxReceiveSize { get; protected set; }
 
-        public bool Supports4X { get; protected set; }
+        //public bool Supports4X { get; protected set; }
         public J2534InitParameters CanParameters { get; set; }
         public TimeoutScenario TimeoutScenario { get; set; }
 
@@ -1019,7 +1019,7 @@ namespace UniversalPatcher
             //Initialize();
             SendAndVerify("AT L0", "OK"); //Disable new line characters between commands/messages
             this.CurrentFilter = FilterMode.Logging;
-            if (datalogger.useVPWFilters && Protocol == ProtocolID.J1850VPW)
+            if (AppSettings.LoggerUseFilters && Protocol == ProtocolID.J1850VPW)
             {
                 return SendAndVerify("AT SR " + DeviceId.Tool.ToString("X2"), "OK");
             }

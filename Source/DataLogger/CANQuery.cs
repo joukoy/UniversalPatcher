@@ -5,11 +5,41 @@ using System.Linq;
 using System.Text;
 using static Upatcher;
 using static Helpers;
+using static UniversalPatcher.DataLogger;
+using System.Xml.Serialization;
+using System.ComponentModel;
 
 namespace UniversalPatcher
 {
     public class CANDevice
     {
+        public CANDevice() 
+        {
+            DTCCodes = new List<DTCCodeStatus>();
+        }
+        public CANDevice(int addr, DataLogger.LoggingProtocol protocol) 
+        {
+            DTCCodes = new List<DTCCodeStatus>();
+            RequestID = addr;
+            ModuleID = (byte)addr;
+            Subnet = protocol;
+            if (Subnet == DataLogger.LoggingProtocol.VPW)
+            {
+                if (addr == DeviceId.Broadcast)
+                {
+                    ModuleName = "Broadcast";
+                }
+                else if (analyzer.PhysAddresses.ContainsKey((byte)addr))
+                {
+                    ModuleName = analyzer.PhysAddresses[(byte)addr];
+                }
+                else
+                {
+                    ModuleName = addr.ToString("X2");
+                }
+            }
+        }
+
         public string ModuleName { get; set; }
         public int ResID { get; set; }
         public int RequestID { get; set; }
@@ -17,6 +47,10 @@ namespace UniversalPatcher
         public byte ModuleID { get; set; }
         public string ModuleDescription { get; set; }
         public DataLogger.LoggingProtocol Subnet { get; set; }
+        [XmlIgnoreAttribute]
+        [Browsable(false)]
+        [Bindable(false)]
+        public List<DTCCodeStatus> DTCCodes { get; set; }
 
         public override string ToString()
         {

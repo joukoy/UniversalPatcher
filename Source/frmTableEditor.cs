@@ -112,6 +112,12 @@ namespace UniversalPatcher
         bool disableTooltips = false;
         ToolTip NaviTip = new ToolTip();
         ToolTip UpDownTip = new ToolTip();
+        FormWindowState LastWindowState;
+        private Color colormin1 = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin1);
+        private Color colormin2 = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin2);
+        private Color colormid = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid);
+        private Color colormax1 = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax1);
+        private Color colormax2 = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax2);
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
@@ -122,12 +128,38 @@ namespace UniversalPatcher
                     dataFont = new Font("Consolas", 9);
                 else
                     dataFont = AppSettings.TableEditorFont.ToFont();
-
+                if (AppSettings.TunerShowHexWindow)
+                {
+                    showHEXWindowToolStripMenuItem.Checked = true;
+                    splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                }
+                else
+                {
+                    splitContainer1.Panel2Collapsed = true;
+                }
+                this.ResizeBegin += FrmTableEditor_ResizeBegin;
+                this.ResizeEnd += FrmTableEditor_ResizeEnd;
+                this.Resize += FrmTableEditor_Resize;
+                splitContainer1.SplitterMoved += SplitContainer1_SplitterMoved;
+                LastWindowState = this.WindowState;
                 numTuneValue.Tag = numTuneValue.Value;
                 autoResizeToolStripMenuItem.Checked = AppSettings.TableEditorAutoResize;
                 addressToolStripMenuItem.Checked = AppSettings.TableEditorHexShowAddress;
                 binaryToolStripMenuItem.Checked = AppSettings.TableEditorHexShowBinary;
                 decimalToolStripMenuItem.Checked = AppSettings.TableEditorHexShowDecimal;
+
+                if (AppSettings.TunerColorsMode == ConditionalColors.Off)
+                {
+                    offToolStripMenuItem.Checked = true;
+                }
+                else if (AppSettings.TunerColorsMode == ConditionalColors.Settings)
+                {
+                    tableSettingsToolStripMenuItem.Checked = true;
+                }
+                else
+                {
+                    tableValuesToolStripMenuItem.Checked = true;
+                }
                 if (AppSettings.TableEditorAutoResize)
                 {
                     AutoResize();
@@ -231,6 +263,85 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
+
+        /*
+        // Source - https://stackoverflow.com/a/62469520
+        // Posted by marsh-wiggle, modified by community. See post 'Timeline' for change history
+        // Retrieved 2026-04-18, License - CC BY-SA 4.0
+
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_SYSCOMMAND = 0x0112;
+            const int SC_MAXIMIZE = 0xF030;
+            const int SC_MINIMIZE = 0xF020;
+            const int SC_RESTORE = 0xF120;
+
+            // Call beofre - don't use when "call after" is used
+            // dependig on the needs may be called before, after or even never (see below)
+            splitContainer1.SplitterMoved -= SplitContainer1_SplitterMoved;
+            base.WndProc(ref m);
+
+            if (m.Msg == WM_SYSCOMMAND)
+            {
+                /// <see cref="https://learn.microsoft.com/en-us/windows/win32/menurc/wm-syscommand"/>
+                /// Quote:
+                /// In WM_SYSCOMMAND messages, the four low - order bits of the wParam parameter 
+                /// are used internally by the system.To obtain the correct result when testing 
+                /// the value of wParam, an application must combine the value 0xFFF0 with the 
+                /// wParam value by using the bitwise AND operator.
+                int wParam = (m.WParam.ToInt32() & 0xFFF0);
+
+                Debug.WriteLine($"Received param: { Convert.ToString(wParam, 16) } ");
+                if (wParam == SC_MAXIMIZE || wParam == SC_MINIMIZE || wParam == SC_RESTORE)
+                {
+                    if (AppSettings.TunerShowHexWindow)
+                    {
+                        splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                        Debug.WriteLine("SplitterDistance: " + splitContainer1.SplitterDistance.ToString() + ", Hex window size: " + AppSettings.TunerHexWindowWidth);
+                    }
+                }
+            }
+
+            // Call after - don't use when "call before" is used
+            //base.WndProc(ref m);
+            splitContainer1.SplitterMoved += SplitContainer1_SplitterMoved;
+        }
+        */
+        private void FrmTableEditor_Resize(object sender, EventArgs e)
+        {
+            if (AppSettings.TunerShowHexWindow)
+            {
+                splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+            }
+        }
+
+        private void FrmTableEditor_ResizeBegin(object sender, EventArgs e)
+        {
+            splitContainer1.SplitterMoved -= SplitContainer1_SplitterMoved;
+        }
+        private void FrmTableEditor_ResizeEnd(object sender, EventArgs e)
+        {
+            if (AppSettings.TunerShowHexWindow)
+            {
+                splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+            }
+            splitContainer1.SplitterMoved += SplitContainer1_SplitterMoved;
+        }
+
+
+        private void SplitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            if (this.WindowState == LastWindowState)
+            {
+                AppSettings.TunerHexWindowWidth = splitContainer1.Width - splitContainer1.SplitterDistance;
+                Debug.WriteLine("Hex window size: " + AppSettings.TunerHexWindowWidth.ToString());
+            }
+            else
+            {
+                LastWindowState = this.WindowState;
+                Debug.WriteLine("Windostate changed to: " + LastWindowState.ToString());
             }
         }
 
@@ -380,6 +491,26 @@ namespace UniversalPatcher
                     labelInfo.Text = "";
                     return; //OBD2 Description
                 }
+                if (showHEXWindowToolStripMenuItem.Checked)
+                {
+                    int row = 0;
+                    int col = 0;
+                    uint a = tCell.td.addrInt;
+                    dataGridView2.ClearSelection();
+                    for (;a<(tCell.addr + tCell.td.ElementSize()); a++)
+                    {
+                        if (a >= tCell.addr)
+                        {
+                            dataGridView2.Rows[row].Cells[col].Selected = true;
+                        }
+                        col++;
+                        if (col > (AppSettings.TunerHexWindowColumns - 1))
+                        {
+                            col = 0;
+                            row++;
+                        }
+                    }
+                }
                 string thisTable = tCell.td.TableName;
                 if (thisTable != lastTable && tuner != null && this.Parent != null)
                 {
@@ -457,6 +588,37 @@ namespace UniversalPatcher
             ShowCellInfo();
         }
 
+        private void SetupColorRanges(TableInfo tInfo)
+        {
+            if (AppSettings.TunerColorsMode == ConditionalColors.Settings)
+            {
+                tInfo.MinVal = tInfo.td.Min;
+                tInfo.MaxVal = tInfo.td.Max;
+            }
+            else
+            {
+                tInfo.MinVal = double.MaxValue;
+                tInfo.MaxVal = double.MinValue;
+                for (int t=0; t< tInfo.tableCells.Count;t++)
+                {
+                    TableCell tc = tInfo.tableCells[t];
+                    if (Convert.ToDouble(tc.lastValue) > tInfo.MaxVal)
+                    {
+                        tInfo.MaxVal = Convert.ToDouble(tc.lastValue);
+                    }
+                    if (Convert.ToDouble(tc.lastValue) < tInfo.MinVal)
+                    {
+                        tInfo.MinVal = Convert.ToDouble(tc.lastValue);
+                    }
+                }
+            }
+            double rangesize = (tInfo.MaxVal - tInfo.MinVal) / 5;
+            tInfo.MinEnd1 = tInfo.MinVal + rangesize;
+            tInfo.MinEnd2 = tInfo.MinVal + (rangesize * 2);
+            tInfo.MaxStart1 = tInfo.MaxVal - (rangesize * 2);
+            tInfo.MaxStart2 = tInfo.MaxVal - rangesize;
+
+        }
         private void ParseTableInfo(CompareFile cmpFile)
         {
             try
@@ -576,6 +738,7 @@ namespace UniversalPatcher
                     uint addr = tData.StartAddress();
                     int step = GetElementSize(tData.DataType);
                     byte mask = 1;
+                    
                     if (tData.RowMajor)
                     {
                         for (int r = 0; r < tData.Rows; r++)
@@ -651,6 +814,7 @@ namespace UniversalPatcher
                         }
 
                     }
+                    SetupColorRanges(tInfo);
                     cmpFile.tableInfos.Add(tInfo);
                 }
                 compareFiles.Add(cmpFile);
@@ -1402,16 +1566,26 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        if (curVal < (mathTd.Max * 0.9) && curVal > (mathTd.Min * 1.1))
-                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
-                        else if (curVal > mathTd.Max)
-                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
-                        else if (curVal > (0.9 * mathTd.Max))
-                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
-                        else if (curVal < mathTd.Min)
-                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
-                        else if (curVal < (1.1 * mathTd.Min))
-                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
+                        if (AppSettings.TunerColorsMode != ConditionalColors.Off)
+                        {
+                            if (tCell.tableInfo.MinVal == tCell.tableInfo.MaxVal)
+                            {
+                                dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
+                            }
+                            else
+                            {
+                                if (curVal >= tCell.tableInfo.MinVal && curVal < tCell.tableInfo.MinEnd1)
+                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormin1;
+                                else if (curVal >= tCell.tableInfo.MinEnd1 && curVal < tCell.tableInfo.MinEnd2)
+                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormin2;
+                                else if (curVal >= tCell.tableInfo.MinEnd2 && curVal < tCell.tableInfo.MaxStart1)
+                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormid;
+                                else if (curVal >= tCell.tableInfo.MaxStart1 && curVal < tCell.tableInfo.MaxStart2)
+                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormax1;
+                                else if (curVal >= tCell.tableInfo.MaxStart2)
+                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormax2;
+                            }
+                        }
                         if (!disableTooltips)
                             dataGridView1.Rows[row].Cells[col].ToolTipText = mathTd.TableDescription;
                     }
@@ -1552,6 +1726,7 @@ namespace UniversalPatcher
                 CompareFile selectedFile = compareFiles[currentFile];
                 PcmFile PCM = selectedFile.pcm;
                 TableData td = selectedFile.tableInfos[0].td;
+                ShowTdinHexWindow(td, PCM.buf);
 
                 showRawHex = showRawHEXValuesToolStripMenuItem.Checked;
                 disableTooltips = disableTooltipsToolStripMenuItem.Checked;
@@ -1605,7 +1780,7 @@ namespace UniversalPatcher
 
                     int gridCol = 0;
                     int gridRow = 0;
-
+                    SetupColorRanges(sFile.tableInfos[tbl]);
                     //Find maximum cell count from all comparefiles:
                     int cellCount = sFile.tableInfos[tbl].tableCells.Count;
                     for (int d = 0; d < cmpFiles.Count; d++)
@@ -1809,9 +1984,9 @@ namespace UniversalPatcher
                         }
 
                     }
-
                 }
-                
+
+
                 if (td.TableName.StartsWith("DTC") && (td.OutputType != OutDataType.Bitmap || showRawHex == false))
                 {
                     ShowDtcDescriptions();
@@ -2118,6 +2293,7 @@ namespace UniversalPatcher
                         ftvd.UpdateDisplay(true);
                     });
                 }
+                ShowTdinHexWindow(td, tc.tableInfo.compareFile.buf);
             }
             catch (Exception ex)
             {
@@ -3502,6 +3678,219 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
+        }
+
+        private double GetCellValue(DataGridView dgv, int row, int col)
+        {
+            var val = dgv[col, row].Value;
+            if (val == null || !double.TryParse(val.ToString(), out double result))
+                throw new Exception($"Invalid numeric value at [{row},{col}]");
+
+            return result;
+        }
+
+        private void InterpolateSelectedArea(DataGridView dgv)
+        {
+            try
+            {
+                if (dgv.SelectedCells.Count == 0)
+                    return;
+
+                int minRow = int.MaxValue, maxRow = int.MinValue;
+                int minCol = int.MaxValue, maxCol = int.MinValue;
+
+                foreach (DataGridViewCell cell in dgv.SelectedCells)
+                {
+                    minRow = Math.Min(minRow, cell.RowIndex);
+                    maxRow = Math.Max(maxRow, cell.RowIndex);
+                    minCol = Math.Min(minCol, cell.ColumnIndex);
+                    maxCol = Math.Max(maxCol, cell.ColumnIndex);
+                }
+
+                int rows = maxRow - minRow + 1;
+                int cols = maxCol - minCol + 1;
+
+                // ─────────────────────────────────────────────
+                // 1×N → horizontal interpolation
+                // ─────────────────────────────────────────────
+                if (rows == 1 && cols >= 2)
+                {
+                    double start = GetCellValue(dgv, minRow, minCol);
+                    double end = GetCellValue(dgv, minRow, maxCol);
+
+                    for (int c = 0; c < cols; c++)
+                    {
+                        double t = cols == 1 ? 0 : (double)c / (cols - 1);
+                        double value = start + t * (end - start);
+
+                        dgv[minCol + c, minRow].Value = Math.Round(value, 3);
+                    }
+                    return;
+                }
+
+                // ─────────────────────────────────────────────
+                // N×1 → vertical interpolation
+                // ─────────────────────────────────────────────
+                if (cols == 1 && rows >= 2)
+                {
+                    double start = GetCellValue(dgv, minRow, minCol);
+                    double end = GetCellValue(dgv, maxRow, minCol);
+
+                    for (int r = 0; r < rows; r++)
+                    {
+                        double t = rows == 1 ? 0 : (double)r / (rows - 1);
+                        double value = start + t * (end - start);
+
+                        dgv[minCol, minRow + r].Value = Math.Round(value, 3);
+                    }
+                    return;
+                }
+
+                // ─────────────────────────────────────────────
+                // NxM → bilinear interpolation
+                // ─────────────────────────────────────────────
+                if (rows >= 2 && cols >= 2)
+                {
+                    double tl = GetCellValue(dgv, minRow, minCol);
+                    double tr = GetCellValue(dgv, minRow, maxCol);
+                    double bl = GetCellValue(dgv, maxRow, minCol);
+                    double br = GetCellValue(dgv, maxRow, maxCol);
+
+                    for (int r = 0; r < rows; r++)
+                    {
+                        double v = (double)r / (rows - 1);
+
+                        for (int c = 0; c < cols; c++)
+                        {
+                            double u = (double)c / (cols - 1);
+
+                            double value =
+                                (1 - u) * (1 - v) * tl +
+                                u * (1 - v) * tr +
+                                (1 - u) * v * bl +
+                                u * v * br;
+
+                            dgv[minCol + c, minRow + r].Value = Math.Round(value, 3);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void interpolateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InterpolateSelectedArea(dataGridView1);
+        }
+
+        private void ShowTdinHexWindow(TableData shTd, byte[] buf)
+        {
+            try
+            {
+                if (!showHEXWindowToolStripMenuItem.Checked)
+                {
+                    return;
+                }
+                uint addr = shTd.StartAddress();
+                uint elemSize = (uint)shTd.ElementSize();
+                uint end = shTd.EndAddress();
+
+                dataGridView2.Rows.Clear();
+                dataGridView2.Columns.Clear();
+                for (int i = 0; i < AppSettings.TunerHexWindowColumns; i++)
+                {
+                    dataGridView2.Columns.Add(i.ToString("X"), i.ToString("X"));
+                }
+                int row = dataGridView2.Rows.Add();
+                dataGridView2.Rows[row].HeaderCell.Value = addr.ToString("X");
+                int col = 0;
+
+                for (uint a = addr; a <= end; a++)
+                {
+                    dataGridView2.Rows[row].Cells[col].Value = buf[a-addr].ToString("X2");
+                    col++;
+                    if (col > (AppSettings.TunerHexWindowColumns - 1))
+                    {
+                        col = 0;
+                        row = dataGridView2.Rows.Add();
+                        dataGridView2.Rows[row].HeaderCell.Value = a.ToString("X");
+                    }
+                }
+                dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+                dataGridView2.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void showHEXWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showHEXWindowToolStripMenuItem.Checked = !showHEXWindowToolStripMenuItem.Checked;
+            AppSettings.TunerShowHexWindow = showHEXWindowToolStripMenuItem.Checked;
+            if (showHEXWindowToolStripMenuItem.Checked)
+            {
+                splitContainer1.Panel2Collapsed = false;
+                splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                CompareFile selectedFile = compareFiles[currentFile];
+                PcmFile PCM = selectedFile.pcm;
+                TableData td = selectedFile.tableInfos[0].td;
+                ShowTdinHexWindow(td, PCM.buf);
+            }
+            else
+            {
+                splitContainer1.Panel2Collapsed = true;
+            }
+
+        }
+
+        private void conditionalFormattingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tableSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tableSettingsToolStripMenuItem.Checked = true;
+            tableValuesToolStripMenuItem.Checked = false;
+            offToolStripMenuItem.Checked = false;
+            AppSettings.TunerColorsMode = ConditionalColors.Settings;
+            LoadTable();
+            AppSettings.Save();
+        }
+
+        private void tableValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tableSettingsToolStripMenuItem.Checked = false;
+            tableValuesToolStripMenuItem.Checked = true;
+            offToolStripMenuItem.Checked = false;
+            AppSettings.TunerColorsMode = ConditionalColors.Values;
+            LoadTable();
+            AppSettings.Save();
+        }
+
+        private void offToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            offToolStripMenuItem.Checked = true;
+            tableSettingsToolStripMenuItem.Checked = false;
+            tableValuesToolStripMenuItem.Checked = false;
+            AppSettings.TunerColorsMode = ConditionalColors.Off;
+            LoadTable();
+            AppSettings.Save();
         }
     }
 }

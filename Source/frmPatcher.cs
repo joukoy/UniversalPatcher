@@ -107,17 +107,6 @@ namespace UniversalPatcher
                 rememberWindowSizeToolStripMenuItem.Checked = false;
             }
 
-            //Set default values for Tuner datagrid, if not set previously:
-            TableData tdTmp = new TableData();
-            if (AppSettings.ConfigModeColumnOrder == null || AppSettings.ConfigModeColumnOrder.Length == 0)
-            {
-                string cOrder = "";
-                foreach (var prop in tdTmp.GetType().GetProperties())
-                {
-                    cOrder += prop.Name + ",";
-                }
-                AppSettings.ConfigModeColumnOrder = cOrder.Trim(',');
-            }
 
             if (AppSettings.PatcherLogFont != null)
                 txtResult.Font = AppSettings.PatcherLogFont.ToFont();
@@ -2209,7 +2198,7 @@ namespace UniversalPatcher
                 if (dstFolder.Length > 0) //Custom destination
                 {
                     Logger("Writing rebuild script: " + scriptFName + "... ");
-                    WriteTextFile(scriptFName, scriptContent);
+                    File.WriteAllText(scriptFName, scriptContent);
                     Logger("[OK]");
                 }
 
@@ -4017,7 +4006,7 @@ namespace UniversalPatcher
                                 LoggerBold("File not found: " + fParts[0]);
                                 return;
                             }
-                            byte[] segment = ReadBin(fParts[0]);
+                            byte[] segment = File.ReadAllBytes(fParts[0]);
                             uint offset = 0;
                             for (int x = 1; x < fParts.Length; x++) //Part1, Part2...
                             {
@@ -4051,7 +4040,7 @@ namespace UniversalPatcher
                 if (fName.Length == 0)
                     return;
                 Logger("Writing to file: " + fName);
-                WriteBinToFile(fName, buf);
+                File.WriteAllBytes(fName, buf);
                 Logger(" [OK]");
             }
             catch (Exception ex)
@@ -4534,7 +4523,7 @@ namespace UniversalPatcher
                     if (fName.Length > 0)
                     {
                         Logger("Writing file: " + fName, false);
-                        WriteBinToFile(fName, newBuf);
+                        File.WriteAllBytes(fName, newBuf);
                         Logger(" [OK]");
                     }
 

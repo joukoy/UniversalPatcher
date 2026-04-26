@@ -224,7 +224,6 @@ namespace UniversalPatcher
                 {
                     //Debug.WriteLine("RS232 port timeout: " + RTimeout.ToString());
                     throw new TimeoutException();
-                    break;
                 }
                 if (receiverToken.IsCancellationRequested)
                 {

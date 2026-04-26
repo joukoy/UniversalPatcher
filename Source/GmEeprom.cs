@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using static Upatcher;
 using static Helpers;
+using System.IO;
 
 namespace UniversalPatcher
 {
@@ -92,7 +93,7 @@ namespace UniversalPatcher
             long fsize = new System.IO.FileInfo(FileName).Length;
             byte[] tmpBuf = new byte[fsize];
 
-            tmpBuf = ReadBin(FileName);
+            tmpBuf = File.ReadAllBytes(FileName);
 
             return GetVIN(tmpBuf);
         }

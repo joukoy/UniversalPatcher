@@ -146,7 +146,19 @@
       <DependentUpon>frmJ2534Server.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLogger\Devices\J2534Client.cs" />
-    <Compile Include="DataLogger\Devices\J2534InitParameters.cs" />
+    <Compile Include="DataLogger\frmLogConverter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmLogConverter.Designer.cs">
+      <DependentUpon>frmLogConverter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogger\frmSconfigs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmSconfigs.Designer.cs">
+      <DependentUpon>frmSconfigs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogger\J2534InitParameters.cs" />
     <Compile Include="DataLogger\Devices\J2534Server.cs" />
     <Compile Include="DataLogger\Devices\JetDevice.cs" />
     <Compile Include="DataLogger\Devices\TcpIpPort.cs" />
@@ -163,6 +175,12 @@
     </Compile>
     <Compile Include="DataLogger\frmDashboard.Designer.cs">
       <DependentUpon>frmDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataLogger\FrmDeviceTree.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\FrmDeviceTree.Designer.cs">
+      <DependentUpon>FrmDeviceTree.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLogger\frmGaugeSettings.cs">
       <SubType>Form</SubType>
@@ -218,8 +236,11 @@
     <Compile Include="DataLogger\Hertz.cs" />
     <Compile Include="DataLogger\isotphandler.cs" />
     <Compile Include="DataLogger\isotphandlerdefs.cs" />
+    <Compile Include="DataLogger\LogConverter.cs" />
     <Compile Include="DataLogger\LogParam.cs" />
     <Compile Include="DataLogger\LogParamFile.cs" />
+    <Compile Include="DataLogger\OBDConnection.cs" />
+    <Compile Include="DataLogger\Simulator.cs" />
     <Compile Include="DataLogger\UpGauge.cs" />
     <Compile Include="DataLogger\GmKeys.cs" />
     <Compile Include="DataLogger\GraphSettings.cs" />
@@ -698,11 +719,17 @@
     <EmbeddedResource Include="DataLogger\frmDashboard.resx">
       <DependentUpon>frmDashboard.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\FrmDeviceTree.resx">
+      <DependentUpon>FrmDeviceTree.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DataLogger\frmGaugeSettings.resx">
       <DependentUpon>frmGaugeSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataLogger\frmJ2534Filters.resx">
       <DependentUpon>frmJ2534Filters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmLogConverter.resx">
+      <DependentUpon>frmLogConverter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataLogger\frmLoggerGraphics.resx">
       <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
@@ -713,6 +740,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLogger\frmPidSelector.resx">
       <DependentUpon>frmPidSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmSconfigs.resx">
+      <DependentUpon>frmSconfigs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataLogger\frmSelectDBC.resx">
       <DependentUpon>frmSelectDBC.cs</DependentUpon>

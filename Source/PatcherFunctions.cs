@@ -35,6 +35,12 @@ public class Upatcher
             return (DetectRule)this.MemberwiseClone();
         }
     }
+    public class ColumnOrder
+    {
+        public bool Visible { get; set; }
+        public string Column { get; set; }
+        public int Width { get; set; }
+    }
 
     public enum DisplayUnits
     {
@@ -49,6 +55,13 @@ public class Upatcher
         _2 = 2,
         _4=4,
         _8 = 8,
+    }
+
+    public enum ConditionalColors
+    {
+        Off,
+        Settings,
+        Values
     }
 
     public class XmlPatch
@@ -560,14 +573,16 @@ public class Upatcher
     public static SavingMath savingMath;
     public static FrmPatcher frmpatcher;
     public static frmLogger frmlogger;
-    private static frmSplashScreen frmSplash;
+    private static frmSplashScreen frmSplash = new frmSplashScreen();
     public static DataLogger datalogger;
     public static Analyzer analyzer;
+    public static OBDConnection MainConnection;
 
     public static CvnDB cvnDB;
     //public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
     //public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
     public static string selectedCompareBin;
+    public static string ColumnsFile;
 
     public static WideBand WB;
 
@@ -689,6 +704,18 @@ public class Upatcher
                 "Please extract all files from ZIP package", "Incomplete installation", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
+        string[] SubFolders = new string[] { "Patches","Segments","Log","Tuner","Histogram","Logger",
+            "Logger\\Log","Logger\\Profiles","Logger\\DisplayProfiles","Logger\\J2534Profiles",
+            "Logger\\ospids", "Logger\\Dashboard", "Logger\\LogConverter","ChecksumSearch",
+            "TuneSessions", "XML\\TunerColumns"};
+        foreach(string SubF in SubFolders)
+        {
+            if (!Directory.Exists(SubF))
+            {
+                Directory.CreateDirectory(SubF);
+            }
+        }
+        /*
         //Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
@@ -718,8 +745,9 @@ public class Upatcher
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "ChecksumSearch"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "TuneSessions")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "TunerSessions"));
-
-        frmSplash = new frmSplashScreen();
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML", "TunerColumns")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML", "TunerColumns"));
+        */
         if (AppSettings.SplashShowTime > 0)
             frmSplash.Show();
         //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
@@ -1210,6 +1238,10 @@ public class Upatcher
         string retVal = mathStr;
         int start = mathStr.IndexOf("table:") + 6;
         int mid = mathStr.IndexOf("'", start + 7);
+        if (start < 0 || mid < 0)
+        {
+            return retVal;
+        }
         string conversionTable = mathStr.Substring(start, mid - start + 1);
         TableData tmpTd = new TableData();
         tmpTd.TableName = conversionTable.Replace("'", "");
@@ -2168,6 +2200,26 @@ public class Upatcher
         Logger(" [OK]");
     }
 
+    public static bool SaveColumnsPreset(List<ColumnOrder> columns, string fName)
+    {
+        if (string.IsNullOrEmpty(fName))
+        {
+            fName = SelectSaveFile(XmlFilter, ColumnsFile);
+        }
+        if (string.IsNullOrEmpty(fName))
+        {
+            return false;
+        }        
+        ColumnsFile = fName;
+        Debug.WriteLine("Saving columns file " + fName + "...");
+        using (FileStream stream = new FileStream(fName, FileMode.Create))
+        {
+            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<ColumnOrder>));
+            writer.Serialize(stream, columns);
+            stream.Close();
+        }
+        return true;
+    }
     public static void LoadOBD2Codes()
     {
         string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");

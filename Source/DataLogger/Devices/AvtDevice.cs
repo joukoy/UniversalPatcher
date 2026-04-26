@@ -475,7 +475,7 @@ namespace UniversalPatcher
 
         public override bool SetLoggingFilter()
         {
-            if (this.CurrentFilter == FilterMode.Logging || datalogger.useVPWFilters == false)
+            if (this.CurrentFilter == FilterMode.Logging || AppSettings.LoggerUseFilters == false)
                 return true;
             Debug.WriteLine("Configure AVT filter");
             this.Port.Send(AVT_FILTER_DEST.GetBytes());

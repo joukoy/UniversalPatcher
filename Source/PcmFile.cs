@@ -26,7 +26,7 @@ namespace UniversalPatcher
                 FileName = Fname;
                 altTableDatas[0].Name = Fname;
                 fsize = (uint)new FileInfo(FileName).Length;
-                buf = ReadBin(FileName);
+                buf = File.ReadAllBytes(FileName);
                 osStoreAddress = uint.MaxValue;
                 if (autodetect)
                 {
@@ -241,7 +241,7 @@ namespace UniversalPatcher
                     long conFileSize = new FileInfo(tSeekFile).Length;
                     if (conFileSize < 255)
                     {
-                        string compXml = ReadTextFile(tSeekFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                        string compXml = File.ReadAllText(tSeekFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
                         compXml = Path.Combine(Application.StartupPath, "XML", compXml);
                         if (File.Exists(compXml))
                         {
@@ -276,7 +276,7 @@ namespace UniversalPatcher
                     long conFileSize = new FileInfo(ssFile).Length;
                     if (conFileSize < 255)
                     {
-                        string compXml = ReadTextFile(ssFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                        string compXml = File.ReadAllText(ssFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
                         compXml = Path.Combine(Application.StartupPath, "XML", compXml);
                         if (File.Exists(compXml))
                         {
@@ -343,8 +343,8 @@ namespace UniversalPatcher
                         platformConfig.PidSearchString = pidSearchConfigs[i].SearchString;
                         platformConfig.PidSearchStep = (uint)pidSearchConfigs[i].Step;
                     }
-                    SavePlatformConfig(PlatformConfigFile);
                 }
+                SavePlatformConfig(PlatformConfigFile);
                 Logger(" [OK]");
             }
         }
@@ -368,7 +368,7 @@ namespace UniversalPatcher
 
         public void ReloadBinFile()
         {
-            buf = ReadBin(FileName);
+            buf = File.ReadAllBytes(FileName);
         }
 
         /// <summary>
@@ -379,7 +379,7 @@ namespace UniversalPatcher
         {
             if (FileName == null || buf == null ||  buf.Length == 0)
                 return false;
-            byte[] compareBuf = ReadBin(FileName);
+            byte[] compareBuf = File.ReadAllBytes(FileName);
             if (buf.SequenceEqual(compareBuf))
                 return false;
             else
@@ -477,7 +477,7 @@ namespace UniversalPatcher
                 for (int di=0; di< dirs.Length;di++)
                 {
                     string fldr = Path.GetFileName(dirs[di].Name);
-                    if (!fldr.StartsWith(".") && !fldr.StartsWith(".") && !fldr.StartsWith("~"))
+                    if (!fldr.StartsWith(".") && !fldr.StartsWith("..") && !fldr.StartsWith("~"))
                         filterdFiles.AddRange(dirs[di].GetFiles("*.*", SearchOption.AllDirectories));
                 }
 
@@ -516,7 +516,7 @@ namespace UniversalPatcher
 
                     if (tFile.Length < 255)
                     {
-                        string tmpXml= ReadTextFile(tFile.FullName).Split(new[] { '\r', '\n' }).FirstOrDefault(); ;
+                        string tmpXml= File.ReadAllText(tFile.FullName).Split(new[] { '\r', '\n' }).FirstOrDefault(); ;
                         if (File.Exists(tmpXml))
                         {
                             compXml = tmpXml;
@@ -560,7 +560,7 @@ namespace UniversalPatcher
                 long conFileSize = new FileInfo(fName).Length;
                 if (conFileSize < 255)
                 {
-                    string compXml = ReadTextFile(fName).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                    string compXml = File.ReadAllText(fName).Split(new[] { '\r', '\n' }).FirstOrDefault();
                     compXml = Path.Combine(Path.GetDirectoryName(fName),compXml);
                     if (File.Exists(compXml))
                     {
@@ -697,7 +697,7 @@ namespace UniversalPatcher
                 long conFileSize = new FileInfo(fileName).Length;
                 if (conFileSize < 255)
                 {
-                    string compXml = ReadTextFile(fileName).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                    string compXml = File.ReadAllText(fileName).Split(new[] { '\r', '\n' }).FirstOrDefault();
                     compXml = Path.Combine(Path.GetDirectoryName(fileName), compXml);
                     if (File.Exists(compXml))
                     {
@@ -713,7 +713,7 @@ namespace UniversalPatcher
                 file.Close();
                 _configFileFullName = fileName;
                 Logger(" [OK]");
-                if (Segments[0].Version == null || Segments[0].Version == "")
+                if (Segments.Count > 0 && (Segments[0].Version == null || Segments[0].Version == ""))
                 {
                     SegmentConfig S = Segments[0];
                     S.Version = "1";
@@ -753,7 +753,7 @@ namespace UniversalPatcher
                     LoggerBold("Warning! Automatic checksum fix is disabled");
                 else
                     FixCheckSums();
-                WriteBinToFile(fName, buf);
+                File.WriteAllBytes(fName, buf);
                 FileName = fName;
             }
             catch (Exception ex)
@@ -867,7 +867,7 @@ namespace UniversalPatcher
                                 if (segmentAddressDatas[seg].CS2Address.Address == uint.MaxValue)
                                 {
                                     string hexdigits;
-                                    if (segmentAddressDatas[seg].CS1Address.Bytes == 0)
+                                    if (segmentAddressDatas[seg].CS2Address.Bytes == 0)
                                         hexdigits = "X4";
                                     else
                                         hexdigits = "X" + (segmentAddressDatas[seg].CS2Address.Bytes * 2).ToString();
