@@ -81,11 +81,18 @@ namespace UniversalPatcher
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("Select XML file", SegmentConfigFilter);
-            if (FileName.Length < 1)
-                return;
-            PCM.LoadConfigFile(FileName);
-            LoadFile(FileName);
+            try
+            {
+                string FileName = SelectFile("Select XML file", SegmentConfigFilter);
+                if (FileName.Length < 1)
+                    return;
+                PCM.LoadConfigFile(FileName);
+                LoadFile(FileName);
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)

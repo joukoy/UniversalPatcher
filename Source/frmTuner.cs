@@ -16,6 +16,7 @@ using static Helpers;
 using static UniversalPatcher.TreeParts;
 using System.Threading.Tasks;
 using System.Reflection;
+using Ionic.Zip;
 
 namespace UniversalPatcher
 {
@@ -3734,12 +3735,7 @@ namespace UniversalPatcher
                     groupExtraOffset.Visible = false;
                     btnFlash.Visible = false;
 
-                    openMapSessionToolStripMenuItem.Visible = false;
-                    loadMapSessionToolStripMenuItem.Visible = false;
-                    saveMapSessionToolStripMenuItem.Visible = false;
-                    saveSessionAsToolStripMenuItem.Visible = false;
-                    closeSessionToolStripMenuItem.Visible = false;
-                    newSessionToolStripMenuItem.Visible = false;
+                    sessionToolStripMenuItem.Visible = false;
                     if (string.IsNullOrEmpty(AppSettings.TunerColumnsTourist))
                     {
                         colsFile = Path.Combine(Application.StartupPath, "XML","TunerColumns", "Columns-Tourist.xml");
@@ -3794,12 +3790,7 @@ namespace UniversalPatcher
                     resetTunerModeColumnsToolStripMenuItem.Visible = true;
                     groupExtraOffset.Visible = false;
                     btnFlash.Visible = false;
-                    openMapSessionToolStripMenuItem.Visible = false;
-                    loadMapSessionToolStripMenuItem.Visible = false;
-                    saveMapSessionToolStripMenuItem.Visible = false;
-                    saveSessionAsToolStripMenuItem.Visible = false;
-                    closeSessionToolStripMenuItem.Visible = false;
-                    newSessionToolStripMenuItem.Visible = false;
+                    sessionToolStripMenuItem.Visible = false;
                     if (string.IsNullOrEmpty(AppSettings.TunerColumnsBasic))
                     {
                         colsFile = Path.Combine(Application.StartupPath, "XML", "TunerColumns", "Columns-Basic.xml");
@@ -3854,13 +3845,7 @@ namespace UniversalPatcher
                     resetTunerModeColumnsToolStripMenuItem.Visible = false;
                     groupExtraOffset.Visible = true;
                     btnFlash.Visible = true;
-
-                    openMapSessionToolStripMenuItem.Visible = true;
-                    loadMapSessionToolStripMenuItem.Visible = true;
-                    saveMapSessionToolStripMenuItem.Visible = true;
-                    saveSessionAsToolStripMenuItem.Visible = true;
-                    closeSessionToolStripMenuItem.Visible = true;
-                    newSessionToolStripMenuItem.Visible = true;
+                    sessionToolStripMenuItem.Visible = true;
                     if (string.IsNullOrEmpty(AppSettings.TunerColumnsAdvanced))
                     {
                         colsFile = Path.Combine(Application.StartupPath, "XML", "TunerColumns", "Columns-Advanced.xml");
@@ -5580,9 +5565,16 @@ namespace UniversalPatcher
 
                 foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
                 {
-                    string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
-                    double newvalue = parser.Parse(mathStr);
-                    cell.Value = newvalue;
+                    if (txtMath.Text == "-0")
+                    {
+                        cell.Value = "-0";
+                    }
+                    else
+                    {
+                        string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
+                        double newvalue = parser.Parse(mathStr);
+                        cell.Value = newvalue;
+                    }
                 }
             }
             catch (Exception ex)
@@ -6720,9 +6712,17 @@ namespace UniversalPatcher
                     fa.Text = "Session name?";
                     fa.labelAsk.Text = "Session name:";
                     if (string.IsNullOrEmpty(this.sessionname))
+                    {
                         fa.TextBox1.Text = DateTime.Now.ToString("yyyy-MM-dd-HH-mm");
+                        if (PCM != null)
+                        {
+                            fa.TextBox1.Text += "-"+PCM.configFile + "-" + PCM.OS;
+                        }
+                    }
                     else
+                    {
                         fa.TextBox1.Text = sessionname;
+                    }
                     if (fa.ShowDialog() == DialogResult.OK)
                     {
                         SessionName = fa.TextBox1.Text;
@@ -6833,20 +6833,23 @@ namespace UniversalPatcher
             }
 
         }
-        public string LoadSession()
+        public string LoadSession(string fName)
         {
             try
             {
                 string sesPath = Path.Combine(Application.StartupPath, "TunerSessions");
-                string defFile = Path.Combine(sesPath, "Session.xml");
-                string fName = SelectFile("Select session file", TunerSessionFilter, defFile);
                 if (string.IsNullOrEmpty(fName))
                 {
-                    return "";
+                    string defFile = Path.Combine(sesPath, "Session.xml");
+                    fName = SelectFile("Select session file", TunerSessionFilter, defFile);
+                    if (string.IsNullOrEmpty(fName))
+                    {
+                        return "";
+                    }
                 }
                 sesPath = Path.GetDirectoryName(fName);
                 fName = Path.Combine(sesPath, "Session.xml");
-                Debug.WriteLine("Loading file " + fName); 
+                Logger("Loading session file " + fName); 
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(SessionSettings));
                 System.IO.StreamReader file = new System.IO.StreamReader(fName);
                 SessionSettings sessionsettings = (SessionSettings)reader.Deserialize(file);
@@ -6938,28 +6941,6 @@ namespace UniversalPatcher
             }
 
         }
-        private void saveMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveSession(SessionName,true);
-        }
-
-        private void loadMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (TunerMain != null)
-            {
-                TunerMain.AddSession(frmTunerMain.SessionType.Load);
-            }
-            else
-            {
-                LoadSession();
-            }
-        }
-
-        private void saveSessionAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveSession("",true);
-        }
-
         private void renameTablelistToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmData frmD = new frmData();
@@ -6988,29 +6969,6 @@ namespace UniversalPatcher
             }
         }
 
-        private void closeSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (TunerMain != null)
-            {
-                TunerMain.CloseSession(myTab);
-            }
-            else
-            {
-                this.Close();
-            }
-        }
-
-        private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (TunerMain != null)
-            {
-                TunerMain.AddSession(frmTunerMain.SessionType.Empty);
-            }
-            else
-            {
-                SaveSession("",true);
-            }
-        }
 
         private void showOnlyMappedTablesToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7331,6 +7289,249 @@ namespace UniversalPatcher
             {
                 AppSettings.TunerColorsMode = ConditionalColors.Values;
                 AppSettings.Save();
+            }
+        }
+
+        private void createMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.AddSession(frmTunerMain.SessionType.Map);
+            }
+            else
+            {
+                CreateMapSession();
+            }
+
+        }
+
+        private void saveSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveSession(SessionName, true);
+        }
+
+        private void saveSessionAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.AddSession(frmTunerMain.SessionType.New);
+            }
+            else
+            {
+                SaveSession("", true);
+            }
+        }
+
+        private void closeSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.CloseSession(myTab);
+            }
+            else
+            {
+                this.Close();
+            }
+
+        }
+
+        private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.AddSession(frmTunerMain.SessionType.Empty);
+            }
+            else
+            {
+                SaveSession("", true);
+            }
+
+        }
+
+        private void ArchiveSession(string CommentFile)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(SaveSession(SessionName, true)))
+                {
+                    Logger("Session saving canceled, no archive created");
+                    return;
+                }
+                string archivefolder = Path.Combine(Application.StartupPath, "TunerSessions", "Archive");
+                if (!Directory.Exists(archivefolder))
+                {
+                    Directory.CreateDirectory(archivefolder);
+                }
+                string sesPath = Path.Combine(Application.StartupPath, "TunerSessions", SessionName);
+                int id = 0;
+                string zipfileName;
+                while (true)
+                {
+                    zipfileName = Path.Combine(archivefolder, SessionName + "-" + id.ToString("000") + ".zip");
+                    if (!File.Exists(zipfileName))
+                    {
+                        break;
+                    }
+                    id++;
+                }
+                Logger("Creating archive: " + zipfileName);
+                string redofile = Path.GetTempFileName();
+                ReDo rTmp = new ReDo();
+                StringBuilder sb = new StringBuilder(rTmp.CsvHeader() + Environment.NewLine);
+                foreach (ReDo rdo in RedoLog)
+                {
+                    sb.Append(rdo.CsvLine() + Environment.NewLine);
+                }
+                File.WriteAllText(redofile, sb.ToString());
+                using (ZipFile zip = new ZipFile())
+                {
+                    ZipEntry entry = zip.AddDirectory(sesPath);
+                    if (!string.IsNullOrEmpty(CommentFile))
+                    {
+                        ZipEntry entry2 = zip.AddFile(CommentFile);
+                        entry2.FileName = "Comments.txt";
+                    }
+                    ZipEntry entry3 = zip.AddFile(redofile);
+                    entry3.FileName = "RedoLog.csv";
+                    zip.Save(zipfileName);
+                }
+                File.Delete(redofile);
+                Logger("[OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+
+        }
+        private void archiveSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ArchiveSession(null);
+        }
+
+        private void restoreArchivedSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string archivefolder = Path.Combine(Application.StartupPath, "TunerSessions", "Archive");
+                if (!Directory.Exists(archivefolder))
+                {
+                    Directory.CreateDirectory(archivefolder);
+                }
+                string fName = SelectFile("Select archive", ZipFilter, Path.Combine(archivefolder, "archive.zip"));
+                if (string.IsNullOrEmpty(fName))
+                {
+                    return;
+                }
+                string sesPath = Path.Combine(Application.StartupPath, "TunerSessions", Path.GetFileNameWithoutExtension(fName));
+                if (Directory.Exists(sesPath))
+                {
+                    DialogResult result = MessageBox.Show("Replace session files in folder " + sesPath + "?", "Replace session files?", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.No)
+                    {
+                        Logger("Restore canceled");
+                        return;
+                    }
+                }
+                using (ZipFile zip = new ZipFile(fName))
+                {
+                    zip.ExtractAll(sesPath, ExtractExistingFileAction.OverwriteSilently);
+                }
+                string sesFile = Path.Combine(sesPath, "Session.xml");
+                LoadSession(sesFile);
+                string redofile = Path.Combine(sesPath, "Redolog.csv");
+                string commentfile = Path.Combine(sesPath, "Comments.txt");
+                if (File.Exists(commentfile))
+                {
+                    frmData fd = new frmData();
+                    fd.txtData.Multiline = true;
+                    fd.txtData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                    fd.txtData.ScrollBars = ScrollBars.Both;
+                    Application.DoEvents();
+                    fd.Height = 400;
+                    fd.Text = "Session comments";
+                    fd.txtData.Text = File.ReadAllText(commentfile);
+                    fd.Show();
+                }
+                if (File.Exists(redofile))
+                {
+                    System.Diagnostics.Process.Start(redofile);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void loadSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.AddSession(frmTunerMain.SessionType.Load);
+            }
+            else
+            {
+                LoadSession(null);
+            }
+
+        }
+
+        private void loadMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TunerMain != null)
+            {
+                TunerMain.AddSession(frmTunerMain.SessionType.Load);
+            }
+            else
+            {
+                LoadSession(null);
+            }
+
+        }
+
+        private void saveMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveSession(SessionName, true);
+        }
+
+        private void archiveSessionWithCommentsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmData fd = new frmData();
+                fd.txtData.Multiline = true;
+                fd.txtData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                Application.DoEvents();
+                fd.Height = 400;
+                fd.Text = "Session comments";
+                if (fd.ShowDialog() == DialogResult.OK)
+                {
+                    //string cFile = Path.Combine(Application.StartupPath, "TunerSessions", SessionName, "Comments.txt");
+                    string cFile = Path.GetTempFileName();
+                    File.WriteAllText(cFile, fd.txtData.Text);
+                    ArchiveSession(cFile);
+                    File.Delete(cFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
             }
         }
     }

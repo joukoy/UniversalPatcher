@@ -99,7 +99,10 @@ namespace UniversalPatcher
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.numHexviewExtra = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtHexView = new System.Windows.Forms.RichTextBox();
+            this.btnHexviewFont = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -112,7 +115,7 @@ namespace UniversalPatcher
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numHexviewExtra)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -399,21 +402,21 @@ namespace UniversalPatcher
             // offToolStripMenuItem
             // 
             this.offToolStripMenuItem.Name = "offToolStripMenuItem";
-            this.offToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.offToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.offToolStripMenuItem.Text = "Off";
             this.offToolStripMenuItem.Click += new System.EventHandler(this.offToolStripMenuItem_Click);
             // 
             // tableSettingsToolStripMenuItem
             // 
             this.tableSettingsToolStripMenuItem.Name = "tableSettingsToolStripMenuItem";
-            this.tableSettingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tableSettingsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.tableSettingsToolStripMenuItem.Text = "Table settings";
             this.tableSettingsToolStripMenuItem.Click += new System.EventHandler(this.tableSettingsToolStripMenuItem_Click);
             // 
             // tableValuesToolStripMenuItem
             // 
             this.tableValuesToolStripMenuItem.Name = "tableValuesToolStripMenuItem";
-            this.tableValuesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tableValuesToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.tableValuesToolStripMenuItem.Text = "Table values";
             this.tableValuesToolStripMenuItem.Click += new System.EventHandler(this.tableValuesToolStripMenuItem_Click);
             // 
@@ -771,20 +774,62 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.dataGridView2);
+            this.splitContainer1.Panel2.Controls.Add(this.btnHexviewFont);
+            this.splitContainer1.Panel2.Controls.Add(this.numHexviewExtra);
+            this.splitContainer1.Panel2.Controls.Add(this.label2);
+            this.splitContainer1.Panel2.Controls.Add(this.txtHexView);
             this.splitContainer1.Size = new System.Drawing.Size(895, 374);
             this.splitContainer1.SplitterDistance = 652;
             this.splitContainer1.TabIndex = 19;
             // 
-            // dataGridView2
+            // numHexviewExtra
             // 
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView2.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.Size = new System.Drawing.Size(239, 374);
-            this.dataGridView2.TabIndex = 0;
+            this.numHexviewExtra.Location = new System.Drawing.Point(67, 0);
+            this.numHexviewExtra.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numHexviewExtra.Name = "numHexviewExtra";
+            this.numHexviewExtra.Size = new System.Drawing.Size(37, 20);
+            this.numHexviewExtra.TabIndex = 2;
+            this.numHexviewExtra.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numHexviewExtra.ValueChanged += new System.EventHandler(this.numHexviewExtra_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(2, 2);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(59, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Extrabytes:";
+            // 
+            // txtHexView
+            // 
+            this.txtHexView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtHexView.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtHexView.Location = new System.Drawing.Point(0, 26);
+            this.txtHexView.Name = "txtHexView";
+            this.txtHexView.Size = new System.Drawing.Size(239, 348);
+            this.txtHexView.TabIndex = 0;
+            this.txtHexView.Text = "";
+            // 
+            // btnHexviewFont
+            // 
+            this.btnHexviewFont.Location = new System.Drawing.Point(115, 0);
+            this.btnHexviewFont.Name = "btnHexviewFont";
+            this.btnHexviewFont.Size = new System.Drawing.Size(55, 20);
+            this.btnHexviewFont.TabIndex = 3;
+            this.btnHexviewFont.Text = "Font";
+            this.btnHexviewFont.UseVisualStyleBackColor = true;
+            this.btnHexviewFont.Click += new System.EventHandler(this.btnHexviewFont_Click);
             // 
             // frmTableEditor
             // 
@@ -825,9 +870,10 @@ namespace UniversalPatcher
             this.groupDifference.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numHexviewExtra)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -897,11 +943,14 @@ namespace UniversalPatcher
         private ToolStripMenuItem smoothToolStripMenuItem;
         private ToolStripMenuItem interpolateToolStripMenuItem;
         private SplitContainer splitContainer1;
-        private DataGridView dataGridView2;
         private ToolStripMenuItem showHEXWindowToolStripMenuItem;
         private ToolStripMenuItem conditionalFormattingToolStripMenuItem;
         private ToolStripMenuItem tableSettingsToolStripMenuItem;
         private ToolStripMenuItem tableValuesToolStripMenuItem;
         private ToolStripMenuItem offToolStripMenuItem;
+        private RichTextBox txtHexView;
+        private NumericUpDown numHexviewExtra;
+        private Label label2;
+        private Button btnHexviewFont;
     }
 }

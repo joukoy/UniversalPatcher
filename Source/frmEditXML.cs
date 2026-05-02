@@ -45,7 +45,8 @@ namespace UniversalPatcher
             CANmodules,
             RealtimeControl,
             XdfPlugins,
-            OldPidProfile
+            OldPidProfile,
+            RedoLog
         }
 
         private XMLTYPE xmlType = XMLTYPE.Autodetect;
@@ -60,6 +61,7 @@ namespace UniversalPatcher
         private List<SegmentSeek> sSeeks;
         public List<RealTimeControl> rtControls;
         private List<CVN> sCVN;
+        private List<ReDo> redos;
         private List<DtcSearchConfig> dtcSC;
         private List<PidSearchConfig> pidSC;
         private List<PidInfo> piddescriptions;
@@ -193,6 +195,21 @@ namespace UniversalPatcher
             }
             bindingSource.DataSource = null;
             bindingSource.DataSource = sCVN;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            UseComboBoxForEnums(dataGridView1);
+            FillFilterBy();
+        }
+        public void LoadRedoLog(List<ReDo> redolist)
+        {
+            xmlType = XMLTYPE.RedoLog;
+            this.Text = "View Redo log";
+            redos = redolist;
+            currentList = redos;
+            currentObj = new ReDo();
+            currentType = typeof(ReDo);
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = redos;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
@@ -947,6 +964,9 @@ namespace UniversalPatcher
                         Logger("Saving file " + fileName, false);
                         datalogger.SaveOldProfile(fileName);
                         Logger(" [OK]");
+                        break;
+                    case XMLTYPE.RedoLog:
+                        Logger("Saving not implemented for RedoLog");
                         break;
                     default:
                         Logger("Saving file autodetect.xml", false);

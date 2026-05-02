@@ -803,3 +803,7 @@
 - Tuner: Save & restore columns with session
 - Tuner: Added HEX window to Table editor
 - Tuner: Customizable conditional colors: Set colors, Use table settings/use values/Off
+
+0.23.5
+- Tuner: HEX window redesign
+- Fixed bug: Creating folders to wrong place in startup

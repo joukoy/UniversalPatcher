@@ -1760,7 +1760,9 @@ namespace UniversalPatcher
                 frmSL.PCM = basefile;
                 frmSL.InitMe();
                 if (basefile.configFileFullName.Length > 0)
+                {
                     frmSL.LoadFile(basefile.configFileFullName);
+                }
                 if (frmSL.ShowDialog() == DialogResult.OK)
                 {
                     //addCheckBoxes();

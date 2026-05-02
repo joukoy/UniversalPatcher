@@ -36,7 +36,7 @@ namespace UniversalPatcher
         public string Collection { get; set; }
         public string ItemName { get; set; }
         public string Property { get; set; }
-        public RedoAction Action { get; set; }
+        public RedoAction Action { get; set; }        
         public Object OldValue { get; set; }
         public Object NewValue { get; set; }
         public int Position { get; set; }
@@ -46,5 +46,23 @@ namespace UniversalPatcher
         [Browsable(false)]
         [Bindable(false)]
         public Object ObjCollection { get; set; }
+        public string CsvHeader()
+        {
+            return "Time;Collection;ItemName;Property;Action;OldValue;NewValue;Position;Object";
+        }
+        public string CsvLine()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(Time + ";");
+            sb.Append(Collection + ";");
+            sb.Append(ItemName + ";");
+            sb.Append(Property + ";");
+            sb.Append(Action.ToString() + ";");
+            sb.Append(OldValue.ToString() + ";");
+            sb.Append(NewValue.ToString() + ";");
+            sb.Append(Position.ToString() + ";");
+            sb.Append(Obj.ToString() + ";");
+            return sb.ToString();
+        }
     }
 }

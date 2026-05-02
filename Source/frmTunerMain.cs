@@ -107,7 +107,7 @@ namespace UniversalPatcher
                         SessionName = ft.SaveSession("",true);
                         break;
                     case SessionType.Load:
-                        SessionName = ft.LoadSession();
+                        SessionName = ft.LoadSession(null);
                         break;
                     case SessionType.SaveAs:
                         SessionName = ft.SaveSession("",true);

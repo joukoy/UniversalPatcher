@@ -63,6 +63,7 @@ namespace UniversalPatcher
             LoggerLastFilterOS = "";
             TunerShowTableCount = true;
             TunerShowHexWindow = false;
+            TunerHexWindowExtraBytes = 4;
             TunerHexWindowColumns = 8;
             TunerHexWindowWidth = 400;
             //TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
@@ -144,6 +145,7 @@ namespace UniversalPatcher
             PatcherLogFont = new SerializableFont(new Font("Consolas", 8));
             DebugFont = new SerializableFont(new Font("Consolas", 8));
             LoggerConsoleFont = new SerializableFont(new Font("Consolas", 8));
+            HexViewFont = new SerializableFont(new Font("Consolas", 8));
         }
         public enum StartupUtil
         {
@@ -353,6 +355,7 @@ namespace UniversalPatcher
         public bool TunerAutoresizeColumns { get; set; }
         public bool TunerAutoSaveColumns { get; set; }
         public bool TunerShowHexWindow { get; set; }
+        public int TunerHexWindowExtraBytes { get; set; }
         public int TunerHexWindowWidth { get; set; }
         public int TunerHexWindowColumns { get; set; }
         public Upatcher.ConditionalColors TunerColorsMode { get; set; }
@@ -410,6 +413,7 @@ namespace UniversalPatcher
         public SerializableFont PatcherLogFont { get; set; }
         public SerializableFont DebugFont { get; set; }
         public SerializableFont LoggerConsoleFont { get; set; }
+        public SerializableFont HexViewFont { get; set; }
 
         public void Save()
         {

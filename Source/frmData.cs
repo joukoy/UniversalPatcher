@@ -29,7 +29,7 @@ namespace UniversalPatcher
 
         private void TxtData_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (txtData.Multiline == false && e.KeyCode == Keys.Enter)
             {
                 this.DialogResult = DialogResult.OK;
                 this.Close();

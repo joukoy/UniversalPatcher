@@ -710,44 +710,12 @@ public class Upatcher
             "TuneSessions", "XML\\TunerColumns"};
         foreach(string SubF in SubFolders)
         {
-            if (!Directory.Exists(SubF))
+            string fldr = Path.Combine(Application.StartupPath, SubF);
+            if (!Directory.Exists(fldr))
             {
-                Directory.CreateDirectory(SubF);
+                Directory.CreateDirectory(fldr);
             }
         }
-        /*
-        //Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Histogram")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Histogram"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Log")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Profiles")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Profiles"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "ospids")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "ospids"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Dashboard")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Dashboard"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "ChecksumSearch")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "ChecksumSearch"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "TuneSessions")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "TunerSessions"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML", "TunerColumns")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML", "TunerColumns"));
-        */
         if (AppSettings.SplashShowTime > 0)
             frmSplash.Show();
         //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));

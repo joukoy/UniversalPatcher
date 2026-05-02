@@ -17,14 +17,24 @@ namespace UniversalPatcher
         {
             InitializeComponent();
         }
-
+        private string sesName;
         private void frmMapSession_Load(object sender, EventArgs e)
         {
             txtMapPin.Text = AppSettings.MapSessionMapBin;
             txtRefBin.Text = AppSettings.MapSessionRefBin;
             txtRefTableList.Text = AppSettings.MapSessionRefTableList;
-            txtSessionName.Text = "map-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm");
+            txtSessionName.Text = "map-"  + DateTime.Now.ToString("yyyy-MM-dd-HH-mm");
+            sesName = txtSessionName.Text;
             chkUseAutoloadTables.Checked = AppSettings.MapSessionUseAutoLoadTableList;
+            txtSessionName.TextChanged += TxtSessionName_TextChanged;
+        }
+
+        private void TxtSessionName_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtMapPin.Text))
+            {
+                sesName = txtSessionName.Text;
+            }
         }
 
         private void btnMapPin_Click(object sender, EventArgs e)
@@ -33,6 +43,8 @@ namespace UniversalPatcher
             if (!string.IsNullOrEmpty(fName))
             {
                 txtMapPin.Text = fName;
+                PcmFile pcm = new PcmFile(fName, true, "");
+                txtSessionName.Text = sesName + "-" + pcm.configFile + "-" + pcm.OS;
             }
         }
 

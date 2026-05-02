@@ -147,6 +147,8 @@ namespace UniversalPatcher
                 addressToolStripMenuItem.Checked = AppSettings.TableEditorHexShowAddress;
                 binaryToolStripMenuItem.Checked = AppSettings.TableEditorHexShowBinary;
                 decimalToolStripMenuItem.Checked = AppSettings.TableEditorHexShowDecimal;
+                numHexviewExtra.Value = AppSettings.TunerHexWindowExtraBytes;
+                txtHexView.Font = AppSettings.HexViewFont.ToFont();
 
                 if (AppSettings.TunerColorsMode == ConditionalColors.Off)
                 {
@@ -491,26 +493,6 @@ namespace UniversalPatcher
                     labelInfo.Text = "";
                     return; //OBD2 Description
                 }
-                if (showHEXWindowToolStripMenuItem.Checked)
-                {
-                    int row = 0;
-                    int col = 0;
-                    uint a = tCell.td.addrInt;
-                    dataGridView2.ClearSelection();
-                    for (;a<(tCell.addr + tCell.td.ElementSize()); a++)
-                    {
-                        if (a >= tCell.addr)
-                        {
-                            dataGridView2.Rows[row].Cells[col].Selected = true;
-                        }
-                        col++;
-                        if (col > (AppSettings.TunerHexWindowColumns - 1))
-                        {
-                            col = 0;
-                            row++;
-                        }
-                    }
-                }
                 string thisTable = tCell.td.TableName;
                 if (thisTable != lastTable && tuner != null && this.Parent != null)
                 {
@@ -570,6 +552,8 @@ namespace UniversalPatcher
                     });
                 }
                 //ftv.displayData(tCell.addr, compareFiles[0].buf);
+                ShowTdinHexWindow(tCell);
+
 
             }
             catch (Exception ex)
@@ -1726,7 +1710,7 @@ namespace UniversalPatcher
                 CompareFile selectedFile = compareFiles[currentFile];
                 PcmFile PCM = selectedFile.pcm;
                 TableData td = selectedFile.tableInfos[0].td;
-                ShowTdinHexWindow(td, PCM.buf);
+                //ShowTdinHexWindow(td, PCM.buf);
 
                 showRawHex = showRawHEXValuesToolStripMenuItem.Checked;
                 disableTooltips = disableTooltipsToolStripMenuItem.Checked;
@@ -2293,7 +2277,7 @@ namespace UniversalPatcher
                         ftvd.UpdateDisplay(true);
                     });
                 }
-                ShowTdinHexWindow(td, tc.tableInfo.compareFile.buf);
+                ShowTdinHexWindow(tc);
             }
             catch (Exception ex)
             {
@@ -3791,41 +3775,67 @@ namespace UniversalPatcher
             InterpolateSelectedArea(dataGridView1);
         }
 
-        private void ShowTdinHexWindow(TableData shTd, byte[] buf)
+        private void ShowTdinHexWindow(TableCell tCell)
         {
             try
             {
-                if (!showHEXWindowToolStripMenuItem.Checked)
+                if (showHEXWindowToolStripMenuItem.Checked)
                 {
-                    return;
-                }
-                uint addr = shTd.StartAddress();
-                uint elemSize = (uint)shTd.ElementSize();
-                uint end = shTd.EndAddress();
-
-                dataGridView2.Rows.Clear();
-                dataGridView2.Columns.Clear();
-                for (int i = 0; i < AppSettings.TunerHexWindowColumns; i++)
-                {
-                    dataGridView2.Columns.Add(i.ToString("X"), i.ToString("X"));
-                }
-                int row = dataGridView2.Rows.Add();
-                dataGridView2.Rows[row].HeaderCell.Value = addr.ToString("X");
-                int col = 0;
-
-                for (uint a = addr; a <= end; a++)
-                {
-                    dataGridView2.Rows[row].Cells[col].Value = buf[a-addr].ToString("X2");
-                    col++;
-                    if (col > (AppSettings.TunerHexWindowColumns - 1))
+                    int row = 0;
+                    int col = 0;
+                    int tableStart = (int)tCell.td.StartAddress();
+                    int tableEnd = (int)tCell.td.EndAddress();
+                    int start = (int)(tCell.td.StartAddress() - numHexviewExtra.Value);
+                    int end = (int)(tCell.td.EndAddress() + numHexviewExtra.Value );
+                    if (start < 0)
                     {
-                        col = 0;
-                        row = dataGridView2.Rows.Add();
-                        dataGridView2.Rows[row].HeaderCell.Value = a.ToString("X");
+                        start = 0;
+                    }
+                    if (end > tCell.tableInfo.compareFile.pcm.buf.Length)
+                    {
+                        end = tCell.tableInfo.compareFile.pcm.buf.Length;
+                    }
+                    int elementsize = tCell.td.ElementSize();
+                    txtHexView.Clear();
+                    for (int a = start; a <= end; a++)
+                    {
+                        if (a < tableStart || a > tableEnd)
+                        {
+                            txtHexView.SelectionColor = Color.SteelBlue;
+                            txtHexView.AppendText(tCell.tableInfo.compareFile.pcm.buf[a].ToString("X2"));
+                            txtHexView.SelectionColor = Color.Black;
+
+                        }
+                        else if (a >= tCell.addr && a < (tCell.addr + elementsize))
+                        {
+                            txtHexView.SelectionColor = Color.Red;
+                            txtHexView.AppendText(tCell.tableInfo.compareFile.buf[a - tCell.tableInfo.compareFile.tableBufferOffset].ToString("X2"));
+                            txtHexView.SelectionColor = Color.Black;
+                        }
+                        else
+                        {
+                            txtHexView.AppendText(tCell.tableInfo.compareFile.buf[a - tCell.tableInfo.compareFile.tableBufferOffset].ToString("X2"));
+                        }
+                        col++;
+                        if (col > (AppSettings.TunerHexWindowColumns - 1))
+                        {
+                            col = 0;
+                            row++;
+                        }
+                        if (a == (tableStart - 1))
+                        {
+                            txtHexView.AppendText("[");
+                        }
+                        else if (a == (tableEnd))
+                        {
+                            txtHexView.AppendText("]");
+                        }
+                        else
+                        {
+                            txtHexView.AppendText(" ");
+                        }
                     }
                 }
-                dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-                dataGridView2.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             }
             catch (Exception ex)
             {
@@ -3846,10 +3856,11 @@ namespace UniversalPatcher
             {
                 splitContainer1.Panel2Collapsed = false;
                 splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
-                CompareFile selectedFile = compareFiles[currentFile];
-                PcmFile PCM = selectedFile.pcm;
-                TableData td = selectedFile.tableInfos[0].td;
-                ShowTdinHexWindow(td, PCM.buf);
+                if (dataGridView1.SelectedCells.Count > 0)
+                {
+                    TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                    ShowTdinHexWindow(tCell);
+                }
             }
             else
             {
@@ -3891,6 +3902,32 @@ namespace UniversalPatcher
             AppSettings.TunerColorsMode = ConditionalColors.Off;
             LoadTable();
             AppSettings.Save();
+        }
+
+        private void numHexviewExtra_ValueChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count > 0)
+            {
+                TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                ShowTdinHexWindow(tCell);
+            }
+        }
+
+        private void btnHexviewFont_Click(object sender, EventArgs e)
+        {
+            FontDialog fdlg = new FontDialog();
+            fdlg.Font = txtHexView.Font;
+            if (fdlg.ShowDialog() == DialogResult.OK)
+            {
+                txtHexView.Font = fdlg.Font;
+                AppSettings.HexViewFont = SerializableFont.FromFont(fdlg.Font);
+                AppSettings.Save();
+                if (dataGridView1.SelectedCells.Count > 0)
+                {
+                    TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                    ShowTdinHexWindow(tCell);
+                }
+            }
         }
     }
 }

@@ -53,13 +53,15 @@ namespace UniversalPatcher
             this.touristToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.openMapSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveMapSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveSessionAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadMapSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.archiveSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createMapSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveSessionAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoreArchivedSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.createDebugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -261,6 +263,7 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
+            this.archiveSessionWithCommentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -383,13 +386,7 @@ namespace UniversalPatcher
             this.reloadFileFromDiskToolStripMenuItem,
             this.createProgramShortcutsToolStripMenuItem,
             this.modeToolStripMenuItem,
-            this.toolStripSeparator4,
-            this.openMapSessionToolStripMenuItem,
-            this.saveMapSessionToolStripMenuItem,
-            this.saveSessionAsToolStripMenuItem,
-            this.loadMapSessionToolStripMenuItem,
-            this.closeSessionToolStripMenuItem,
-            this.newSessionToolStripMenuItem,
+            this.sessionToolStripMenuItem,
             this.toolStripSeparator7,
             this.createDebugLogToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -483,52 +480,77 @@ namespace UniversalPatcher
             this.advancedToolStripMenuItem.Text = "Advanced";
             this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
-            // toolStripSeparator4
+            // sessionToolStripMenuItem
             // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(206, 6);
+            this.sessionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.archiveSessionToolStripMenuItem,
+            this.archiveSessionWithCommentsToolStripMenuItem,
+            this.closeSessionToolStripMenuItem,
+            this.createMapSessionToolStripMenuItem,
+            this.loadSessionToolStripMenuItem,
+            this.newSessionToolStripMenuItem,
+            this.saveSessionToolStripMenuItem,
+            this.saveSessionAsToolStripMenuItem,
+            this.restoreArchivedSessionToolStripMenuItem});
+            this.sessionToolStripMenuItem.Name = "sessionToolStripMenuItem";
+            this.sessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.sessionToolStripMenuItem.Text = "Session";
             // 
-            // openMapSessionToolStripMenuItem
+            // archiveSessionToolStripMenuItem
             // 
-            this.openMapSessionToolStripMenuItem.Name = "openMapSessionToolStripMenuItem";
-            this.openMapSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.openMapSessionToolStripMenuItem.Text = "Create map session";
-            this.openMapSessionToolStripMenuItem.Click += new System.EventHandler(this.openMapSessionToolStripMenuItem_Click);
-            // 
-            // saveMapSessionToolStripMenuItem
-            // 
-            this.saveMapSessionToolStripMenuItem.Name = "saveMapSessionToolStripMenuItem";
-            this.saveMapSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.saveMapSessionToolStripMenuItem.Text = "Save session";
-            this.saveMapSessionToolStripMenuItem.Click += new System.EventHandler(this.saveMapSessionToolStripMenuItem_Click);
-            // 
-            // saveSessionAsToolStripMenuItem
-            // 
-            this.saveSessionAsToolStripMenuItem.Name = "saveSessionAsToolStripMenuItem";
-            this.saveSessionAsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.saveSessionAsToolStripMenuItem.Text = "Save session as...";
-            this.saveSessionAsToolStripMenuItem.Click += new System.EventHandler(this.saveSessionAsToolStripMenuItem_Click);
-            // 
-            // loadMapSessionToolStripMenuItem
-            // 
-            this.loadMapSessionToolStripMenuItem.Name = "loadMapSessionToolStripMenuItem";
-            this.loadMapSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.loadMapSessionToolStripMenuItem.Text = "Load session";
-            this.loadMapSessionToolStripMenuItem.Click += new System.EventHandler(this.loadMapSessionToolStripMenuItem_Click);
+            this.archiveSessionToolStripMenuItem.Name = "archiveSessionToolStripMenuItem";
+            this.archiveSessionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.archiveSessionToolStripMenuItem.Text = "Archive session";
+            this.archiveSessionToolStripMenuItem.Click += new System.EventHandler(this.archiveSessionToolStripMenuItem_Click);
             // 
             // closeSessionToolStripMenuItem
             // 
             this.closeSessionToolStripMenuItem.Name = "closeSessionToolStripMenuItem";
-            this.closeSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.closeSessionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.closeSessionToolStripMenuItem.Text = "Close session";
             this.closeSessionToolStripMenuItem.Click += new System.EventHandler(this.closeSessionToolStripMenuItem_Click);
+            // 
+            // createMapSessionToolStripMenuItem
+            // 
+            this.createMapSessionToolStripMenuItem.Name = "createMapSessionToolStripMenuItem";
+            this.createMapSessionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.createMapSessionToolStripMenuItem.Text = "Create map session";
+            this.createMapSessionToolStripMenuItem.Click += new System.EventHandler(this.createMapSessionToolStripMenuItem_Click);
+            // 
+            // loadSessionToolStripMenuItem
+            // 
+            this.loadSessionToolStripMenuItem.Name = "loadSessionToolStripMenuItem";
+            this.loadSessionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.loadSessionToolStripMenuItem.Text = "Load session";
+            this.loadSessionToolStripMenuItem.Click += new System.EventHandler(this.loadSessionToolStripMenuItem_Click);
             // 
             // newSessionToolStripMenuItem
             // 
             this.newSessionToolStripMenuItem.Name = "newSessionToolStripMenuItem";
-            this.newSessionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.newSessionToolStripMenuItem.Text = "New Session";
+            this.newSessionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.newSessionToolStripMenuItem.Text = "New session";
             this.newSessionToolStripMenuItem.Click += new System.EventHandler(this.newSessionToolStripMenuItem_Click);
+            // 
+            // saveSessionToolStripMenuItem
+            // 
+            this.saveSessionToolStripMenuItem.Name = "saveSessionToolStripMenuItem";
+            this.saveSessionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.saveSessionToolStripMenuItem.Text = "Save session";
+            this.saveSessionToolStripMenuItem.Click += new System.EventHandler(this.saveSessionToolStripMenuItem_Click);
+            // 
+            // saveSessionAsToolStripMenuItem
+            // 
+            this.saveSessionAsToolStripMenuItem.Name = "saveSessionAsToolStripMenuItem";
+            this.saveSessionAsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.saveSessionAsToolStripMenuItem.Text = "Save session as...";
+            this.saveSessionAsToolStripMenuItem.Click += new System.EventHandler(this.saveSessionAsToolStripMenuItem_Click);
+            // 
+            // restoreArchivedSessionToolStripMenuItem
+            // 
+            this.restoreArchivedSessionToolStripMenuItem.Name = "restoreArchivedSessionToolStripMenuItem";
+            this.restoreArchivedSessionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.restoreArchivedSessionToolStripMenuItem.Text = "Restore archived session";
+            this.restoreArchivedSessionToolStripMenuItem.Click += new System.EventHandler(this.restoreArchivedSessionToolStripMenuItem_Click);
             // 
             // toolStripSeparator7
             // 
@@ -2519,6 +2541,13 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
             // 
+            // archiveSessionWithCommentsToolStripMenuItem
+            // 
+            this.archiveSessionWithCommentsToolStripMenuItem.Name = "archiveSessionWithCommentsToolStripMenuItem";
+            this.archiveSessionWithCommentsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.archiveSessionWithCommentsToolStripMenuItem.Text = "Archive session with comments";
+            this.archiveSessionWithCommentsToolStripMenuItem.Click += new System.EventHandler(this.archiveSessionWithCommentsToolStripMenuItem_Click);
+            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2778,15 +2807,8 @@ namespace UniversalPatcher
         private ToolStripMenuItem pasteRowToolStripMenuItem;
         private ToolStripMenuItem updateAddressesByOSToolStripMenuItem;
         private ToolStripMenuItem editOSAddressPairsToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator4;
-        private ToolStripMenuItem openMapSessionToolStripMenuItem;
-        private ToolStripMenuItem saveMapSessionToolStripMenuItem;
-        private ToolStripMenuItem loadMapSessionToolStripMenuItem;
-        private ToolStripMenuItem saveSessionAsToolStripMenuItem;
         private ToolStripMenuItem renameTablelistToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator5;
-        private ToolStripMenuItem closeSessionToolStripMenuItem;
-        private ToolStripMenuItem newSessionToolStripMenuItem;
         private ToolStripMenuItem showOnlyMappedTablesToolStripMenuItem;
         private ToolStripMenuItem saveExtraOffsetTablelistAsToolStripMenuItem;
         private ToolStripMenuItem copyToTableseekToolStripMenuItem;
@@ -2815,5 +2837,15 @@ namespace UniversalPatcher
         private RadioButton radioColorsUseTableValues;
         private RadioButton radioColorsUseTableSettings;
         private RadioButton radioColorsOff;
+        private ToolStripMenuItem sessionToolStripMenuItem;
+        private ToolStripMenuItem createMapSessionToolStripMenuItem;
+        private ToolStripMenuItem saveSessionToolStripMenuItem;
+        private ToolStripMenuItem saveSessionAsToolStripMenuItem;
+        private ToolStripMenuItem closeSessionToolStripMenuItem;
+        private ToolStripMenuItem newSessionToolStripMenuItem;
+        private ToolStripMenuItem archiveSessionToolStripMenuItem;
+        private ToolStripMenuItem restoreArchivedSessionToolStripMenuItem;
+        private ToolStripMenuItem loadSessionToolStripMenuItem;
+        private ToolStripMenuItem archiveSessionWithCommentsToolStripMenuItem;
     }
 }
