@@ -645,6 +645,8 @@ namespace UniversalPatcher
 
                 for (int i = 0; i < filteredTableDatas.Count; i++)
                 {
+                    if (filteredTableDatas[i].HideFromTree)
+                        continue;
                     //string cat = filteredTableDatas[i].Category;
                     string cat = "";
                     string[] mainCats = filteredTableDatas[i].MainCategories().ToArray();
@@ -736,7 +738,8 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    if (tnC2.Node.Nodes.Count > 0)
+                    bool hasExtraCats = TableDatas.Any(td => !string.IsNullOrEmpty(td.ExtraCategories));
+                    if (hasExtraCats && tnC2.Node.Nodes.Count > 0)
                     {
                         parent.Add(tnC2.Node);
                     }

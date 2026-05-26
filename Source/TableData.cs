@@ -171,6 +171,7 @@ namespace UniversalPatcher
         public string ExtraCategories { get; set; }
         public string TableDescription { get; set; }
         public string ExtraDescription { get; set; }
+        public bool HideFromTree { get; set; }
         public string OS_Address { get; set; }
 
         private string altOS;
