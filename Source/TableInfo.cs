@@ -364,10 +364,6 @@ namespace UniversalPatcher
         //For coloring:
         public double MinVal { get; set; }
         public double MaxVal { get; set; }
-        public double MinEnd1 { get; set; }
-        public double MinEnd2 { get; set; }
-        public double MaxStart1 { get; set; }
-        public double MaxStart2 { get; set; }
     }
 
     public class CompareFile

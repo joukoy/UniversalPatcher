@@ -113,11 +113,27 @@ namespace UniversalPatcher
         ToolTip NaviTip = new ToolTip();
         ToolTip UpDownTip = new ToolTip();
         FormWindowState LastWindowState;
-        private Color colormin1 = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin1);
-        private Color colormin2 = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin2);
-        private Color colormid = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid);
-        private Color colormax1 = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax1);
-        private Color colormax2 = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax2);
+        private static readonly Color[] gradientStops = {
+            Color.FromArgb( 71, 206,  71),  // lime green  (min)
+            Color.FromArgb(255, 255,  26),  // yellow
+            Color.FromArgb(255, 143,  26),  // orange
+            Color.FromArgb(215,  44,  44),  // deep red    (max)
+        };
+
+        private static Color GetGradientColor(double value, double minVal, double maxVal)
+        {
+            if (maxVal <= minVal) return Color.White;
+            double t = Math.Max(0.0, Math.Min(1.0, (value - minVal) / (maxVal - minVal)));
+            double scaled = t * (gradientStops.Length - 1);
+            int i = Math.Min((int)scaled, gradientStops.Length - 2);
+            double frac = scaled - i;
+            Color a = gradientStops[i], b = gradientStops[i + 1];
+            return Color.FromArgb(
+                (int)(a.R + frac * (b.R - a.R)),
+                (int)(a.G + frac * (b.G - a.G)),
+                (int)(a.B + frac * (b.B - a.B))
+            );
+        }
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
@@ -596,11 +612,6 @@ namespace UniversalPatcher
                     }
                 }
             }
-            double rangesize = (tInfo.MaxVal - tInfo.MinVal) / 5;
-            tInfo.MinEnd1 = tInfo.MinVal + rangesize;
-            tInfo.MinEnd2 = tInfo.MinVal + (rangesize * 2);
-            tInfo.MaxStart1 = tInfo.MaxVal - (rangesize * 2);
-            tInfo.MaxStart2 = tInfo.MaxVal - rangesize;
 
         }
         private void ParseTableInfo(CompareFile cmpFile)
@@ -1557,23 +1568,8 @@ namespace UniversalPatcher
                     {
                         if (AppSettings.TunerColorsMode != ConditionalColors.Off)
                         {
-                            if (tCell.tableInfo.MinVal == tCell.tableInfo.MaxVal)
-                            {
-                                dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
-                            }
-                            else
-                            {
-                                if (curVal >= tCell.tableInfo.MinVal && curVal < tCell.tableInfo.MinEnd1)
-                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormin1;
-                                else if (curVal >= tCell.tableInfo.MinEnd1 && curVal < tCell.tableInfo.MinEnd2)
-                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormin2;
-                                else if (curVal >= tCell.tableInfo.MinEnd2 && curVal < tCell.tableInfo.MaxStart1)
-                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormid;
-                                else if (curVal >= tCell.tableInfo.MaxStart1 && curVal < tCell.tableInfo.MaxStart2)
-                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormax1;
-                                else if (curVal >= tCell.tableInfo.MaxStart2)
-                                    dataGridView1.Rows[row].Cells[col].Style.BackColor = colormax2;
-                            }
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor =
+                                GetGradientColor(curVal, tCell.tableInfo.MinVal, tCell.tableInfo.MaxVal);
                         }
                         if (!disableTooltips)
                             dataGridView1.Rows[row].Cells[col].ToolTipText = mathTd.TableDescription;

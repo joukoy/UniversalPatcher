@@ -35,11 +35,11 @@ namespace UniversalPatcher
             TunerShowUnitsImperial = true;
             TunerShowUnitsMetric = true;
             TunerColorsMode = Upatcher.ConditionalColors.Values;
-            TunerColorsMin1 = System.Drawing.ColorTranslator.ToHtml(Color.SteelBlue);
-            TunerColorsMin2 = System.Drawing.ColorTranslator.ToHtml(Color.LightSteelBlue);
-            TunerColorsMid = System.Drawing.ColorTranslator.ToHtml(Color.White);
-            TunerColorsMax1 = System.Drawing.ColorTranslator.ToHtml(Color.LightPink);
-            TunerColorsMax2 = System.Drawing.ColorTranslator.ToHtml(Color.LightCoral);
+            TunerColorsMin1 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(180, 245, 180));
+            TunerColorsMin2 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(220, 250, 170));
+            TunerColorsMid = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 255, 160));
+            TunerColorsMax1 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 210, 160));
+            TunerColorsMax2 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 160, 160));
 
             SplashShowTime = 4;
             FlashApp = "PCMHammer\\pcmhammer.exe";
