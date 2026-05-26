@@ -82,10 +82,10 @@ namespace UniversalPatcher
                 this.Port.OpenAsync(configuration);
                 this.Port.DiscardBuffers();
 
-                string response;
                 // This is common across all ELM-based devices.
                 this.SendRequest(""); // send a cr/lf to prevent the ATZ failing.
-                Debug.WriteLine(response = this.SendRequest("AT Z").Data);  // reset
+                string response = this.SendRequest("AT Z").Data;  // reset
+                Debug.WriteLine(response);
                 if (string.IsNullOrWhiteSpace(response))
                 {
                     LoggerBold($"No device found on {this.Port.ToString()}");

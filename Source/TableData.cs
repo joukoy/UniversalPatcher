@@ -159,6 +159,8 @@ namespace UniversalPatcher
         //public bool Floating;
         public ushort Columns { get; set; }
         public ushort Rows { get; set; }
+        public ushort RowStride { get; set; }
+        public ushort ElementStride { get; set; }
         public Byte_Order ByteOrder { get; set; }
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
@@ -285,6 +287,21 @@ namespace UniversalPatcher
         public uint EndAddressNoExtra()
         {
             return (uint)(addrInt + Offset + Size());
+        }
+
+        // Returns the per-element step in bytes (TunerPro major stride).
+        // Falls back to elemSize when ElementStride is not set.
+        public int EffectiveElementStride(int elemSize)
+        {
+            return ElementStride > 0 ? ElementStride : elemSize;
+        }
+
+        // Returns the byte distance from row start to next row start (TunerPro minor stride).
+        // Pass the effective element stride, not the raw element size.
+        // Falls back to Columns * elemStride when RowStride is not set.
+        public int EffectiveRowStride(int elemStride)
+        {
+            return RowStride > 0 ? RowStride : Columns * elemStride;
         }
 
         public int Size()

@@ -2154,14 +2154,17 @@ namespace UniversalPatcher
                     uint addr = shTd.StartAddress();
                     double firstVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
                     uint elemSize = (uint)shTd.ElementSize();
+                    uint elemStride = (uint)shTd.EffectiveElementStride((int)elemSize);
                     if (shTd.RowMajor)
                     {
+                        int rowStride = shTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < shTd.Rows; r++)
                         {
+                            uint rowStart = addr;
                             for (int c = 0; c < shTd.Columns; c++)
                             {
                                 double curVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
-                                addr += elemSize;
+                                addr += elemStride;
                                 tblData.Append("[" + curVal.ToString("#0.0") + "]");
                                 if (!ShowMinMax)
                                 {
@@ -2173,6 +2176,7 @@ namespace UniversalPatcher
                                 }
                             }
                             tblData.Append(Environment.NewLine);
+                            addr = rowStart + (uint)rowStride;
                         }
                     }
                     else
@@ -2185,7 +2189,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < shTd.Rows; r++)
                             {
                                 double curVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
-                                addr += elemSize;
+                                addr += elemStride;
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                                 if (!ShowMinMax)
                                 {
@@ -3564,16 +3568,20 @@ namespace UniversalPatcher
                     frmTE.PrepareTable(PCM, pTd, null, "A");
                     frmTE.LoadTable();
                     uint step = (uint)GetElementSize(pTd.DataType);
+                    uint elemStride = (uint)pTd.EffectiveElementStride((int)step);
                     uint addr = pTd.StartAddress();
                     if (pTd.RowMajor)
                     {
+                        int rowStride = pTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < pTd.Rows; r++)
                         {
+                            uint rowStart = addr;
                             for (int c = 0; c < pTd.Columns; c++)
                             {
                                 xpatch.Data += GetValue(PCM.buf, addr, pTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += step;
+                                addr += elemStride;
                             }
+                            addr = rowStart + (uint)rowStride;
                         }
                     }
                     else
@@ -3583,7 +3591,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < pTd.Rows; r++)
                             {
                                 xpatch.Data += GetValue(PCM.buf, addr, pTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += step;
+                                addr += elemStride;
                             }
                         }
                     }
@@ -3637,17 +3645,21 @@ namespace UniversalPatcher
                     frmTE.PrepareTable(PCM, srcTd, null, "A");
                     frmTE.LoadTable();
                     uint step = (uint)GetElementSize(srcTd.DataType);
+                    uint elemStride = (uint)srcTd.EffectiveElementStride((int)step);
                     uint addr = srcTd.StartAddress();
                     patchTd.Values = "TablePatch: ";
                     if (srcTd.RowMajor)
                     {
+                        int rowStride = srcTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < srcTd.Rows; r++)
                         {
+                            uint rowStart = addr;
                             for (int c = 0; c < srcTd.Columns; c++)
                             {
                                 patchTd.Values += GetValue(PCM.buf, addr, srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += step;
+                                addr += elemStride;
                             }
+                            addr = rowStart + (uint)rowStride;
                         }
                     }
                     else
@@ -3657,7 +3669,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < srcTd.Rows; r++)
                             {
                                 patchTd.Values += GetValue(PCM.buf, addr, srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += step;
+                                addr += elemStride;
                             }
                         }
                     }

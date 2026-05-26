@@ -533,16 +533,20 @@ namespace UniversalPatcher
                     frmTE.PrepareTable(pcm1, pTd, null, "A");
                     frmTE.LoadTable();
                     uint step = (uint)GetElementSize(pTd.DataType);
+                    uint elemStride = (uint)pTd.EffectiveElementStride((int)step);
                     uint addr = pTd.StartAddress();
                     if (pTd.RowMajor)
                     {
+                        int rowStride = pTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < pTd.Rows; r++)
                         {
+                            uint rowStart = addr;
                             for (int c = 0; c < pTd.Columns; c++)
                             {
                                 xpatch.Data += GetValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
-                                addr += step;
+                                addr += elemStride;
                             }
+                            addr = rowStart + (uint)rowStride;
                         }
                     }
                     else
@@ -552,7 +556,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < pTd.Rows; r++)
                             {
                                 xpatch.Data += GetValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
-                                addr += step;
+                                addr += elemStride;
                             }
                         }
                     }
