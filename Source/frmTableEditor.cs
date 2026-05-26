@@ -721,12 +721,15 @@ namespace UniversalPatcher
                     }
                     uint addr = tData.StartAddress();
                     int step = GetElementSize(tData.DataType);
+                    int elemStride = tData.EffectiveElementStride(step);
                     byte mask = 1;
-                    
+
                     if (tData.RowMajor)
                     {
+                        int rowStride = tData.EffectiveRowStride(elemStride);
                         for (int r = 0; r < tData.Rows; r++)
                         {
+                            uint rowStart = addr;
                             for (int c = 0; c < tData.Columns; c++)
                             {
                                 TableCell tc = new TableCell(tData,tInfo,addr,c,r,rowHeaders[r], colHeaders[c]);
@@ -753,10 +756,12 @@ namespace UniversalPatcher
                                     tc.lastValue = GetValue(pcm.buf, addr, tData, 0, pcm);
                                     tc.lastRawValue = GetRawValue(pcm.buf, addr, tData, 0, pcm.platformConfig.MSB);
                                     Array.Copy(pcm.buf,addr, tc.lastRawBytes, 0, step);
-                                    addr += (uint)step;
+                                    addr += (uint)elemStride;
                                 }
                                 tInfo.tableCells.Add(tc);
                             }
+                            if (tData.OutputType != OutDataType.Bitmap)
+                                addr = rowStart + (uint)rowStride;
                         }
                     }
                     else
@@ -790,7 +795,7 @@ namespace UniversalPatcher
                                     tc.lastValue = GetValue(pcm.buf, addr, tData, 0, pcm);
                                     tc.lastRawValue = GetRawValue(pcm.buf, addr, tData, 0, pcm.platformConfig.MSB);
                                     Array.Copy(pcm.buf, addr, tc.lastRawBytes, 0, step);
-                                    addr += (uint)step;
+                                    addr += (uint)elemStride;
                                 }
                                 tInfo.tableCells.Add(tc);
                             }

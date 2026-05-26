@@ -1324,12 +1324,16 @@ public class Upatcher
             uint addr = mathTd.StartAddress();
             UInt32 bufAddr = (UInt32)(addr - offset);
             uint elemSize = (uint)mathTd.ElementSize();
+            uint elemStride = (uint)mathTd.EffectiveElementStride((int)elemSize);
             byte byteMask = 0x80;
             if (mathTd.RowMajor)
             {
+                int rowStride = mathTd.EffectiveRowStride((int)elemStride);
                 for (int r = 0; r < mathTd.Rows; r++)
                 {
                     if (r > row) break;
+                    UInt32 rowBufStart = bufAddr;
+                    bool reachedTarget = false;
                     for (int c = 0; c < mathTd.Columns; c++)
                     {
                         if (mathTd.OutputType == OutDataType.Bitmap)
@@ -1347,10 +1351,12 @@ public class Upatcher
                         }
                         else
                         {
-                            bufAddr += elemSize;
+                            bufAddr += elemStride;
                         }
-                        if (r == row && c == column) break;
+                        if (r == row && c == column) { reachedTarget = true; break; }
                     }
+                    if (!reachedTarget && mathTd.OutputType != OutDataType.Bitmap)
+                        bufAddr = rowBufStart + (UInt32)rowStride;
                 }
             }
             else
@@ -1375,7 +1381,7 @@ public class Upatcher
                         }
                         else
                         {
-                            bufAddr += elemSize;
+                            bufAddr += elemStride;
                         }
                         if (r == row && c == column) break;
                     }
@@ -2089,16 +2095,20 @@ public class Upatcher
         List<double> tableValues = new List<double>();
         uint addr = td1.StartAddress();
         uint step = (uint)GetElementSize(td1.DataType);
+        uint es1 = (uint)td1.EffectiveElementStride((int)step);
         if (td1.RowMajor)
         {
+            int rowStride1 = td1.EffectiveRowStride((int)es1);
             for (int r = 0; r < td1.Rows; r++)
             {
+                uint rowStart = addr;
                 for (int c = 0; c < td1.Columns; c++)
                 {
                     double val = GetValue(pcm1.buf,addr,td1,0,pcm1);
                     tableValues.Add(val);
-                    addr += step;
+                    addr += es1;
                 }
+                addr = rowStart + (uint)rowStride1;
             }
         }
         else
@@ -2109,18 +2119,21 @@ public class Upatcher
                 {
                     double val = GetValue(pcm1.buf, addr, td1, 0, pcm1);
                     tableValues.Add(val);
-                    addr += step;
+                    addr += es1;
                 }
             }
         }
 
         addr = td2.StartAddress();
         step = (uint)GetElementSize(td2.DataType);
+        uint es2 = (uint)td2.EffectiveElementStride((int)step);
         int i = 0;
         if (td2.RowMajor)
         {
+            int rowStride2 = td2.EffectiveRowStride((int)es2);
             for (int r = 0; r < td2.Rows; r++)
             {
+                uint rowStart = addr;
                 for (int c = 0; c < td2.Columns; c++)
                 {
                     double val = GetValue(pcm2.buf, addr, td2, 0,pcm2);
@@ -2129,9 +2142,10 @@ public class Upatcher
                         match = false;
                         break;
                     }
-                    addr += step;
+                    addr += es2;
                     i++;
                 }
+                addr = rowStart + (uint)rowStride2;
             }
         }
         else
@@ -2146,7 +2160,7 @@ public class Upatcher
                         match = false;
                         break;
                     }
-                    addr += step;
+                    addr += es2;
                     i++;
                 }
             }

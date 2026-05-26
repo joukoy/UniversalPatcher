@@ -175,17 +175,22 @@ namespace UniversalPatcher
                 {
                     string tblData = ""; //"Current values: " + Environment.NewLine;
                     uint addr = compTd.StartAddress();
+                    uint elemStep = (uint)GetElementSize(compTd.DataType);
+                    uint elemStride = (uint)compTd.EffectiveElementStride((int)elemStep);
                     if (compTd.RowMajor)
                     {
+                        int rowStride = compTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < compTd.Rows; r++)
                         {
+                            uint rowStart = addr;
                             for (int c = 0; c < compTd.Columns; c++)
                             {
                                 double curVal = GetValue(peekPCM.buf, addr, compTd,0, peekPCM);
-                                addr += (uint)GetElementSize(compTd.DataType);
+                                addr += elemStride;
                                 tblData += "[" + curVal.ToString("#0.0") + "]";
                             }
                             tblData += Environment.NewLine;
+                            addr = rowStart + (uint)rowStride;
                         }
                     }
                     else
@@ -199,7 +204,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < compTd.Rows; r++)
                             {
                                 double curVal = GetValue(peekPCM.buf, addr, compTd,0, peekPCM);
-                                addr += (uint)GetElementSize(compTd.DataType);
+                                addr += elemStride;
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }
                         }
