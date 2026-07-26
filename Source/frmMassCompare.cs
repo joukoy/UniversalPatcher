@@ -80,136 +80,24 @@ namespace UniversalPatcher
             string retVal = "";
             try
             {
+                TableInfo tInfo = new TableInfo(peekPCM, compTd);
+                tInfo.ParseTable(true, false, false);
                 if (compTd.Dimensions() == 1)
                 {
-                    double curVal = GetValue(peekPCM.buf, compTd.StartAddress(), compTd,0,peekPCM);
-                    UInt64 rawVal = (UInt64) GetRawValue(peekPCM.buf,compTd.StartAddress(), compTd,0,peekPCM.platformConfig.MSB);
-                    string valTxt = curVal.ToString();
-                    string unitTxt = " " + compTd.Units;
-                    string maskTxt = "";
-                    TableValueType vt = compTd.ValueType();
-                    if (vt == TableValueType.bitmask)
-                    {
-                        unitTxt = "";
-                        UInt64 maskVal = Convert.ToUInt64(compTd.BitMask.Replace("0x", ""), 16);
-                        if ((rawVal & maskVal) == maskVal)
-                            valTxt = "Set";
-                        else
-                            valTxt = "Unset";
-                        string maskBits = Convert.ToString((Int64)maskVal, 2);
-                        int bit = -1;
-                        for (int i = 0; 1 <= maskBits.Length; i++)
-                        {
-                            if (((maskVal & (UInt64)(1 << i)) != 0))
-                            {
-                                bit = i + 1;
-                                break;
-                            }
-                        }
-                        if (bit > -1)
-                        {
-                            string rawBinVal = Convert.ToString((Int64)rawVal, 2);
-                            rawBinVal = rawBinVal.PadLeft(GetBits(compTd.DataType), '0');
-                            maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
-                        }
-                    }
-                    else if (vt == TableValueType.boolean)
-                    {
-                        unitTxt = ", Unset/Set";
-                        if (curVal > 0)
-                            valTxt = "Set, " + valTxt;
-                        else
-                            valTxt = "Unset, " + valTxt;
-                    }
-                    else if (vt == TableValueType.selection)
-                    {
-                        Dictionary<double, string> possibleVals = ParseEnumHeaders(compTd.Values);
-                        if (possibleVals.ContainsKey(curVal))
-                            unitTxt = " (" + possibleVals[curVal] + ")";
-                        else
-                            unitTxt = " (Out of range)";
-                    }
-                    string formatStr = "X" + (GetElementSize(compTd.DataType) * 2).ToString();
-                    string rawTxt = "";
-                    switch (compTd.DataType)
-                    {
-                        case InDataType.FLOAT32:
-                            rawTxt = ((Single)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.FLOAT64:
-                            rawTxt = ((double)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.INT64:
-                            rawTxt = ((Int64)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.INT32:
-                            rawTxt = ((Int32)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.UINT64:
-                            rawTxt = ((UInt64)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.UINT32:
-                            rawTxt = ((UInt32)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.SWORD:
-                            rawTxt = ((Int16)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.UWORD:
-                            rawTxt = ((UInt16)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.SBYTE:
-                            rawTxt = ((sbyte)rawVal).ToString(formatStr);
-                            break;
-                        case InDataType.UBYTE:
-                            rawTxt = ((byte)rawVal).ToString(formatStr);
-                            break;
-                        default:
-                            rawTxt = ((Int32)rawVal).ToString(formatStr);
-                            break;
-                    }
-
-                    retVal = valTxt + unitTxt + " [" + rawTxt + "]" + maskTxt;
+                    retVal = tInfo.tableCells[0].ValueText;
                     //txtResult.AppendText(Environment.NewLine);
                 }
                 else
                 {
                     string tblData = ""; //"Current values: " + Environment.NewLine;
-                    uint addr = compTd.StartAddress();
-                    uint elemStep = (uint)GetElementSize(compTd.DataType);
-                    uint elemStride = (uint)compTd.EffectiveElementStride((int)elemStep);
-                    if (compTd.RowMajor)
+                    for (int c = 0; c < compTd.Columns; c++)
                     {
-                        int rowStride = compTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < compTd.Rows; r++)
                         {
-                            uint rowStart = addr;
-                            for (int c = 0; c < compTd.Columns; c++)
-                            {
-                                double curVal = GetValue(peekPCM.buf, addr, compTd,0, peekPCM);
-                                addr += elemStride;
-                                tblData += "[" + curVal.ToString("#0.0") + "]";
-                            }
-                            tblData += Environment.NewLine;
-                            addr = rowStart + (uint)rowStride;
+                            TableCell tc = tInfo.tableCellArray[r, c];
+                            tblData += "[" + ((double)tc.lastValue).ToString("#0.0") + "]";
                         }
-                    }
-                    else
-                    {
-                        List<string> tblRows = new List<string>();
-                        for (int r = 0; r < compTd.Rows; r++)
-                            tblRows.Add("");
-                        for (int c = 0; c < compTd.Columns; c++)
-                        {
-
-                            for (int r = 0; r < compTd.Rows; r++)
-                            {
-                                double curVal = GetValue(peekPCM.buf, addr, compTd,0, peekPCM);
-                                addr += elemStride;
-                                tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
-                            }
-                        }
-                        for (int r = 0; r < compTd.Rows; r++)
-                            tblData += tblRows[r] + Environment.NewLine;
+                        tblData += Environment.NewLine;
                     }
                     retVal = tblData;
                 }

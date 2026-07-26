@@ -30,12 +30,26 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmEditSegmentAddr));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtPlusStart = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.numMultiplyStart = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.btnStartSeek = new System.Windows.Forms.Button();
+            this.numBytes = new System.Windows.Forms.NumericUpDown();
+            this.radioStartSeek = new System.Windows.Forms.RadioButton();
             this.radioStartAbsolute = new System.Windows.Forms.RadioButton();
             this.radioStartRead = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
             this.numReadPairs = new System.Windows.Forms.NumericUpDown();
             this.txtStart = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtPlusEnd = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.numMultiplyEnd = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.btnEndSeek = new System.Windows.Forms.Button();
+            this.radioEndSeek = new System.Windows.Forms.RadioButton();
             this.radioReadSize = new System.Windows.Forms.RadioButton();
             this.radioSize = new System.Windows.Forms.RadioButton();
             this.radioEndAbsolute = new System.Windows.Forms.RadioButton();
@@ -50,21 +64,21 @@
             this.label3 = new System.Windows.Forms.Label();
             this.numBlock = new System.Windows.Forms.NumericUpDown();
             this.labelOf = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.numBytes = new System.Windows.Forms.NumericUpDown();
-            this.radioStartSeek = new System.Windows.Forms.RadioButton();
-            this.btnStartSeek = new System.Windows.Forms.Button();
-            this.btnEndSeek = new System.Windows.Forms.Button();
-            this.radioEndSeek = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numMultiplyStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numBytes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numReadPairs)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numMultiplyEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBlock)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numBytes)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtPlusStart);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.numMultiplyStart);
+            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.btnStartSeek);
             this.groupBox1.Controls.Add(this.numBytes);
@@ -76,10 +90,100 @@
             this.groupBox1.Controls.Add(this.txtStart);
             this.groupBox1.Location = new System.Drawing.Point(4, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(296, 134);
+            this.groupBox1.Size = new System.Drawing.Size(296, 161);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Start Address";
+            // 
+            // txtPlusStart
+            // 
+            this.txtPlusStart.Location = new System.Drawing.Point(223, 133);
+            this.txtPlusStart.Name = "txtPlusStart";
+            this.txtPlusStart.Size = new System.Drawing.Size(65, 20);
+            this.txtPlusStart.TabIndex = 19;
+            this.txtPlusStart.Text = "0";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(154, 137);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(60, 13);
+            this.label6.TabIndex = 18;
+            this.label6.Text = "Add (HEX):";
+            // 
+            // numMultiplyStart
+            // 
+            this.numMultiplyStart.Location = new System.Drawing.Point(63, 133);
+            this.numMultiplyStart.Name = "numMultiplyStart";
+            this.numMultiplyStart.Size = new System.Drawing.Size(69, 20);
+            this.numMultiplyStart.TabIndex = 17;
+            this.numMultiplyStart.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 137);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(45, 13);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "Multiply:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(180, 111);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(36, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Bytes:";
+            // 
+            // btnStartSeek
+            // 
+            this.btnStartSeek.Location = new System.Drawing.Point(87, 44);
+            this.btnStartSeek.Name = "btnStartSeek";
+            this.btnStartSeek.Size = new System.Drawing.Size(28, 19);
+            this.btnStartSeek.TabIndex = 8;
+            this.btnStartSeek.Text = "...";
+            this.btnStartSeek.UseVisualStyleBackColor = true;
+            this.btnStartSeek.Click += new System.EventHandler(this.btnStartSeek_Click);
+            // 
+            // numBytes
+            // 
+            this.numBytes.Location = new System.Drawing.Point(222, 109);
+            this.numBytes.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.numBytes.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numBytes.Name = "numBytes";
+            this.numBytes.Size = new System.Drawing.Size(68, 20);
+            this.numBytes.TabIndex = 5;
+            this.numBytes.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            // 
+            // radioStartSeek
+            // 
+            this.radioStartSeek.AutoSize = true;
+            this.radioStartSeek.Location = new System.Drawing.Point(9, 43);
+            this.radioStartSeek.Name = "radioStartSeek";
+            this.radioStartSeek.Size = new System.Drawing.Size(73, 17);
+            this.radioStartSeek.TabIndex = 7;
+            this.radioStartSeek.TabStop = true;
+            this.radioStartSeek.Text = "Use seek:";
+            this.radioStartSeek.UseVisualStyleBackColor = true;
             // 
             // radioStartAbsolute
             // 
@@ -141,6 +245,10 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txtPlusEnd);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.numMultiplyEnd);
+            this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.btnEndSeek);
             this.groupBox2.Controls.Add(this.radioEndSeek);
             this.groupBox2.Controls.Add(this.radioReadSize);
@@ -150,12 +258,71 @@
             this.groupBox2.Controls.Add(this.radioUseStart);
             this.groupBox2.Controls.Add(this.txtEnd);
             this.groupBox2.Controls.Add(this.chkEnd);
-            this.groupBox2.Location = new System.Drawing.Point(4, 146);
+            this.groupBox2.Location = new System.Drawing.Point(4, 173);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(296, 159);
+            this.groupBox2.Size = new System.Drawing.Size(296, 184);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "End address";
+            // 
+            // txtPlusEnd
+            // 
+            this.txtPlusEnd.Location = new System.Drawing.Point(215, 161);
+            this.txtPlusEnd.Name = "txtPlusEnd";
+            this.txtPlusEnd.Size = new System.Drawing.Size(65, 20);
+            this.txtPlusEnd.TabIndex = 23;
+            this.txtPlusEnd.Text = "0";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(149, 161);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(60, 13);
+            this.label7.TabIndex = 22;
+            this.label7.Text = "Add (HEX):";
+            // 
+            // numMultiplyEnd
+            // 
+            this.numMultiplyEnd.Location = new System.Drawing.Point(58, 157);
+            this.numMultiplyEnd.Name = "numMultiplyEnd";
+            this.numMultiplyEnd.Size = new System.Drawing.Size(69, 20);
+            this.numMultiplyEnd.TabIndex = 21;
+            this.numMultiplyEnd.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 161);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(45, 13);
+            this.label8.TabIndex = 20;
+            this.label8.Text = "Multiply:";
+            // 
+            // btnEndSeek
+            // 
+            this.btnEndSeek.Location = new System.Drawing.Point(87, 132);
+            this.btnEndSeek.Name = "btnEndSeek";
+            this.btnEndSeek.Size = new System.Drawing.Size(28, 19);
+            this.btnEndSeek.TabIndex = 14;
+            this.btnEndSeek.Text = "...";
+            this.btnEndSeek.UseVisualStyleBackColor = true;
+            this.btnEndSeek.Click += new System.EventHandler(this.btnEndSeek_Click);
+            // 
+            // radioEndSeek
+            // 
+            this.radioEndSeek.AutoSize = true;
+            this.radioEndSeek.Location = new System.Drawing.Point(10, 134);
+            this.radioEndSeek.Name = "radioEndSeek";
+            this.radioEndSeek.Size = new System.Drawing.Size(73, 17);
+            this.radioEndSeek.TabIndex = 13;
+            this.radioEndSeek.TabStop = true;
+            this.radioEndSeek.Text = "Use seek:";
+            this.radioEndSeek.UseVisualStyleBackColor = true;
             // 
             // radioReadSize
             // 
@@ -239,7 +406,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 314);
+            this.label2.Location = new System.Drawing.Point(10, 366);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 7;
@@ -247,7 +414,7 @@
             // 
             // txtOffset
             // 
-            this.txtOffset.Location = new System.Drawing.Point(91, 311);
+            this.txtOffset.Location = new System.Drawing.Point(91, 363);
             this.txtOffset.Name = "txtOffset";
             this.txtOffset.Size = new System.Drawing.Size(127, 20);
             this.txtOffset.TabIndex = 11;
@@ -309,84 +476,11 @@
             this.labelOf.TabIndex = 13;
             this.labelOf.Text = "of 1";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(180, 111);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(36, 13);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Bytes:";
-            // 
-            // numBytes
-            // 
-            this.numBytes.Location = new System.Drawing.Point(222, 109);
-            this.numBytes.Maximum = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numBytes.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numBytes.Name = "numBytes";
-            this.numBytes.Size = new System.Drawing.Size(68, 20);
-            this.numBytes.TabIndex = 5;
-            this.numBytes.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            // 
-            // radioStartSeek
-            // 
-            this.radioStartSeek.AutoSize = true;
-            this.radioStartSeek.Location = new System.Drawing.Point(9, 43);
-            this.radioStartSeek.Name = "radioStartSeek";
-            this.radioStartSeek.Size = new System.Drawing.Size(73, 17);
-            this.radioStartSeek.TabIndex = 7;
-            this.radioStartSeek.TabStop = true;
-            this.radioStartSeek.Text = "Use seek:";
-            this.radioStartSeek.UseVisualStyleBackColor = true;
-            // 
-            // btnStartSeek
-            // 
-            this.btnStartSeek.Location = new System.Drawing.Point(87, 44);
-            this.btnStartSeek.Name = "btnStartSeek";
-            this.btnStartSeek.Size = new System.Drawing.Size(28, 19);
-            this.btnStartSeek.TabIndex = 8;
-            this.btnStartSeek.Text = "...";
-            this.btnStartSeek.UseVisualStyleBackColor = true;
-            this.btnStartSeek.Click += new System.EventHandler(this.btnStartSeek_Click);
-            // 
-            // btnEndSeek
-            // 
-            this.btnEndSeek.Location = new System.Drawing.Point(87, 132);
-            this.btnEndSeek.Name = "btnEndSeek";
-            this.btnEndSeek.Size = new System.Drawing.Size(28, 19);
-            this.btnEndSeek.TabIndex = 14;
-            this.btnEndSeek.Text = "...";
-            this.btnEndSeek.UseVisualStyleBackColor = true;
-            this.btnEndSeek.Click += new System.EventHandler(this.btnEndSeek_Click);
-            // 
-            // radioEndSeek
-            // 
-            this.radioEndSeek.AutoSize = true;
-            this.radioEndSeek.Location = new System.Drawing.Point(10, 134);
-            this.radioEndSeek.Name = "radioEndSeek";
-            this.radioEndSeek.Size = new System.Drawing.Size(73, 17);
-            this.radioEndSeek.TabIndex = 13;
-            this.radioEndSeek.TabStop = true;
-            this.radioEndSeek.Text = "Use seek:";
-            this.radioEndSeek.UseVisualStyleBackColor = true;
-            // 
             // frmEditSegmentAddr
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(410, 363);
+            this.ClientSize = new System.Drawing.Size(410, 421);
             this.Controls.Add(this.labelOf);
             this.Controls.Add(this.numBlock);
             this.Controls.Add(this.label3);
@@ -399,13 +493,16 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmEditSegmentAddr";
             this.Text = "Edit Segment Address";
+            this.Load += new System.EventHandler(this.frmEditSegmentAddr_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numMultiplyStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numBytes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numReadPairs)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numMultiplyEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBlock)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numBytes)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -440,5 +537,13 @@
         private System.Windows.Forms.RadioButton radioStartSeek;
         private System.Windows.Forms.Button btnEndSeek;
         private System.Windows.Forms.RadioButton radioEndSeek;
+        private System.Windows.Forms.TextBox txtPlusStart;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown numMultiplyStart;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtPlusEnd;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.NumericUpDown numMultiplyEnd;
+        private System.Windows.Forms.Label label8;
     }
 }

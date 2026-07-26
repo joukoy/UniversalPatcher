@@ -166,7 +166,6 @@
     <Compile Include="DataLogger\Devices\J2534Server.cs" />
     <Compile Include="DataLogger\Devices\JetDevice.cs" />
     <Compile Include="DataLogger\Devices\TcpIpPort.cs" />
-    <Compile Include="DataLogger\Devices\UPX-OBD.cs" />
     <Compile Include="DataLogger\EECV.cs" />
     <Compile Include="DataLogger\frmBinToScript.cs">
       <SubType>Form</SubType>
@@ -560,6 +559,12 @@
     <Compile Include="frmTableVisDouble.designer.cs">
       <DependentUpon>frmTableVisDouble.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmTableVisDouble_HexView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTableVisDouble_HexView.Designer.cs">
+      <DependentUpon>frmTableVisDouble_HexView.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmTdEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -616,6 +621,12 @@
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers.cs" />
+    <Compile Include="HexPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HexViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Histogram.cs" />
     <Compile Include="IntelHex.cs" />
     <Compile Include="J2534DotNet\IJ2534.cs" />
@@ -699,6 +710,7 @@
     <Compile Include="TreeViewMS.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TunerTheme.cs" />
     <Compile Include="Units.cs" />
     <Compile Include="UpatcherSettings.cs" />
     <Compile Include="UPLogger.cs" />
@@ -923,6 +935,9 @@
     <EmbeddedResource Include="frmTableVisDouble.resx">
       <DependentUpon>frmTableVisDouble.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmTableVisDouble_HexView.resx">
+      <DependentUpon>frmTableVisDouble_HexView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmTdEditor.resx">
       <DependentUpon>frmTdEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -1006,6 +1021,11 @@
   <ItemGroup>
     <None Include="Resources\system.ico" />
     <None Include="Resources\Dimensions.ico" />
+    <None Include="bin\Debug\Images\Cancel.png" />
+    <None Include="bin\Debug\Images\ApplyCodeChanges.png" />
+    <None Include="bin\Debug\Images\SearchGo.png" />
+    <None Include="bin\Debug\Images\RunLiveUnitTest.png" />
+    <None Include="bin\Debug\Images\SiteMap.png" />
     <Content Include="UniversalPatcher.ico" />
   </ItemGroup>
   <ItemGroup />

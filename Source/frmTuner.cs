@@ -25,6 +25,7 @@ namespace UniversalPatcher
         public FrmTuner(PcmFile PCM1, bool loadTableList = true)
         {
             InitializeComponent();
+            //FrmTunerTheme.Apply(this);
             DrawingControl.SetDoubleBuffered(dataGridView1);
 
             PCM = PCM1;
@@ -103,12 +104,28 @@ namespace UniversalPatcher
             public List<string> TdListNames { get; set; }
             public List<string> TdListFiles { get; set; }
         }
+        public class ExtraOffset
+        {
+            public ExtraOffset() { }
+            public ExtraOffset(Guid tableguid, int offset, decimal hitpercent)
+            {
+                this.Offset = offset;
+                this.Hitpercent = hitpercent;
+                this.DisplayValue = offset.ToString() + ": " + hitpercent.ToString("0.00") + "%";
+                this.TableGuid = tableguid;
+            }
+            public int Offset { get; set; }
+            public decimal Hitpercent { get; set; }
+            public string DisplayValue { get; set; }
+            public Guid TableGuid { get; set; }
+        }
 
         public class SessionSettings
         {
             public SessionSettings()
             {
                 Pcms = new List<SessionPcm>();
+                Extraoffsets = new List<ExtraOffset>();
             }
             public string SessionName { get; set; }
             public bool MapSession { get; set; }
@@ -118,47 +135,119 @@ namespace UniversalPatcher
             public string CurrentBin { get; set; }
             public List<SessionPcm> Pcms { get; set; }
             public List<ColumnOrder> columns { get; set; }
+            public List<ExtraOffset> Extraoffsets { get; set; }
             public bool ShowHexWindow { get; set; }
             public int HexWindowWidth { get; set; }
+
+        }
+
+        private class TableLink
+        {
+            public TableLink() { }
+            public TableLink(string filename, string tablename, int startindex, int length) 
+            {
+                FileName = filename;
+                TableName = tablename;
+                StartIndex = startindex;
+                EndIndex = startindex + length;
+            }
+            public string FileName { get; set; }
+            public string TableName { get; set; }
+            public int StartIndex { get; set; }
+            public int EndIndex { get; set; }
+        }
+        public class PcmPeekBytes
+        {
+            public PcmPeekBytes(PcmFile pcm, TableData td, bool primary)
+            {
+                tInfo = new TableInfo(pcm, td);
+                if (td.Dimensions() == 1)
+                {
+                    MinMaxText = tInfo.Parse1dTablePeekValue();
+
+                }
+                else
+                {
+                    tInfo.ParseTable(true, false, false);
+                }
+                this.Primary = primary;
+            }
+            private bool Primary { get; set; }
+            public TableInfo tInfo { get; set; }
+            public string Header 
+            { 
+                get
+                {
+                    if (Primary) return "";
+                    return tInfo.pcm.FileName + ": [" + tInfo.td.TableName + "]" + Environment.NewLine;
+                }
+            }
+            public string ValueHeader 
+            {  
+                get
+                {
+                    if (tInfo.td.Dimensions() == 1) return "Current value: ";
+                    return "Current values: " + tInfo.GetMinMaxString() + Environment.NewLine;
+                }
+            }
+            public string MinMaxText { get; internal set; }
+        }
+        public class MyBindingList<T> : BindingList<T>
+        {
+            public void AddRange(IEnumerable<T> items)
+            {
+                RaiseListChangedEvents = false;
+
+                foreach (var item in items)
+                    Add(item);
+
+                RaiseListChangedEvents = true;
+                ResetBindings();
+            }
         }
         public PcmFile PCM;
-        //private List<TableData> tableDataList;
+        public List<PcmFile> LoadedPcms = new List<PcmFile>();
+        public List<string> FileLetters = new List<string>();
         private string sortBy = "TableName";
         private int sortIndex = 0;
         private bool columnsModified = false;
-        BindingSource bindingsource = new BindingSource();
-        BindingSource categoryBindingSource = new BindingSource();
-        //private BindingList<TableData> bindingsource = new BindingList<TableData>();
-        private BindingList<TableData> filteredTableDatas = new BindingList<TableData>();
-        SortOrder strSortOrder = SortOrder.Ascending;
-        private TableData lastSelectTd;        
-        int keyDelayCounter = 0;
+        //private BindingSource bindingsource = new BindingSource();
+        private BindingSource categoryBindingSource = new BindingSource();
+        private MyBindingList<TableData> filteredTableDatas = new MyBindingList<TableData>();
+        private SortOrder strSortOrder = SortOrder.Ascending;
+        private int keyDelayCounter = 0;
         private SplitContainer splitTree;
+        private SplitContainer splitTreeInfo;
         private TreeViewMS treeDimensions;
         private TreeViewMS treeMulti;
         private TreeViewMS treeValueType;
         private TreeViewMS treeCategory;
         private TreeViewMS treeSegments;
+        private Label labelTreeTableTip;
         private string[] GalleryArray;
-        TabPage currentTab;
-        int iconSize;
+        private TabPage currentTab;
+        private int iconSize;
         public string currentBin = "A";
-        bool ExtraOffsetFirstTry = true;
-        private frmTableVisDouble ftvd;
+        private bool ExtraOffsetFirstTry = true;
+        private frmTableVisDouble2 ftvd;
         public int CompareSelection = 0;
         public int CompareType = 0;
         public bool ShowAsHex = false;
         public bool SwapXy = false;
         private DispMode DisplayMode = DispMode.None;
-        bool Navigating = false;
-        ToolTip NaviTip = new ToolTip();
+        private bool Navigating = false;
+        private ToolTip NaviTip = new ToolTip();
         private string sessionname;
         private frmHistogram hstForm;
         public bool histogramTableSelectionEnabled;
         private FileTraceListener DebugFileListener;
         public static List<ColumnOrder> columnorder;
-        string[] TunerModeColumns = new string[] { "id", "TableName", "Category", "Units", "Columns", "Rows", "TableDescription" };
-
+        private string[] TunerModeColumns = new string[] { "id", "TableName", "Category", "Units", "Columns", "Rows", "TableDescription" };
+        private List<PcmPeekBytes> peekpcms = new List<PcmPeekBytes>();
+        private List<TableLink> tablelinks = new List<TableLink>();
+        private decimal hitPercent = 0;
+        //private SessionSettings sessionsettings;
+        private List<ExtraOffset> extraoffsets;
         public String SessionName
         {
             get { return sessionname; }
@@ -174,10 +263,42 @@ namespace UniversalPatcher
         private bool mapSession = false;
         public frmTunerMain TunerMain;
         public TabPage myTab;
+        private TableData CurrentTd 
+        { 
+            get
+            {
+                TableData retVal = null;
+                try
+                {
+                    if (DisplayMode == DispMode.Tree)
+                    {
+                        TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                        foreach (TreeNode tn in tv.SelectedNodes)
+                        {
+                            Tnode tnode = (Tnode)tn.Tag;
+                            if (tnode.NodeType == NType.Table)
+                                return tnode.Td;
+                        }
+                    }
+                    else
+                    {
+                        return (TableData)dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+                    }
+                }
+                catch { }
+                return retVal;
+
+            }
+        }
         private void frmTuner_Load(object sender, EventArgs e)
         {
-            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
 
+            dataGridView1.DataSource = filteredTableDatas;
+            extraoffsets = new List<ExtraOffset>();
+            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
+            splitContainerListTree.Panel2Collapsed = true;
+            splitContainerListTree.Dock = DockStyle.Fill;
+            this.KeyDown += FrmTuner_KeyDown;
             selectedCompareBin = "";
             SetWorkingMode();
             disableConfigAutoloadToolStripMenuItem.Checked = AppSettings.disableTunerAutoloadSettings;
@@ -191,27 +312,10 @@ namespace UniversalPatcher
             radioListMode.Checked = !AppSettings.TunerTreeMode;
             autoresizeToolStripMenuItem.Checked = AppSettings.TunerAutoresizeColumns;
             autosaveColumnsToolStripMenuItem.Checked = AppSettings.TunerAutoSaveColumns;
-            if (AppSettings.TunerColorsMode == ConditionalColors.Off)
-            {
-                radioColorsOff.Checked = true;
-            }
-            else if (AppSettings.TunerColorsMode == ConditionalColors.Settings)
-            {
-                radioColorsUseTableSettings.Checked = true;
-            }
-            else
-            {
-                radioColorsUseTableValues.Checked = true;
-            }
-            btnColorMin1.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin1);
-            btnColorMin2.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin2);
-            btnColorMid.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid);
-            btnColorMax1.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax1);
-            btnColorMax2.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax2);
+            enableExtraoffsetButtonsToolStripMenuItem.Checked = AppSettings.TunerEnableExtraOffsetButtons;
+            chkShowTreeHover.Checked = AppSettings.TunerTreeUseMouseHover;
             SelectDispMode();
             LoadColumnPresetFiles();
-
-            //LogReceivers.Add(txtResult);
 
             if (AppSettings.MainWindowPersistence && hstForm != null)
             {
@@ -227,7 +331,7 @@ namespace UniversalPatcher
                 }
                 if (AppSettings.TunerLogWindowSize.Width > 0 || AppSettings.TunerLogWindowSize.Height > 0)
                 {
-                    this.splitContainer2.SplitterDistance = AppSettings.TunerLogWindowSize.Width;
+                    this.splitContainerListView.SplitterDistance = AppSettings.TunerLogWindowSize.Width;
                     this.splitContainer1.SplitterDistance = AppSettings.TunerLogWindowSize.Height;
                 }
                 if (AppSettings.TunerListModeTreeWidth > 0)
@@ -240,32 +344,14 @@ namespace UniversalPatcher
             else
                 patcherToolStripMenuItem.Visible = false;
 
-            comboFilterBy.Items.Clear();
-            TableData tdTmp = new TableData();
-            comboFilterBy.Items.Add("All");
-            foreach (ColumnOrder co in columnorder)
-            {
-                if (co.Visible || co.Column == "Address")
-                {
-                    ToolStripMenuItem sortItem = new ToolStripMenuItem(co.Column);
-                    sortItem.Name = co.Column;
-                    if (sortBy == co.Column)
-                        sortItem.Checked = true;
-                    sortByToolStripMenuItem.DropDownItems.Add(sortItem);
-                    sortItem.Click += SortItem_Click;
-                }
-            }
 
             comboFilterBy.Text = "TableName";
             labelTableName.Text = "";
-            //lastSelectedId = -1;
-            lastSelectTd = null;
-            filteredTableDatas = new BindingList<TableData>(PCM.tableDatas);
-            bindingsource = new BindingSource(typeof(BindingList<TableData>), null);
-            bindingsource.DataSource = filteredTableDatas;
-            dataGridView1.DataSource = bindingsource;
+            if (PCM != null && PCM.tableDatas.Count > 0)
+            {
+                filteredTableDatas.AddRange(PCM.tableDatas);
+            }
             dataGridView1.AllowUserToAddRows = false;
-            //FilterTables(false);
 
             this.AllowDrop = true;
             this.DragEnter += FrmTuner_DragEnter;
@@ -276,6 +362,7 @@ namespace UniversalPatcher
             dataGridView1.KeyUp += DataGridView1_KeyUp;
             dataGridView1.UserAddedRow += DataGridView1_UserAddedRow;
             dataGridView1.CellValidating += DataGridView1_CellValidating;
+            dataGridTrashBin.DataError += DataGridTrashBin_DataError;
             revToolStripMenuItem.MouseHover += RevToolStripMenuItem_MouseHover;
             fwdToolStripMenuItem.MouseHover += RevToolStripMenuItem_MouseHover;
             revToolStripMenuItem.MouseDown += NaviMenuItem_MouseDown; 
@@ -287,8 +374,292 @@ namespace UniversalPatcher
                 this.splitContainer1.SplitterDistance = (int)(0.7 * splitContainer1.Width);
                 histogramTableSelectionEnabled = true;
             }
+            this.chkShowTreeHover.CheckedChanged += new System.EventHandler(this.chkShowTreeHover_CheckedChanged);
+
+            txtDescription.MouseDoubleClick += TxtDescription_MouseDoubleClick;
+            txtDescription.MouseMove += TxtDescription_MouseMove;
+            txtDescription.MouseLeave += TxtDescription_MouseLeave;
+
+            treemodeToolStripMenuItem.Click += (sender1, e1) => RestorePath_Click(sender1,e1,DispMode.Tree);
+            listmodeToolStripMenuItem.Click += (sender1, e1) => RestorePath_Click(sender1,e1,DispMode.List);
+
+            radioListMode.MouseDown += RadioListMode_MouseDown;
+            radioTreeMode.MouseDown += RadioTreeMode_MouseDown;
         }
 
+        private void DataGridTrashBin_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            
+        }
+
+        private void RadioTreeMode_MouseDown(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    this.radioTreeMode.CheckedChanged -= new System.EventHandler(this.radioTreeMode_CheckedChanged);
+                    List<TableData> tds = GetSelectedTableTds();
+                    TreeViewMS tv = treeView1;
+                    List<string> path = TreeParts.GetCurrentNodePath(tv);
+                    path.Insert(0,tds[0].TableName);
+                    radioTreeMode.Checked = true;
+                    SelectTreemode();
+                    tabControl1.SelectedTab = tabMultiTree;
+                    tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                    AppSettings.TunerTreeMode = true;
+                    AppSettings.Save();
+                    FilterTables(false);
+                    TreeParts.RestoreNodePath(tv, path, PCM);
+                    this.radioTreeMode.CheckedChanged += new System.EventHandler(this.radioTreeMode_CheckedChanged);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void RadioListMode_MouseDown(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    this.radioTreeMode.CheckedChanged -= new System.EventHandler(this.radioTreeMode_CheckedChanged);
+                    List<TableData> tds = GetSelectedTableTds();
+                    TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                    List<string> path = TreeParts.GetCurrentNodePath(tv);
+                    radioListMode.Checked = true;
+                    SelectListMode();
+                    AppSettings.TunerTreeMode = false;
+                    AppSettings.Save();
+                    FilterTables(false);
+                    TreeParts.RestoreNodePath(treeView1, path, PCM);
+                    if (tds.Count > 0)
+                    {
+                        for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                        {
+                            TableData td = (TableData)dataGridView1.Rows[r].DataBoundItem;
+                            if (td.guid == tds[0].guid)
+                            {
+                                dataGridView1.Rows[r].Cells[0].Selected = true;
+                                dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[0];
+                                break;
+                            }
+                        }
+                    }
+                    this.radioTreeMode.CheckedChanged += new System.EventHandler(this.radioTreeMode_CheckedChanged);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void TxtDescription_MouseLeave(object sender, EventArgs e)
+        {
+            txtDescription.Cursor = Cursors.IBeam;
+        }
+
+        private void TxtDescription_MouseMove(object sender, MouseEventArgs e)
+        {
+            int charIndex = txtDescription.GetCharIndexFromPosition(e.Location);
+
+            // Guard: verify the char's actual position is near the mouse
+            Point charPos = txtDescription.GetPositionFromCharIndex(charIndex);
+            bool nearChar = Math.Abs(charPos.X - e.X) < 10 && Math.Abs(charPos.Y - e.Y) < 20;
+
+            bool overLink = nearChar && tablelinks.Any(link => charIndex >= link.StartIndex && charIndex <= link.EndIndex);
+
+            txtDescription.Cursor = overLink ? Cursors.Hand : Cursors.IBeam;
+        }
+
+        //Run in background after tablelist load and check if description includes tablenames
+        private void FindTableLinks(PcmFile pcm)
+        {
+            Logger("Searching table references in background...");
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    Stopwatch timer = new Stopwatch();
+                    timer.Start();
+
+                    foreach (TableData yTd in pcm.tableDatas)
+                    {
+                        string searchedTable = yTd.TableName;
+                        int idx = searchedTable.IndexOf(" - ");
+                        string searchedTable2 = searchedTable;
+                        string searchedTable3 = searchedTable;
+                        if (idx > 0)
+                        {
+                            searchedTable2 = "{" + searchedTable.Substring(0, idx) + "} \"" + searchedTable.Substring(idx + 3) + "\"";
+                            searchedTable3 = "{" + searchedTable.Substring(0, idx) + "} " + searchedTable.Substring(idx + 3);
+                        }
+                        foreach (TableData xTd in pcm.tableDatas)
+                        {
+                            bool found = false;
+                            if (!string.IsNullOrEmpty(xTd.TableDescription))
+                            {
+                                if (xTd.TableDescription.Contains(searchedTable))
+                                {
+                                    found = true;
+                                }
+                                else if (idx > 0 && (xTd.TableDescription.Contains(searchedTable2) || xTd.TableDescription.Contains(searchedTable3)))
+                                {
+                                    found = true;
+                                }
+                            }
+                            if (!found && !string.IsNullOrEmpty(xTd.ExtraDescription))
+                            {
+                                if (xTd.ExtraDescription.Contains(searchedTable))
+                                {
+                                    found = true;
+                                }
+                                else if (idx > 0 && (xTd.ExtraDescription.Contains(searchedTable2) || xTd.ExtraDescription.Contains(searchedTable3)))
+                                {
+                                    found = true;
+                                }
+                            }
+                            if (found)
+                            {
+                                Debug.WriteLine("Adding table reference, Table: " + xTd.TableName + ", Referenced table: " + searchedTable);
+                                xTd.LinkTables.Add(searchedTable);
+                            }
+                        }
+                    }                                
+                    this.Invoke((MethodInvoker)delegate ()
+                    {
+                        Logger("Table reference search done for: " + Path.GetFileName(pcm.FileName));
+                    });
+                    timer.Stop();
+                    Debug.WriteLine("Table link search time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+
+                }
+                catch (Exception ex)
+                {
+                    var st = new StackTrace(ex, true);
+                    // Get the top stack frame
+                    var frame = st.GetFrame(st.FrameCount - 1);
+                    // Get the line number from the stack frame
+                    var line = frame.GetFileLineNumber();
+                    Debug.WriteLine("Error, frmTuner line " + line + ": " + ex.Message);
+                }
+            });
+        }
+        private void TxtDescription_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Clicks == 1 && e.Button == MouseButtons.Left)
+            {
+                int position = txtDescription.GetCharIndexFromPosition(new Point(e.X, e.Y));
+                foreach(TableLink tl in tablelinks)
+                {
+                    if (position >= tl.StartIndex && position <= tl.EndIndex)
+                    {
+                        foreach(PcmFile xPCM in LoadedPcms)
+                        {
+                            if (xPCM.FileName == tl.FileName)
+                            {
+                                foreach (TableData td in xPCM.tableDatas)
+                                {
+                                    if (td.TableName == tl.TableName) // || td.ExtraTableName == tl.TableName)
+                                    {
+                                        List<TableData> tds = new List<TableData>();
+                                        tds.Add(td);
+                                        OpenTableEditor(tds, true);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        private void FrmTuner_KeyDown(object sender, KeyEventArgs e)
+        {
+            foreach (ExtraOffsetKeymap map in ExtraOffsetKeymaps)
+            {
+                if (e.KeyCode == map.KeyCode)
+                {
+                    if (map.Function != ExtraOffsetFunction.EnableButtons && AppSettings.TunerEnableExtraOffsetButtons == false)
+                    {
+                        return;
+                    }
+                    switch (map.Function)
+                    {
+                        case ExtraOffsetFunction.FindPrevious:
+                            FindExtraOffset(false);
+                            break;
+                        case ExtraOffsetFunction.FindNext:
+                            FindExtraOffset(true);
+                            break;
+                        case ExtraOffsetFunction.OffsetPlus:
+                            numExtraOffset.Value += 1;
+                            break;
+                        case ExtraOffsetFunction.OffsetMinus:
+                            numExtraOffset.Value -= 1;
+                            break;
+                        case ExtraOffsetFunction.CopyFromTest:
+                            numExtraOffset.Value = numExtraOffsetTest.Value;
+                            break;
+                        case ExtraOffsetFunction.CopyToTest:
+                            numExtraOffsetTest.Value = numExtraOffset.Value;
+                            break;
+                        case ExtraOffsetFunction.TestOffsetMinus:
+                            numExtraOffsetTest.Value -= 1;
+                            break;
+                        case ExtraOffsetFunction.TestOffsetPlus:
+                            numExtraOffsetTest.Value += 1;
+                            break;
+                        case ExtraOffsetFunction.NextTable:
+                            TestOffset(1);
+                            break;
+                        case ExtraOffsetFunction.PreviousTable:
+                            TestOffset(-1);
+                            break;
+                        case ExtraOffsetFunction.TestOffset:
+                            TestOffset(0);
+                            break;
+                        case ExtraOffsetFunction.Apply:
+                            ApplyExtraOffset();
+                            break;
+                        case ExtraOffsetFunction.Cancel:
+                            numExtraOffsetTest.Value = 0;
+                            break;
+                        case ExtraOffsetFunction.DisableButtons:
+                            enableExtraoffsetButtonsToolStripMenuItem.Checked = false;
+                            AppSettings.TunerEnableExtraOffsetButtons = false;
+                            AppSettings.Save();
+                            break;
+                        case ExtraOffsetFunction.EnableButtons:
+                            enableExtraoffsetButtonsToolStripMenuItem.Checked = true;
+                            AppSettings.TunerEnableExtraOffsetButtons = true;
+                            AppSettings.Save();
+                            break;
+                        case ExtraOffsetFunction.OpenTable:
+                            OpenTableEditor();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
 
         private bool IsSessionModified()
         {
@@ -399,7 +770,7 @@ namespace UniversalPatcher
                     AppSettings.TunerWindowSize = this.RestoreBounds.Size;
                 }
                 Size logSize = new Size();
-                logSize.Width = this.splitContainer2.SplitterDistance;
+                logSize.Width = this.splitContainerListView.SplitterDistance;
                 logSize.Height = this.splitContainer1.SplitterDistance;
                 AppSettings.TunerLogWindowSize = logSize;
                 AppSettings.TunerListModeTreeWidth = splitContainerListMode.SplitterDistance;
@@ -477,24 +848,20 @@ namespace UniversalPatcher
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
         }
-
-
         public void SelectPCM()
         {
             try
             {
-                this.Text = "Tuner " + PCM.FileName + " [" + PCM.tunerFile + "]";
+                this.Text = "Tuner " + PCM.FileName;
+                if (!string.IsNullOrEmpty(PCM.tunerFile))
+                {
+                    this.Text += " [" + PCM.tunerFile + "]";
+                }
                 PCM.SelectTableDatas(0, PCM.FileName);
                 if (TunerMain != null)
                 {
-                    TunerMain.Text = "Tuner " + PCM.FileName + " [" + PCM.tunerFile + "]";
+                    TunerMain.Text = this.Text;
                 }
-/*                frmNavigator fn = new frmNavigator();
-                fn.Show();
-                fn.PCM = PCM;
-                fn.dataGridView2.DataSource = fn.PCM.NaviGator;
-*/
-                //tableDataList = PCM.tableDatas;
                 for (int m = tableListToolStripMenuItem.DropDownItems.Count - 1; m >= 0; m--)
                 {
 
@@ -582,6 +949,9 @@ namespace UniversalPatcher
                             ImportTinyTunerDB(ref newPCM);
                     }
                     ImportDTC(ref newPCM);
+                    FindTableLinks(newPCM);
+                    filteredTableDatas.Clear();
+                    filteredTableDatas.AddRange(newPCM.tableDatas);
                 }
             }
             catch (Exception ex)
@@ -632,13 +1002,17 @@ namespace UniversalPatcher
 
                 if (td.addrInt == uint.MaxValue)
                 {
-                    Logger("No address defined!");
+                    Logger("Table: " + td.TableName + ", No address defined!");
+                    foreach (var x in splitTree.Panel2.Controls.OfType<Form>())
+                    {
+                            x.Close();
+                    }
                     return;
                 }
 
                 if (!string.IsNullOrEmpty(td.OS) && !td.OS.Contains(PCM.OS) && !td.CompatibleOS.Contains("," + PCM.OS + ","))
                 {
-                    LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);                
+                    LoggerBold("WARNING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);                
                 }
 
                 frmTableEditor frmT;
@@ -649,9 +1023,8 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    ClearPanel2();
-                    frmT = new frmTableEditor();
-                    frmT.tuner = this;
+                    ClearPanel2(false,false);
+                    frmT = new frmTableEditor(this);
                     if (DisplayMode == DispMode.Tree && !newWindow)
                     {
                         frmT.Dock = DockStyle.Fill;
@@ -662,7 +1035,7 @@ namespace UniversalPatcher
                 }
                 if (DisplayMode == DispMode.List)
                 {
-                    frmT.tunerSelectedTables = filteredTableDatas.ToList();
+                    frmT.tunerFilteredTables = filteredTableDatas.ToList();
                 }
                 else
                 {
@@ -676,23 +1049,23 @@ namespace UniversalPatcher
                     {
                         tnode = (Tnode)tv.SelectedNode.Parent.Tag;
                     }
-                    frmT.tunerSelectedTables = tnode.filteredTds;
+                    frmT.tunerFilteredTables = tnode.filteredTds;
                 }
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 frmT.CleanUp();
                 frmT.PrepareTable(PCM, td, tableTds, currentBin);
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 {
-                    PcmFile comparePCM = (PcmFile)mi.Tag;
-                    if (PCM.FileName != comparePCM.FileName)
+                    PcmFile cmpPCM = (PcmFile)mi.Tag;
+                    if (PCM.FileName != cmpPCM.FileName)
                     {
-                        Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
+                        Logger("Adding file: " + Path.GetFileName(cmpPCM.FileName) + " to compare menu... ", false);
                         {
                             TableData xTd = null;
                             for (int y = 0; y < tableTds.Count; y++)
                             {
                                 TableData tmpTd = tableTds[y];
-                                xTd = FindTableData(tmpTd, comparePCM.tableDatas);
+                                xTd = FindTableData(tmpTd, cmpPCM.tableDatas);
                                 if (xTd != null)
                                     break;
                             }
@@ -702,8 +1075,8 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                frmT.AddCompareFiletoMenu(comparePCM, null, mi.Text, selectedCompareBin);
-                                if (PCM.configFile != comparePCM.configFile)
+                                frmT.AddCompareFiletoMenu(cmpPCM,  mi.Text , selectedCompareBin);
+                                if (PCM.configFile != cmpPCM.configFile)
                                 {
                                     LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
                                 }
@@ -732,11 +1105,6 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
             }
-        }
-
-        private void btnEditTable_Click(object sender, EventArgs e)
-        {
-            OpenTableEditor();
         }
 
         public void LoggerBold(string LogText, Boolean NewLine = true)
@@ -770,7 +1138,7 @@ namespace UniversalPatcher
                     return;
 
                 Logger("Saving to file: " + fileName);
-                ClearPanel2();
+                ClearPanel2(false,true);
                 PcmFile newPCM = PCM.ShallowCopy();
                 newPCM.SaveBin(fileName);
                 AddtoCurrentFileMenu(newPCM);
@@ -798,7 +1166,6 @@ namespace UniversalPatcher
 
         public void RefreshFast()
         {
-            //bindingsource = filteredTableDatas;
             this.Invoke((MethodInvoker)delegate ()
             {
                 dataGridView1.Update();
@@ -828,14 +1195,37 @@ namespace UniversalPatcher
                 this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
 
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-
+                Guid selectedGuid = Guid.Empty;
+                int selectedCol = 0;
+                if (DisplayMode == DispMode.List && dataGridView1.CurrentRow != null)
+                {
+                    selectedGuid = ((TableData)dataGridView1.CurrentRow.DataBoundItem).guid;
+                    selectedCol = dataGridView1.CurrentCell.ColumnIndex;
+                }
                 RefreshCategories();
                 Application.DoEvents();
+                List<string> currentPath = TreeParts.GetCurrentNodePath(treeView1);
                 FilterTables(RestorePath);
                 treeView1.SelectedNodes.Clear();
                 treeView1.Nodes.Clear();
                 DrawingControl.SuspendDrawing(treeView1);
                 TreeParts.AddNodes(treeView1.Nodes, PCM, filteredTableDatas.ToList(), true);
+                if (RestorePath)
+                {
+                    TreeParts.RestoreNodePath(treeView1, currentPath, PCM);
+                }
+                if (selectedGuid != Guid.Empty)
+                {
+                    for (int r = 0; r< dataGridView1.Rows.Count; r++)
+                    {
+                        if (((TableData)dataGridView1.Rows[r].DataBoundItem).guid == selectedGuid)
+                        {
+                            Debug.WriteLine("Selecting cell: " + r.ToString() + ", " + selectedCol.ToString());
+                            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[selectedCol];
+                            break;
+                        }
+                    }
+                }
                 DrawingControl.ResumeDrawing(treeView1);
             }
             catch (Exception ex)
@@ -857,31 +1247,25 @@ namespace UniversalPatcher
             Logger(" [OK]");
         }
 
-        private void btnLoadXml_Click(object sender, EventArgs e)
+        private void FillFilterby()
         {
-            PCM.LoadTableList();
-            RefreshTablelist(false);
+            comboFilterBy.Items.Clear();
+            TableData tdTmp = new TableData();
+            comboFilterBy.Items.Add("All");
+            foreach (ColumnOrder co in columnorder)
+            {
+                if (co.Visible || co.Column == "Address")
+                {
+                    ToolStripMenuItem sortItem = new ToolStripMenuItem(co.Column);
+                    sortItem.Name = co.Column;
+                    if (sortBy == co.Column)
+                        sortItem.Checked = true;
+                    sortByToolStripMenuItem.DropDownItems.Add(sortItem);
+                    sortItem.Click += SortItem_Click;
+                    comboFilterBy.Items.Add(co.Column);
+                }
+            }
         }
-
-
-        private void btnSaveXML_Click(object sender, EventArgs e)
-        {
-            dataGridView1.EndEdit();
-            PCM.SaveTableList("");
-        }
-
-        private void btnImportDTC_Click(object sender, EventArgs e)
-        {
-            ImportDTC(ref PCM);
-        }
-
-
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            PCM.ClearTableList();
-            RefreshTablelist(false);
-        }
-
         private void ReorderColumns()
         {
             try
@@ -912,12 +1296,13 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, frmTuner (reorder columns) , line " + line + ": " + ex.Message);
             }
 
         }
         private void SortTables()
         {
+            int pos = dataGridView1.FirstDisplayedScrollingColumnIndex;
             this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
             DrawingControl.SuspendDrawing(dataGridView1);
             List<TableData> results = filteredTableDatas.ToList();
@@ -926,18 +1311,31 @@ namespace UniversalPatcher
             else
                 results = results.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
 
-            filteredTableDatas = new BindingList<TableData>(results.ToList());
-
-            dataGridView1.DataSource = filteredTableDatas;
+            filteredTableDatas.Clear();
+            filteredTableDatas.AddRange(results);
+            dataGridView1.Invalidate();
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
             DrawingControl.ResumeDrawing(dataGridView1);
             dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
             FilterTree(true);
+            dataGridView1.FirstDisplayedScrollingColumnIndex = pos;
         }
         private void FilterTables(bool RestorePath)
         {
             try
             {
+                if (PCM.tableDatas.Count == 0)
+                {
+                    filteredTableDatas.Clear();
+                    dataGridView1.Invalidate();
+                    if (tabControl1.SelectedTab.Controls.Count > 0)
+                    {
+                        TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                        tv.Nodes.Clear();
+                        ClearPanel2(false, true);
+                    }
+                    return;
+                }
                 this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
                 DrawingControl.SuspendDrawing(dataGridView1);
 
@@ -946,8 +1344,18 @@ namespace UniversalPatcher
                     return;
                 //Save settings before reordering
                 SaveGridLayout();
-
                 List<TableData> compareList = PCM.tableDatas;
+                if (DisplayMode == DispMode.List && !treeView1.Nodes["All"].IsSelected && !treeView1.Nodes["Patches"].IsSelected && treeView1.SelectedNodes.Count > 0)
+                {
+                    List<TableData> newTDList = new List<TableData>();
+                    foreach (TreeNode tn in treeView1.SelectedNodes)
+                    {
+                        TreeParts.Tnode tnode = (TreeParts.Tnode)tn.Tag;
+                        newTDList.AddRange(tnode.filteredTds);
+                    }
+                    compareList = newTDList;
+                }
+
                 Debug.WriteLine("Total table count: " + compareList.Count.ToString());
                 if (showOnlyMappedTablesToolStripMenuItem.Checked)
                 {
@@ -1135,28 +1543,31 @@ namespace UniversalPatcher
                     }
                     Debug.WriteLine("OK");
                 }
-
-/*                if (DisplayMode == DispMode.List && !treeView1.Nodes["All"].IsSelected && !treeView1.Nodes["Patches"].IsSelected && treeView1.SelectedNodes.Count > 0)
+                filteredTableDatas.Clear();
+                filteredTableDatas.AddRange(results);
+                if (DisplayMode == DispMode.Tree)
                 {
-                    Debug.WriteLine("Filtering by tree");
-                    List<TableData> newTDList = new List<TableData>();
-                    foreach (TreeNode tn in treeView1.SelectedNodes)
-                    {
-                        TreeParts.Tnode tnode = (TreeParts.Tnode)tn.Tag;
-                        newTDList.AddRange(tnode.filteredTds);
-                    }
-                    results = newTDList;
-                    Debug.WriteLine("OK");
-                    Debug.WriteLine("Total table count, filtered by selected tree node: " + compareList.Count.ToString());
+                    FilterTree(RestorePath);
                 }
-*/
-                filteredTableDatas = new BindingList<TableData>(results.ToList());
-
-                dataGridView1.DataSource = filteredTableDatas;
-                //bindingsource = filteredTableDatas;
-                ReorderColumns();
+                else 
+                {
+                    dataGridView1.DataSource = filteredTableDatas;
+                    dataGridView1.Invalidate();
+                    if (RestorePath && PCM.LastListmodeTable != Guid.Empty)
+                    {
+                        for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                        {
+                            TableData rTd = (TableData)dataGridView1.Rows[r].DataBoundItem;
+                            if (rTd.guid == PCM.LastListmodeTable)
+                            {
+                                dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[0];
+                                break;
+                            }
+                        }
+                    }
+                    ReorderColumns();
+                }
                 txtDescription.Text = "";
-                FilterTree(RestorePath);
                 this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
                 Debug.WriteLine("Enable drawings");
                 DrawingControl.ResumeDrawing(dataGridView1);
@@ -1220,10 +1631,10 @@ namespace UniversalPatcher
                     Debug.WriteLine("FilterTree, restoring path");
                     List<string> path = PCM.SelectedNode[tv.Name];
                     if (path != null && tabControl1.SelectedTab != tabSettings && tabControl1.SelectedTab != tabFileInfo && tabControl1.SelectedTab != tabPatches)
+                    {
                         RestoreNodePath(tv, path, PCM);
+                    }
                 }
-                //tv.AfterSelect += Tree_AfterSelect;
-                //tv.NodeMouseClick += Tree_NodeMouseClick;
             }
             catch (Exception ex)
             {
@@ -1239,35 +1650,7 @@ namespace UniversalPatcher
         private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
             Debug.WriteLine("comboTableCategory_SelectedIndexChanged");
-            //FilterTables(true);
             RefreshTablelist(true);
-        }
-
-        private void btnSearchTableSeek_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                int rowindex = dataGridView1.CurrentCell.RowIndex;
-                for (int i = rowindex + 1; i < dataGridView1.RowCount; i++)
-                {
-                    if (dataGridView1.Rows[i].Cells["TableName"].Value != null && dataGridView1.Rows[i].Cells["TableName"].Value.ToString().ToLower().Contains(txtFilter.Text.ToLower()))
-                    {
-                        dataGridView1.ClearSelection();
-                        dataGridView1.CurrentCell = dataGridView1.Rows[i].Cells[0];
-                        dataGridView1.CurrentCell.Selected = true;
-                        break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTuner line " + line + ": " + ex.Message);
-            }
         }
 
         private void ImportTinyTunerDB(ref PcmFile _PCM)
@@ -1278,12 +1661,6 @@ namespace UniversalPatcher
 
         }
 
-        private void btnReadTinyTunerDB_Click(object sender, EventArgs e)
-        {
-            ImportTinyTunerDB(ref PCM);
-            RefreshTablelist(false);
-        }
-
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
@@ -1292,10 +1669,9 @@ namespace UniversalPatcher
         private void loadXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PCM.LoadTableList();
+            FindTableLinks(PCM);
             comboTableCategory.Text = "_All";
             RefreshTablelist(false);
-
-            //currentXmlFile = PCM.configFileFullName;
         }
 
         private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1307,7 +1683,7 @@ namespace UniversalPatcher
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Logger("Saving to file: " + PCM.FileName);
-            ClearPanel2();
+            ClearPanel2(false,true);
             PCM.SaveBin(PCM.FileName);
             Logger("Done.");
         }
@@ -1317,26 +1693,12 @@ namespace UniversalPatcher
             try
             {
                 Logger("Importing DTC codes...", false);
-                bool haveDTC = false;
-/*              for (int t = 0; t < _PCM.tableDatas.Count; t++)
-                {
-                    if (_PCM.tableDatas[t].TableName == "DTC" || _PCM.tableDatas[t].TableName == "DTC.Codes")
-                    {
-                        haveDTC = true;
-                        Logger(" DTC codes already defined");
-                        break;
-                    }
-                }
-*/
-                if (!haveDTC)
-                {
-                    TableData tdTmp = new TableData();
-                    tdTmp.ImportDTC(_PCM, ref _PCM.tableDatas,true);
-                    tdTmp.ImportDTC(_PCM, ref _PCM.tableDatas, false);
-                    Logger(" [OK]");
-                    //FilterTables(true);
-                    RefreshTablelist(true);
-                }
+                TableData tdTmp = new TableData();
+                tdTmp.ImportDTC(_PCM, ref _PCM.tableDatas,true);
+                tdTmp.ImportDTC(_PCM, ref _PCM.tableDatas, false);
+                Logger(" [OK]");
+                //FilterTables(true);
+                RefreshTablelist(true);
             }
             catch (Exception ex)
             {
@@ -1352,7 +1714,6 @@ namespace UniversalPatcher
         private void clearTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PCM.ClearTableList();
-            //PCM.tableCategories = new List<string>();
             RefreshTablelist(false);
         }
 
@@ -1424,21 +1785,15 @@ namespace UniversalPatcher
         {
             try
             {
-/*                if (e.RowIndex == -1 && e.Button == MouseButtons.Right)
-                {
-                    contextMenuStrip2.Show(Cursor.Position.X, Cursor.Position.Y);
-                }
-                else 
-*/
                 if (e.Button == MouseButtons.Left)
                 {
                     SaveCurrentPath(treeView1);
                 }
                 if (AppSettings.WorkingMode > 0 && dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
                 {
-                    lastSelectTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
+                    TableData sTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
                     contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
-                    EnableAxisTableMenus(lastSelectTd);
+                    EnableAxisTableMenus(sTd);
                 }
             }
             catch { }
@@ -1645,10 +2000,6 @@ namespace UniversalPatcher
             }
 
         }
-        private void exportCsvToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void ImportxperimentalCSV()
         {
@@ -1703,11 +2054,6 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                /*            for (int i = PCM.tableDatas.Count -1; i >= 0; i--)
-                            {
-                                if (PCM.tableDatas[i].addrInt == uint.MaxValue)
-                                    PCM.tableDatas.RemoveAt(i);
-                            }*/
                 //Fix table names:
                 for (int i = 0; i < PCM.tableDatas.Count; i++)
                 {
@@ -1732,7 +2078,6 @@ namespace UniversalPatcher
 
         private void txFilter_TextChanged(object sender, EventArgs e)
         {
-            //filterTables();
             keyDelayCounter = 0;
             timerFilter.Enabled = true;
         }
@@ -1743,7 +2088,6 @@ namespace UniversalPatcher
                 showTablesWithEmptyAddressToolStripMenuItem.Checked = false;
             else
                 showTablesWithEmptyAddressToolStripMenuItem.Checked = true;
-            //FilterTables(true);
             RefreshTablelist(true);
         }
 
@@ -1881,6 +2225,7 @@ namespace UniversalPatcher
                 sortIndex = e.ColumnIndex;
                 strSortOrder = GetSortOrder(sortIndex);
                 SortTables();
+                //(dataGridView1.FirstDisplayedScrollingColumnIndex = e.ColumnIndex;
             }
         }
 
@@ -1928,21 +2273,11 @@ namespace UniversalPatcher
             fe.LoadUnits();
         }
 
-        private void fixTableNamesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < PCM.tableDatas.Count; i++)
-            {
-                if (PCM.tableDatas[i].TableName.ToLower().StartsWith("ka_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("ke_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("kv_"))
-                    PCM.tableDatas[i].TableName = PCM.tableDatas[i].TableName.Substring(3);
-            }
-            RefreshTablelist(true);
-        }
-
         private void DataGridView1_UserAddedRow(object sender, DataGridViewRowEventArgs e)
         {
             if (dataGridView1.CurrentCell != null)
             {
-                TableData rTd = (TableData)dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
+                TableData rTd = CurrentTd;
                 AddToRedoLog(rTd, PCM.tableDatas,"TableData",rTd.TableName, "", ReDo.RedoAction.Add, "", "", dataGridView1.CurrentCell.RowIndex);
             }
         }
@@ -1951,11 +2286,22 @@ namespace UniversalPatcher
         {
             var oldValue = dataGridView1[e.ColumnIndex, e.RowIndex].Value;
             var newValue = e.FormattedValue;
-            TableData rTd = (TableData)dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].DataBoundItem;
-            string prop = dataGridView1.Columns[e.ColumnIndex].HeaderText;
-            AddToRedoLog(rTd, PCM.tableDatas, "TableData", rTd.TableName, prop, ReDo.RedoAction.Edit, oldValue, newValue);
+            if (CurrentTd.GetType() == typeof(TableData))
+            {
+                TableData rTd = CurrentTd;
+                string prop = dataGridView1.Columns[e.ColumnIndex].HeaderText;
+                AddToRedoLog(rTd, PCM.tableDatas, "TableData", rTd.TableName, prop, ReDo.RedoAction.Edit, oldValue, newValue);
+            }
         }
 
+        private void RemoveTableConfig(PcmFile PCM, TableData rTd)
+        {
+            int pos = PCM.GetTableConfigPosition(rTd);
+            AddToRedoLog(rTd, PCM.tableDatas, "TableData", rTd.TableName, "", ReDo.RedoAction.Delete, "", "", pos);
+            PCM.tableDataTrashBin.Add(rTd);
+            filteredTableDatas.Remove(rTd);
+            PCM.tableDatas.Remove(rTd);
+        }
 
         private void DataGridView1_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
@@ -1966,15 +2312,20 @@ namespace UniversalPatcher
                     e.Cancel = true;
                     return;
                 }
+                List<TableData> rTds = new List<TableData>();
                 for (int r = 0; r < dataGridView1.SelectedRows.Count; r++)
                 {
                     TableData rTd = (TableData)dataGridView1.SelectedRows[r].DataBoundItem;
-                    AddToRedoLog(rTd, PCM.tableDatas, "TableData", rTd.TableName, "", ReDo.RedoAction.Delete, "", "", r);
-                    PCM.tableDatas.Remove(rTd);
-                    //FilterTables();
+                    rTds.Add(rTd);
                 }
-                dataGridView1.Update();
-                dataGridView1.Refresh();
+                foreach (TableData rTd in rTds)
+                {
+                    RemoveTableConfig(PCM, rTd);
+                }
+                dataGridView1.Invalidate();
+                
+                //dataGridView1.Update();
+                //dataGridView1.Refresh();
             }
             catch (Exception ex)
             {
@@ -1987,67 +2338,243 @@ namespace UniversalPatcher
             }
 
         }
-        private void PeekTableValuesWithCompare(TableData shTd)
+
+        private void ShowPeekText()
         {
-            PeekTableValues(shTd, PCM,true, Color.Blue); //Show values from current file 
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            try
             {
-                PcmFile peekPCM = (PcmFile)mi.Tag;
-                if (peekPCM.FileName != PCM.FileName)
+                decimal hitCount = 0;
+                if (peekpcms.Count > 1 && peekpcms[0].tInfo.Rows > 0)
                 {
-                    TableData compTd = FindTableData(shTd, peekPCM.tableDatas);
-                    if (compTd != null)
+                    //Check matching bytes 
+                    for (int r = 0; r < peekpcms[0].tInfo.Rows; r++)
                     {
-                        txtDescription.AppendText(peekPCM.FileName + ": [" + shTd.TableName + "]" + Environment.NewLine);
-                        PeekTableValues(compTd, peekPCM,true, Color.Blue);
+                        for (int c = 0; c < peekpcms[0].tInfo.Columns; c++)
+                        {
+                            bool match = true;
+                            for (int pcmId = 1; pcmId < peekpcms.Count; pcmId++)
+                            {
+                                if (peekpcms[pcmId].tInfo.Rows == 0 ||peekpcms[0].tInfo.Rows != peekpcms[pcmId].tInfo.Rows || peekpcms[0].tInfo.Columns != peekpcms[pcmId].tInfo.Columns)
+                                {
+                                    match = false;
+                                    break;
+                                }
+                                if (!peekpcms[0].tInfo.tableCellArray[r, c].lastRawBytes.SequenceEqual(peekpcms[pcmId].tInfo.tableCellArray[r, c].lastRawBytes))
+                                {
+                                    match = false;
+                                    //Debug.WriteLine("Raw value don't match: " + peekpcms[0].PeekBytes[p].RawValue.ToHex() + " <> " + peekpcms[x].PeekBytes[p].RawValue.ToHex());
+                                    break;
+                                }
+                            }
+                            if (match)
+                            {
+                                hitCount++;
+                                for (int pcm = 0; pcm < peekpcms.Count; pcm++)
+                                {
+                                    peekpcms[pcm].tInfo.tableCellArray[r, c].Match = true;
+                                }
+                            }
+                        }
                     }
                 }
-            }
-            if (ftvd != null && ftvd.Visible)
-            {
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                //Show text
+                for (int pcm = 0; pcm < peekpcms.Count; pcm++)
                 {
-                    PcmFile peekPCM = (PcmFile)mi.Tag;
+                    if (!string.IsNullOrEmpty(peekpcms[pcm].Header))
+                    {
+                        txtDescription.AppendText(peekpcms[pcm].Header);
+                    }
+                    Color currentColor = Color.Blue;
+                    if (!string.IsNullOrEmpty(peekpcms[pcm].ValueHeader))
+                    {
+                        txtDescription.SelectionColor = Color.Blue;
+                        txtDescription.AppendText(peekpcms[pcm].ValueHeader);
+                    }
+                    if (peekpcms[pcm].tInfo.Rows < 2 && peekpcms[pcm].tInfo.Columns < 2)
+                    {
+                        if (peekpcms[pcm].tInfo.tableCellArray[0, 0].Match)
+                        {
+                            txtDescription.SelectionColor = Color.Green;
+                            txtDescription.AppendText(peekpcms[pcm].tInfo.tableCellArray[0, 0].ValueText);
+                            txtDescription.SelectionColor = Color.Blue;
+                            txtDescription.AppendText(peekpcms[pcm].MinMaxText + Environment.NewLine);
+                        }
+                        else
+                        {
+                            txtDescription.SelectionColor = Color.Blue;
+                            txtDescription.AppendText(peekpcms[pcm].tInfo.tableCellArray[0, 0].ValueText + peekpcms[pcm].MinMaxText + Environment.NewLine);
+                        }
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        txtDescription.SelectionColor = Color.Blue;
+                        for (int r = 0; r < peekpcms[pcm].tInfo.Rows; r++)
+                        {
+                            for (int c = 0; c < peekpcms[pcm].tInfo.Columns; c++)
+                            {
+                                TableCell tc = peekpcms[pcm].tInfo.tableCellArray[r, c];
+                                Color newColor = tc.Match ? Color.Green : Color.Blue;
+                                if (newColor != currentColor)
+                                {
+                                    txtDescription.SelectionColor = newColor;
+                                    txtDescription.AppendText(sb.ToString());
+                                    sb.Clear();
+                                    currentColor = newColor;
+                                }
+                                sb.Append("[" + ((double)tc.lastValue).ToString("#0.0")+"]");
+                            }
+                            sb.Append(Environment.NewLine);
+                        }
+                        txtDescription.SelectionColor = currentColor;
+                        txtDescription.AppendText(sb.ToString());
+
+                    }
+                    txtDescription.AppendText(Environment.NewLine);
+                }
+
+                if (peekpcms.Count > 1 && peekpcms[0].tInfo.Rows > 0)
+                {
+                    hitPercent = hitCount / (peekpcms[0].tInfo.Rows * peekpcms[0].tInfo.Columns) * 100;
+                    if (hitPercent == 100)
+                    {
+                        labelMatch.BackColor = Color.Red;
+                    }
+                    else if (hitPercent > 90)
+                    {
+                        labelMatch.BackColor = Color.Blue;
+                    }
+                    else if (hitPercent > 0)
+                    {
+                        labelMatch.BackColor = Color.Yellow;
+                    }
+                    else
+                    {
+                        labelMatch.BackColor = labelTableName.BackColor;
+                    }
+                    labelMatch.Text = "Match: " + hitPercent.ToString("0.#") + " %";
+                    labelMatch.Visible = true;
+                }
+                else
+                {
+                    labelMatch.Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void ShowTableDescriptionSimple(TableData shTd, PcmFile peekPCM, bool ShowMinMax, Color color)
+        {
+            txtDescription.SuspendLayout();
+            peekpcms.Clear();
+            //txtDescription.Text = "";
+            peekpcms.Add(new PcmPeekBytes(peekPCM,shTd,true));
+            txtDescription.SelectionColor = color;
+            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
+            txtDescription.AppendText(shTd.TableName + Environment.NewLine);
+            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
+            ShowPeekText();
+            txtDescription.ResumeLayout();
+        }
+
+        private void PeekTableValuesWithCompare(TableData shTd)
+        {
+            try
+            {
+                peekpcms.Clear();
+                peekpcms.Add(new PcmPeekBytes(PCM, shTd, true));
+                foreach (PcmFile peekPCM in LoadedPcms)
+                {
                     if (peekPCM.FileName != PCM.FileName)
                     {
                         TableData compTd = FindTableData(shTd, peekPCM.tableDatas);
                         if (compTd != null)
                         {
-                            this.Invoke((MethodInvoker)delegate ()
+                            PcmPeekBytes peek = new PcmPeekBytes(peekPCM, compTd, false);
+                            peekpcms.Add(peek);
+                        }
+                    }
+                }
+                ShowPeekText();
+                if (ftvd != null && ftvd.Visible)
+                {
+                    foreach (PcmFile peekPCM in LoadedPcms)
+                    {
+                        if (peekPCM.FileName != PCM.FileName)
+                        {
+                            TableData compTd = FindTableData(shTd, peekPCM.tableDatas);
+                            if (compTd != null)
                             {
-                                ftvd.vis1.ChangeTd(PCM, shTd);
-                                ftvd.vis2.ChangeTd(peekPCM, compTd);
-                                ftvd.ShowTables(0);
-                            });
-                            break;
+                                this.Invoke((MethodInvoker)delegate ()
+                                {
+                                    ftvd.vis1.ChangeTd(PCM, shTd);
+                                    ftvd.vis2.ChangeTd(peekPCM, compTd);
+                                    ftvd.ShowTables(0);
+                                });
+                                break;
+                            }
                         }
                     }
                 }
             }
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
         }
 
-        private void PeekTableValues(TableData shTd, PcmFile peekPCM, bool ShowMinMax, Color color)
+        private int GetSelectionCount()
+        {
+            List<int> selectedRows = new List<int>();
+            foreach (DataGridViewCell dgc in dataGridView1.SelectedCells)
+            {
+                if (!selectedRows.Contains(dgc.RowIndex))
+                {
+                    selectedRows.Add(dgc.RowIndex);
+                }
+            }
+            //string message = "Selected " + selectedRows.Count.ToString() + " tables";
+            return selectedRows.Count;
+        }
+        private void PeekMapTableValues(TableData mapTd, PcmFile mapPCM, bool ShowMinMax, Color color)
         {
             try
             {
-                if (shTd.addrInt >= peekPCM.fsize)
+                if (mapTd.addrInt >= mapPCM.fsize)
                 {
                     Debug.WriteLine("No address defined");
                     return;
                 }
-                if (shTd.OutputType == OutDataType.Bitmap)
+                if (mapTd.OutputType == OutDataType.Bitmap)
                 {
                     Debug.WriteLine("Bitmap peek not implemented");
                     return;
                 }
-                txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
-                txtDescription.SelectionColor = color;
+                txtDescription2.Clear();
+                txtDescription2.SelectionColor = Color.Black;
+                txtDescription2.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
+                txtDescription2.AppendText(mapTd.TableName + Environment.NewLine);
+                txtDescription2.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
+                txtDescription2.SelectionColor = color;
+
                 string minMax = " [";
-                if (shTd.Min > double.MinValue)
-                    minMax += " Min: " + shTd.Min.ToString();
-                if (shTd.Max < double.MaxValue)
-                    minMax += " Max: " + shTd.Max.ToString();
+                if (mapTd.Min > double.MinValue)
+                    minMax += " Min: " + mapTd.Min.ToString();
+                if (mapTd.Max < double.MaxValue)
+                    minMax += " Max: " + mapTd.Max.ToString();
                 if (minMax == " [")
                     minMax = "";
                 else
@@ -2056,18 +2583,18 @@ namespace UniversalPatcher
                 {
                     minMax = "";
                 }
-                if (shTd.Dimensions() == 1)
+                if (mapTd.Dimensions() == 1)
                 {
-                    double curVal = GetValue(peekPCM.buf, (uint)(shTd.addrInt + shTd.Offset + shTd.extraoffset), shTd, 0, peekPCM);
-                    UInt64 rawVal = (UInt64)GetRawValue(peekPCM.buf, shTd.StartAddress(), shTd, 0, peekPCM.platformConfig.MSB);
+                    double curVal = GetValue(mapPCM.buf, (uint)(mapTd.addrInt + mapTd.Offset + mapTd.extraoffset), mapTd, 0, mapPCM);
+                    UInt64 rawVal = (UInt64)GetRawValue(mapPCM.buf, mapTd.StartAddress(), mapTd, 0, mapPCM.platformConfig.MSB);
                     string valTxt = curVal.ToString();
-                    string unitTxt = " " + shTd.Units;
+                    string unitTxt = " " + mapTd.Units;
                     string maskTxt = "";
-                    TableValueType vt = shTd.ValueType();
+                    TableValueType vt = mapTd.ValueType();
                     if (vt == TableValueType.bitmask)
                     {
                         unitTxt = "";
-                        UInt64 maskVal = Convert.ToUInt64(shTd.BitMask.Replace("0x", ""), 16);
+                        UInt64 maskVal = Convert.ToUInt64(mapTd.BitMask.Replace("0x", ""), 16);
                         if ((rawVal & maskVal) == maskVal)
                             valTxt = "Set";
                         else
@@ -2085,7 +2612,7 @@ namespace UniversalPatcher
                         if (bit > -1)
                         {
                             string rawBinVal = Convert.ToString((Int64)rawVal, 2);
-                            rawBinVal = rawBinVal.PadLeft(GetBits(shTd.DataType), '0');
+                            rawBinVal = rawBinVal.PadLeft(GetBits(mapTd.DataType), '0');
                             maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
                         }
                     }
@@ -2099,15 +2626,15 @@ namespace UniversalPatcher
                     }
                     else if (vt == TableValueType.selection)
                     {
-                        Dictionary<double, string> possibleVals = ParseEnumHeaders(shTd.Values);
+                        Dictionary<double, string> possibleVals = ParseEnumHeaders(mapTd.Values);
                         if (possibleVals.ContainsKey(curVal))
                             unitTxt = " (" + possibleVals[curVal] + ")";
                         else
                             unitTxt = " (Out of range)";
                     }
-                    string formatStr = "X" + (GetElementSize(shTd.DataType) * 2).ToString();
+                    string formatStr = "X" + (GetElementSize(mapTd.DataType) * 2).ToString();
                     string rawTxt = "";
-                    switch (shTd.DataType)
+                    switch (mapTd.DataType)
                     {
                         case InDataType.FLOAT32:
                             rawTxt = ((Int32)rawVal).ToString(formatStr);
@@ -2144,31 +2671,29 @@ namespace UniversalPatcher
                             break;
                     }
 
-                    txtDescription.AppendText("Current value: " + valTxt + unitTxt + " [" + rawTxt + "]" + minMax + maskTxt);
-                    txtDescription.AppendText(Environment.NewLine);
+                    txtDescription2.AppendText("Current value: " + valTxt + unitTxt + " [" + rawTxt + "]" + minMax + maskTxt);
+                    txtDescription2.AppendText(Environment.NewLine);
                 }
                 else //Not 1D
                 {
                     //string tblData = "Current values: " + minMax + Environment.NewLine;
                     StringBuilder tblData = new StringBuilder("Current values: " + minMax + Environment.NewLine);
-                    uint addr = shTd.StartAddress();
-                    double firstVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
-                    uint elemSize = (uint)shTd.ElementSize();
-                    uint elemStride = (uint)shTd.EffectiveElementStride((int)elemSize);
-                    if (shTd.RowMajor)
+                    uint addr = mapTd.StartAddress();
+                    double firstVal = GetValue(mapPCM.buf, addr, mapTd, 0, mapPCM);
+                    uint step = (uint)mapTd.EffectiveElementStride();
+                    if (mapTd.RowMajor)
                     {
-                        int rowStride = shTd.EffectiveRowStride((int)elemStride);
-                        for (int r = 0; r < shTd.Rows; r++)
+                        for (int r = 0; r < mapTd.Rows; r++)
                         {
                             uint rowStart = addr;
-                            for (int c = 0; c < shTd.Columns; c++)
+                            for (int c = 0; c < mapTd.Columns; c++)
                             {
-                                double curVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
-                                addr += elemStride;
+                                double curVal = GetValue(mapPCM.buf, addr, mapTd, 0, mapPCM);
+                                addr += step;
                                 tblData.Append("[" + curVal.ToString("#0.0") + "]");
                                 if (!ShowMinMax)
                                 {
-                                    if (curVal > shTd.Max || curVal < shTd.Min)
+                                    if (curVal > mapTd.Max || curVal < mapTd.Min)
                                     {
                                         Debug.WriteLine("Value out of range: " + curVal.ToString());
                                         return;
@@ -2176,24 +2701,24 @@ namespace UniversalPatcher
                                 }
                             }
                             tblData.Append(Environment.NewLine);
-                            addr = rowStart + (uint)rowStride;
+                            addr += mapTd.MajorStride;
                         }
                     }
                     else
                     {
                         List<string> tblRows = new List<string>();
-                        for (int r = 0; r < shTd.Rows; r++)
+                        for (int r = 0; r < mapTd.Rows; r++)
                             tblRows.Add("");
-                        for (int c = 0; c < shTd.Columns; c++)
+                        for (int c = 0; c < mapTd.Columns; c++)
                         {
-                            for (int r = 0; r < shTd.Rows; r++)
+                            for (int r = 0; r < mapTd.Rows; r++)
                             {
-                                double curVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
-                                addr += elemStride;
+                                double curVal = GetValue(mapPCM.buf, addr, mapTd, 0, mapPCM);
+                                addr += step;
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                                 if (!ShowMinMax)
                                 {
-                                    if (curVal > shTd.Max || curVal < shTd.Min)
+                                    if (curVal > mapTd.Max || curVal < mapTd.Min)
                                     {
                                         Debug.WriteLine("Value out of range: " + curVal.ToString());
                                         return;
@@ -2201,10 +2726,10 @@ namespace UniversalPatcher
                                 }
                             }
                         }
-                        for (int r = 0; r < shTd.Rows; r++)
+                        for (int r = 0; r < mapTd.Rows; r++)
                             tblData.Append(tblRows[r] + Environment.NewLine);
                     }
-                    txtDescription.AppendText(tblData.ToString());
+                    txtDescription2.AppendText(tblData.ToString());
                 }
             }
             catch (Exception ex)
@@ -2218,41 +2743,118 @@ namespace UniversalPatcher
             }
         }
 
-        private int GetSelectionCount()
+        private void FillComboExtraOffsets(TableData eTd)
         {
-            List<int> selectedRows = new List<int>();
-            foreach (DataGridViewCell dgc in dataGridView1.SelectedCells)
+            List<ExtraOffset> eOffsets = extraoffsets.Where(X=>X.TableGuid == eTd.guid).OrderByDescending(X => X.Hitpercent).ToList();
+
+            if (eOffsets == null)
             {
-                if (!selectedRows.Contains(dgc.RowIndex))
-                {
-                    selectedRows.Add(dgc.RowIndex);
-                }
+                comboExtraOffsetResults.DataSource = null;
             }
-            //string message = "Selected " + selectedRows.Count.ToString() + " tables";
-            return selectedRows.Count;
+            else
+            {
+                this.comboExtraOffsetResults.SelectedIndexChanged -= new System.EventHandler(this.comboExtraOffsetResults_SelectedIndexChanged);
+                comboExtraOffsetResults.DataSource = eOffsets;
+                comboExtraOffsetResults.ValueMember = "Offset";
+                comboExtraOffsetResults.DisplayMember = "DisplayValue";
+                comboExtraOffsetResults.Text = "";
+                this.comboExtraOffsetResults.SelectedIndexChanged += new System.EventHandler(this.comboExtraOffsetResults_SelectedIndexChanged);
+            }
+
         }
-        public void ShowTableDescription(PcmFile PCM, TableData shTd)
+        public void ShowTableDescription(PcmFile PCM, TableData shTd, bool primary = true)
         {
             try
             {
                 if (PCM.buf == null || PCM.buf.Length == 0)
                     return;
-                txtDescription.Text = "";
+                if (primary)
+                {
+                    txtDescription.Text = "";
+                    if (PCM.FileName == this.PCM.FileName && splitContainerListTree.Panel2Collapsed == false)
+                    {
+                        foreach (PcmFile mapPcm in LoadedPcms)
+                        {
+                            if (mapPcm.FileName != this.PCM.FileName)
+                            {
+                                TableData mapTd = FindTableData(shTd, mapPcm.tableDatas);
+                                if (mapTd != null)
+                                {
+                                    PeekMapTableValues(mapTd, mapPcm, true, Color.Blue);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                txtDescription.SelectionColor = Color.Black;
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
                 txtDescription.AppendText(shTd.TableName);
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
-                if (DisplayMode == DispMode.List)
+                if (primary)
                 {
-                    txtDescription.AppendText(" (" + GetSelectionCount().ToString() + " tables selected)");
+                    labelTableName.Text = shTd.TableName;
+                    FillComboExtraOffsets(shTd);
+                    if (DisplayMode == DispMode.List)
+                    {
+                        txtDescription.AppendText(" (" + GetSelectionCount().ToString() + " tables selected)");
+                    }
+                    txtDescription.AppendText(Environment.NewLine);
+                    int startpoint = txtDescription.Text.Length;
+                    if (!string.IsNullOrEmpty(shTd.TableDescription))
+                    {
+                        txtDescription.AppendText(shTd.TableDescription + Environment.NewLine);
+                    }
+                    if (!string.IsNullOrEmpty(shTd.ExtraDescription))
+                    {
+                        txtDescription.AppendText(shTd.ExtraDescription + Environment.NewLine);
+                    }
+                    tablelinks.Clear();
+                    foreach (string tbName in shTd.LinkTables)
+                    {
+                        int index = txtDescription.Text.IndexOf(tbName, startpoint);
+                        int startpoint2 = startpoint;
+                        int len = tbName.Length;
+                        while (true)
+                        {
+                            if (index < 0)
+                            {
+                                int idx = tbName.IndexOf(" - ");
+                                if (idx > 0)
+                                {
+                                    string tmpname = "{" + tbName.Substring(0, idx) + "} \"" + tbName.Substring(idx + 3) + "\"";
+                                    index = txtDescription.Text.IndexOf(tmpname, startpoint2);
+                                    len = tmpname.Length;
+                                    if (index < 0)
+                                    {
+                                        tmpname = "{" + tbName.Substring(0, idx) + "} " + tbName.Substring(idx + 3);
+                                        index = txtDescription.Text.IndexOf(tmpname, startpoint2);
+                                        len = tmpname.Length;
+                                    }
+                                }
+                            }
+                            if (index > -1)
+                            {
+                                txtDescription.SelectionStart = index;
+                                txtDescription.SelectionLength = len;
+                                txtDescription.SelectionColor = Color.Blue;
+                                txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Underline);
+                                TableLink tl = new TableLink(PCM.FileName, tbName, index, len);
+                                tablelinks.Add(tl);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            startpoint2 = index + 1;
+                            index = txtDescription.Text.IndexOf(tbName, startpoint2);
+                        }
+                    }
                 }
-                txtDescription.AppendText(Environment.NewLine);
-                if (shTd.TableDescription != null)
-                    txtDescription.AppendText(shTd.TableDescription + Environment.NewLine);
-                if (shTd.ExtraDescription != null)
-                    txtDescription.AppendText(shTd.ExtraDescription + Environment.NewLine);
-
+                txtDescription.SuspendLayout();
                 PeekTableValuesWithCompare(shTd);
-                labelTableName.Text = shTd.TableName;
+                txtDescription.ResumeLayout();
             }
             catch (Exception ex)
             {
@@ -2290,6 +2892,7 @@ namespace UniversalPatcher
                 {
                     hstForm.SetupTable(PCM, selTd);
                 }
+                PCM.LastListmodeTable = selTd.guid;
             }
             catch (Exception ex)
             {
@@ -2335,9 +2938,6 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
             }
 
-        }
-        private void exportXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
-        {
         }
         struct OsAddrStruct
         {
@@ -2455,7 +3055,6 @@ namespace UniversalPatcher
         private void DataGridView1_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
         {
             columnsModified = true;
-            //saveGridLayout();
             Debug.WriteLine("Columnwidth: " + e.Column.HeaderText);
         }
 
@@ -2634,7 +3233,12 @@ namespace UniversalPatcher
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                     lastFile++;
                 string fLetter = Base26Encode(lastFile);
-
+                LoadedPcms.Add(newPCM);
+                FileLetters.Add(fLetter);
+                if (LoadedPcms.Count > 1 && string.IsNullOrEmpty(selectedCompareBin) )
+                {
+                    selectedCompareBin = FileLetters[0];
+                }
                 ToolStripMenuItem menuitem = new ToolStripMenuItem(newPCM.FileName);
                 menuitem.Text = fLetter + ": " + newPCM.FileName;
                 menuitem.Name = newPCM.FileName;
@@ -2669,6 +3273,18 @@ namespace UniversalPatcher
                 addSegmentOffsetNodeToolStripMenuItem.DropDownItems.Add(offsetMenuItem);
                 offsetMenuItem.Click += Fmi_Click;
 
+                ToolStripMenuItem mirrorMenuItem = new ToolStripMenuItem(newPCM.FileName);
+                mirrorMenuItem.Name = newPCM.FileName;
+                mirrorMenuItem.Tag = newPCM;
+                mirrorSegmentsFromCompareToolStripMenuItem.DropDownItems.Add(mirrorMenuItem);
+                mirrorMenuItem.Click += MirrorMenuItem_Click;
+
+                ToolStripMenuItem searchExtraMenuItem = new ToolStripMenuItem(newPCM.FileName);
+                searchExtraMenuItem.Name = newPCM.FileName;
+                searchExtraMenuItem.Tag = newPCM;
+                searchTablesextraoffsetToolStripMenuItem.DropDownItems.Add(searchExtraMenuItem);
+                searchExtraMenuItem.Click += SearchExtraMenuItem_Click;
+
                 UpdateFileInfoTab();
             }
             catch (Exception ex)
@@ -2681,6 +3297,95 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
             }
 
+        }
+
+        private void SearchExtraMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridView1.SelectedCells.Count == 0) return;
+                ToolStripMenuItem mi = (ToolStripMenuItem)sender;
+                PcmFile refPcm = (PcmFile)mi.Tag;
+                uint min = uint.MaxValue;
+                uint max = uint.MinValue;
+                List<TableData> refTds = new List<TableData>();
+                List<TableData> selectedTds = new List<TableData>();
+                List<int> selectedRows = new List<int>();
+                for (int c=0;c< dataGridView1.SelectedCells.Count;c++)
+                {
+                    int row = dataGridView1.SelectedCells[c].RowIndex;
+                    if (!selectedRows.Contains(row))
+                    {
+                        selectedRows.Add(row);
+                    }
+                }
+                foreach (int row in selectedRows)
+                {
+                    TableData td = (TableData)dataGridView1.Rows[row].DataBoundItem;
+                    TableData refTd = FindTableData(td, refPcm.tableDatas);
+                    if (refTd != null)
+                    {
+                        if (refTd.StartAddress() < min) min = refTd.StartAddress();
+                        if (refTd.EndAddress() > max) max = refTd.EndAddress();
+                        refTds.Add(refTd);
+                        selectedTds.Add(td);
+                    }
+                    else
+                    {
+                        LoggerBold("Table " + td.TableName + " not found from file " + refPcm.FileName);
+                    }
+                }
+                uint size = max - min + 1;
+                int extra = 0;
+                for (int a=0;a<(PCM.buf.Length - size); a++)
+                {
+                    bool match = true;
+                    for (int b = 0; b < size; b++)
+                    {
+                        if (refPcm.buf[min + b] != PCM.buf[a+b])
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+                    if (match)
+                    {
+                        extra = (int)(a - min);
+                        Logger("Found match, extraoffset: " + extra.ToString());
+                        foreach(TableData td in selectedTds)
+                        {
+                                Logger("Adding extraoffset for table " + td.TableName);
+                                td.extraoffset = extra;
+                        }
+                        return;
+                    }
+                }
+                Logger("Match not found");
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void MirrorMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem fmi = (ToolStripMenuItem)sender;
+            PcmFile cmpPcm = (PcmFile)fmi.Tag;
+            if (cmpPcm == null)
+            {
+                return;
+            }
+            TreeParts.SegmentPCM = cmpPcm;
+            mirrorSegmentsFromCompareToolStripMenuItem.Checked = true;
+            RefreshTablelist(true);
+            //AddSegments(treeView1.Nodes, cmpPcm, cmpPcm.tableDatas, true, true);
         }
 
         private void CmpHexMenuitem_Click(object sender, EventArgs e)
@@ -2701,10 +3406,6 @@ namespace UniversalPatcher
             SelectPCM();
         }
 
-        private void compareWithToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
         private void compareMenuitem_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
@@ -2712,7 +3413,6 @@ namespace UniversalPatcher
             FindTableDifferences(cmpWithPcm);
         }
 
-        int diffMissingTables;
         private TableData CompareTableHEX(TableData td1, PcmFile pcm1, PcmFile pcm2)
         {
             try
@@ -2727,7 +3427,6 @@ namespace UniversalPatcher
                     if (cmpTd == null)
                     {
                         //Logger("Table not found: " + td1.TableName + "[" + pcm2.FileName + "]");
-                        diffMissingTables++;
                         return null;    //Don't add to list if not in both files
                     }
                     td2 = cmpTd;
@@ -2823,7 +3522,7 @@ namespace UniversalPatcher
             {
                 Logger("Finding tables with different data");
                 if (PCM.configFile != cmpWithPcm.configFile)
-                    LoggerBold("WARING! OS mismatch!");
+                    LoggerBold("WARNING! OS mismatch!");
                 else
                 {
                     //Check undefined areas, too
@@ -2941,19 +3640,6 @@ namespace UniversalPatcher
             ExportCSV();
         }
 
-        private void xDFToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Logger("Generating xdf...");
-            XDF xdf = new XDF();
-            Logger(xdf.ExportXdf(PCM, PCM.tableDatas));
-
-        }
-
-        private void xMLGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ExportXMLgeneratorCSV();
-        }
-
         private void dTCToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImportDTC(ref PCM);
@@ -3042,24 +3728,20 @@ namespace UniversalPatcher
         {
             try
             {
-                TableData newTd = lastSelectTd.ShallowCopy(true);
+                TableData newTd = CurrentTd.ShallowCopy(true);
                 newTd.OS = PCM.OS;
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.LoadTd();
-                int c = dataGridView1.CurrentCell.ColumnIndex;
-                int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
                     for (int id = 0; id < PCM.tableDatas.Count; id++)
                     {
-                        if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                        if (PCM.tableDatas[id].guid == CurrentTd.guid)
                         {
                             PCM.tableDatas.Insert(id, fte.td);
                             AddToRedoLog(fte.td, PCM.tableDatas, "TableData", fte.td.TableName, "", ReDo.RedoAction.Add, "", "", id);
-                            FilterTables(true);
-                            dataGridView1.ClearSelection();
-                            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
+                            dataGridView1.Invalidate();
                             break;
                         }
                     }
@@ -3107,16 +3789,21 @@ namespace UniversalPatcher
         {
             try
             {
-                int c = dataGridView1.CurrentCell.ColumnIndex;
-                int r = dataGridView1.CurrentCell.RowIndex;
-                AddToRedoLog(lastSelectTd, PCM.tableDatas, "TableData", lastSelectTd.TableName, "", ReDo.RedoAction.Delete, "", "", r);
-                PCM.tableDatas.Remove(lastSelectTd);
-                FilterTables(true);
-                dataGridView1.ClearSelection();
-                if (r < dataGridView1.Rows.Count)
+                List<TableData> rTds = new List<TableData>();
+                for (int c=0;c<dataGridView1.SelectedCells.Count;c++)
                 {
-                    dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
+                    int r = dataGridView1.SelectedCells[c].RowIndex;
+                    TableData rTd = (TableData)dataGridView1.Rows[r].DataBoundItem;
+                    if (!rTds.Contains(rTd))
+                    {
+                        rTds.Add(rTd);
+                    }
                 }
+                foreach(TableData rTd in rTds)
+                {
+                    RemoveTableConfig(PCM, rTd);
+                }
+                dataGridView1.Invalidate();
             }
             catch (Exception ex)
             {
@@ -3133,18 +3820,16 @@ namespace UniversalPatcher
         {
             try
             {
-                TableData newTd = lastSelectTd.ShallowCopy(true);
+                TableData newTd = CurrentTd.ShallowCopy(true);
                 int c = dataGridView1.CurrentCell.ColumnIndex;
                 int r = dataGridView1.CurrentCell.RowIndex;
                 for (int id = 0; id < PCM.tableDatas.Count; id++)
                 {
-                    if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                    if (PCM.tableDatas[id].guid == CurrentTd.guid)
                     {
                         PCM.tableDatas.Insert(id, newTd);
                         AddToRedoLog(newTd, PCM.tableDatas, "TableData", newTd.TableName, "", ReDo.RedoAction.Add, "", "", id);
-                        FilterTables(true);
-                        dataGridView1.ClearSelection();
-                        dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
+                        dataGridView1.Invalidate();
                         break;
                     }
                 }
@@ -3166,8 +3851,7 @@ namespace UniversalPatcher
             {
                 frmMassCompare fmc = new frmMassCompare();
                 fmc.PCM = PCM;
-                //int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
-                fmc.td = lastSelectTd;
+                fmc.td = CurrentTd;
                 fmc.Text = "Search and Compare: " + fmc.td.TableName;
                 fmc.Show();
                 fmc.SelectCmpFiles();
@@ -3200,6 +3884,7 @@ namespace UniversalPatcher
             PCM.LoadTableList();
             ImportDTC(ref PCM);
             ImportTableSeek(ref PCM);
+            FindTableLinks(PCM);
             comboTableCategory.Text = "_All";
             RefreshTablelist(false);
         }
@@ -3208,6 +3893,7 @@ namespace UniversalPatcher
         {
             AddNewTableList("");
             PCM.LoadTableList();
+            FindTableLinks(PCM);
             comboTableCategory.Text = "_All";
             RefreshTablelist(false);
         }
@@ -3258,9 +3944,8 @@ namespace UniversalPatcher
 
         private void saveAllBINFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            foreach (PcmFile pcmFile in LoadedPcms)
             {
-                PcmFile pcmFile = (PcmFile)mi.Tag;
                 Logger("Saving file:" + pcmFile.FileName);
                 pcmFile.SaveBin(pcmFile.FileName);
             }
@@ -3276,7 +3961,7 @@ namespace UniversalPatcher
                 fmc.PCM = PCM;
                 fmc.compareAll = true;
                 //int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
-                fmc.td = lastSelectTd;
+                fmc.td = CurrentTd;
                 fmc.Text = "Search and Compare: " + fmc.td.TableName;
                 fmc.Show();
                 fmc.SelectCmpFiles();
@@ -3311,7 +3996,7 @@ namespace UniversalPatcher
                     return;
                 }
                 Logger("Comparing....");
-                frmTableEditor frmT = new frmTableEditor();
+                frmTableEditor frmT = new frmTableEditor(this);
                 frmT.disableMultiTable = true;
                 PcmFile pcm1 = PCM.ShallowCopy();
                 pcm1.FileName = td1.TableName;
@@ -3320,7 +4005,7 @@ namespace UniversalPatcher
                 List<TableData> tds2 = new List<TableData>();
                 tds2.Add(td1);
                 frmT.PrepareTable(pcm1, td1, tds2, "A");
-                frmT.AddCompareFiletoMenu(pcm2, td2, "B: " + td2.TableName, "B");
+                frmT.AddCompareFiletoMenu(pcm2, "B: " + td2.TableName, "B");
                 frmT.Show();
                 frmT.radioSideBySide.Checked = true;
                 frmT.LoadTable();
@@ -3485,27 +4170,29 @@ namespace UniversalPatcher
             {
                 if (DisplayMode == DispMode.Tree)
                 {
-                    TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-                    //foreach (TreeNode tn in tv.Nodes)
-                    //  findCheckdNodes(tn, ref tableIds);
-                    foreach (TreeNode tn in tv.SelectedNodes)
+                    if (tabControl1.SelectedTab.Controls.Count > 0 && tabControl1.SelectedTab.Controls[0].GetType() == typeof(TreeViewMS))
                     {
-                        Tnode tnode = (Tnode)tn.Tag;
-                        if (tnode.NodeType == NType.Table)
-                            tableTds.Add(tnode.Td);
+                        TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                        foreach (TreeNode tn in tv.SelectedNodes)
+                        {
+                            Tnode tnode = (Tnode)tn.Tag;
+                            if (tnode.NodeType == NType.Table)
+                                tableTds.Add(tnode.Td);
+                        }
+                        if (tableTds.Count == 0 && CurrentTd != null)
+                            tableTds.Add(CurrentTd);
                     }
-                    if (tableTds.Count == 0 && lastSelectTd != null)
-                        tableTds.Add(lastSelectTd);
                 }
                 else
                 {
                     for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
                     {
                         int row = dataGridView1.SelectedCells[i].RowIndex;
-                        //int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
                         TableData xTd = (TableData)dataGridView1.Rows[row].DataBoundItem;
                         if (!tableTds.Contains(xTd))
+                        {
                             tableTds.Add(xTd);
+                        }
                     }
                 }
             }
@@ -3564,24 +4251,19 @@ namespace UniversalPatcher
                     xpatch.XmlFile = PCM.configFile;
                     xpatch.Segment = PCM.GetSegmentName(pTd.addrInt);
                     xpatch.Description = Description;
-                    frmTableEditor frmTE = new frmTableEditor();
-                    frmTE.PrepareTable(PCM, pTd, null, "A");
-                    frmTE.LoadTable();
-                    uint step = (uint)GetElementSize(pTd.DataType);
-                    uint elemStride = (uint)pTd.EffectiveElementStride((int)step);
+                    uint step = (uint)pTd.EffectiveElementStride();
                     uint addr = pTd.StartAddress();
                     if (pTd.RowMajor)
                     {
-                        int rowStride = pTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < pTd.Rows; r++)
                         {
                             uint rowStart = addr;
                             for (int c = 0; c < pTd.Columns; c++)
                             {
                                 xpatch.Data += GetValue(PCM.buf, addr, pTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += elemStride;
+                                addr += step;
                             }
-                            addr = rowStart + (uint)rowStride;
+                            addr += pTd.MajorStride;
                         }
                     }
                     else
@@ -3591,7 +4273,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < pTd.Rows; r++)
                             {
                                 xpatch.Data += GetValue(PCM.buf, addr, pTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += elemStride;
+                                addr += step;
                             }
                         }
                     }
@@ -3641,25 +4323,20 @@ namespace UniversalPatcher
                     patchTd.AddCategory(srcTd.ExtraCategories);
                     patchTd.OS = srcTd.OS;
                     patchTd.CompatibleOS = "Table:" + srcTd.TableName + ",columns:" + srcTd.Columns.ToString() + ",rows:" + srcTd.Rows.ToString();
-                    frmTableEditor frmTE = new frmTableEditor();
-                    frmTE.PrepareTable(PCM, srcTd, null, "A");
-                    frmTE.LoadTable();
-                    uint step = (uint)GetElementSize(srcTd.DataType);
-                    uint elemStride = (uint)srcTd.EffectiveElementStride((int)step);
+                    uint step = (uint)srcTd.EffectiveElementStride();
                     uint addr = srcTd.StartAddress();
                     patchTd.Values = "TablePatch: ";
                     if (srcTd.RowMajor)
                     {
-                        int rowStride = srcTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < srcTd.Rows; r++)
                         {
                             uint rowStart = addr;
                             for (int c = 0; c < srcTd.Columns; c++)
                             {
                                 patchTd.Values += GetValue(PCM.buf, addr, srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += elemStride;
+                                addr += step;
                             }
-                            addr = rowStart + (uint)rowStride;
+                            addr += patchTd.MajorStride;
                         }
                     }
                     else
@@ -3669,7 +4346,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < srcTd.Rows; r++)
                             {
                                 patchTd.Values += GetValue(PCM.buf, addr, srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += elemStride;
+                                addr += step;
                             }
                         }
                     }
@@ -3746,7 +4423,7 @@ namespace UniversalPatcher
                     resetTunerModeColumnsToolStripMenuItem.Visible = false;
                     groupExtraOffset.Visible = false;
                     btnFlash.Visible = false;
-
+                    mapExtraOffsetButtonsToolStripMenuItem.Visible = false;
                     sessionToolStripMenuItem.Visible = false;
                     if (string.IsNullOrEmpty(AppSettings.TunerColumnsTourist))
                     {
@@ -3803,6 +4480,7 @@ namespace UniversalPatcher
                     groupExtraOffset.Visible = false;
                     btnFlash.Visible = false;
                     sessionToolStripMenuItem.Visible = false;
+                    mapExtraOffsetButtonsToolStripMenuItem.Visible = false;
                     if (string.IsNullOrEmpty(AppSettings.TunerColumnsBasic))
                     {
                         colsFile = Path.Combine(Application.StartupPath, "XML", "TunerColumns", "Columns-Basic.xml");
@@ -3858,6 +4536,7 @@ namespace UniversalPatcher
                     groupExtraOffset.Visible = true;
                     btnFlash.Visible = true;
                     sessionToolStripMenuItem.Visible = true;
+                    mapExtraOffsetButtonsToolStripMenuItem.Visible = true;
                     if (string.IsNullOrEmpty(AppSettings.TunerColumnsAdvanced))
                     {
                         colsFile = Path.Combine(Application.StartupPath, "XML", "TunerColumns", "Columns-Advanced.xml");
@@ -3882,6 +4561,23 @@ namespace UniversalPatcher
                 System.IO.StreamReader file = new System.IO.StreamReader(colsFile);
                 columnorder = (List<ColumnOrder>)reader.Deserialize(file);
                 file.Close();
+                TableData tdCol = new TableData();
+                foreach (var prop in tdCol.GetType().GetProperties())
+                {
+                    if (prop.Name == "extraoffset")
+                    {
+                        continue;
+                    }
+                    ColumnOrder co = columnorder.Where(X => X.Column == prop.Name).FirstOrDefault();
+                    if (co == null)
+                    {
+                        co = new ColumnOrder();
+                        co.Column = prop.Name;
+                        co.Width = prop.Name.Length * 9;
+                        co.Visible = false;
+                        columnorder.Add(co);
+                    }
+                }
             }
             else
             {
@@ -3903,7 +4599,7 @@ namespace UniversalPatcher
                     columnorder.Add(co);
                 }
             }
-
+            FillFilterby();
         }
         private void SelectTreemode()
         {
@@ -3913,15 +4609,40 @@ namespace UniversalPatcher
             dataGridView1.Visible = false;
             treeView1.Visible = false;
                 //treeView1.SelectedNodes.Clear();
-            dataGridView1.DataSource = null;
             if (splitTree == null)
             {
                 splitTree = new SplitContainer();
-                splitTree.Orientation = Orientation.Vertical;
-                splitTree.Panel1.Controls.Add(tabControl1);
-                splitContainer2.Panel1.Controls.Add(splitTree);
                 splitTree.Dock = DockStyle.Fill;
+                splitTreeInfo = new SplitContainer();
+                splitTreeInfo.Dock = DockStyle.Fill;
+                splitTree.Panel1.Controls.Add(splitTreeInfo);
+                splitTreeInfo.Orientation = Orientation.Horizontal;
+                splitTree.Orientation = Orientation.Vertical;
+                splitTreeInfo.Panel1.Controls.Add(tabControl1);
+                splitContainerListView.Panel1.Controls.Add(splitTree);
+                splitTreeInfo.SplitterDistance = splitTreeInfo.Height - 35;
+                if (AppSettings.TunerTreeUseMouseHover)
+                {
+                    //tabControl1.Dock = DockStyle.None;
+                    //tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                    //Application.DoEvents();
+                    labelTreeTableTip = new Label();
+                    splitTreeInfo.Panel2.Controls.Add(labelTreeTableTip);
+                    labelTreeTableTip.Dock = DockStyle.Fill;
+                    labelTreeTableTip.BorderStyle = BorderStyle.Fixed3D;
+                    //labelTreeTableTip.Height = 35;
+                    //labelTreeTableTip.Font = new Font("Arial", 8);
+                    //tabControl1.Height = splitTree.Height - 35;
+                }
+                else
+                {
+                    splitTreeInfo.Panel2Collapsed = true;
+                    tabControl1.Dock = DockStyle.Fill;
+                }
                 tabControl1.Dock = DockStyle.Fill;
+                //tabControl1.Top = 0;
+                //tabControl1.Left = 0;
+                //tabControl1.Width = splitTree.Panel1.Width;
                 tabDimensions.Enter += TabDimensions_Enter;
                 tabValueType.Enter += TabValueType_Enter;
                 tabPatches.Enter += TabPatches_Enter;
@@ -3953,7 +4674,9 @@ namespace UniversalPatcher
             comboTableCategory.Text = "_All";
             btnExecute.Visible = false;
             txtMath.Visible = false;
+            FilterTables(true);
         }
+
 
         private void TabMultiTree_Enter(object sender, EventArgs e)
         {
@@ -3989,6 +4712,7 @@ namespace UniversalPatcher
                     treeMulti.AfterSelect += Tree_AfterSelect;
                     treeMulti.NodeMouseClick += Tree_NodeMouseClick;
                     treeMulti.AfterExpand += TreeMulti_AfterExpand;
+                    treeMulti.NodeMouseHover += Tree_NodeMouseHover;
                 }
                 AddNodes(treeMulti.Nodes, PCM,filteredTableDatas.ToList(), true);
                 Cursor.Current = Cursors.Default;
@@ -4003,6 +4727,25 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTuner, line " + line + ": " + ex.Message);
             }
 
+        }
+
+
+        private void Tree_NodeMouseHover(object sender, TreeNodeMouseHoverEventArgs e)
+        {
+            //TreeNode selNode = (TreeNode)treeView1.GetNodeAt(treeView1.PointToClient(Cursor.Position));
+            if (labelTreeTableTip == null)
+            {
+                return;
+            }
+            TreeNode selNode = (TreeNode)e.Node;
+            if (selNode != null)
+            {
+                Tnode tnode1 = (Tnode)selNode.Tag;
+                if (tnode1.NodeType == NType.Table)
+                {
+                    labelTreeTableTip.Text = tnode1.Td.TableName.Trim() +" - " + tnode1.Td.TableDescription.Trim();
+                }
+            }
         }
 
         private void TreeMulti_AfterExpand(object sender, TreeViewEventArgs e)
@@ -4046,15 +4789,15 @@ namespace UniversalPatcher
                 if (currentTab != tabFileInfo)
                     return;
                 tabControlFileInfo.Dock = DockStyle.Fill;
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                for (int l=0;l<LoadedPcms.Count;l++)
                 {
-                    string tabName = "tab" + mi.Text.Substring(0, 1);
+                    string tabName = "tab" + FileLetters[l];
                     if (tabControlFileInfo.TabPages[tabName] == null)
                     {
-                        TabPage newTab = new TabPage(mi.Text.Substring(0, 1));
+                        TabPage newTab = new TabPage(FileLetters[l]);
                         newTab.Name = tabName;
                         tabControlFileInfo.TabPages.Add(newTab);
-                        PcmFile infoPcm = (PcmFile)mi.Tag;
+                        PcmFile infoPcm = LoadedPcms[l];
                         RichTextBox rBox = new RichTextBox();
                         tabControlFileInfo.TabPages[tabName].Controls.Add(rBox);
                         rBox.Font = new Font("Consolas", 8);
@@ -4086,9 +4829,9 @@ namespace UniversalPatcher
         {
             if (DisplayMode == DispMode.List)
                 return;
-
+            RefreshListModeTree();
             DisplayMode = DispMode.List;
-            ClearPanel2();
+            ClearPanel2(false,true);
             if (splitTree != null)
                 splitTree.Visible = false;
             splitContainerListMode.Visible = true;
@@ -4102,8 +4845,9 @@ namespace UniversalPatcher
             }
                 
             dataGridView1.Visible = true;
-            dataGridView1.DataSource = filteredTableDatas;
+            dataGridView1.Invalidate();
             treeView1.Visible = true;
+            treeView1.Dock = DockStyle.Fill;
             //treeView1.SelectedNodes.Clear();
             //treeView1.Nodes.Clear();
             if (treeView1.Nodes.Count == 0)
@@ -4174,7 +4918,7 @@ namespace UniversalPatcher
         {
             try
             {
-                ClearPanel2();
+                ClearPanel2(false,true);
                 dataGridView1.Visible = true;
                 dataGridView1.DataSource = Patch.patches;
             }
@@ -4191,23 +4935,37 @@ namespace UniversalPatcher
 
         private void FilterByTreeview1()
         {
-            if (!treeView1.Nodes["All"].IsSelected && !treeView1.Nodes["Patches"].IsSelected && treeView1.SelectedNodes.Count > 0)
+            try
             {
-                Debug.WriteLine("Filtering by tree");
-                DrawingControl.SuspendDrawing(dataGridView1);
-                this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
-                List<TableData> newTDList = new List<TableData>();
-                foreach (TreeNode tn in treeView1.SelectedNodes)
+                if (!treeView1.Nodes["All"].IsSelected && !treeView1.Nodes["Patches"].IsSelected && treeView1.SelectedNodes.Count > 0)
                 {
-                    TreeParts.Tnode tnode = (TreeParts.Tnode)tn.Tag;
-                    newTDList.AddRange(tnode.filteredTds);
+                    Debug.WriteLine("Filtering by tree");
+                    DrawingControl.SuspendDrawing(dataGridView1);
+                    this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
+                    List<TableData> newTDList = new List<TableData>();
+                    foreach (TreeNode tn in treeView1.SelectedNodes)
+                    {
+                        TreeParts.Tnode tnode = (TreeParts.Tnode)tn.Tag;
+                        newTDList.AddRange(tnode.filteredTds);
+                    }
+                    filteredTableDatas.Clear();
+                    filteredTableDatas.AddRange(newTDList);
+                    //dataGridView1.DataSource = filteredTableDatas;
+                    dataGridView1.Invalidate();
+                    this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
+                    DrawingControl.ResumeDrawing(dataGridView1);
+                    Debug.WriteLine("OK");
+                    Debug.WriteLine("Total table count, filtered by selected tree node: " + newTDList.Count.ToString());
                 }
-                filteredTableDatas = new BindingList<TableData>(newTDList);
-                dataGridView1.DataSource = filteredTableDatas;
-                this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
-                DrawingControl.ResumeDrawing(dataGridView1);
-                Debug.WriteLine("OK");
-                Debug.WriteLine("Total table count, filtered by selected tree node: " + newTDList.Count.ToString());
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner, line " + line + ": " + ex.Message);
             }
 
         }
@@ -4229,28 +4987,16 @@ namespace UniversalPatcher
                     treeView1.ContextMenuStrip = contextMenuStripPatch;
                     return;
                 }
-                /*                if (AppSettings.TableExplorerUseCategorySubfolder)
-                                {
-                                    if (tnode.NodeType != TreeParts.NType.Category)
-                                    {
-                                        AddCategories(e.Node.Nodes, tnode.filteredTds,true);
-                                    }
-                                }
-                */
-                //dataGridView1.DataSource = filteredTableDatas;
                 treeView1.ContextMenuStrip = contextMenuStripListTree;
                 if (e.Action == TreeViewAction.ByKeyboard || e.Action == TreeViewAction.ByMouse)
                 {
                     SaveCurrentPath(treeView1);
-                    //FilterTables(true);
                     FilterByTreeview1();
                 }
                 else
                 {
-                    //FilterTables(false);
                     FilterByTreeview1();
                 }
-                //if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
                 if (e.Node.Name != "All" && e.Node.Parent != null)
                     TreeParts.AddChildNodes(e.Node, PCM);
             }
@@ -4271,17 +5017,6 @@ namespace UniversalPatcher
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-                    if (tv.SelectedNode != null && tv.SelectedNode.Tag != null)
-                    {
-                        //lastSelectedId = Convert.ToInt32(tv.SelectedNode.Tag);
-                        Tnode tnode = (Tnode)tv.SelectedNode.Tag;
-                        lastSelectTd = tnode.Td;
-                    }
-                    else
-                    {
-                        lastSelectTd = null;
-                    }
                     contextMenuStripTree.Show(Cursor.Position.X, Cursor.Position.Y);
                 }
             }
@@ -4387,10 +5122,18 @@ namespace UniversalPatcher
                 if (DisplayMode == DispMode.List)
                 {
                     tab = null;
-                    if (filteredTableDatas.Count > 0)
+                    if (filteredTableDatas.Count > 0 && dataGridView1.Rows.Count > 0) 
                     {
-                        td = (TableData)dataGridView1.CurrentRow.DataBoundItem;
-                        path.Insert(0, td.TableName);
+                        if (dataGridView1.CurrentRow.DataBoundItem.GetType() == typeof(TableData))
+                        {
+                            td = (TableData)dataGridView1.CurrentRow.DataBoundItem;
+                            path.Insert(0, td.TableName);
+                        }
+                        else if (dataGridView1.CurrentRow.DataBoundItem.GetType() == typeof(XmlPatch))
+                        {
+                            XmlPatch patch = (XmlPatch)dataGridView1.CurrentRow.DataBoundItem;
+                            path.Insert(0, patch.Name);
+                        }
                     }
                 }
                 else
@@ -4449,6 +5192,78 @@ namespace UniversalPatcher
                 {
                     PCM.SelectedNode.Add(tv.Name, path);
                 }
+                ToolStripMenuItem mi = treemodeToolStripMenuItem;
+                if (DisplayMode == DispMode.Tree)
+                {
+                    mi = listmodeToolStripMenuItem;
+                }
+                mi.Tag = PCM.NaviCurrent;
+                StringBuilder pathStr = new StringBuilder();
+                for (int i = 0; i < path.Count - 1; i++)
+                {
+                    pathStr.Append(path[i] + "=>");
+                }
+                pathStr.Append(path.Last());
+                mi.Text = pathStr.ToString();
+                mi.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void RestorePath_Click(object sender, EventArgs e, DispMode mode)
+        {
+            try
+            {
+                ToolStripMenuItem mi = (ToolStripMenuItem)sender;
+                int pos = (int)mi.Tag;
+                Navi navi = PCM.Navigator[pos].ShallowCopy();
+                if (mode == DispMode.List)
+                {
+                    navi.Tab = null;
+                }
+                Navigating = true;
+
+                TreeViewMS tv;
+                if (navi.Tab == null)
+                {
+                    radioListMode.Checked = true;
+                    tv = treeView1;
+                }
+                else
+                {
+                    radioTreeMode.Checked = true;
+                    tabControl1.SelectedTab = navi.Tab;
+                    tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                }
+                txtFilter.TextChanged -= txFilter_TextChanged;
+                txtFilter.Text = "";
+                comboFilterBy.Text = navi.FilterBy;
+                txtFilter.Text = navi.Filter;
+                FilterTables(false);
+                RestoreNodePath(tv, navi.Path, PCM);
+                if (DisplayMode == DispMode.List)
+                {
+                    for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                    {
+                        TableData cTd = (TableData)dataGridView1.Rows[r].DataBoundItem;
+                        if (cTd.guid == navi.Td.guid)
+                        {
+                            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells["TableName"];
+                            break;
+                        }
+                    }
+                }
+                Application.DoEvents();
+                txtFilter.TextChanged += txFilter_TextChanged;
+                Navigating = false;
             }
             catch (Exception ex)
             {
@@ -4470,7 +5285,7 @@ namespace UniversalPatcher
                 Tnode tnode1 = (Tnode)e.Node.Tag;
                 if (e.Node.Name == "Patches")
                 {
-                    ClearPanel2();
+                    ClearPanel2(false,true);
                     ShowPatchSelector();
                     return;
                 }
@@ -4500,7 +5315,7 @@ namespace UniversalPatcher
                     //If multitable fail, we may have other tasks to do
                 }
                 if (!splitTree.Panel2.Controls.ContainsKey("frmTableEditor"))
-                    ClearPanel2();
+                    ClearPanel2(false,true);
                 List<TableData> tableTds = new List<TableData>();
                 foreach (TreeNode tn in tms.SelectedNodes)
                 {
@@ -4508,19 +5323,21 @@ namespace UniversalPatcher
                     if (tnode.NodeType == TreeParts.NType.Table)
                         tableTds.Add(((TreeParts.Tnode)tn.Tag).Td);
                 }
-                // showTableDescription(PCM, tableIds[0]);
+                if (tableTds.Count > 0)
+                {
+                    ShowTableDescription(PCM, tableTds[0]);
+                }
                 if (histogramTableSelectionEnabled)
                 {
                     hstForm.SetupTable(PCM, tableTds[0]);
                 }
                 if (tableTds == null || tableTds.Count == 0)
                 {
-                    ClearPanel2();
+                    ClearPanel2(false,true);
                 }
                 else
                 {
-                    lastSelectTd = tableTds.LastOrDefault();
-                    EnableTreeModeAxisMenus(lastSelectTd);
+                    EnableTreeModeAxisMenus(CurrentTd);
                     OpenTableEditor(tableTds);
                 }
             }
@@ -4535,7 +5352,6 @@ namespace UniversalPatcher
             }
         }
 
-
         private void TabSegments_Enter(object sender, EventArgs e)
         {
             if (currentTab == tabSegments)
@@ -4544,7 +5360,6 @@ namespace UniversalPatcher
             currentTab = tabSegments;
             FilterTree(true);
         }
-
 
         private void ShowPatchSelector()
         {
@@ -4570,7 +5385,7 @@ namespace UniversalPatcher
             if (PCM == null || PCM.configFileFullName == null || PCM.configFileFullName.Length == 0)
                 return;
             currentTab = tabPatches;
-            ClearPanel2();
+            ClearPanel2(false,true);
             ShowPatchSelector();
         }
 
@@ -4634,16 +5449,17 @@ namespace UniversalPatcher
                     iconSize = (int)numIconSize.Value;
                     imageList1.ImageSize = new Size(iconSize, iconSize);
                     imageList1.Images.Clear();
-                    string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
+                    string folderIcon = Path.Combine(Application.StartupPath, "Images", "FolderOpen.png");
                     imageList1.Images.Add(Image.FromFile(folderIcon));
-                    string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+                    string iconFolder = Path.Combine(Application.StartupPath, "Images");
                     GalleryArray = System.IO.Directory.GetFiles(iconFolder);
                     for (int i = 0; i < GalleryArray.Length; i++)
                     {
-                        if (GalleryArray[i].ToLower().EndsWith(".ico"))
+                        if (GalleryArray[i].ToLower().EndsWith(".png"))
                         {
                             //Debug.WriteLine("Icon: " + GalleryArray[i]);
-                            imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
+                            //imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
+                            imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Image.FromFile(GalleryArray[i]));
                         }
                     }
                 }
@@ -4718,6 +5534,7 @@ namespace UniversalPatcher
                     treeDimensions.AfterSelect += Tree_AfterSelect;
                     treeDimensions.NodeMouseClick += Tree_NodeMouseClick;
                     treeDimensions.AfterExpand += Tree_AfterExpand;
+                    treeDimensions.NodeMouseHover += Tree_NodeMouseHover;
                 }
                 AddDimensions(treeDimensions.Nodes, filteredTableDatas.ToList(),false);
 
@@ -4742,7 +5559,7 @@ namespace UniversalPatcher
                             //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                             {
                                 TableData fTd = tnode.filteredTds[i];
-                                string ico = fTd.ValueType().ToString() +".ico";
+                                string ico = fTd.ValueType().ToString() +".png";
                                 Tnode tChild = new Tnode(fTd.TableName, fTd.TableName, NType.Table, ico, dNode);
                                 tChild.Td = fTd;
                             }
@@ -4788,6 +5605,7 @@ namespace UniversalPatcher
                     treeValueType.AfterCheck += Tree_AfterCheck;
                     treeValueType.NodeMouseClick += Tree_NodeMouseClick;
                     treeValueType.AfterExpand += Tree_AfterExpand;
+                    treeValueType.NodeMouseHover += Tree_NodeMouseHover;
                 }
 
                 AddValueTypes(treeValueType.Nodes, filteredTableDatas.ToList(),false);
@@ -4810,7 +5628,7 @@ namespace UniversalPatcher
                         for (int i = 0; i < tnode.filteredTds.Count; i++)
                         {
                             TableData fTd = tnode.filteredTds[i];
-                            string ico = fTd.Dimensions().ToString() + "d.ico";
+                            string ico = fTd.Dimensions().ToString() + "d.png";
                             Tnode tChild = new Tnode(fTd.TableName, fTd.TableName, NType.Table, ico, dNode);
                             tChild.Td = fTd;
                         }
@@ -4854,8 +5672,9 @@ namespace UniversalPatcher
                     treeCategory.AfterCheck += Tree_AfterCheck;
                     treeCategory.NodeMouseClick += Tree_NodeMouseClick;
                     treeCategory.AfterExpand += Tree_AfterExpand;
+                    treeCategory.NodeMouseHover += Tree_NodeMouseHover;
                 }
-                AddCategories(treeCategory.Nodes, filteredTableDatas.ToList(),false);
+                AddCategories(treeCategory.Nodes, filteredTableDatas.ToList(), false);
                 Cursor.Current = Cursors.Default;
             }
             catch (Exception ex)
@@ -4894,8 +5713,9 @@ namespace UniversalPatcher
                     treeSegments.AfterCheck += Tree_AfterCheck;
                     treeSegments.NodeMouseClick += Tree_NodeMouseClick;
                     treeSegments.AfterExpand += Tree_AfterExpand;
+                    treeSegments.NodeMouseHover += Tree_NodeMouseHover;
                 }
-                AddSegments(treeSegments.Nodes,PCM, filteredTableDatas.ToList(),false);
+                AddSegments(treeSegments.Nodes, PCM, filteredTableDatas.ToList(), false);
 
                 if (AppSettings.TableExplorerUseCategorySubfolder)
                 {
@@ -4915,7 +5735,7 @@ namespace UniversalPatcher
                         for (int i = 0; i < tnode.filteredTds.Count; i++)
                         {
                             TableData fTd = tnode.filteredTds[i];
-                            string ico = fTd.ValueType().ToString().Replace("number", "") + fTd.Dimensions() + "d.ico";
+                            string ico = fTd.ValueType().ToString().Replace("number", "") + fTd.Dimensions() + "d.png";
                             Tnode tChild = new Tnode(fTd.TableName, fTd.TableName, NType.Table, ico, dNode);
                             tChild.Td = fTd;
                         }
@@ -4954,32 +5774,57 @@ namespace UniversalPatcher
             catch { };
         }
 
-        private void ClearPanel2(bool force = false)
+        private void ClearPanel2(bool force, bool clearDescription)
         {
-            if (splitTree == null)
-                return;
-            foreach (var x in splitTree.Panel2.Controls.OfType<Form>())
+            try
             {
-                if (force)
-                    x.Dispose();
-                else
-                    x.Close();
+                if (splitTree == null)
+                    return;
+                foreach (var x in splitTree.Panel2.Controls.OfType<Form>())
+                {
+                    if (force)
+                        x.Dispose();
+                    else
+                        x.Close();
+                }
+                if (clearDescription)
+                {
+                    labelTableName.Text = "";
+                    txtDescription.Text = "";
+                }
             }
-            labelTableName.Text = "";
-            txtDescription.Text = "";
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void SelectDispMode()
         {
             try
             {
-                if (radioTreeMode.Checked)
-                    SelectTreemode();
-                else
-                    SelectListMode();
                 AppSettings.TunerTreeMode = radioTreeMode.Checked;
                 AppSettings.Save();
-                FilterTables(true);
+                if (radioTreeMode.Checked)
+                {
+                    SelectTreemode();
+                }
+                else
+                {
+                    SelectListMode();
+                }
+                //FilterTables(true);
+                List<TableData> tds = GetSelectedTableTds();
+                if (tds.Count > 0)
+                {
+                    ShowTableDescription(PCM,tds[0],true);
+                }
             }
             catch (Exception ex)
             {
@@ -4991,7 +5836,6 @@ namespace UniversalPatcher
                 Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
             }
         }
-
 
         private void radioTreeMode_CheckedChanged(object sender, EventArgs e)
         {
@@ -5051,11 +5895,6 @@ namespace UniversalPatcher
             CompareSelectedTables();
         }
 
-        private void importXDFToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportXDF();
-        }
-
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode tn = treeView1.SelectedNode;
@@ -5093,17 +5932,7 @@ namespace UniversalPatcher
         private void reloadFileFromDiskToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PCM.ReloadBinFile();
-            ClearPanel2(true);
-        }
-
-        private void selectFileToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            SelectDiffFile(false);
-        }
-
-        private void selectFileToolStripMenuItem3_Click(object sender, EventArgs e)
-        {
-            SelectDiffFile(true);
+            ClearPanel2(true,true);
         }
 
         private void addTablesToExistingPatchToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5171,19 +6000,7 @@ namespace UniversalPatcher
             }
 
         }
-
-        private void patcherToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (frmpatcher == null)
-            {
-                frmpatcher = new FrmPatcher();
-                frmpatcher.Show();
-            }
-            else
-                frmpatcher.BringToFront();
-
-        }
-
+        
         private void openCompareBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenNewBinFile(true);
@@ -5231,78 +6048,6 @@ namespace UniversalPatcher
                 }
                 return;
 
-                //Old code:
-/*                Logger("Reading file: " + fileName, false);
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(SWCNT));
-                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                SWCNT swcnt = (SWCNT)reader.Deserialize(file);
-                file.Close();
-                Logger(" [OK], converting...");
-
-                SWCNTDATEN data = (SWCNTDATEN)swcnt.Items[3];
-                SWCNTDATENDATENBLOECKEDATENBLOCK[] segments = data.DATENBLOECKE;
-
-                int blockCount = segments.Length;
-                List<byte[]> binBlocks = new List<byte[]>();
-                int size = 0;
-                for (int i = 0; i < blockCount; i++)
-                {
-                    string b64Data = segments[i].DATENBLOCKDATEN;
-                    b64Data = b64Data.Substring(b64Data.IndexOf("base64") + 6);
-                    byte[] b = System.Convert.FromBase64String(b64Data);
-                    binBlocks.Add(b);
-                    int start;
-                    HexToInt(segments[i].STARTADR.Replace("0x", ""), out start);
-                    int bSize = 0;
-                    HexToInt(segments[i].GROESSEDEKOMPRIMIERT.Replace("0x", ""), out bSize);
-                    if (size < (start + bSize))
-                        size = start + bSize;
-                    Logger("Segment: " + segments[i].DATENBLOCKNAME + " ", false);
-                    SWCNTDATENDATENBLOECKEDATENBLOCKDATENBLOCKCHECK[] cs = segments[i].DATENBLOCKCHECK;
-                    SWCNTDATENDATENBLOECKEDATENBLOCKLOESCHBEREICH[] segBlocks = segments[i].LOESCHBEREICH;
-                    string sbStr = "";
-                    for (int sb = 0; sb < segBlocks.Length; sb++)
-                    {
-                        sbStr += segBlocks[sb].STARTADR.Replace("0x", "") + " - " + segBlocks[sb].ENDADR.Replace("0x", "") + ", ";
-                    }
-                    //sbStr = sbStr.Trim(',');
-                    Logger(sbStr, false);
-
-                    for (int x = 0; x < cs.Length; x++)
-                    {
-                        Logger("Checksum: " + cs[x].CHECKSUMME.Replace("0x", "") + " (" + cs[x].STARTADR.Replace("0x", "") + " - " + cs[x].ENDADR.Replace("0x", "") + ")");
-                        int csend = 0;
-                        HexToInt(cs[x].ENDADR.Replace("0x", ""), out csend);
-                        if (csend > size)
-                            size = csend;
-                    }
-                }
-
-                byte[] binbuf = new byte[size];
-
-                for (int i = 0; i < blockCount; i++)
-                {
-                    byte[] b = binBlocks[i];
-                    int start;
-                    HexToInt(segments[i].STARTADR.Replace("0x", ""), out start);
-                    Array.Copy(b, 0, binbuf, start, b.Length);
-                }
-
-                Logger("Done");
-
-                fileName = SelectSaveFile(BinFilter, "imported-file.bin");
-                if (fileName.Length == 0)
-                    return;
-                Logger("Saving to file: " + fileName, false);
-                WriteBinToFile(fileName, binbuf);
-                Logger(" [OK]");
-                if (AppSettings.AutomaticOpenImportedFile)
-                {
-                    List<string> fList = new List<string>();
-                    fList.Add(fileName);
-                    OpenNewBinFile(false, fList);
-                }
-*/
             }
             catch (Exception ex)
             {
@@ -5399,10 +6144,9 @@ namespace UniversalPatcher
                 int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
-                    lastSelectTd = fte.td;
                     for (int id = 0; id < PCM.tableDatas.Count; id++)
                     {
-                        if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                        if (PCM.tableDatas[id].guid == CurrentTd.guid)
                         {
                             PCM.tableDatas[id] = fte.td;
                             FilterTables(true);
@@ -5428,36 +6172,38 @@ namespace UniversalPatcher
 
         private void editXaxisTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditAxisTable(lastSelectTd.ColumnHeaders);
+            EditAxisTable(CurrentTd.ColumnHeaders);
         }
 
         private void editYaxisTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditAxisTable(lastSelectTd.RowHeaders);
+            EditAxisTable(CurrentTd.RowHeaders);
         }
 
         private void openXaxisTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenAxisTable(lastSelectTd.ColumnHeaders);
+            OpenAxisTable(CurrentTd.ColumnHeaders);
         }
 
         private void openYaxisTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenAxisTable(lastSelectTd.RowHeaders);
+            OpenAxisTable(CurrentTd.RowHeaders);
         }
 
         private void editMathtableToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
-                TableData newTd = PCM.GetConversiotableByMath(lastSelectTd.Math);
+                TableData newTd = PCM.GetConversiotableByMath(CurrentTd.Math);
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.LoadTd();
-                int c = dataGridView1.CurrentCell.ColumnIndex;
-                int r = dataGridView1.CurrentCell.RowIndex;
+                //int c = dataGridView1.CurrentCell.ColumnIndex;
+                //int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
+                    dataGridView1.Invalidate();
+                    /*
                     for (int id = 0; id < PCM.tableDatas.Count; id++)
                     {
                         if (PCM.tableDatas[id].guid == lastSelectTd.guid)
@@ -5469,6 +6215,7 @@ namespace UniversalPatcher
                             break;
                         }
                     }
+                    */
                 }
                 fte.Dispose();
             }
@@ -5485,7 +6232,7 @@ namespace UniversalPatcher
 
         private void openMathtableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TableData hTd = PCM.GetConversiotableByMath(lastSelectTd.Math);
+            TableData hTd = PCM.GetConversiotableByMath(CurrentTd.Math);
             List<TableData> hTds = new List<TableData>();
             hTds.Add(hTd);
             OpenTableEditor(hTds, true);
@@ -5610,7 +6357,7 @@ namespace UniversalPatcher
                 int End;
                 if (!int.TryParse(parts[0], out Start))
                 {
-                    LoggerBold("Can't convert from hex: " + parts[0]);
+                    LoggerBold("Can't convert from integer: " + parts[0]);
                     return;
                 }
                 if (!int.TryParse(parts[1], out End))
@@ -5618,14 +6365,14 @@ namespace UniversalPatcher
                     LoggerBold("Can't convert to integer: " + parts[1]);
                     return;
                 }
-
                 TableData tdTmp = ((TableData)dataGridView1.CurrentRow.DataBoundItem).ShallowCopy(false);
-
+                extraoffsets.RemoveAll(X => X.TableGuid == tdTmp.guid);
                 List<byte> targetBytes = new List<byte>();
                 PcmFile peekPCM = null;
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                decimal BestMatch = 0;
+                for (int l=0;l<LoadedPcms.Count;l++)
                 {
-                    peekPCM = (PcmFile)mi.Tag;
+                    peekPCM = LoadedPcms[l];
                     if (peekPCM.FileName != PCM.FileName)
                     {
                         if (tdTmp.Offset > 0)
@@ -5667,6 +6414,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
+                    /*
                     if (!offRange)
                     {
                         if (ColorCoding || FilterOutOfRange)
@@ -5706,13 +6454,40 @@ namespace UniversalPatcher
                             }
                         }
                     }
+                    */
                     if (!offRange)
                     {
                         txtDescription.AppendText("Extra Offset: " + tdTmp.extraoffset.ToString() + " [" + addr.ToString("X") + "]" + Environment.NewLine);
-                        PeekTableValues(tdTmp, PCM, false, color);
+                        //ShowTableDescriptionSimple(tdTmp, PCM, false, color);
+                        ShowTableDescription(PCM, tdTmp, false);
+                        if (hitPercent > BestMatch)
+                        {
+                            BestMatch = hitPercent;
+                        }
+                        ExtraOffset itm = new ExtraOffset(tdTmp.guid, eo, hitPercent);
+                        extraoffsets.Add(itm);
                     }
-
                 }
+                if (BestMatch == 100)
+                {
+                    labelMatch.BackColor = Color.Red;
+                }
+                else if (BestMatch > 90)
+                {
+                    labelMatch.BackColor = Color.Blue;
+                }
+                else if (BestMatch > 0)
+                {
+                    labelMatch.BackColor = Color.Yellow;
+                }
+                else
+                {
+                    labelMatch.BackColor = labelTableName.BackColor;
+                }
+                labelMatch.Text = "Match: " + BestMatch.ToString("0.#") + " %";
+                labelMatch.Visible = true;
+                FillComboExtraOffsets(tdTmp);
+
             }
             catch (Exception ex)
             {
@@ -5748,9 +6523,9 @@ namespace UniversalPatcher
                 UInt64 Target3D = UInt64.MaxValue;
                 PcmFile peekPCM = null;
                 TableData compTd = null;
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                for (int l=0;l<LoadedPcms.Count;l++)
                 {
-                    peekPCM = (PcmFile)mi.Tag;
+                    peekPCM = LoadedPcms[l];
                     if (peekPCM.FileName != PCM.FileName)
                     {
                         //compTd = FindTableData(tdTmp, peekPCM.tableDatas);
@@ -5826,7 +6601,7 @@ namespace UniversalPatcher
                     if (hits == tdTmp.Elements())
                     {
                         txtDescription.AppendText("Extra Offset: " + eo.ToString() + " [" + (tdTmp.addrInt + tdTmp.Offset + tdTmp.extraoffset).ToString("X") + "]" + Environment.NewLine);
-                        PeekTableValues(tdTmp, PCM, false, Color.Red);
+                        ShowTableDescriptionSimple(tdTmp, PCM, false, Color.Red);
                         dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = eo;
                         numExtraOffset.Value = eo;
                         dataGridView1.EndEdit();
@@ -5859,11 +6634,6 @@ namespace UniversalPatcher
             FindExtraOffset(true);
         }
 
-        private void radioExtraOffsetMinus_CheckedChanged(object sender, EventArgs e)
-        {
-            ExtraOffsetFirstTry = true;
-        }
-
         private void numExtraOffset_ValueChanged(object sender, EventArgs e)
         {
             try
@@ -5879,7 +6649,8 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    PeekTableValues(tdTmp, PCM, false, Color.Blue);
+                    txtDescription.Clear();
+                    ShowTableDescriptionSimple(tdTmp, PCM, false, Color.Black);
                     if (appendFocusToolStripMenuItem.Checked)
                     {
                         txtDescription.SelectionStart = txtDescription.Text.Length;
@@ -5930,9 +6701,8 @@ namespace UniversalPatcher
             try
             {
                 TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                foreach (PcmFile peekPCM in LoadedPcms)
                 {
-                    PcmFile peekPCM = (PcmFile)mi.Tag;
                     if (peekPCM.FileName != PCM.FileName)
                     {
                         int seg = peekPCM.GetSegmentNumber((uint)(selTd.addrInt + selTd.Offset));
@@ -5954,24 +6724,10 @@ namespace UniversalPatcher
 
         private void btnExtraOffsetTest_Click(object sender, EventArgs e)
         {
-            try
-            {
-                TableData tdTmp = ((TableData)dataGridView1.CurrentRow.DataBoundItem).ShallowCopy(true);
-                tdTmp.extraoffset = (int)numExtraOffsetTest.Value;
-                ShowTableDescription(PCM, tdTmp);
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, frmTuner btnExtraOffsetTest_Click, line " + line + ": " + ex.Message);
-            }
+            TestOffset(0);
         }
 
-        private void btnExtraOffsetTestApply_Click(object sender, EventArgs e)
+        private void ApplyExtraOffset()
         {
             try
             {
@@ -5990,6 +6746,11 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, frmTuner btnExtraOffsetTestApply_Click, line " + line + ": " + ex.Message);
             }
+
+        }
+        private void btnExtraOffsetTestApply_Click(object sender, EventArgs e)
+        {
+            ApplyExtraOffset();
         }
 
         private void addNewTableToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6040,9 +6801,9 @@ namespace UniversalPatcher
                     return;
                 }
                 TableData selTd = tds[0];
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                for (int l=0;l<LoadedPcms.Count;l++)
                 {
-                    peekPCM = (PcmFile)mi.Tag;
+                    peekPCM = LoadedPcms[l];
                     if (peekPCM.FileName != PCM.FileName)
                     {
                         compTd = FindTableData(selTd, peekPCM.tableDatas);
@@ -6053,18 +6814,9 @@ namespace UniversalPatcher
                     }
                 }
 
-/*                if (compTd == null)
-                {
-                    Logger("Please open another file");
-                    return;
-                }
-*/
                 if (ftvd == null || !ftvd.Visible)
                 {
                     StartVisualizer(PCM, selTd, peekPCM, compTd, 0);
-                    //Task.Factory.StartNew(() => StartVisualizer(PCM, selTd, peekPCM, compTd, 0));
-                    //ftvd = new frmTableVisDouble(PCM, selTd, peekPCM, compTd, 0);
-                    //ftvd.tuner = this;
                 }
             }
             catch (Exception ex)
@@ -6078,56 +6830,21 @@ namespace UniversalPatcher
             }
 
         }
-        //[STAThread]
         private void StartVisualizer(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
         {
-            ftvd = new frmTableVisDouble(PCM1, PCM2,td1,td2);
+            ftvd = new frmTableVisDouble2(PCM1, PCM2,td1,td2);
             ftvd.tuner = this;
             ftvd.ShowTables(SelectedByte);
             ftvd.Show();
-            //Application.Run(ftvd);
         }
         private void mirrorSegmentsFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mirrorSegmentsFromCompareToolStripMenuItem.Checked = !mirrorSegmentsFromCompareToolStripMenuItem.Checked;
-            FilterTables(true);
-        }
-
-        private void contextMenuStrip2_Opening(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        public class Roska
-        {
-            public Roska()
+            if (!mirrorSegmentsFromCompareToolStripMenuItem.Checked)
             {
-                Components = new List<string>();
+                TreeParts.SegmentPCM = null;
             }
-            public string eka { get; set; }
-            [XmlArray]
-            [XmlArrayItem("Component")]
-            public List<string> Components { get; set; }
-            public string Categories
-            {
-                get
-                {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i=0; i<Components.Count;i++)
-                    {
-                        sb.Append(Components[i]);
-                        if (i < Components.Count - 1)
-                            sb.Append(" - ");
-                    }
-                    return sb.ToString();
-                }
-                set
-                {
-                    string[] parts = value.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
-                    Components.AddRange(parts);
-                }
-            }
-
+            RefreshTablelist(true);
         }
 
         private void SelectExplorerFont()
@@ -6172,7 +6889,6 @@ namespace UniversalPatcher
             {
                 return;
             }
-            //AddSegments(treeView1.Nodes, cmpPcm, filteredTableDatas.ToList(), true, true);
             AddSegments(treeView1.Nodes, cmpPcm, cmpPcm.tableDatas, true, true);
 
         }
@@ -6257,37 +6973,26 @@ namespace UniversalPatcher
                         tabControl1.SelectedTab = navi.Tab;
                         tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
                     }
-/*                    if (step != 0 && tv.SelectedNode != null && tv.SelectedNode.Parent != null &&
-                        tv.SelectedNode.Parent.Nodes.ContainsKey(navi.Path[0]) && navi != null &&
-                        navi.PathSerial() == naviOld.PathSerial())
+                    txtFilter.TextChanged -= txFilter_TextChanged;
+                    txtFilter.Text = "";
+                    comboFilterBy.Text = navi.FilterBy;
+                    txtFilter.Text = navi.Filter;
+                    FilterTables(false);
+                    RestoreNodePath(tv, navi.Path, PCM);
+                    if (DisplayMode == DispMode.List)
                     {
-                        Debug.WriteLine("Navigating directly in same path, different node");
-                        tv.SelectedNode = tv.SelectedNode.Parent.Nodes[navi.Path[0]];
-                    }
-                    else
-*/
-                    {
-                        txtFilter.TextChanged -= txFilter_TextChanged;
-                        txtFilter.Text = "";
-                        comboFilterBy.Text = navi.FilterBy;
-                        txtFilter.Text = navi.Filter;
-                        FilterTables(false);
-                        RestoreNodePath(tv, navi.Path, PCM);
-                        if (DisplayMode == DispMode.List)
+                        for (int r = 0; r < dataGridView1.Rows.Count; r++)
                         {
-                            for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                            TableData cTd = (TableData)dataGridView1.Rows[r].DataBoundItem;
+                            if (cTd.guid == navi.Td.guid)
                             {
-                                TableData cTd = (TableData)dataGridView1.Rows[r].DataBoundItem;
-                                if (cTd.guid == navi.Td.guid)
-                                {
-                                    dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells["TableName"];
-                                    break;
-                                }
+                                dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells["TableName"];
+                                break;
                             }
                         }
-                        Application.DoEvents();
-                        txtFilter.TextChanged += txFilter_TextChanged;
                     }
+                    Application.DoEvents();
+                    txtFilter.TextChanged += txFilter_TextChanged;
                 }
                 Navigating = false;
             }
@@ -6320,7 +7025,7 @@ namespace UniversalPatcher
 
         }
 
-        private void openInListModeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenInListMode()
         {
             try
             {
@@ -6347,7 +7052,7 @@ namespace UniversalPatcher
                 }
                 radioListMode.Checked = true;
                 Navigating = true;
-                RestoreNodePath(treeView1, path, PCM);                
+                RestoreNodePath(treeView1, path, PCM);
                 Navigating = false;
                 for (int r = 0; r < dataGridView1.Rows.Count; r++)
                 {
@@ -6370,6 +7075,12 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
                 Navigating = false;
             }
+
+        }
+
+        private void openInListModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenInListMode();
         }
 
         private void FindAxisTable(string header)
@@ -6382,7 +7093,7 @@ namespace UniversalPatcher
                 List<string> path = GetCurrentNodePath(tv);
                 path[0] = hTd.TableName;    //Replace last node with axis-table
                 txtFilter.TextChanged -= txFilter_TextChanged;
-                txtFilter.Text = hTd.TableName + " | " + lastSelectTd.TableName;
+                txtFilter.Text = hTd.TableName + " | " + CurrentTd.TableName;
                 comboFilterBy.Text = "TableName";
                 FilterTables(false);
                 txtFilter.TextChanged += txFilter_TextChanged;
@@ -6456,7 +7167,7 @@ namespace UniversalPatcher
             try
             {
                 Navigating = true;
-                FindAxisTable(lastSelectTd.ColumnHeaders);
+                FindAxisTable(CurrentTd.ColumnHeaders);
                 Debug.WriteLine("Axis table, Navigator: " + (PCM.NaviCurrent + 1).ToString() + "/" + PCM.Navigator.Count.ToString());
                 Application.DoEvents();
                 TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
@@ -6477,23 +7188,17 @@ namespace UniversalPatcher
 
         private void xAxisToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GotoAxisTable(lastSelectTd.ColumnHeaders);
+            GotoAxisTable(CurrentTd.ColumnHeaders);
         }
 
         private void yAxisToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GotoAxisTable(lastSelectTd.RowHeaders);
+            GotoAxisTable(CurrentTd.RowHeaders);
         }
 
         private void mathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GotoAxisTable(lastSelectTd.Math);
-        }
-
-        private void ShowNaviInfo(string NextPrev, int ind)
-        {
-            string message = NextPrev + Environment.NewLine + PCM.Navigator[ind].NaviInfo();
-            NaviTip.Show(message, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y, 7000);
+            GotoAxisTable(CurrentTd.Math);
         }
 
         private void ShowNaviSelection()
@@ -6602,11 +7307,11 @@ namespace UniversalPatcher
             try
             {
                 frmEditPairs fep = new frmEditPairs();
-                fep.pairStr = lastSelectTd.OS_Address;
+                fep.pairStr = CurrentTd.OS_Address;
                 fep.OS = PCM.OS;
                 if (fep.ShowDialog() == DialogResult.OK)
                 {
-                    lastSelectTd.OS_Address = fep.pairStr;
+                    CurrentTd.OS_Address = fep.pairStr;
                     this.Refresh();
                 }
                 fep.Dispose();
@@ -6676,17 +7381,6 @@ namespace UniversalPatcher
 
                 PCM = refPCM;
                 SelectPCM();
-                /*
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
-                {
-                    PcmFile mPCM = (PcmFile)mi.Tag;
-                    if (mPCM.FileName == mapPCM.FileName)
-                    {
-                        mPCM.ClearTableList();
-                        mPCM.LoadTableList(newRefDefFile);
-                    }
-                }
-                */
                 SaveSession(SessionName,true);
                 return SessionName;
             }
@@ -6701,17 +7395,6 @@ namespace UniversalPatcher
                 return "";
             }
 
-        }
-        private void openMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (TunerMain != null)
-            {
-                TunerMain.AddSession(frmTunerMain.SessionType.Map);
-            }
-            else
-            {
-                CreateMapSession();
-            }
         }
 
         public string SaveSession(string SessionName, bool Verbose)
@@ -6754,9 +7437,10 @@ namespace UniversalPatcher
                     Directory.CreateDirectory(sesPath);
                 string fName = Path.Combine(sesPath, "Session.xml");
                 SessionSettings sessionsettings = new SessionSettings();
+                sessionsettings.Extraoffsets = extraoffsets;
                 sessionsettings.columns = GetColumnOrder();
                 sessionsettings.HexWindowWidth = AppSettings.TunerHexWindowWidth;
-                sessionsettings.ShowHexWindow = AppSettings.TunerShowHexWindow;
+                sessionsettings.ShowHexWindow = AppSettings.TunerHexWindowShow;
                 sessionsettings.SessionName = SessionName;
                 sessionsettings.MapSession = mapSession;
                 if (mapSession)
@@ -6767,10 +7451,9 @@ namespace UniversalPatcher
                 sessionsettings.SortIndex = sortIndex;
                 sessionsettings.StrSortOrder = strSortOrder;
                 int fNr = 0;
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                foreach (PcmFile sPCM in LoadedPcms)
                 {
                     fNr++;
-                    PcmFile sPCM = (PcmFile)mi.Tag;
                     SessionPcm sessPcm = new SessionPcm();
                     if (mapSession)
                     {
@@ -6866,6 +7549,7 @@ namespace UniversalPatcher
                 System.IO.StreamReader file = new System.IO.StreamReader(fName);
                 SessionSettings sessionsettings = (SessionSettings)reader.Deserialize(file);
                 file.Close();
+                this.extraoffsets = sessionsettings.Extraoffsets;
                 this.SessionName = sessionsettings.SessionName;
                 this.mapSession = sessionsettings.MapSession;
                 string selectedBin = "";
@@ -6896,6 +7580,7 @@ namespace UniversalPatcher
                             RefreshTablelist(false);
                         }
                     }
+                    FindTableLinks(PCM);
                     foreach (NaviSetting ns in sessPcm.NaviSettings)
                     {
                         TableData tdN = PCM.tableDatas.Where(X => X.guid.Equals(ns.TableSelection)).FirstOrDefault();
@@ -6924,9 +7609,8 @@ namespace UniversalPatcher
                 sortBy = sessionsettings.SortBy;
                 sortIndex = sessionsettings.SortIndex;
                 strSortOrder = sessionsettings.StrSortOrder;                    
-                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                foreach (PcmFile sPCM in LoadedPcms)
                 {
-                    PcmFile sPCM = (PcmFile)mi.Tag;
                     if (sPCM.FileName == selectedBin)
                     {
                         PCM = sPCM;
@@ -6935,7 +7619,7 @@ namespace UniversalPatcher
                     }
 
                 }
-                AppSettings.TunerShowHexWindow = sessionsettings.ShowHexWindow;
+                AppSettings.TunerHexWindowShow = sessionsettings.ShowHexWindow;
                 AppSettings.TunerHexWindowWidth = sessionsettings.HexWindowWidth;
                 Navigate(0);
                 Logger("Done");
@@ -6980,7 +7664,6 @@ namespace UniversalPatcher
                 }
             }
         }
-
 
         private void showOnlyMappedTablesToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7211,99 +7894,6 @@ namespace UniversalPatcher
             AppSettings.Save();
         }
 
-
-        private void btnColorMin1_Click(object sender, EventArgs e)
-        {
-            ColorDialog clrDialog = new ColorDialog();
-            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin1);
-            if (clrDialog.ShowDialog() == DialogResult.OK)
-            {
-                //save the colour that the user chose
-                btnColorMin1.BackColor = clrDialog.Color;
-                AppSettings.TunerColorsMin1 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
-            }
-            AppSettings.Save();
-        }
-
-        private void btnColorMin2_Click(object sender, EventArgs e)
-        {
-            ColorDialog clrDialog = new ColorDialog();
-            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin2);
-            if (clrDialog.ShowDialog() == DialogResult.OK)
-            {
-                //save the colour that the user chose
-                btnColorMin2.BackColor = clrDialog.Color;
-                AppSettings.TunerColorsMin2 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
-            }
-            AppSettings.Save();
-        }
-
-        private void btnColorMid_Click(object sender, EventArgs e)
-        {
-            ColorDialog clrDialog = new ColorDialog();
-            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid);
-            if (clrDialog.ShowDialog() == DialogResult.OK)
-            {
-                //save the colour that the user chose
-                btnColorMid.BackColor = clrDialog.Color;
-                AppSettings.TunerColorsMid = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
-            }
-            AppSettings.Save();
-        }
-
-        private void btnColorMax1_Click(object sender, EventArgs e)
-        {
-            ColorDialog clrDialog = new ColorDialog();
-            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax1);
-            if (clrDialog.ShowDialog() == DialogResult.OK)
-            {
-                //save the colour that the user chose
-                btnColorMax1.BackColor = clrDialog.Color;
-                AppSettings.TunerColorsMax1 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
-            }
-            AppSettings.Save();
-        }
-
-        private void btnColorMax2_Click(object sender, EventArgs e)
-        {
-            ColorDialog clrDialog = new ColorDialog();
-            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax2);
-            if (clrDialog.ShowDialog() == DialogResult.OK)
-            {
-                //save the colour that the user chose
-                btnColorMax2.BackColor = clrDialog.Color;
-                AppSettings.TunerColorsMax2 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
-            }
-            AppSettings.Save();
-        }
-
-        private void radioColorsUseTableSettings_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioColorsUseTableSettings.Checked)
-            {
-                AppSettings.TunerColorsMode = ConditionalColors.Settings;
-                AppSettings.Save();
-            }
-        }
-
-        private void radioColorsOff_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioColorsOff.Checked)
-            {
-                AppSettings.TunerColorsMode = ConditionalColors.Off;
-                AppSettings.Save();
-            }
-        }
-
-        private void radioColorsUseTableValues_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioColorsUseTableValues.Checked)
-            {
-                AppSettings.TunerColorsMode = ConditionalColors.Values;
-                AppSettings.Save();
-            }
-        }
-
         private void createMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (TunerMain != null)
@@ -7498,25 +8088,6 @@ namespace UniversalPatcher
             }
 
         }
-
-        private void loadMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (TunerMain != null)
-            {
-                TunerMain.AddSession(frmTunerMain.SessionType.Load);
-            }
-            else
-            {
-                LoadSession(null);
-            }
-
-        }
-
-        private void saveMapSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveSession(SessionName, true);
-        }
-
         private void archiveSessionWithCommentsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -7545,6 +8116,267 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTuner , line " + line + ": " + ex.Message);
             }
+        }
+
+        private void btnExtraOffsetCopyToTest_Click(object sender, EventArgs e)
+        {
+            numExtraOffsetTest.Value = numExtraOffset.Value;
+        }
+
+        private void btnExtraOffsetCopyFromTest_Click(object sender, EventArgs e)
+        {
+            numExtraOffset.Value = numExtraOffsetTest.Value;
+        }
+
+        private void TestOffset(int IndexOffset)
+        {
+            try
+            {
+                int row = dataGridView1.CurrentRow.Index + IndexOffset;
+                if (row < 0)
+                {
+                    row = 0;
+                }
+                if (row >= dataGridView1.Rows.Count)
+                {
+                    row = dataGridView1.Rows.Count - 1;
+                }
+
+                dataGridView1.CurrentCell = dataGridView1.Rows[row].Cells[0];
+                TableData tdTmp = ((TableData)dataGridView1.Rows[row].DataBoundItem).ShallowCopy(true);
+                tdTmp.extraoffset = (int)numExtraOffsetTest.Value;
+                ShowTableDescription(PCM, tdTmp);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner btnExtraOffsetTest_Click, line " + line + ": " + ex.Message);
+            }
+
+        }
+        private void btnTestPrevTable_Click(object sender, EventArgs e)
+        {
+            TestOffset(-1);
+        }
+
+        private void btnTestNextTable_Click(object sender, EventArgs e)
+        {
+            TestOffset(1);
+        }
+
+        private void btnCancelExtraOffset_Click(object sender, EventArgs e)
+        {
+            numExtraOffset.Value = 0;
+        }
+
+        private void mapExtraOffsetButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML fXml = new frmEditXML();
+            fXml.LoadExtraOffsetMapping();
+            fXml.Show();
+        }
+
+        private void enableExtraoffsetButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            enableExtraoffsetButtonsToolStripMenuItem.Checked = !enableExtraoffsetButtonsToolStripMenuItem.Checked;
+            AppSettings.TunerEnableExtraOffsetButtons = enableExtraoffsetButtonsToolStripMenuItem.Checked;
+            AppSettings.Save();
+        }
+
+        private void chkShowTreeHover_CheckedChanged(object sender, EventArgs e)
+        {
+            AppSettings.TunerTreeUseMouseHover = chkShowTreeHover.Checked;
+            AppSettings.Save();
+            if (AppSettings.TunerTreeUseMouseHover)
+            {
+                tabControl1.Dock = DockStyle.None;
+                tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                Application.DoEvents();
+                labelTreeTableTip = new Label();
+                splitTree.Panel1.Controls.Add(labelTreeTableTip);
+                labelTreeTableTip.Dock = DockStyle.Bottom;
+                labelTreeTableTip.BorderStyle = BorderStyle.Fixed3D;
+                labelTreeTableTip.Height = 35;
+                labelTreeTableTip.Font = new Font("Arial", 8);
+                tabControl1.Height = splitTree.Height - 35;
+            }
+            else
+            {
+                tabControl1.Dock = DockStyle.Fill;
+                splitTree.Panel1.Controls.Remove(labelTreeTableTip);
+                labelTreeTableTip = null;
+            }
+        }
+
+        private void allSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmPropertyEditor fpe = new frmPropertyEditor();
+            UpatcherSettings tmpSettings = AppSettings.ShallowCopy();
+            fpe.LoadObject(tmpSettings, "AllSettings");
+            fpe.resetToDefaultValueToolStripMenuItem.Enabled = true;
+            if (fpe.ShowDialog() == DialogResult.OK)
+            {
+                AppSettings = tmpSettings;
+                AppSettings.Save();
+                Logger("Settings saved");
+            }
+        }
+
+        public void SelectTableFromList(PcmFile PCM, int idx)
+        {
+            this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
+
+            try
+            {
+                if (dataGridView1.Rows.Count > idx)
+                {
+                    dataGridView1.CurrentCell = dataGridView1.Rows[idx].Cells[0];
+                    TableData pTd = (TableData)dataGridView1.Rows[idx].DataBoundItem;
+                    txtDescription.Clear();
+                    ShowTableDescriptionSimple(pTd, PCM, true, Color.Black);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner line " + line + ": " + ex.Message);
+            }
+            this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
+        }
+
+        private void addSegmentOffsetNodeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtFilter_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numIconSize_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnCollapseTree_Click(object sender, EventArgs e)
+        {
+            if (DisplayMode == DispMode.Tree)
+            {
+                if (splitTree.Panel1Collapsed)
+               
+                {
+                    splitTree.Panel1Collapsed = false;
+                    btnCollapseTree.ImageKey = "Expand.png";
+                }
+                else
+                {
+                    splitTree.Panel1Collapsed = true;
+                    btnCollapseTree.ImageKey = "Collapse.png";
+
+                }
+            }
+            else
+            {
+                if (splitContainerListMode.Panel1Collapsed)
+                {
+                    splitContainerListMode.Panel1Collapsed = false;
+                    btnCollapseTree.ImageKey = "Expand.png";
+                }
+                else
+                {
+                    splitContainerListMode.Panel1Collapsed = true;
+                    btnCollapseTree.ImageKey = "Collapse.png";
+
+                }
+            }
+        }
+        public void RefreshGrid()
+        {
+            dataGridView1.Invalidate();
+        }
+
+        private void btnShowExtraOffsetSearch_Click(object sender, EventArgs e)
+        {
+            splitContainerListTree.Panel2Collapsed = !splitContainerListTree.Panel2Collapsed;
+            txtDescription2.Visible = !splitContainerListTree.Panel2Collapsed;
+            txtDescription2.Dock = DockStyle.Fill;
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            TestExtraOffset(txtTestExtraOffset.Text, chkTestExtraOffsetFilterOutOfRange.Checked, chkTestExtraOffsetColorCoding.Checked, chkTestExtraOffsetOffsetBytes.Checked);
+
+        }
+
+        private void comboExtraOffsetResults_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ExtraOffset itm = (ExtraOffset)comboExtraOffsetResults.SelectedItem;
+            numExtraOffset.Value = itm.Offset;
+        }
+
+        private void numExtraOffsetTest_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnApplyExtraOffsetCombo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RestoreTableConfig()
+        {
+            List<TableData> rTds = new List<TableData>();
+            foreach (DataGridViewCell dgc in dataGridTrashBin.SelectedCells)
+            {
+                TableData rTd = (TableData)dataGridTrashBin.Rows[dgc.RowIndex].DataBoundItem;
+                if (!rTds.Contains(rTd))
+                {
+                    rTds.Add(rTd);
+                }
+            }
+            foreach(TableData rTd in rTds)
+            {
+                int position = PCM.GetTableConfigPosition(rTd);
+                AddToRedoLog(rTd, PCM.tableDatas, "TableData", rTd.TableName, "", ReDo.RedoAction.Restore, "", "", position);
+                PCM.tableDatas.Add(rTd);
+                PCM.tableDataTrashBin.Remove(rTd);
+
+            }
+            dataGridView1.Invalidate();
+            dataGridTrashBin.Invalidate();
+        }
+        private void restoreToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RestoreTableConfig();
+        }
+
+        private void undeleteTableconfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            groupUndeleteTableConfig.Visible = true;
+            groupUndeleteTableConfig.Dock = DockStyle.Fill;
+            dataGridView1.Visible = false;
+            dataGridTrashBin.DataSource = PCM.tableDataTrashBin;
+        }
+
+        private void btnCloseUndelete_Click(object sender, EventArgs e)
+        {
+            groupUndeleteTableConfig.Visible = false;
+            dataGridView1.Visible = true;
+        }
+
+        private void btnRestoreTableConfig_Click(object sender, EventArgs e)
+        {
+            RestoreTableConfig();
         }
     }
 }

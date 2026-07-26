@@ -3143,7 +3143,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                frmTableEditor frmT = new frmTableEditor();
+                frmTableEditor frmT = new frmTableEditor(null);
                 frmT.LoadSeekTable(codeIndex, basefile);
                 frmT.Show();
             }

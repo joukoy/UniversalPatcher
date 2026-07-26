@@ -32,6 +32,8 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTableEditor));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -47,6 +49,7 @@ namespace UniversalPatcher
             this.interpolateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtMath = new System.Windows.Forms.TextBox();
             this.btnExecute = new System.Windows.Forms.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.labelUnits = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,7 +59,6 @@ namespace UniversalPatcher
             this.showHistogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoResizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.swapXyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showRawHEXValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.binaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,8 +81,6 @@ namespace UniversalPatcher
             this.upToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.downToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
-            this.numColumn = new System.Windows.Forms.NumericUpDown();
-            this.labelColumn = new System.Windows.Forms.Label();
             this.groupSelectCompare = new System.Windows.Forms.GroupBox();
             this.radioDifference2 = new System.Windows.Forms.RadioButton();
             this.radioCompareAll = new System.Windows.Forms.RadioButton();
@@ -99,23 +99,42 @@ namespace UniversalPatcher
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.numHexviewExtra = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtHexView = new System.Windows.Forms.RichTextBox();
-            this.btnHexviewFont = new System.Windows.Forms.Button();
+            this.contextMenuHexWindowSettings = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.applyEditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cancelEditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setExtraoffsetToPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.scrollToTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.columnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.highlightBackgroundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showAsciiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showHeadersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showOffsetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.backgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.otherDataColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifiedColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectionColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetColorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
+            this.groupExtraOffset = new System.Windows.Forms.GroupBox();
+            this.btnApplyExtraOffset = new System.Windows.Forms.Button();
+            this.btnToggleHexview = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numColumn)).BeginInit();
             this.groupSelectCompare.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTuneValue)).BeginInit();
             this.groupDifference.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numHexviewExtra)).BeginInit();
+            this.contextMenuHexWindowSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numExtraOffset)).BeginInit();
+            this.groupExtraOffset.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -123,17 +142,30 @@ namespace UniversalPatcher
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToOrderColumns = true;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(652, 374);
+            this.dataGridView1.Size = new System.Drawing.Size(652, 355);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
-            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
-            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
             // contextMenuStrip1
@@ -151,7 +183,6 @@ namespace UniversalPatcher
             this.interpolateToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(211, 224);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // cutToolStripMenuItem
             // 
@@ -234,13 +265,22 @@ namespace UniversalPatcher
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(123, 50);
+            this.btnExecute.ImageKey = "Apply.png";
+            this.btnExecute.ImageList = this.imageList1;
+            this.btnExecute.Location = new System.Drawing.Point(123, 46);
             this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(54, 21);
+            this.btnExecute.Size = new System.Drawing.Size(34, 29);
             this.btnExecute.TabIndex = 2;
-            this.btnExecute.Text = "Execute";
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "Apply.png");
+            this.imageList1.Images.SetKeyName(1, "collapse.png");
+            this.imageList1.Images.SetKeyName(2, "expand.png");
             // 
             // labelUnits
             // 
@@ -311,7 +351,6 @@ namespace UniversalPatcher
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.autoResizeToolStripMenuItem,
-            this.swapXyToolStripMenuItem,
             this.showRawHEXValuesToolStripMenuItem,
             this.disableTooltipsToolStripMenuItem,
             this.dataFontToolStripMenuItem,
@@ -327,13 +366,6 @@ namespace UniversalPatcher
             this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.autoResizeToolStripMenuItem.Text = "Auto Resize";
             this.autoResizeToolStripMenuItem.Click += new System.EventHandler(this.autoResizeToolStripMenuItem_Click);
-            // 
-            // swapXyToolStripMenuItem
-            // 
-            this.swapXyToolStripMenuItem.Name = "swapXyToolStripMenuItem";
-            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.swapXyToolStripMenuItem.Text = "Swap x/y";
-            this.swapXyToolStripMenuItem.Click += new System.EventHandler(this.swapXyToolStripMenuItem_Click);
             // 
             // showRawHEXValuesToolStripMenuItem
             // 
@@ -397,7 +429,6 @@ namespace UniversalPatcher
             this.conditionalFormattingToolStripMenuItem.Name = "conditionalFormattingToolStripMenuItem";
             this.conditionalFormattingToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.conditionalFormattingToolStripMenuItem.Text = "Conditional formatting";
-            this.conditionalFormattingToolStripMenuItem.Click += new System.EventHandler(this.conditionalFormattingToolStripMenuItem_Click);
             // 
             // offToolStripMenuItem
             // 
@@ -503,41 +534,6 @@ namespace UniversalPatcher
             this.chkSwapXY.Text = "Swap X/Y";
             this.chkSwapXY.UseVisualStyleBackColor = true;
             this.chkSwapXY.CheckedChanged += new System.EventHandler(this.chkSwapXY_CheckedChanged);
-            // 
-            // numColumn
-            // 
-            this.numColumn.Enabled = false;
-            this.numColumn.Location = new System.Drawing.Point(636, 3);
-            this.numColumn.Maximum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.numColumn.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numColumn.Name = "numColumn";
-            this.numColumn.Size = new System.Drawing.Size(38, 20);
-            this.numColumn.TabIndex = 8;
-            this.numColumn.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numColumn.Visible = false;
-            this.numColumn.ValueChanged += new System.EventHandler(this.numColumn_ValueChanged);
-            // 
-            // labelColumn
-            // 
-            this.labelColumn.AutoSize = true;
-            this.labelColumn.Location = new System.Drawing.Point(585, 5);
-            this.labelColumn.Name = "labelColumn";
-            this.labelColumn.Size = new System.Drawing.Size(45, 13);
-            this.labelColumn.TabIndex = 9;
-            this.labelColumn.Text = "Column:";
-            this.labelColumn.Visible = false;
             // 
             // groupSelectCompare
             // 
@@ -765,77 +761,223 @@ namespace UniversalPatcher
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(0, 75);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 76);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.btnHexviewFont);
-            this.splitContainer1.Panel2.Controls.Add(this.numHexviewExtra);
-            this.splitContainer1.Panel2.Controls.Add(this.label2);
-            this.splitContainer1.Panel2.Controls.Add(this.txtHexView);
-            this.splitContainer1.Size = new System.Drawing.Size(895, 374);
+            this.splitContainer1.Size = new System.Drawing.Size(895, 355);
             this.splitContainer1.SplitterDistance = 652;
             this.splitContainer1.TabIndex = 19;
             // 
-            // numHexviewExtra
+            // contextMenuHexWindowSettings
             // 
-            this.numHexviewExtra.Location = new System.Drawing.Point(67, 0);
-            this.numHexviewExtra.Maximum = new decimal(new int[] {
-            10000,
+            this.contextMenuHexWindowSettings.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.applyEditToolStripMenuItem,
+            this.cancelEditToolStripMenuItem,
+            this.setExtraoffsetToPositionToolStripMenuItem,
+            this.scrollToTableToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.fontToolStripMenuItem,
+            this.columnsToolStripMenuItem,
+            this.highlightBackgroundToolStripMenuItem,
+            this.showAsciiToolStripMenuItem,
+            this.showHeadersToolStripMenuItem,
+            this.showOffsetsToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.backgroundColorToolStripMenuItem,
+            this.textColorToolStripMenuItem,
+            this.otherDataColorToolStripMenuItem,
+            this.modifiedColorToolStripMenuItem,
+            this.selectionColorToolStripMenuItem,
+            this.resetColorsToolStripMenuItem});
+            this.contextMenuHexWindowSettings.Name = "contextMenuHexWindowSettings";
+            this.contextMenuHexWindowSettings.Size = new System.Drawing.Size(210, 368);
+            // 
+            // applyEditToolStripMenuItem
+            // 
+            this.applyEditToolStripMenuItem.Name = "applyEditToolStripMenuItem";
+            this.applyEditToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.applyEditToolStripMenuItem.Text = "Apply edit";
+            this.applyEditToolStripMenuItem.Click += new System.EventHandler(this.applyEditToolStripMenuItem_Click);
+            // 
+            // cancelEditToolStripMenuItem
+            // 
+            this.cancelEditToolStripMenuItem.Name = "cancelEditToolStripMenuItem";
+            this.cancelEditToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.cancelEditToolStripMenuItem.Text = "Cancel Edit";
+            this.cancelEditToolStripMenuItem.Click += new System.EventHandler(this.cancelEditToolStripMenuItem_Click);
+            // 
+            // setExtraoffsetToPositionToolStripMenuItem
+            // 
+            this.setExtraoffsetToPositionToolStripMenuItem.Name = "setExtraoffsetToPositionToolStripMenuItem";
+            this.setExtraoffsetToPositionToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.setExtraoffsetToPositionToolStripMenuItem.Text = "Set as extraoffset position";
+            this.setExtraoffsetToPositionToolStripMenuItem.Click += new System.EventHandler(this.setExtraoffsetToPositionToolStripMenuItem_Click);
+            // 
+            // scrollToTableToolStripMenuItem
+            // 
+            this.scrollToTableToolStripMenuItem.Name = "scrollToTableToolStripMenuItem";
+            this.scrollToTableToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.scrollToTableToolStripMenuItem.Text = "Scroll to table";
+            this.scrollToTableToolStripMenuItem.Click += new System.EventHandler(this.scrollToTableToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(206, 6);
+            // 
+            // fontToolStripMenuItem
+            // 
+            this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.fontToolStripMenuItem.Text = "Font...";
+            this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
+            // 
+            // columnsToolStripMenuItem
+            // 
+            this.columnsToolStripMenuItem.Name = "columnsToolStripMenuItem";
+            this.columnsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.columnsToolStripMenuItem.Text = "Columns";
+            // 
+            // highlightBackgroundToolStripMenuItem
+            // 
+            this.highlightBackgroundToolStripMenuItem.Enabled = false;
+            this.highlightBackgroundToolStripMenuItem.Name = "highlightBackgroundToolStripMenuItem";
+            this.highlightBackgroundToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.highlightBackgroundToolStripMenuItem.Text = "Highlight background";
+            this.highlightBackgroundToolStripMenuItem.Visible = false;
+            this.highlightBackgroundToolStripMenuItem.Click += new System.EventHandler(this.highlightBackgroundToolStripMenuItem_Click);
+            // 
+            // showAsciiToolStripMenuItem
+            // 
+            this.showAsciiToolStripMenuItem.Name = "showAsciiToolStripMenuItem";
+            this.showAsciiToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.showAsciiToolStripMenuItem.Text = "Show ascii";
+            this.showAsciiToolStripMenuItem.Click += new System.EventHandler(this.showAsciiToolStripMenuItem_Click);
+            // 
+            // showHeadersToolStripMenuItem
+            // 
+            this.showHeadersToolStripMenuItem.Name = "showHeadersToolStripMenuItem";
+            this.showHeadersToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.showHeadersToolStripMenuItem.Text = "Show headers";
+            this.showHeadersToolStripMenuItem.Click += new System.EventHandler(this.showHeadersToolStripMenuItem_Click);
+            // 
+            // showOffsetsToolStripMenuItem
+            // 
+            this.showOffsetsToolStripMenuItem.Name = "showOffsetsToolStripMenuItem";
+            this.showOffsetsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.showOffsetsToolStripMenuItem.Text = "Show offsets";
+            this.showOffsetsToolStripMenuItem.Click += new System.EventHandler(this.showOffsetsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(206, 6);
+            // 
+            // backgroundColorToolStripMenuItem
+            // 
+            this.backgroundColorToolStripMenuItem.Name = "backgroundColorToolStripMenuItem";
+            this.backgroundColorToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.backgroundColorToolStripMenuItem.Text = "Background Color";
+            this.backgroundColorToolStripMenuItem.Click += new System.EventHandler(this.backgroundColorToolStripMenuItem_Click);
+            // 
+            // textColorToolStripMenuItem
+            // 
+            this.textColorToolStripMenuItem.Name = "textColorToolStripMenuItem";
+            this.textColorToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.textColorToolStripMenuItem.Text = "Data Color";
+            this.textColorToolStripMenuItem.Click += new System.EventHandler(this.textColorToolStripMenuItem_Click);
+            // 
+            // otherDataColorToolStripMenuItem
+            // 
+            this.otherDataColorToolStripMenuItem.Name = "otherDataColorToolStripMenuItem";
+            this.otherDataColorToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.otherDataColorToolStripMenuItem.Text = "Other Data Color";
+            this.otherDataColorToolStripMenuItem.Click += new System.EventHandler(this.otherDataColorToolStripMenuItem_Click);
+            // 
+            // modifiedColorToolStripMenuItem
+            // 
+            this.modifiedColorToolStripMenuItem.Name = "modifiedColorToolStripMenuItem";
+            this.modifiedColorToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.modifiedColorToolStripMenuItem.Text = "Modified Color";
+            this.modifiedColorToolStripMenuItem.Click += new System.EventHandler(this.modifiedColorToolStripMenuItem_Click);
+            // 
+            // selectionColorToolStripMenuItem
+            // 
+            this.selectionColorToolStripMenuItem.Name = "selectionColorToolStripMenuItem";
+            this.selectionColorToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.selectionColorToolStripMenuItem.Text = "Selection Color";
+            this.selectionColorToolStripMenuItem.Click += new System.EventHandler(this.selectionColorToolStripMenuItem_Click);
+            // 
+            // resetColorsToolStripMenuItem
+            // 
+            this.resetColorsToolStripMenuItem.Name = "resetColorsToolStripMenuItem";
+            this.resetColorsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.resetColorsToolStripMenuItem.Text = "Reset colors";
+            this.resetColorsToolStripMenuItem.Click += new System.EventHandler(this.resetColorsToolStripMenuItem_Click);
+            // 
+            // numExtraOffset
+            // 
+            this.numExtraOffset.Location = new System.Drawing.Point(6, 13);
+            this.numExtraOffset.Maximum = new decimal(new int[] {
+            100000,
             0,
             0,
             0});
-            this.numHexviewExtra.Name = "numHexviewExtra";
-            this.numHexviewExtra.Size = new System.Drawing.Size(37, 20);
-            this.numHexviewExtra.TabIndex = 2;
-            this.numHexviewExtra.Value = new decimal(new int[] {
-            4,
+            this.numExtraOffset.Minimum = new decimal(new int[] {
+            100000,
             0,
             0,
-            0});
-            this.numHexviewExtra.ValueChanged += new System.EventHandler(this.numHexviewExtra_ValueChanged);
+            -2147483648});
+            this.numExtraOffset.Name = "numExtraOffset";
+            this.numExtraOffset.Size = new System.Drawing.Size(83, 20);
+            this.numExtraOffset.TabIndex = 21;
             // 
-            // label2
+            // groupExtraOffset
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(2, 2);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Extrabytes:";
+            this.groupExtraOffset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupExtraOffset.Controls.Add(this.btnApplyExtraOffset);
+            this.groupExtraOffset.Controls.Add(this.numExtraOffset);
+            this.groupExtraOffset.Location = new System.Drawing.Point(716, 31);
+            this.groupExtraOffset.Name = "groupExtraOffset";
+            this.groupExtraOffset.Size = new System.Drawing.Size(134, 39);
+            this.groupExtraOffset.TabIndex = 22;
+            this.groupExtraOffset.TabStop = false;
+            this.groupExtraOffset.Text = "Extra offset";
             // 
-            // txtHexView
+            // btnApplyExtraOffset
             // 
-            this.txtHexView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtHexView.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtHexView.Location = new System.Drawing.Point(0, 26);
-            this.txtHexView.Name = "txtHexView";
-            this.txtHexView.Size = new System.Drawing.Size(239, 348);
-            this.txtHexView.TabIndex = 0;
-            this.txtHexView.Text = "";
+            this.btnApplyExtraOffset.ImageKey = "Apply.png";
+            this.btnApplyExtraOffset.ImageList = this.imageList1;
+            this.btnApplyExtraOffset.Location = new System.Drawing.Point(95, 8);
+            this.btnApplyExtraOffset.Name = "btnApplyExtraOffset";
+            this.btnApplyExtraOffset.Size = new System.Drawing.Size(34, 29);
+            this.btnApplyExtraOffset.TabIndex = 22;
+            this.btnApplyExtraOffset.UseVisualStyleBackColor = true;
+            this.btnApplyExtraOffset.Click += new System.EventHandler(this.btnApplyExtraOffset_Click);
             // 
-            // btnHexviewFont
+            // btnToggleHexview
             // 
-            this.btnHexviewFont.Location = new System.Drawing.Point(115, 0);
-            this.btnHexviewFont.Name = "btnHexviewFont";
-            this.btnHexviewFont.Size = new System.Drawing.Size(55, 20);
-            this.btnHexviewFont.TabIndex = 3;
-            this.btnHexviewFont.Text = "Font";
-            this.btnHexviewFont.UseVisualStyleBackColor = true;
-            this.btnHexviewFont.Click += new System.EventHandler(this.btnHexviewFont_Click);
+            this.btnToggleHexview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToggleHexview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnToggleHexview.ImageKey = "expand.png";
+            this.btnToggleHexview.ImageList = this.imageList1;
+            this.btnToggleHexview.Location = new System.Drawing.Point(855, 39);
+            this.btnToggleHexview.Name = "btnToggleHexview";
+            this.btnToggleHexview.Size = new System.Drawing.Size(34, 29);
+            this.btnToggleHexview.TabIndex = 23;
+            this.btnToggleHexview.UseVisualStyleBackColor = true;
+            this.btnToggleHexview.Click += new System.EventHandler(this.btnToggleHexview_Click);
             // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(895, 450);
+            this.Controls.Add(this.btnToggleHexview);
+            this.Controls.Add(this.groupExtraOffset);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.chkRawHex);
             this.Controls.Add(this.groupDifference);
@@ -844,8 +986,6 @@ namespace UniversalPatcher
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numDecimals);
             this.Controls.Add(this.groupSelectCompare);
-            this.Controls.Add(this.labelColumn);
-            this.Controls.Add(this.numColumn);
             this.Controls.Add(this.chkSwapXY);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.labelUnits);
@@ -861,7 +1001,6 @@ namespace UniversalPatcher
             this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numColumn)).EndInit();
             this.groupSelectCompare.ResumeLayout(false);
             this.groupSelectCompare.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).EndInit();
@@ -869,11 +1008,11 @@ namespace UniversalPatcher
             this.groupDifference.ResumeLayout(false);
             this.groupDifference.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numHexviewExtra)).EndInit();
+            this.contextMenuHexWindowSettings.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numExtraOffset)).EndInit();
+            this.groupExtraOffset.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -897,14 +1036,11 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem exportCSVToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem autoResizeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem swapXyToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkSwapXY;
         private System.Windows.Forms.ToolStripMenuItem showRawHEXValuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disableTooltipsToolStripMenuItem;
         private ToolStripMenuItem graphToolStripMenuItem;
         private ToolStripMenuItem showGraphicToolStripMenuItem;
-        private Label labelColumn;
-        public NumericUpDown numColumn;
         private ToolStripMenuItem compareToolStripMenuItem;
         private GroupBox groupSelectCompare;
         private RadioButton radioDifference;
@@ -948,9 +1084,29 @@ namespace UniversalPatcher
         private ToolStripMenuItem tableSettingsToolStripMenuItem;
         private ToolStripMenuItem tableValuesToolStripMenuItem;
         private ToolStripMenuItem offToolStripMenuItem;
-        private RichTextBox txtHexView;
-        private NumericUpDown numHexviewExtra;
-        private Label label2;
-        private Button btnHexviewFont;
+        private ContextMenuStrip contextMenuHexWindowSettings;
+        private ToolStripMenuItem fontToolStripMenuItem;
+        private ToolStripMenuItem columnsToolStripMenuItem;
+        private ToolStripMenuItem backgroundColorToolStripMenuItem;
+        private ToolStripMenuItem modifiedColorToolStripMenuItem;
+        private ToolStripMenuItem selectionColorToolStripMenuItem;
+        private ToolStripMenuItem textColorToolStripMenuItem;
+        private ToolStripMenuItem highlightBackgroundToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem showHeadersToolStripMenuItem;
+        private ToolStripMenuItem showOffsetsToolStripMenuItem;
+        private ToolStripMenuItem showAsciiToolStripMenuItem;
+        private ToolStripMenuItem resetColorsToolStripMenuItem;
+        private ToolStripMenuItem applyEditToolStripMenuItem;
+        private ToolStripMenuItem cancelEditToolStripMenuItem;
+        private ToolStripMenuItem otherDataColorToolStripMenuItem;
+        private NumericUpDown numExtraOffset;
+        private GroupBox groupExtraOffset;
+        private Button btnApplyExtraOffset;
+        private ToolStripMenuItem setExtraoffsetToPositionToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem scrollToTableToolStripMenuItem;
+        private ImageList imageList1;
+        private Button btnToggleHexview;
     }
 }

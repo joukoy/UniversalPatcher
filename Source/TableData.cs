@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 
 namespace UniversalPatcher
 {
+
     public class TableData
     {
         public TableData()
@@ -45,6 +46,7 @@ namespace UniversalPatcher
             ByteOrder = Byte_Order.PlatformOrder;
             ExtraOffset = "0";
             //Mapped = false;
+            LinkTables = new List<string>();
         }
 
         //public uint id { get; set; }
@@ -159,8 +161,8 @@ namespace UniversalPatcher
         //public bool Floating;
         public ushort Columns { get; set; }
         public ushort Rows { get; set; }
-        public ushort RowStride { get; set; }
-        public ushort ElementStride { get; set; }
+        public ushort MajorStride { get; set; }
+        public ushort MinorStride { get; set; }
         public Byte_Order ByteOrder { get; set; }
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
@@ -193,6 +195,10 @@ namespace UniversalPatcher
                 }
             }
         }
+        [XmlIgnoreAttribute]
+        [Browsable(false)]
+        [Bindable(false)]
+        public List<string> LinkTables;
         public void UpdateAddressByOS(string PcmOS)
         {
             if (!string.IsNullOrEmpty(OS) && OS.Contains(":") && (string.IsNullOrEmpty(OS_Address) || !OS_Address.Contains(":")))
@@ -250,7 +256,7 @@ namespace UniversalPatcher
             {
                 Category = cat;
             }
-            else
+            //else
             {
                 if (string.IsNullOrEmpty(ExtraCategories))
                 {
@@ -283,31 +289,42 @@ namespace UniversalPatcher
 
         public uint EndAddress()
         {
-            return (uint)(addrInt + Offset + extraoffset + Size());
+            return (uint)(addrInt + Offset + extraoffset + Size() - 1);
         }
         public uint EndAddressNoExtra()
         {
-            return (uint)(addrInt + Offset + Size());
+            return (uint)(addrInt + Offset + Size() - 1);
         }
 
         // Returns the per-element step in bytes (TunerPro major stride).
-        // Falls back to elemSize when ElementStride is not set.
-        public int EffectiveElementStride(int elemSize)
+        public int EffectiveElementStride()
         {
-            return ElementStride > 0 ? ElementStride : elemSize;
+            return MajorStride > ElementSize() ? MajorStride : ElementSize();
         }
 
-        // Returns the byte distance from row start to next row start (TunerPro minor stride).
-        // Pass the effective element stride, not the raw element size.
-        // Falls back to Columns * elemStride when RowStride is not set.
-        public int EffectiveRowStride(int elemStride)
+        //Extra bytes after every column (if columnmajor) or after every row (if rowmajor)
+        public int EffectiveMinorStride()
         {
-            return RowStride > 0 ? RowStride : Columns * elemStride;
+            if (MinorStride < EffectiveElementStride())
+            {
+                return 0;
+            }
+            else
+            {
+                return MinorStride - EffectiveElementStride();
+            }
         }
-
         public int Size()
         {
-            return Rows * Columns * ElementSize() - 1;
+            //return Rows * Columns * ElementSize();
+            if (RowMajor)
+            {
+                return (Rows * EffectiveElementStride() + MinorStride) * Columns;
+            }
+            else
+            {
+                return (Columns * EffectiveElementStride() + MinorStride) * Rows;
+            }
         }
         
         public int ElementSize()

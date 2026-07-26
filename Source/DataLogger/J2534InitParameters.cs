@@ -38,6 +38,7 @@ namespace UniversalPatcher
             Secondary = false;
             UsePrimaryChannel = false;
             SeparateProtoByChannel = false;
+            Baudrate = BaudRate.J1850VPW_10400;
         }
         public bool VPWLogger { get; set; }
         public bool Secondary { get; set; }

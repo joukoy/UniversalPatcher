@@ -15,15 +15,17 @@ using System.Windows.Forms.DataVisualization.Charting;
 using static UniversalPatcher.ExtensionMethods;
 using static Helpers;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace UniversalPatcher
 {
     public partial class frmTableEditor : Form
     {
-        public frmTableEditor()
+        public frmTableEditor(FrmTuner tuner)
         {
             InitializeComponent();
             DrawingControl.SetDoubleBuffered(dataGridView1);
+            this.tuner = tuner;
         }
 
 
@@ -77,11 +79,11 @@ namespace UniversalPatcher
             public string RowName { get; set; }
         }
 
-
         //List of loaded files (for compare) File 0 is always "master" or A
         public List<CompareFile> compareFiles = new List<CompareFile>();
+        private TableInfo[] compareTableInfos;
         //List of selected tables in tuner (current node in tree)
-        public List<TableData> tunerSelectedTables = new List<TableData>();
+        public List<TableData> tunerFilteredTables = new List<TableData>();
         int currentTunerTd = -1;
         public string tableName = "";
         Font dataFont;
@@ -101,7 +103,7 @@ namespace UniversalPatcher
         int decimals = 0;
 
         //frmTableVis ftv;
-        frmTableVisDouble ftvd;
+        frmTableVisDouble2 ftvd;
 
         private Dictionary<string, int> dgColumnHeaders;
         private Dictionary<string, int> dgRowHeaders;
@@ -109,62 +111,68 @@ namespace UniversalPatcher
         private ShowMode showMode = ShowMode.normal;
         private bool showRawHex = false;
         private bool enableDiff = false;
+        private bool editingHex = false;
         bool disableTooltips = false;
         ToolTip NaviTip = new ToolTip();
         ToolTip UpDownTip = new ToolTip();
-        FormWindowState LastWindowState;
         private static readonly Color[] gradientStops = {
-            Color.FromArgb( 71, 206,  71),  // lime green  (min)
-            Color.FromArgb(255, 255,  26),  // yellow
-            Color.FromArgb(255, 143,  26),  // orange
-            Color.FromArgb(215,  44,  44),  // deep red    (max)
+            System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin),  // lime green  (min)
+            System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid2),  // yellow
+            System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid2),  // orange
+            System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax),  // deep red    (max)
         };
-
-        private static Color GetGradientColor(double value, double minVal, double maxVal)
-        {
-            if (maxVal <= minVal) return Color.White;
-            double t = Math.Max(0.0, Math.Min(1.0, (value - minVal) / (maxVal - minVal)));
-            double scaled = t * (gradientStops.Length - 1);
-            int i = Math.Min((int)scaled, gradientStops.Length - 2);
-            double frac = scaled - i;
-            Color a = gradientStops[i], b = gradientStops[i + 1];
-            return Color.FromArgb(
-                (int)(a.R + frac * (b.R - a.R)),
-                (int)(a.G + frac * (b.G - a.G)),
-                (int)(a.B + frac * (b.B - a.B))
-            );
-        }
-
+        private Color HexDataColor = System.Drawing.ColorTranslator.FromHtml("#056017");
+        private static readonly Regex HexChar = new Regex(@"[0-9A-Fa-f]");
+        private HexPanel hexpanel;
+        private bool AutoResizeTmpDisabled = false;
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
             try
             {
+                if (AppSettings.WorkingMode < 2)
+                {
+                    groupExtraOffset.Visible = false;
+                }
                 dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
                 if (AppSettings.TableEditorFont == null)
                     dataFont = new Font("Consolas", 9);
                 else
                     dataFont = AppSettings.TableEditorFont.ToFont();
-                if (AppSettings.TunerShowHexWindow)
+                hexpanel = new HexPanel();
+                hexpanel.BytesPerRow = AppSettings.TunerHexWindowColumns;
+                hexpanel.ShowHeaders = AppSettings.TunerHexWindowHeaders;
+                hexpanel.ShowOffsets = AppSettings.TunerHexWindowOffsets;
+                showOffsetsToolStripMenuItem.Checked = AppSettings.TunerHexWindowOffsets;
+                showHeadersToolStripMenuItem.Checked = AppSettings.TunerHexWindowHeaders;
+                hexpanel.ShowAscii = false;
+                hexpanel.TextFont = AppSettings.TunerHexWindowFont.ToFont();
+                splitContainer1.Panel2.Controls.Add(hexpanel);
+                hexpanel.Dock = DockStyle.Fill;
+                hexpanel.SelectionChanged += Hexpanel_SelectionChanged;
+                hexpanel.ContextMenuStrip = contextMenuHexWindowSettings;
+                hexpanel.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowBackColor);
+                hexpanel.ColorHex = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowDataColor);
+                hexpanel.ColorModified = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowModifiedColor);
+                highlightBackgroundToolStripMenuItem.Checked = AppSettings.TunerHexWindowHighlightBackground;
+                hexpanel.HighlightBackground = AppSettings.TunerHexWindowHighlightBackground;
+                if (AppSettings.TunerHexWindowShow)
                 {
                     showHEXWindowToolStripMenuItem.Checked = true;
                     splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                    btnToggleHexview.ImageKey = "Collapse.png";
                 }
                 else
                 {
                     splitContainer1.Panel2Collapsed = true;
+                    btnToggleHexview.ImageKey = "Expand.png";
                 }
-                this.ResizeBegin += FrmTableEditor_ResizeBegin;
-                this.ResizeEnd += FrmTableEditor_ResizeEnd;
                 this.Resize += FrmTableEditor_Resize;
-                splitContainer1.SplitterMoved += SplitContainer1_SplitterMoved;
-                LastWindowState = this.WindowState;
+                splitContainer1.MouseUp += SplitContainer1_MouseUp;
                 numTuneValue.Tag = numTuneValue.Value;
                 autoResizeToolStripMenuItem.Checked = AppSettings.TableEditorAutoResize;
                 addressToolStripMenuItem.Checked = AppSettings.TableEditorHexShowAddress;
                 binaryToolStripMenuItem.Checked = AppSettings.TableEditorHexShowBinary;
                 decimalToolStripMenuItem.Checked = AppSettings.TableEditorHexShowDecimal;
-                numHexviewExtra.Value = AppSettings.TunerHexWindowExtraBytes;
-                txtHexView.Font = AppSettings.HexViewFont.ToFont();
 
                 if (AppSettings.TunerColorsMode == ConditionalColors.Off)
                 {
@@ -199,7 +207,6 @@ namespace UniversalPatcher
                 rememberCompareSelectionToolStripMenuItem.Checked = AppSettings.TableEditorRememberCompare;
                 if (AppSettings.TableEditorRememberCompare)
                 {
-                    swapXyToolStripMenuItem.Checked = tuner.SwapXy;
                     chkSwapXY.Checked = tuner.SwapXy;
                     showRawHEXValuesToolStripMenuItem.Checked = tuner.ShowAsHex;
                     chkRawHex.Checked = tuner.ShowAsHex;
@@ -248,6 +255,9 @@ namespace UniversalPatcher
                 dataGridView1.RowHeaderMouseClick += DataGridView1_RowHeaderMouseClick;
                 dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
                 dataGridView1.CellClick += DataGridView1_SelectionChanged;
+                dataGridView1.CellMouseMove += DataGridView1_CellMouseMove;
+                dataGridView1.CellMouseLeave += DataGridView1_CellMouseLeave;
+                dataGridView1.ColumnAdded += DataGridView1_ColumnAdded;
                 rewToolStripMenuItem.MouseDown += NavigatorMenuItem_MouseDown;
                 fwdToolStripMenuItem.MouseDown += NavigatorMenuItem_MouseDown;
                 if (this.Parent == null)
@@ -272,6 +282,16 @@ namespace UniversalPatcher
                     downToolStripMenuItem.Visible = false;
 
                 }
+                for (int c=2;c<=16;c+=2)
+                {
+                    ToolStripMenuItem mi = new ToolStripMenuItem(c.ToString());
+                    mi.Click += HexWindowColumnsMenu_Click;
+                    if (c == AppSettings.TunerHexWindowColumns)
+                    {
+                        mi.Checked = true;
+                    }
+                    columnsToolStripMenuItem.DropDownItems.Add(mi);
+                }
             }
             catch (Exception ex)
             {
@@ -284,82 +304,153 @@ namespace UniversalPatcher
             }
         }
 
-        /*
-        // Source - https://stackoverflow.com/a/62469520
-        // Posted by marsh-wiggle, modified by community. See post 'Timeline' for change history
-        // Retrieved 2026-04-18, License - CC BY-SA 4.0
-
-        protected override void WndProc(ref Message m)
+        private void DataGridView1_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
-            const int WM_SYSCOMMAND = 0x0112;
-            const int SC_MAXIMIZE = 0xF030;
-            const int SC_MINIMIZE = 0xF020;
-            const int SC_RESTORE = 0xF120;
+            e.Column.FillWeight = 1;
+        }
 
-            // Call beofre - don't use when "call after" is used
-            // dependig on the needs may be called before, after or even never (see below)
-            splitContainer1.SplitterMoved -= SplitContainer1_SplitterMoved;
-            base.WndProc(ref m);
-
-            if (m.Msg == WM_SYSCOMMAND)
+        private void DataGridView1_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            try
             {
-                /// <see cref="https://learn.microsoft.com/en-us/windows/win32/menurc/wm-syscommand"/>
-                /// Quote:
-                /// In WM_SYSCOMMAND messages, the four low - order bits of the wParam parameter 
-                /// are used internally by the system.To obtain the correct result when testing 
-                /// the value of wParam, an application must combine the value 0xFFF0 with the 
-                /// wParam value by using the bitwise AND operator.
-                int wParam = (m.WParam.ToInt32() & 0xFFF0);
+                if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null) return;
+                if (!AppSettings.TableCellMouseHover) return;
+                TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                ShowCellInfo(tCell, true);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
 
-                Debug.WriteLine($"Received param: { Convert.ToString(wParam, 16) } ");
-                if (wParam == SC_MAXIMIZE || wParam == SC_MINIMIZE || wParam == SC_RESTORE)
+        private void DataGridView1_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            try
+            {
+                if (e.RowIndex < 0 || e.RowIndex >= dataGridView1.Rows.Count || e.ColumnIndex < 0 || e.ColumnIndex >= dataGridView1.Columns.Count) return;
+                if (!AppSettings.TableCellMouseHover) return;
+                TableCell tCell = (TableCell)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag;
+                ShowCellInfo(tCell, true);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void Hexpanel_SelectionChanged(object sender, HexSelectionEventArgs e)
+        {
+            if (e.Start < 0) return; // nothing selected
+            Debug.WriteLine(e.ToString());
+            try
+            {
+                dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
+                dataGridView1.CellClick -= DataGridView1_SelectionChanged;
+                //Debug.WriteLine("First byte: " + selectedByte.ToString() + ", length: " + selectedByteCount.ToString());
+                dataGridView1.ClearSelection();
+                TableCell tCell = (TableCell)dataGridView1.Rows[0].Cells[0].Tag;
+                int[] selectedBytes = hexpanel.GetSelectedOffsets();
+                List<int> selectedAddresses = new List<int>();
+                int elementSize = tCell.td.ElementSize();
+                foreach(int selectedByte in selectedBytes)
                 {
-                    if (AppSettings.TunerShowHexWindow)
+                    selectedAddresses.Add((int)(tCell.td.StartAddress() + selectedByte - hexpanel.BracketStart));
+                }
+                for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                {
+                    for (int c = 0; c < dataGridView1.Columns.Count; c++)
                     {
-                        splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
-                        Debug.WriteLine("SplitterDistance: " + splitContainer1.SplitterDistance.ToString() + ", Hex window size: " + AppSettings.TunerHexWindowWidth);
+                        tCell = (TableCell)dataGridView1.Rows[r].Cells[c].Tag;
+                        if (tCell != null)
+                        {
+                            for (int a = (int)tCell.addr; a < (tCell.addr + elementSize); a++)
+                            {
+                                if (selectedAddresses.Contains(a))
+                                {
+                                    dataGridView1.Rows[r].Cells[c].Selected = true;
+                                }
+                            }
+                        }
                     }
                 }
             }
-
-            // Call after - don't use when "call before" is used
-            //base.WndProc(ref m);
-            splitContainer1.SplitterMoved += SplitContainer1_SplitterMoved;
-        }
-        */
-        private void FrmTableEditor_Resize(object sender, EventArgs e)
-        {
-            if (AppSettings.TunerShowHexWindow)
+            catch (Exception ex)
             {
-                splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
+            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
+            dataGridView1.CellClick += DataGridView1_SelectionChanged;
         }
 
-        private void FrmTableEditor_ResizeBegin(object sender, EventArgs e)
+        private void HexWindowColumnsMenu_Click(object sender, EventArgs e)
         {
-            splitContainer1.SplitterMoved -= SplitContainer1_SplitterMoved;
-        }
-        private void FrmTableEditor_ResizeEnd(object sender, EventArgs e)
-        {
-            if (AppSettings.TunerShowHexWindow)
+            foreach (ToolStripMenuItem m in columnsToolStripMenuItem.DropDownItems)
             {
-                splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                m.Checked = false;
             }
-            splitContainer1.SplitterMoved += SplitContainer1_SplitterMoved;
+            ToolStripMenuItem mi = (ToolStripMenuItem)sender;
+            mi.Checked = true;
+            AppSettings.TunerHexWindowColumns = int.Parse(mi.Text);
+            hexpanel.BytesPerRow = AppSettings.TunerHexWindowColumns;
+            AutoResize();
         }
 
-
-        private void SplitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        private void SplitContainer1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (this.WindowState == LastWindowState)
+            try
             {
                 AppSettings.TunerHexWindowWidth = splitContainer1.Width - splitContainer1.SplitterDistance;
                 Debug.WriteLine("Hex window size: " + AppSettings.TunerHexWindowWidth.ToString());
             }
-            else
+            catch (Exception ex)
             {
-                LastWindowState = this.WindowState;
-                Debug.WriteLine("Windostate changed to: " + LastWindowState.ToString());
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void FrmTableEditor_Resize(object sender, EventArgs e)
+        {
+            try
+            {
+                if (AppSettings.TunerHexWindowShow)
+                {
+                    int w = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                    if (w > 0)
+                    {
+                        splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
 
@@ -413,10 +504,9 @@ namespace UniversalPatcher
                 return;
             }
             bool tableModified = false;
-            uint addr = compareFiles[0].tableBufferOffset;
-            for (int a = 0; a < compareFiles[0].buf.Length; a++)
+            for (int a = 0; a < compareFiles[0].tableInfos.Count; a++)
             {
-                if (compareFiles[0].pcm.buf[addr + a] != compareFiles[0].buf[a])
+                if (compareFiles[0].tableInfos[a].isModified())
                 {
                     tableModified = true;
                     break;
@@ -479,8 +569,10 @@ namespace UniversalPatcher
         //Required for tree/docked mode tuner
         public void CleanUp()
         {
+            groupSelectCompare.Enabled = false;
             compareToolStripMenuItem.DropDownItems.Clear();
             compareFiles = new List<CompareFile>();
+
             chkSwapXY.Enabled = true;
             this.numDecimals.ValueChanged -= new System.EventHandler(this.numDecimals_ValueChanged);
             numDecimals.Value = -1;
@@ -493,24 +585,56 @@ namespace UniversalPatcher
             duplicateTableName = false;    // Multiple tables wit equal name, but some other setting may differ
             currentFile = 0;
             currentCmpFile = 1;
-            currentTunerTd = -1;
+            //currentTunerTd = -1;
             lastTable = "";
         }
 
-        private void ShowCellInfo()
+        private void ShowSelectionInHexWindow(int elementSize)
+        {
+
+            try
+            {
+                if (editingHex || AppSettings.TunerHexWindowShow == false )
+                {
+                    return;
+                }
+                List<int> selectedBytes = new List<int>();
+                for (int s = 0; s < dataGridView1.SelectedCells.Count; s++)
+                {
+                    TableCell tCell = (TableCell)dataGridView1.SelectedCells[s].Tag;
+                    if (tCell != null)
+                    {
+                        int byteNr = (int)(tCell.addr);
+                        for (int b = 0; b < tCell.td.ElementSize(); b++)
+                        {
+                            selectedBytes.Add(byteNr + b);
+                        }
+                    }
+                }
+                hexpanel.SetExternalSelection(selectedBytes.ToArray());
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void ShowCellInfo(TableCell tCell, bool InfoOnly)
         {
             try
             {
-                if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null)
-                    return;
-                TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
-                if (tCell.addr == (uint.MaxValue - 1))
+                if (tCell == null || tCell.addr == (uint.MaxValue - 1))
                 {
                     labelInfo.Text = "";
-                    return; //OBD2 Description
+                    return; //OBD2 Description, or empty
                 }
                 string thisTable = tCell.td.TableName;
-                if (thisTable != lastTable && tuner != null && this.Parent != null)
+                if (!InfoOnly && thisTable != lastTable && tuner != null && this.Parent != null)
                 {
                     lastTable = thisTable;
                     tuner.ShowTableDescription(tCell.tableInfo.compareFile.pcm, tCell.td);
@@ -528,12 +652,15 @@ namespace UniversalPatcher
                 double max = tCell.CalculatedValue(maxRaw);
 
                 string formatStr = "0";
-                for (int f = 1; f <= (int)numDecimals.Value; f++)
+                if (numDecimals.Value > 0)
                 {
-                    if (f == 1) formatStr += ".";
-                    formatStr += "0";
+                    formatStr = "0.";
+                    for (int f = 0; f < (int)numDecimals.Value; f++)
+                    {
+                        //if (f == 1) formatStr += ".";
+                        formatStr += "0";
+                    }
                 }
-
                 if (min > max)
                 {
                     //swap
@@ -544,7 +671,7 @@ namespace UniversalPatcher
 
                 if (min < tData.Min || max > tData.Max)
                 {
-                    minMaxTxt = "Soft limits: Min " + tData.Min.ToString(formatStr) + " Max " + tData.Max.ToString(formatStr) +
+                    minMaxTxt = " Soft limits: Min " + tData.Min.ToString(formatStr) + " Max " + tData.Max.ToString(formatStr) +
                         " Hard limits: Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
 
                 }
@@ -553,24 +680,27 @@ namespace UniversalPatcher
                     minMaxTxt = "Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
                 }
                 string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
-                labelInfo.Text = minMaxTxt + valTxt;
-                if (!tData.Math.StartsWith("DTC") )
+                labelInfo.Text = valTxt + minMaxTxt;
+                //if (!tData.Math.StartsWith("DTC"))
+                {
                     labelInfo.Text += " Address: " + tCell.addr.ToString("X");
+                }
                 if (tData.OutputType == OutDataType.Bitmap)
                 {
                     labelInfo.Text += " Bit: " + (tCell.Row % 8).ToString();
                 }
-                if (ftvd != null && ftvd.Visible)
+                if (!InfoOnly)
                 {
-                    this.Invoke((MethodInvoker)delegate ()
+                    if (ftvd != null && ftvd.Visible)
                     {
-                        ftvd.ChangeSelection(tCell.addr);
-                    });
+                        this.Invoke((MethodInvoker)delegate ()
+                        {
+                            ftvd.ChangeSelection(tCell.addr);
+                        });
+                    }
+
+                    ShowSelectionInHexWindow(tCell.td.ElementSize());
                 }
-                //ftv.displayData(tCell.addr, compareFiles[0].buf);
-                ShowTdinHexWindow(tCell);
-
-
             }
             catch (Exception ex)
             {
@@ -585,7 +715,10 @@ namespace UniversalPatcher
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            ShowCellInfo();
+            if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null)
+                return;
+            TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+            ShowCellInfo(tCell, false);
         }
 
         private void SetupColorRanges(TableInfo tInfo)
@@ -619,205 +752,29 @@ namespace UniversalPatcher
             try
             {
                 PcmFile pcm = cmpFile.pcm;
-                List<TableData> sizeList = new List<TableData>(cmpFile.filteredTables.OrderBy(o => o.addrInt).ToList());
-                TableData first = sizeList[0];
-                TableData last = sizeList[sizeList.Count - 1];
-                int elementSize = GetElementSize(last.DataType);
-                int singleTableSize = last.Rows * last.Columns * elementSize;
-                uint bufSize = (uint)(last.addrInt - first.addrInt   + singleTableSize);
-                cmpFile.buf = new byte[bufSize];
-                Array.Copy(pcm.buf, first.addrInt, cmpFile.buf, 0, bufSize);
-                cmpFile.tableBufferOffset = first.addrInt;
-
-
-                for (int tId = 0; tId < cmpFile.tableIds.Count; tId++)
+               
+                int totalRows = 0;
+                int totalCols = 0;
+                foreach(TableData tData in cmpFile.filteredTables)
                 {
-                    TableData tData = cmpFile.filteredTables[tId];
+                    totalRows += tData.Rows;
+                    totalCols += tData.Columns;
                     TableInfo tInfo = new TableInfo(pcm, tData);
                     tInfo.compareFile = cmpFile;
-
-                    int rowCount = tData.Rows;
-                    int colCount = tData.Columns;
-
-
-                    /*                int elementSize = getBits(tData.DataType) / 8;
-                                    int bufSize = (int)(tData.Rows * tData.Columns * elementSize + tData.Offset);
-                                    cmpFile.buf = new byte[bufSize];
-                                    Array.Copy(pcm.buf, tData.addrInt, cmpFile.buf, 0, bufSize);
-                                    cmpFile.tableBufferOffset = tData.addrInt;
-                    */
-                    if (tData.TableName.ToLower().EndsWith(".data"))
-                    {
-                        rowCount = GetRowCountFromTable(tData, pcm);
-                        colCount = GetColumnsFromTable(tData, pcm);
-                    }
-
-                    string[] cHeaders = tData.ColumnHeaders.Split(',');
-                    if (tData.ColumnHeaders.ToLower().StartsWith("table:") || tData.ColumnHeaders.ToLower().StartsWith("guid:"))
-                    {
-                        TableData headerTd = pcm.GetTdbyHeader(tData.ColumnHeaders);
-                        cHeaders = LoadHeaderFromTable(headerTd, tData.Columns, pcm);
-                    }
-
-                    string[] rHeaders = tData.RowHeaders.Split(',');
-                    if (tData.RowHeaders.ToLower().StartsWith("table:") || tData.RowHeaders.ToLower().StartsWith("guid:"))
-                    {
-                        TableData headerTd = pcm.GetTdbyHeader(tData.RowHeaders);
-                        rHeaders = LoadHeaderFromTable(headerTd, tData.Rows, pcm);
-                    }
-
-                    string RowPrefix = "";
-                    string colPrefix = "";
-                    if (!disableMultiTable)
-                    {
-                        string[] nParts = tData.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (nParts.Length > 1)
-                        {
-                            //"Real" multitable
-                            string TableName = nParts[0];
-                            if (nParts.Length == 2)
-                            {
-                                colPrefix = nParts[1].Trim();
-                            }
-                            if (nParts.Length == 3)
-                            {
-                                colPrefix = nParts[1].Trim();
-                                RowPrefix = nParts[2].Trim();
-                            }
-                            if (nParts.Length > 3)
-                            {
-                                int columnPos = (int)numColumn.Value;
-                                colPrefix = nParts[columnPos].Trim();
-                                for (int i = 1; i < 4; i++)
-                                    if (i != columnPos)
-                                        RowPrefix += "[" + nParts[i].Trim() + "]";
-                            }
-                            colPrefix += " ";
-                            RowPrefix += " ";
-                        }
-                    }
-
-                    List<string> colHeaders = new List<string>();
-                    List<string> rowHeaders = new List<string>();
-                    for (int c = 0; c < tData.Columns; c++)
-                    {
-                        string cHdr = "";
-                        if (cHeaders.Length >= c + 1 && cHeaders[c].Length > 0)
-                            cHdr = cHeaders[c];
-                        else
-                            cHdr = tData.Units + " " + c.ToString();
-                        if (duplicateTableName)
-                            cHdr += " [" + tData.guid.ToString().Substring(0,4) + "]";
-                        if (colHeaders.Contains(colPrefix + cHdr))
-                            colHeaders.Add(colPrefix + cHdr + c.ToString());
-                        else
-                            colHeaders.Add(colPrefix + cHdr);
-                    }
-                    for (int r = 0; r < tData.Rows; r++)
-                    {
-                        string rHdr = "";
-                        if (rHeaders.Length >= r + 1 && rHeaders[r].Length > 0)
-                            rHdr = rHeaders[r];
-                        else
-                            rHdr = "(" + r.ToString() + ")";
-                        if (rowHeaders.Contains(RowPrefix + rHdr))
-                            rowHeaders.Add(RowPrefix + rHdr + r.ToString());
-                        else
-                            rowHeaders.Add(RowPrefix + rHdr);
-                    }
-
-                    if (tData.OutputType == OutDataType.Bitmap)
-                    {
-                        tData.DataType = InDataType.UBYTE;
-                    }
-                    uint addr = tData.StartAddress();
-                    int step = GetElementSize(tData.DataType);
-                    int elemStride = tData.EffectiveElementStride(step);
-                    byte mask = 1;
-
-                    if (tData.RowMajor)
-                    {
-                        int rowStride = tData.EffectiveRowStride(elemStride);
-                        for (int r = 0; r < tData.Rows; r++)
-                        {
-                            uint rowStart = addr;
-                            for (int c = 0; c < tData.Columns; c++)
-                            {
-                                TableCell tc = new TableCell(tData,tInfo,addr,c,r,rowHeaders[r], colHeaders[c]);
-                                if (tData.OutputType == OutDataType.Bitmap)
-                                {
-
-                                    if ((pcm.buf[addr] & mask) == mask)
-                                        tc.lastValue = 1;
-                                    else
-                                        tc.lastValue = 0;
-                                    tc.lastRawValue = pcm.buf[addr];
-                                    if (mask == 0x80)
-                                    {
-                                        mask = 1;
-                                        addr++;
-                                    }
-                                    else
-                                    {
-                                        mask = (byte)(mask << 1);
-                                    }
-                                }
-                                else
-                                {
-                                    tc.lastValue = GetValue(pcm.buf, addr, tData, 0, pcm);
-                                    tc.lastRawValue = GetRawValue(pcm.buf, addr, tData, 0, pcm.platformConfig.MSB);
-                                    Array.Copy(pcm.buf,addr, tc.lastRawBytes, 0, step);
-                                    addr += (uint)elemStride;
-                                }
-                                tInfo.tableCells.Add(tc);
-                            }
-                            if (tData.OutputType != OutDataType.Bitmap)
-                                addr = rowStart + (uint)rowStride;
-                        }
-                    }
-                    else
-                    {
-                        // not rowmajor
-                        for (int c = 0; c < tData.Columns; c++)
-                        {
-                            for (int r = 0; r < tData.Rows; r++)
-                            {
-                                TableCell tc = new TableCell(tData, tInfo,addr,c,r, rowHeaders[r], colHeaders[c]);
-                                if (tData.OutputType == OutDataType.Bitmap)
-                                {
-
-                                    if ((pcm.buf[addr] & mask) == mask)
-                                        tc.lastValue = 1;
-                                    else
-                                        tc.lastValue = 0;
-                                    tc.lastRawValue = pcm.buf[addr];
-                                    if (mask == 0x80)
-                                    {
-                                        mask = 1;
-                                        addr++;
-                                    }
-                                    else
-                                    {
-                                        mask = (byte)(mask << 1);
-                                    }
-                                }
-                                else
-                                {
-                                    tc.lastValue = GetValue(pcm.buf, addr, tData, 0, pcm);
-                                    tc.lastRawValue = GetRawValue(pcm.buf, addr, tData, 0, pcm.platformConfig.MSB);
-                                    Array.Copy(pcm.buf, addr, tc.lastRawBytes, 0, step);
-                                    addr += (uint)elemStride;
-                                }
-                                tInfo.tableCells.Add(tc);
-                            }
-
-                        }
-
-                    }
+                    tInfo.ParseTable(disableMultiTable, duplicateTableName, true);
                     SetupColorRanges(tInfo);
                     cmpFile.tableInfos.Add(tInfo);
                 }
                 compareFiles.Add(cmpFile);
+                if (totalRows < totalCols && AppSettings.TunerXYSwapWideTables)
+                {
+                    SetXYswapped(true);
+                }
+                else
+                {
+                    SetXYswapped(false);
+                }
+
             }
             catch (Exception ex)
             {
@@ -853,8 +810,6 @@ namespace UniversalPatcher
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                //CleanUp();
-                TableInfo tInfo = new TableInfo(pcm, td);
                 CompareFile orgFile = new CompareFile(pcm);
                 orgFile.fileLetter = fileLetter;
                 radioOriginal.Text = fileLetter;
@@ -888,7 +843,6 @@ namespace UniversalPatcher
                         }
                     }
                     string[] separators = AppSettings.MultitableChars.Split(' ');
-                    //if (td.TableName.Contains("[") || td.TableName.Contains("."))
                     if (separators.Any(td.TableName.Contains))
                     {
                         //if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
@@ -899,7 +853,7 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
+                            MultiTableName mtn = new MultiTableName(td.TableName, 1);
                             tableName = mtn.TableName;
                             for (int t = 0; t < pcm.tableDatas.Count; t++)
                             {
@@ -913,8 +867,6 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                orgFile.tableIds = new List<Guid>();
-                orgFile.tableIds.Add(td.guid);
                 orgFile.filteredTables = new List<TableData>();
                 orgFile.filteredTables.Add(tableTds[0]);
                 ParseTableInfo(orgFile);
@@ -948,8 +900,6 @@ namespace UniversalPatcher
                 int cols = 0;
                 int rows = 0;
 
-                cmpFile.tableIds = new List<Guid>();
-
                 if (tableTds != null && tableTds.Count > 1)
                 {
                     //Manually selected multiple tables
@@ -977,7 +927,6 @@ namespace UniversalPatcher
                     for (int i = 0; i < tableTds.Count; i++)
                     {
                         cmpFile.filteredTables.Add(tableTds[i]);
-                        cmpFile.tableIds.Add(tableTds[i].guid);
 
                     }
                     rows = tableTds.Count;
@@ -998,7 +947,6 @@ namespace UniversalPatcher
                     for (int i = 0; i < cmpFile.filteredTables.Count; i++)
                     {
                         tableTds.Add(cmpFile.filteredTables[i]);
-                        cmpFile.tableIds.Add(tableTds[i].guid);
                         tableTds[i].extraoffset = ExtraOffset;
                     }
                 }
@@ -1046,7 +994,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public void AddCompareFiletoMenu(PcmFile cmpPCM, TableData cmpTd, string menuTxt, string selectedFile)
+        public void AddCompareFiletoMenu(PcmFile cmpPCM, string menuTxt, string selectedFile)
         {
             //If cmpTd is not null AND cmpPCM.OS == PCM.OS, cmpTd is used as is (Compare 2 tables)
             try
@@ -1069,7 +1017,15 @@ namespace UniversalPatcher
                     menuitem.Text = fLetter + ": " + cmpPCM.FileName;
                     cmpFile.fileLetter = fLetter;
                 }
-                PrepareCompareTable(cmpFile, cmpTd);
+                foreach(TableInfo tInfo in compareFiles[0].tableInfos)
+                {
+                    TableData cmpTd = FindTableData(tInfo.td, cmpPCM.tableDatas);
+                    if (cmpTd != null)
+                    {
+                        cmpFile.filteredTables.Add(cmpTd);
+                    }
+                }
+                ParseTableInfo(cmpFile);
                 menuitem.Click += compareSelection_Click;
                 if (cmpFile.fileLetter == selectedFile || (compareToolStripMenuItem.DropDownItems.Count == 0 && selectedFile == ""))
                 {
@@ -1079,7 +1035,7 @@ namespace UniversalPatcher
                     //currentCmpFile = compareToolStripMenuItem.DropDownItems.Count;
                 }
                 compareToolStripMenuItem.DropDownItems.Add(menuitem);
-                currentCmpFile = FindFile(cmpFile.fileLetter);
+                currentCmpFile = FindFile(selectedFile);
             }
             catch (Exception ex)
             {
@@ -1092,55 +1048,6 @@ namespace UniversalPatcher
             }
 
         }
-
-        public void PrepareCompareTable(CompareFile cmpFile, TableData cmpTd)
-        {
-            try
-            {
-                for (int i = 0; i < compareFiles[0].tableIds.Count; i++)
-                {
-
-                    TableData origTd = compareFiles[0].tableInfos[i].td;
-/*                    if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
-                    {
-                        if (cmpTd == null)
-                        {
-                            //If cmpTd is not null AND cmpPCM.OS == PCM.OS, cmpTd is used as is (Compare 2 tables)
-                            cmpFile.tableIds.Add(origTd.guid);
-                            cmpFile.filteredTables.Add(origTd);
-                            cmpFile.refTableIds.Add(compareFiles[0].tableIds[i], origTd);
-                        }
-                        else
-                        {
-                            cmpFile.tableIds.Add(cmpTd.guid);
-                            cmpFile.filteredTables.Add(cmpTd);
-                            cmpFile.refTableIds.Add(compareFiles[0].tableIds[i], cmpTd);
-                        }
-                    }
-                    else
-*/                    {
-                        cmpTd = FindTableData(compareFiles[0].tableInfos[i].td, cmpFile.pcm.tableDatas);
-                        if (cmpTd != null)
-                        {
-                            cmpFile.tableIds.Add(cmpTd.guid);
-                            cmpFile.filteredTables.Add(cmpTd);
-                            cmpFile.refTableIds.Add(compareFiles[0].tableIds[i], cmpTd);
-                        }
-                    }
-                }
-                ParseTableInfo(cmpFile);
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
-            }
-        }
-
         private void compareSelection_Click(object sender, EventArgs e)
         {
             foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
@@ -1189,24 +1096,15 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
-
-        private int FindCurrentRow(TableData mathTd,TableData cmpTd, int currentRow)
-        {
-            string[] headersA = mathTd.RowHeaders.Split(',');
-            string[] headersB = cmpTd.RowHeaders.Split(',');
-
-            for (int i=0; i< headersB.Length; i++)
-            {
-                if (headersB[i] == headersA[currentRow])
-                    return i;
-            }
-            return -1;
-        }
-
         public void SetCellValue(int row, int col, TableCell tCell, TableCell cmpTCell)
         {
             try
             {
+                if (row < 0 || row >= dataGridView1.Rows.Count || col < 0 || col >= dataGridView1.Columns.Count)
+                {
+                    Debug.WriteLine("Error, position " + row.ToString() + "," + col.ToString() + " out of grid");
+                    return;
+                }
                 TableData mathTd = tCell.td;
                 double curVal = Convert.ToDouble(tCell.lastValue);
                 double origVal = Convert.ToDouble(tCell.origValue);
@@ -1227,7 +1125,7 @@ namespace UniversalPatcher
                     string formatStr = "0";
                     if (showRawHEXValuesToolStripMenuItem.Checked)
                     {
-                        formatStr = "X" + (GetElementSize(mathTd.DataType) * 2).ToString();
+                        formatStr = "X" + (mathTd.ElementSize() * 2).ToString();
                         curTxt = curRawValue.ToString(formatStr);
                         if (cmpRawValue < UInt64.MaxValue)
                             cmpTxt = ((uint)cmpRawValue).ToString(formatStr);
@@ -1236,12 +1134,10 @@ namespace UniversalPatcher
                     {
                         if (mathTd.OutputType == OutDataType.Text)
                         {
-                            //curTxt = ReadTextBlock(tCell.tableInfo.compareFile.buf, (int)(tCell.addr - tCell.tableInfo.compareFile.tableBufferOffset), tCell.td.Columns);
                             curTxt = Convert.ToChar((ushort)curVal).ToString();
                             if (cmpVal > double.MinValue)
                             {
                                 cmpTxt = Convert.ToChar((ushort)cmpVal).ToString();
-                                //cmpTxt = ReadTextBlock(cmpTCell.tableInfo.compareFile.buf, (int)(cmpTCell.addr - cmpTCell.tableInfo.compareFile.tableBufferOffset), cmpTCell.td.Columns);
                             }
                         }
                         else if (mathTd.OutputType == OutDataType.Bitmap || (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0))
@@ -1293,26 +1189,29 @@ namespace UniversalPatcher
                 //Not side by side text mode, continue...
                 double showVal = curVal;
                 double showRawVal = curRawValue;
-                if (showMode == ShowMode.diff)
+                if (cmpTCell != null)
                 {
-                    if (radioMultiplier.Checked)
-                        showVal = curVal / cmpVal;
-                    else if (radioPercent.Checked)
-                        showVal = curVal / cmpVal * 100 - 100;
-                    else
-                        showVal = curVal - cmpVal;
-                    showRawVal = curRawValue - cmpRawValue;
-                }    
-                else if (showMode == ShowMode.diff2)
-                {
-                    if (radioMultiplier.Checked)
-                        showVal = cmpVal / curVal;
-                    else if (radioPercent.Checked)
-                        showVal = cmpVal / curVal * 100 - 100;
-                    else
-                        showVal = cmpVal - curVal;
-                    showRawVal = cmpRawValue - curRawValue;
+                    if (showMode == ShowMode.diff)
+                    {
+                        if (radioMultiplier.Checked)
+                            showVal = curVal / cmpVal;
+                        else if (radioPercent.Checked)
+                            showVal = curVal / cmpVal * 100 - 100;
+                        else
+                            showVal = curVal - cmpVal;
+                        showRawVal = curRawValue - cmpRawValue;
+                    }
+                    else if (showMode == ShowMode.diff2)
+                    {
+                        if (radioMultiplier.Checked)
+                            showVal = cmpVal / curVal;
+                        else if (radioPercent.Checked)
+                            showVal = cmpVal / curVal * 100 - 100;
+                        else
+                            showVal = cmpVal - curVal;
+                        showRawVal = cmpRawValue - curRawValue;
 
+                    }
                 }
 
                 if (showRawHex)
@@ -1440,8 +1339,6 @@ namespace UniversalPatcher
                             break;
                     }
                 }
-                //else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
-
                 dataGridView1.Rows[row].Cells[col].Tag = tCell;
                 SetCellColor(row, col,tCell);
                 if (!disableTooltips && mathTd.TableDescription != null)
@@ -1464,10 +1361,30 @@ namespace UniversalPatcher
 
         }
 
+        private static Color GetGradientColor(double value, double minVal, double maxVal)
+        {
+            if (maxVal <= minVal) return Color.White;
+            double t = Math.Max(0.0, Math.Min(1.0, (value - minVal) / (maxVal - minVal)));
+            double scaled = t * (gradientStops.Length - 1);
+            int i = Math.Min((int)scaled, gradientStops.Length - 2);
+            double frac = scaled - i;
+            Color a = gradientStops[i], b = gradientStops[i + 1];
+            return Color.FromArgb(
+                (int)(a.R + frac * (b.R - a.R)),
+                (int)(a.G + frac * (b.G - a.G)),
+                (int)(a.B + frac * (b.B - a.B))
+            );
+        }
+
         private void SetCellColor(int row, int col, TableCell tCell)
         {
             try
             {
+                if (row < 0 || row >= dataGridView1.Rows.Count || col < 0 || col >= dataGridView1.Columns.Count)
+                {
+                    Debug.WriteLine("Error, position " + row.ToString() + "," + col.ToString() + " out of grid");
+                    return;
+                }
                 TableData mathTd = tCell.td;
                 double curVal = Convert.ToDouble(tCell.lastValue);
                 double origVal = Convert.ToDouble(tCell.origValue);
@@ -1554,6 +1471,7 @@ namespace UniversalPatcher
                 if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
                     dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
                 {
+                    //Debug.WriteLine("Setting color for " + row.ToString() + ", " + col.ToString() +", Current value: " + curVal.ToString() +", origVal: " + origVal.ToString());
                     if (dataGridView1.Rows[row].Cells[col].ReadOnly)
                     {
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightGray;
@@ -1562,14 +1480,16 @@ namespace UniversalPatcher
                     {
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
                         if (!disableTooltips)
+                        {
                             dataGridView1.Rows[row].Cells[col].ToolTipText = "Original value: " + origVal.ToString();
+                        }
                     }
                     else
                     {
                         if (AppSettings.TunerColorsMode != ConditionalColors.Off)
                         {
                             dataGridView1.Rows[row].Cells[col].Style.BackColor =
-                                GetGradientColor(curVal, tCell.tableInfo.MinVal, tCell.tableInfo.MaxVal);
+                                                           GetGradientColor(curVal, tCell.tableInfo.MinVal, tCell.tableInfo.MaxVal);
                         }
                         if (!disableTooltips)
                             dataGridView1.Rows[row].Cells[col].ToolTipText = mathTd.TableDescription;
@@ -1603,10 +1523,9 @@ namespace UniversalPatcher
             }
         }
 
-
         private int GetColumnByHeader(string hdrTxt)
         {
-            int ind = int.MinValue;
+            int ind;
             hdrTxt = hdrTxt.Trim();
             if (dgColumnHeaders.ContainsKey(hdrTxt))
             {
@@ -1622,7 +1541,7 @@ namespace UniversalPatcher
 
         private int GetRowByHeader(string hdrTxt)
         {
-            int ind = int.MinValue;
+            int ind;
             hdrTxt = hdrTxt.Trim();
             if (dgRowHeaders.ContainsKey(hdrTxt))
             {
@@ -1699,7 +1618,13 @@ namespace UniversalPatcher
                     Debug.WriteLine("Table Editor: LoadTable: No files loaded, exit");
                     return;
                 }
+                if (groupSelectCompare.Enabled == false)
+                {
+                    //If only one file loaded, can't use any of compare modes
+                    radioOriginal.Checked = true;
+                }
                 this.dataGridView1.CellValueChanged -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
+                this.numExtraOffset.ValueChanged -= new System.EventHandler(this.numExtraOffset_ValueChanged);
                 dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
                 dataGridView1.ColumnHeadersHeightSizeMode =  DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
                 dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
@@ -1716,11 +1641,12 @@ namespace UniversalPatcher
                 showRawHex = showRawHEXValuesToolStripMenuItem.Checked;
                 disableTooltips = disableTooltipsToolStripMenuItem.Checked;
                 enableDiff = false;
+                numExtraOffset.Value = td.extraoffset;
 
                 if (td.Units.ToLower().Contains("bitmask"))
                     labelUnits.Text = "Units: Boolean";
                 else
-                    labelUnits.Text = "Units: " + GetUnitFromTableData(td);
+                    labelUnits.Text = "Units: " + (td.Units ?? "");
                 if (td.ValueType() == TableValueType.selection)
                     labelUnits.Text += ", Values: " + td.Values;
 
@@ -1735,18 +1661,14 @@ namespace UniversalPatcher
 
                 List<CompareFile> cmpFiles = new List<CompareFile>();
                 CompareFile diffFile = null;
-                if (radioDifference.Checked || radioDifference2.Checked)
+                if (radioDifference.Checked || radioDifference2.Checked || radioSideBySideText.Checked)
                 {
                     diffFile = compareFiles[currentCmpFile];
                 }
-                if (radioSideBySideText.Checked)
+                if (radioSideBySide.Checked && compareFiles.Count > currentCmpFile)
                 {
                     diffFile = compareFiles[currentCmpFile];
-                }
-                if (radioSideBySide.Checked)
-                {
-                    diffFile = compareFiles[currentCmpFile];
-                    cmpFiles.Add(diffFile);
+                    cmpFiles.Add(compareFiles[currentCmpFile]);
                 }
                 if (radioCompareAll.Checked)
                 {
@@ -1756,8 +1678,10 @@ namespace UniversalPatcher
                     }
                 }
 
+                compareTableInfos = new TableInfo[compareFiles.Count];
                 CompareFile sFile = compareFiles[currentFile];
-
+                ShowTdinHexWindow(sFile.tableInfos[0].tableCells[0]);
+                Debug.WriteLine("LoadTable, ShowTdInHewindow done, time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
                 for (int tbl = 0; tbl < sFile.tableInfos.Count; tbl++)
                 {
                     TableData ft = sFile.tableInfos[tbl].td;
@@ -1768,17 +1692,20 @@ namespace UniversalPatcher
                     SetupColorRanges(sFile.tableInfos[tbl]);
                     //Find maximum cell count from all comparefiles:
                     int cellCount = sFile.tableInfos[tbl].tableCells.Count;
-                    for (int d = 0; d < cmpFiles.Count; d++)
+                    for (int d = 1; d < compareFiles.Count; d++)
                     {
-                        TableData cmpTd = null;
-                        if (cmpFiles[d].refTableIds.ContainsKey(sFile.tableIds[tbl]))
-                            cmpTd = cmpFiles[d].refTableIds[sFile.tableIds[tbl]];
+                        TableData cmpTd = FindTableData(ft, compareFiles[d].pcm.tableDatas);
                         if (cmpTd != null)
                         {
-                            int pos = cmpFiles[d].tableIds.IndexOf(cmpTd.guid);
-                            cmpTinfo = cmpFiles[d].tableInfos[pos];
-                            if (cmpTinfo.tableCells.Count > cellCount)
-                                cellCount = cmpTinfo.tableCells.Count;
+                            cmpTinfo = compareFiles[d].tableInfos.Where(X=>X.td.TableName == cmpTd.TableName).FirstOrDefault();
+                            if (cmpTinfo != null)
+                            {
+                                compareTableInfos[d] = cmpTinfo;
+                                if (cmpTinfo.tableCells.Count > cellCount)
+                                {
+                                    cellCount = cmpTinfo.tableCells.Count;
+                                }
+                            }
                         }
                     }
 
@@ -1793,15 +1720,11 @@ namespace UniversalPatcher
                             TableCell tcell = sFile.tableInfos[tbl].tableCells[cell];
                             if (diffFile != null)   //RadioDifference checked
                             {
-                                TableData cmpId = null;
-                                if (diffFile.refTableIds.ContainsKey(sFile.tableIds[tbl]))
-                                    cmpId = diffFile.refTableIds[sFile.tableIds[tbl]];
-                                if (cmpId != null)
+
+                                if (compareTableInfos[currentCmpFile] != null)
                                 {
-                                    int pos = diffFile.tableIds.IndexOf(cmpId.guid);
-                                    cmpTinfo = diffFile.tableInfos[pos];
-                                    if (cmpTinfo.tableCells.Count > cell)
-                                        cmpCell = cmpTinfo.tableCells[cell];
+                                    cmpTinfo = compareTableInfos[currentCmpFile];
+                                    cmpCell = cmpTinfo.tableCells.Where(X => X.RowhHeader == tcell.RowhHeader && X.ColHeader == tcell.ColHeader).FirstOrDefault();
                                 }
                             }
                             string colHdr;
@@ -1884,6 +1807,7 @@ namespace UniversalPatcher
                             }
                             gridCol = GetColumnByHeader(colHdr);
                             gridRow = GetRowByHeader(rowHdr);
+                            //Debug.WriteLine("Grid col: " + gridCol.ToString() + ", Gridrow: " + gridRow.ToString());
                             AddCellByType(ft, gridRow, gridCol);
                             SetCellValue(gridRow, gridCol, tcell, cmpCell);
                         }
@@ -1900,12 +1824,14 @@ namespace UniversalPatcher
                                     continue;   
                             }
                             TableData compTd = null;
-                            if (cmpFiles[d].refTableIds.ContainsKey(sFile.tableIds[tbl]))
-                                compTd = cmpFiles[d].refTableIds[sFile.tableIds[tbl]];
+                            if (compareTableInfos[currentCmpFile] != null)
+                            {
+                                cmpTinfo = compareTableInfos[currentCmpFile];
+                                compTd = compareTableInfos[currentCmpFile].td;
+                            }
+
                             if (compTd != null)
                             {
-                                int pos = cmpFiles[d].tableIds.IndexOf(compTd.guid);
-                                cmpTinfo = cmpFiles[d].tableInfos[pos];
                                 if (cmpTinfo.tableCells.Count > cell)
                                 {
                                     cmpCell = cmpTinfo.tableCells[cell];
@@ -1970,6 +1896,7 @@ namespace UniversalPatcher
 
                     }
                 }
+                Debug.WriteLine("LoadTable, SetCellValue done for main all files, time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
 
 
                 if (td.TableName.StartsWith("DTC") && (td.OutputType != OutDataType.Bitmap || showRawHex == false))
@@ -1999,8 +1926,8 @@ namespace UniversalPatcher
                 }
                 SetDataGridLayout(td);
                 dataGridView1.EndEdit();
-                this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
-                ShowCellInfo();
+                //ShowCellInfo((TableCell)dataGridView1.Rows[0].Cells[0].Tag, false);
+                Debug.WriteLine("LoadTable time before resume layout: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
                 DrawingControl.ResumeDrawing(dataGridView1);
                 if (enableDiff)
                 {
@@ -2017,15 +1944,12 @@ namespace UniversalPatcher
                     });
                 }
 
-                if (this.Parent == null && currentTunerTd == -1) //Not docked
-                {                    
-                    for (int t = 0; t < tunerSelectedTables.Count; t++)
+                for (int t = 0; t < tunerFilteredTables.Count; t++)
+                {
+                    if (tunerFilteredTables[t].guid == td.guid)
                     {
-                        if (tunerSelectedTables[t].guid == td.guid)
-                        {
-                            currentTunerTd = t;
-                            break;
-                        }
+                        currentTunerTd = t;
+                        break;
                     }
                 }
             }
@@ -2038,8 +1962,9 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
+            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
+            this.numExtraOffset.ValueChanged += new System.EventHandler(this.numExtraOffset_ValueChanged);
         }
-
 
         private void ShowDtcDescriptions()
         {
@@ -2051,7 +1976,6 @@ namespace UniversalPatcher
                 if (OBD2Codes.Count == 0)
                     return;
                 chkSwapXY.Enabled = false;
-                swapXyToolStripMenuItem.Enabled = false;
                 searchCodeFromGoogleToolStripMenuItem.Visible = true;
                 DataGridViewColumn dgc = new DataGridViewColumn();
                 dgc.Name = "Description";
@@ -2081,79 +2005,6 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
-
-        public int GetColumnsFromTable(TableData tData, PcmFile pcm)
-        {
-            int cols = tData.Columns;
-            try
-            {
-
-                string yTbName = tData.TableName.Replace(".Data", ".xVal");
-                for (int y = 0; y < pcm.tableDatas.Count; y++)
-                {
-                    if (pcm.tableDatas[y].TableName == yTbName)
-                    {
-                        TableData ytb = pcm.tableDatas[y];
-                        uint xaddr = ytb.StartAddress();
-                        cols = (int)GetValue(pcm.buf, xaddr, ytb, 0, pcm);
-                        break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
-            }
-            return cols;
-        }
-
-        public int GetRowCountFromTable(TableData tData, PcmFile pcm)
-        {
-            int rows = tData.Rows;
-            try
-            {
-
-                for (int x = 0; x < pcm.tableDatas.Count; x++)
-                {
-                    if (pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".Size") || pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".yVal"))
-                    {
-                        uint addr = pcm.tableDatas[x].StartAddress();
-                        rows = (int)GetValue(pcm.buf, addr, pcm.tableDatas[x], 0, pcm);
-                        break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
-            }
-            return rows;
-        }
-
-        private string GetUnitFromTableData(TableData tData)
-        {
-            string retVal = "";
-
-            /*for (int i = 0; i < unitList.Count; i++)
-                if (tData.TableName.Contains(unitList[i].Abbreviation) && unitList[i].Unit != null && unitList[i].Unit.Length > 0)
-                    return unitList[i].Unit;*/
-
-            if (tData.Units != null)
-                retVal = tData.Units;
-            
-            return retVal;
-        }
-
 
         private void SetDataGridLayout(TableData td)
         {
@@ -2203,7 +2054,6 @@ namespace UniversalPatcher
                 if (autoResizeToolStripMenuItem.Checked) AutoResize();
                 stopwatch.Stop();
                 Debug.WriteLine("setDataGridLayout time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
-                //dataGridView1.RefreshEdit();
             }
             catch (Exception ex)
             {
@@ -2216,21 +2066,17 @@ namespace UniversalPatcher
             }
 
         }
-
-        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
-        {
-        }
-
-
         private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
+                if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
                 TableCell tc = new TableCell(); 
                 if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag != null)
                 {
                     tc = (TableCell)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag;
                 }
+                if (tc == null) return;
                 if ( dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value == null || String.IsNullOrWhiteSpace(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString()))
                 {
                     if (tc.lastValue != null)
@@ -2266,9 +2112,13 @@ namespace UniversalPatcher
                     }
                     else
                     {
+                        this.dataGridView1.CellValueChanged -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
                         if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != tc.lastValue)
+                        {
                             SaveValue(e.RowIndex, e.ColumnIndex, tc);
+                        }
                         SetCellColor(e.RowIndex, e.ColumnIndex, tc);
+                        this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
                     }
                 }
                 if (ftvd != null && ftvd.Visible)
@@ -2278,7 +2128,12 @@ namespace UniversalPatcher
                         ftvd.UpdateDisplay(true);
                     });
                 }
-                ShowTdinHexWindow(tc);
+                int location = (int)(tc.addr);
+                for (int i=0;i<tc.td.ElementSize();i++)
+                {
+                    hexpanel.SetByte(location +i, tc.lastRawBytes[i]);
+                }
+                hexpanel.AddHighlight(location, tc.td.ElementSize(), System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowModifiedColor), "Modified");
             }
             catch (Exception ex)
             {
@@ -2287,16 +2142,12 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, frmTableEditor line " + line + ": " + ex.Message, "Error");
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
-
-
-
-
-        public void SaveValue(int r, int c, TableCell tCell, double value = double.MinValue)
+        public void SaveValue(int r, int c, TableCell tCell)
         {            
-            double newValue = value;
+            double newValue = double.MinValue;
             TableData mathTd = tCell.td;
             try
             {
@@ -2305,48 +2156,50 @@ namespace UniversalPatcher
                     Debug.WriteLine("Can't save in extended HEX mode");
                     return;
                 }
-                if (value == double.MinValue)
+                if (dataGridView1.Rows[r].Cells[c].GetType() == typeof(DataGridViewComboBoxCell))
                 {
-                    if (dataGridView1.Rows[r].Cells[c].GetType() == typeof(DataGridViewComboBoxCell))
-                    {
-                        DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dataGridView1.Rows[r].Cells[c];
-                        newValue = Convert.ToDouble(cb.Value);
-                    }
-                    else if (showRawHEXValuesToolStripMenuItem.Checked)
+                    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dataGridView1.Rows[r].Cells[c];
+                    newValue = Convert.ToDouble(cb.Value);
+                }
+                else if (showRawHEXValuesToolStripMenuItem.Checked)
+                {
+                    newValue = (double)Convert.ToInt64(dataGridView1.Rows[r].Cells[c].Value.ToString(), 16);
+                }
+                else
+                {
+                    if (tCell.td.OutputType == OutDataType.Hex)
                     {
                         newValue = (double)Convert.ToInt64(dataGridView1.Rows[r].Cells[c].Value.ToString(), 16);
                     }
                     else
                     {
-                        if (tCell.td.OutputType == OutDataType.Hex)
-                            newValue = (double)Convert.ToInt64(dataGridView1.Rows[r].Cells[c].Value.ToString(), 16);
-                        else
-                            newValue = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
-                        if (radioDifference.Checked)
-                        {
-                            if (radioAbsolute.Checked)
-                                newValue = (double)tCell.lastValue - newValue;
-                            else if (radioMultiplier.Checked)
-                                newValue = (double)tCell.cmpValue * newValue;
-                            else if (radioPercent.Checked)
-                                newValue =  (100 + newValue) / 100 * (double)tCell.cmpValue;
-                        }
-                        else if (radioDifference2.Checked)
-                        {
-                            if (radioAbsolute.Checked)
-                                newValue =  newValue + (double)tCell.lastValue;
-                            else if (radioMultiplier.Checked)
-                                newValue = (double)tCell.cmpValue / newValue;
-                            else if(radioPercent.Checked)
-                                newValue = (100 - newValue) / 100 * (double)tCell.cmpValue;
-                        }
+                        newValue = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+                    }
+                    if (radioDifference.Checked)
+                    {
+                        if (radioAbsolute.Checked)
+                            newValue = (double)tCell.lastValue - newValue;
+                        else if (radioMultiplier.Checked)
+                            newValue = (double)tCell.cmpValue * newValue;
+                        else if (radioPercent.Checked)
+                            newValue =  (100 + newValue) / 100 * (double)tCell.cmpValue;
+                    }
+                    else if (radioDifference2.Checked)
+                    {
+                        if (radioAbsolute.Checked)
+                            newValue =  newValue + (double)tCell.lastValue;
+                        else if (radioMultiplier.Checked)
+                            newValue = (double)tCell.cmpValue / newValue;
+                        else if(radioPercent.Checked)
+                            newValue = (100 - newValue) / 100 * (double)tCell.cmpValue;
                     }
                 }
+                
                 if (newValue == double.MaxValue) return;
 
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                 {
-                    tCell.SaveValue(newValue, true);
+                    tCell.SetValue(newValue, true);
                 }
                 else
                 { 
@@ -2355,17 +2208,13 @@ namespace UniversalPatcher
                     {
                         if (newValue > mathTd.Max)
                             //  newValue = mathTd.Max;
-                            Logger("Waring: Value " + newValue.ToString() + " > Max value (" + mathTd.Max.ToString() + ")");
+                            Logger("Warning: Value " + newValue.ToString() + " > Max value (" + mathTd.Max.ToString() + ")");
                         if (newValue < mathTd.Min)
                             //newValue = mathTd.Min;
-                            Logger("Waring: Value " + newValue.ToString() + " < Max value (" + mathTd.Min.ToString() + ")");
+                            Logger("Warning: Value " + newValue.ToString() + " < Max value (" + mathTd.Min.ToString() + ")");
 
                     }
-                    //string mathStr = mathTd.SavingMath.ToLower();
-                    //newValue = parser.Parse(mathStr, true);
-                    tCell.SaveValue(newValue);
-                    //string mathStr = mathTd.Math.ToLower();
-                    //double calcValue = (double)tCell.lastValue;
+                    tCell.SetValue(newValue);
                     if (radioDifference.Checked || radioDifference2.Checked)
                         LoadTable();
                     else
@@ -2391,8 +2240,13 @@ namespace UniversalPatcher
             {
                 if (useDataGrid)
                     dataGridView1.EndEdit();
-                byte[] tableBuffer = compareFiles[0].buf;
-                Array.Copy(tableBuffer, 0, compareFiles[0].pcm.buf,compareFiles[0].tableBufferOffset, tableBuffer.Length);
+                for (int a = 0; a < compareFiles[0].tableInfos.Count; a++)
+                {
+                    if (compareFiles[0].tableInfos[a].isModified())
+                    {
+                        compareFiles[0].tableInfos[a].SaveCellsToPcmBuffer();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -2401,7 +2255,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, frmTableEditor line " + line + ": " + ex.Message, "Error");
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
 
         }
@@ -2424,7 +2278,7 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error");
+                LoggerBold(ex.Message);
             }
         }
 
@@ -2432,14 +2286,26 @@ namespace UniversalPatcher
         {
             try
             {
-                if (this.ParentForm != null)
+                if (this.ParentForm != null || AutoResizeTmpDisabled)
                 {
                     //No resize if docked to tuner panel
                     return;
                 }
                 int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) + dataGridView1.RowHeadersWidth;
-                if (dgv_width < 550) dgv_width = 550;
                 int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible) + dataGridView1.ColumnHeadersHeight;
+                if (AppSettings.TunerHexWindowShow)
+                {
+                    SizeF f = hexpanel.RequiredSizeForBrackets();
+                    dgv_height = Math.Max(dgv_height, (int)(f.Height + 30));
+                    int hexWidth = splitContainer1.Width - (int)(f.Width);
+                    if (hexWidth > 0)
+                    {
+                        splitContainer1.SplitterDistance = hexWidth;
+                        AppSettings.TunerHexWindowWidth = splitContainer1.Panel2.Width;
+                    }
+                    dgv_width += (int)f.Width + 10;
+                }
+                if (dgv_width < 550) dgv_width = 550;
                 Screen myScreen = Screen.FromPoint(MousePosition);
                 System.Drawing.Rectangle area = myScreen.WorkingArea;
                 if ((dgv_width + 150) > area.Width)
@@ -2450,6 +2316,10 @@ namespace UniversalPatcher
                     this.Height = area.Height - 50;
                 else
                     this.Height = dgv_height + 150; //175
+                if (AppSettings.TunerHexWindowShow)
+                {
+                    hexpanel.ScrollToBrackets();
+                }
             }
             catch (Exception ex)
             {
@@ -2460,24 +2330,6 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
-        }
-
-        private void chkAutoResize_CheckedChanged(object sender, EventArgs e)
-        {
-            AppSettings.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
-            AppSettings.Save();
-            if (autoResizeToolStripMenuItem.Checked)
-            {
-                AutoResize();
-            }
-        }
-
-        private void chkTranspose_CheckedChanged(object sender, EventArgs e)
-        {
-            LoadTable();
-            dataGridView1.AutoResizeColumns();
-            dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
-            if (autoResizeToolStripMenuItem.Checked) AutoResize();
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2679,21 +2531,16 @@ namespace UniversalPatcher
 
         }
 
-        private void swapXyToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SetXYswapped(bool swapped)
         {
-            if (swapXyToolStripMenuItem.Checked)
-                swapXyToolStripMenuItem.Checked = false;
-            else
-                swapXyToolStripMenuItem.Checked = true;
-            chkSwapXY.Checked = swapXyToolStripMenuItem.Checked;
-            tuner.SwapXy = swapXyToolStripMenuItem.Checked;
-            LoadTable();
+            this.chkSwapXY.CheckedChanged -= new System.EventHandler(this.chkSwapXY_CheckedChanged);
+            chkSwapXY.Checked = swapped;
+            tuner.SwapXy = swapped;
+            this.chkSwapXY.CheckedChanged += new System.EventHandler(this.chkSwapXY_CheckedChanged);
         }
 
         private void chkSwapXY_CheckedChanged(object sender, EventArgs e)
         {
-            swapXyToolStripMenuItem.Checked = chkSwapXY.Checked;
-            tuner.SwapXy = chkSwapXY.Checked;
             LoadTable();
         }
 
@@ -2735,7 +2582,6 @@ namespace UniversalPatcher
             }
         }
 
-
         private void showGraphicToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -2767,7 +2613,6 @@ namespace UniversalPatcher
                         point++;
                     }
                 }
-                //fg.chart1.ChartAreas[0].AxisY.Interval = 10;
             }
             catch (Exception ex)
             {
@@ -2784,13 +2629,6 @@ namespace UniversalPatcher
         {
             if (!e.Exception.Message.Contains("DataGridViewComboBoxCell"))
                 Debug.WriteLine(e.Exception);
-        }
-
-        private void numColumn_ValueChanged(object sender, EventArgs e)
-        {
-            TableData td = compareFiles[currentFile].tableInfos[0].td;
-            MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
-            //loadMultiTable(mtn.TableName,compareFiles[currentFile].pcm);
         }
 
         private void SelectFile(string letter)
@@ -2945,9 +2783,6 @@ namespace UniversalPatcher
             dataGridView1.EndEdit();
             SaveOBD2Codes(null);
         }
-        private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-        }
 
         private void searchCodeFromGoogleToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2958,11 +2793,6 @@ namespace UniversalPatcher
             System.Diagnostics.Process.Start(url);
 
         }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-        }
-
         private void copyFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -3068,23 +2898,34 @@ namespace UniversalPatcher
         {
             try
             {
-                dataGridView1.BeginEdit(true);
+                List<Point> SelectedCells = new List<Point>();
                 for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
                 {
-                    TableCell tCell = (TableCell)dataGridView1.SelectedCells[i].Tag;
+                    Point p = new Point(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex);
+                    SelectedCells.Add(p);
+                }
+                dataGridView1.BeginEdit(true);
+                //for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                foreach(Point p in SelectedCells)
+                {
+                    TableCell tCell = (TableCell)dataGridView1.Rows[p.X].Cells[p.Y].Tag;
                     TableData mathTd = tCell.td;
                     double rawVal = (double)tCell.lastRawValue;
                     double newRawVal = rawVal + step;
-                    Debug.WriteLine("Row: " + dataGridView1.SelectedCells[i].RowIndex + ", col: " + dataGridView1.SelectedCells[i].ColumnIndex + ", Old raw: " + tCell.lastRawValue + ", new raw: " + newRawVal);
-                    tCell.SaveValue(newRawVal, true);
+                    Debug.WriteLine("Row: " + p.X + ", col: " + p.Y + ", Old raw: " + tCell.lastRawValue + ", new raw: " + newRawVal);
+                    tCell.SetValue(newRawVal, true);
                     double val = Convert.ToDouble(tCell.lastValue);
 
-                    dataGridView1.SelectedCells[i].Value = val;
-                    SetCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
+                    dataGridView1.Rows[p.X].Cells[p.Y].Value = val;
+                    SetCellColor(p.X, p.Y, tCell);
                 }
                 this.dataGridView1.CellValueChanged -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
                 dataGridView1.EndEdit();
                 this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
+                foreach (Point p in SelectedCells)
+                {
+                    dataGridView1.Rows[p.X].Cells[p.Y].Selected = true;
+                }
             }
             catch (Exception ex)
             {
@@ -3099,7 +2940,7 @@ namespace UniversalPatcher
 
         private void numTuneValue_ValueChanged(object sender, EventArgs e)
         {
-            if (radioDifference.Checked || radioDifference2.Checked)
+            if (radioDifference.Checked || radioDifference2.Checked || dataGridView1.SelectedCells.Count == 0)
                 return;
             decimal oldVal = (decimal)numTuneValue.Tag;
             decimal newVal = numTuneValue.Value;
@@ -3183,14 +3024,12 @@ namespace UniversalPatcher
                 for (int id = 0; id < compareFiles[0].tableInfos.Count; id++)
                 {
                     TableInfo ti = compareFiles[0].tableInfos[id];
-                    TableData compTd = compareFiles[currentCmpFile].refTableIds[ti.td.guid];
-                    int ind = compareFiles[currentCmpFile].tableIds.IndexOf(compTd.guid);
-                    if (ind > -1)
+                    if (compareTableInfos[currentCmpFile] != null)
                     {
-                        TableInfo cmpTi = compareFiles[currentCmpFile].tableInfos[ind];
+                        TableInfo cmpTi = compareTableInfos[currentCmpFile];
                         for (int cell = 0; cell < ti.tableCells.Count; cell++)
                         {
-                            ti.tableCells[cell].SaveValue(Convert.ToDouble(cmpTi.tableCells[cell].lastValue));
+                            ti.tableCells[cell].SetValue(Convert.ToDouble(cmpTi.tableCells[cell].lastValue));
                         }
                     }
                 }
@@ -3323,19 +3162,12 @@ namespace UniversalPatcher
         {
             try
             {
-                //ftv = new frmTableVis(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td);
-                //ftv.Show();
                 uint addr = 0;
                 if (dataGridView1.SelectedCells.Count > 0)
                 {
                     TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
                     addr = tCell.addr;
                 }
-                //ftvd = new frmTableVisDouble();
-                //ftvd.Show();
-                //ftvd.ShowTables(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr);
-                //ftv.DisplayData(addr, compareFiles[currentFile].buf);
-                //Task.Factory.StartNew(() => StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr));
                 StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, null, null, addr);
             }
             catch (Exception ex)
@@ -3347,7 +3179,7 @@ namespace UniversalPatcher
         //[STAThread]
         private void StartVisualizer(PcmFile PCM1, TableData td1, PcmFile PCM2, TableData td2, uint SelectedByte)
         {
-            ftvd = new frmTableVisDouble(PCM1, PCM2,td1,td2);
+            ftvd = new frmTableVisDouble2(PCM1, PCM2,td1,td2);
             ftvd.ShowTables(SelectedByte);
             ftvd.Show();
             //Application.Run(ftvd);
@@ -3381,10 +3213,6 @@ namespace UniversalPatcher
                         TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
                         addr = tCell.addr;
                     }
-                    //ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr);
-                    //ftvd.Show();
-                    //ftvd.tuner = tuner;
-                    //Task.Factory.StartNew(() => StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr));
                     StartVisualizer(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr);
                 }
             }
@@ -3392,11 +3220,6 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
-
-        }
-
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
-        {
 
         }
 
@@ -3469,15 +3292,15 @@ namespace UniversalPatcher
             {
                 if (currentTunerTd > 0)
                 {
-                    upToolStripMenuItem.ToolTipText = "Previous: " + tunerSelectedTables[currentTunerTd - 1].TableName;
+                    upToolStripMenuItem.ToolTipText = "Previous: " + tunerFilteredTables[currentTunerTd - 1].TableName;
                 }
                 else
                 {
                     upToolStripMenuItem.ToolTipText = null;
                 }
-                if (currentTunerTd < tunerSelectedTables.Count - 1)
+                if (currentTunerTd < tunerFilteredTables.Count - 1)
                 {
-                    downToolStripMenuItem.ToolTipText = "Next: " + tunerSelectedTables[currentTunerTd + 1].TableName;
+                    downToolStripMenuItem.ToolTipText = "Next: " + tunerFilteredTables[currentTunerTd + 1].TableName;
                 }
                 else
                 {
@@ -3514,7 +3337,7 @@ namespace UniversalPatcher
                 }
                 if (down)
                 {
-                    if (currentTunerTd < tunerSelectedTables.Count - 1)
+                    if (currentTunerTd < tunerFilteredTables.Count - 1)
                         currentTunerTd++;
                     else
                         return;
@@ -3526,25 +3349,16 @@ namespace UniversalPatcher
                     else
                         return;
                 }
-                td = tunerSelectedTables[currentTunerTd];
-                List<CompareFile> cmpFiles = new List<CompareFile>();
-                cmpFiles.AddRange(compareFiles);
+                SaveOnExit();
+
+                td = tunerFilteredTables[currentTunerTd];
                 CleanUp();
-                PrepareTable(pcm, td, null, tuner.currentBin);
-                for (int c=0;c<cmpFiles.Count;c++)
+                ReloadTable(selectedFile, td);
+                if (this.Parent == null)
                 {
-                    if (c != currentFile)
-                    {
-                        CompareFile cmpFile = cmpFiles[c];
-                        TableData cmpTd = FindTableData(td, cmpFile.pcm.tableDatas);
-                        if (cmpTd != null)
-                        {
-                            AddCompareFiletoMenu(cmpFile.pcm, cmpTd, cmpFile.fileLetter +":" + cmpFile.pcm.FileName, cmpFile.fileLetter);
-                        }
-                    }
+                    tuner.SelectTableFromList(pcm,currentTunerTd);
                 }
-                LoadTable();
-                
+
                 SetUpDownToolTips();
                 if (down)
                     ShowDownToolTip();
@@ -3778,64 +3592,50 @@ namespace UniversalPatcher
 
         private void ShowTdinHexWindow(TableCell tCell)
         {
+            hexpanel.SelectionChanged -= Hexpanel_SelectionChanged;
+
             try
             {
-                if (showHEXWindowToolStripMenuItem.Checked)
+                if (showHEXWindowToolStripMenuItem.Checked && !editingHex)
                 {
-                    int row = 0;
-                    int col = 0;
                     int tableStart = (int)tCell.td.StartAddress();
                     int tableEnd = (int)tCell.td.EndAddress();
-                    int start = (int)(tCell.td.StartAddress() - numHexviewExtra.Value);
-                    int end = (int)(tCell.td.EndAddress() + numHexviewExtra.Value );
-                    if (start < 0)
+                    //int tableEnd = tableStart + tCell.tableInfo.compareFile.buf.Length - 1;
+                    hexpanel.SetData(tCell.tableInfo.compareFile.pcm.buf);
+                    if (tCell.tableInfo.compareFile.filteredTables.Count > 1)
                     {
-                        start = 0;
-                    }
-                    if (end > tCell.tableInfo.compareFile.pcm.buf.Length)
-                    {
-                        end = tCell.tableInfo.compareFile.pcm.buf.Length;
-                    }
-                    int elementsize = tCell.td.ElementSize();
-                    txtHexView.Clear();
-                    for (int a = start; a <= end; a++)
-                    {
-                        if (a < tableStart || a > tableEnd)
+                        int min = int.MaxValue;
+                        int max = int.MinValue;
+                        foreach (TableData td in tCell.tableInfo.compareFile.filteredTables)
                         {
-                            txtHexView.SelectionColor = Color.SteelBlue;
-                            txtHexView.AppendText(tCell.tableInfo.compareFile.pcm.buf[a].ToString("X2"));
-                            txtHexView.SelectionColor = Color.Black;
+                            if (td.StartAddress() < min) min = (int)td.StartAddress();
+                            if (td.EndAddress() > max) max = (int)td.StartAddress();
+                        }
+                        hexpanel.SetBrackets(min, max);
+                    }
+                    else
+                    {
+                        hexpanel.SetBrackets(tableStart, tableEnd);
+                    }
+                    for (int r=0;r<dataGridView1.Rows.Count;r++)
+                    {
+                        for (int c=0; c<dataGridView1.Columns.Count;c++)
+                        {
+                            tCell = (TableCell)dataGridView1.Rows[r].Cells[c].Tag;
+                            if (tCell.lastRawValue != tCell.origRawValue)
+                            {
+                                int location = (int)(tCell.addr - tCell.td.StartAddress() + hexpanel.BracketStart);
+                                hexpanel.AddHighlight(location, tCell.td.ElementSize(), System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowModifiedColor),"Modified");
+                            }
+                        }
+                    }
+                    hexpanel.AddHighlight(0, tableStart, Color.LightBlue);
+                    hexpanel.AddHighlight(tableEnd + 1, tCell.tableInfo.compareFile.pcm.buf.Length - tableEnd, Color.LightBlue);
+                    if (!AppSettings.TableEditorAutoResize)
+                    {
+                        hexpanel.ScrollToBrackets();
+                    }
 
-                        }
-                        else if (a >= tCell.addr && a < (tCell.addr + elementsize))
-                        {
-                            txtHexView.SelectionColor = Color.Red;
-                            txtHexView.AppendText(tCell.tableInfo.compareFile.buf[a - tCell.tableInfo.compareFile.tableBufferOffset].ToString("X2"));
-                            txtHexView.SelectionColor = Color.Black;
-                        }
-                        else
-                        {
-                            txtHexView.AppendText(tCell.tableInfo.compareFile.buf[a - tCell.tableInfo.compareFile.tableBufferOffset].ToString("X2"));
-                        }
-                        col++;
-                        if (col > (AppSettings.TunerHexWindowColumns - 1))
-                        {
-                            col = 0;
-                            row++;
-                        }
-                        if (a == (tableStart - 1))
-                        {
-                            txtHexView.AppendText("[");
-                        }
-                        else if (a == (tableEnd))
-                        {
-                            txtHexView.AppendText("]");
-                        }
-                        else
-                        {
-                            txtHexView.AppendText(" ");
-                        }
-                    }
                 }
             }
             catch (Exception ex)
@@ -3847,32 +3647,54 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
+            hexpanel.SelectionChanged += Hexpanel_SelectionChanged;
         }
 
+        private void ToggleHexview()
+        {
+            try
+            {
+                showHEXWindowToolStripMenuItem.Checked = !showHEXWindowToolStripMenuItem.Checked;
+                AppSettings.TunerHexWindowShow = showHEXWindowToolStripMenuItem.Checked;
+                if (showHEXWindowToolStripMenuItem.Checked)
+                {
+                    btnToggleHexview.ImageKey = "Collapse.png";
+                    splitContainer1.Panel2Collapsed = false;
+                    if (!AppSettings.TableEditorAutoResize)
+                    {
+                        int w = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
+                        if (w > 0)
+                        {
+                            splitContainer1.SplitterDistance = w;
+                        }
+                    }
+                    if (dataGridView1.Rows.Count > 0)
+                    {
+                        TableCell tCell = (TableCell)dataGridView1.Rows[0].Cells[0].Tag;
+                        ShowTdinHexWindow(tCell);
+                    }
+                }
+                else
+                {
+                    btnToggleHexview.ImageKey = "Expand.png";
+                    splitContainer1.Panel2Collapsed = true;
+                }
+                AutoResize();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+
+        }
         private void showHEXWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            showHEXWindowToolStripMenuItem.Checked = !showHEXWindowToolStripMenuItem.Checked;
-            AppSettings.TunerShowHexWindow = showHEXWindowToolStripMenuItem.Checked;
-            if (showHEXWindowToolStripMenuItem.Checked)
-            {
-                splitContainer1.Panel2Collapsed = false;
-                splitContainer1.SplitterDistance = splitContainer1.Width - AppSettings.TunerHexWindowWidth;
-                if (dataGridView1.SelectedCells.Count > 0)
-                {
-                    TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
-                    ShowTdinHexWindow(tCell);
-                }
-            }
-            else
-            {
-                splitContainer1.Panel2Collapsed = true;
-            }
-
-        }
-
-        private void conditionalFormattingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
+            ToggleHexview();
         }
 
         private void tableSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3905,30 +3727,287 @@ namespace UniversalPatcher
             AppSettings.Save();
         }
 
-        private void numHexviewExtra_ValueChanged(object sender, EventArgs e)
+        private void ApplyHexEdit()
         {
-            if (dataGridView1.SelectedCells.Count > 0)
+            try
             {
-                TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
-                ShowTdinHexWindow(tCell);
+                editingHex = true;
+                byte[] tableHexData = hexpanel.GetData();
+                int elementsize = 1;
+                for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                {
+                    for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                    {
+                        bool modified = false;
+                        TableCell tCell = (TableCell)dataGridView1.Rows[r].Cells[c].Tag;
+                        if (tCell != null)
+                        {
+                            elementsize = tCell.td.ElementSize();
+                            for (int b = 0; b < tCell.lastRawBytes.Length; b++)
+                            {
+                                if (tCell.lastRawBytes[b] != tableHexData[tCell.addr + b])
+                                {
+                                    modified = true;
+                                }
+                            }
+                            if (modified)
+                            {
+                                double newVal = GetRawValue(tableHexData, tCell.addr, tCell.td, 0, tCell.tableInfo.pcm.platformConfig.MSB);
+                                tCell.SetValue(newVal, true);
+                                SetCellValue(r, c, tCell, null);
+                            }
+                        }
+                    }
+                }
+                editingHex = false;
+                ShowSelectionInHexWindow(elementsize);
+                Debug.WriteLine("Hex apply done");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+            editingHex = false;
+
+        }
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FontDialog fdlg = new FontDialog();
+            fdlg.Font = hexpanel.TextFont;
+            if (fdlg.ShowDialog() == DialogResult.OK)
+            {
+                hexpanel.TextFont = fdlg.Font;
+                hexpanel.Invalidate();
+                Application.DoEvents();
+                AutoResize();
+                AppSettings.TunerHexWindowFont = SerializableFont.FromFont(fdlg.Font);
+                AppSettings.Save();
             }
         }
 
-        private void btnHexviewFont_Click(object sender, EventArgs e)
+        private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FontDialog fdlg = new FontDialog();
-            fdlg.Font = txtHexView.Font;
-            if (fdlg.ShowDialog() == DialogResult.OK)
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = hexpanel.BackColor;
+            if (clrDialog.ShowDialog() == DialogResult.OK)
             {
-                txtHexView.Font = fdlg.Font;
-                AppSettings.HexViewFont = SerializableFont.FromFont(fdlg.Font);
+                //save the colour that the user chose
+                hexpanel.BackColor = clrDialog.Color;
+                AppSettings.TunerHexWindowBackColor = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
                 AppSettings.Save();
-                if (dataGridView1.SelectedCells.Count > 0)
-                {
-                    TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
-                    ShowTdinHexWindow(tCell);
-                }
+                hexpanel.Invalidate();
             }
         }
+
+        private void modifiedColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            Color oldColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowModifiedColor);
+            clrDialog.Color = oldColor;
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                AppSettings.TunerHexWindowModifiedColor = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+                hexpanel.ReplaceHighlightColor(oldColor, clrDialog.Color);
+                AppSettings.Save();
+            }
+        }
+
+        private void selectionColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            Color oldColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowSelectionColor);
+            clrDialog.Color = oldColor;
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                hexpanel.ReplaceHighlightColor(oldColor, clrDialog.Color);
+                AppSettings.TunerHexWindowSelectionColor = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+                AppSettings.Save();
+            }
+        }
+
+        private void textColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = hexpanel.ColorHex;
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                hexpanel.ColorHex = clrDialog.Color;
+                AppSettings.TunerHexWindowDataColor = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+                AppSettings.Save();
+                hexpanel.Invalidate();
+            }
+        }
+
+        private void highlightBackgroundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            highlightBackgroundToolStripMenuItem.Checked = !highlightBackgroundToolStripMenuItem.Checked;
+            AppSettings.TunerHexWindowHighlightBackground = highlightBackgroundToolStripMenuItem.Checked;
+            hexpanel.HighlightBackground = highlightBackgroundToolStripMenuItem.Checked;
+            hexpanel.Invalidate();
+            AppSettings.Save();
+        }
+
+        private void showHeadersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showHeadersToolStripMenuItem.Checked = !showHeadersToolStripMenuItem.Checked;
+            AppSettings.TunerHexWindowHeaders = showHeadersToolStripMenuItem.Checked;
+            hexpanel.ShowHeaders = AppSettings.TunerHexWindowHeaders;
+            AppSettings.Save();
+        }
+
+        private void showOffsetsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showOffsetsToolStripMenuItem.Checked = !showOffsetsToolStripMenuItem.Checked;
+            AppSettings.TunerHexWindowOffsets = showOffsetsToolStripMenuItem.Checked;
+            hexpanel.ShowOffsets = AppSettings.TunerHexWindowOffsets;
+            AppSettings.Save();
+            AutoResize();
+        }
+
+        private void showAsciiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showAsciiToolStripMenuItem.Checked = !showAsciiToolStripMenuItem.Checked;
+            AppSettings.TunerHexWindowAscii = showAsciiToolStripMenuItem.Checked;
+            hexpanel.ShowAscii = showAsciiToolStripMenuItem.Checked;
+            AppSettings.Save();
+            AutoResize();
+        }
+
+        private void resetColorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hexpanel.ReplaceHighlightColor(System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowSelectionColor), Color.Red);
+            hexpanel.ReplaceHighlightColor(System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowModifiedColor), Color.Yellow);
+            AppSettings.TunerHexWindowBackColor = System.Drawing.ColorTranslator.ToHtml(Color.Black);
+            AppSettings.TunerHexWindowDataColor = "#056017";
+            AppSettings.TunerHexWindowSelectionColor = System.Drawing.ColorTranslator.ToHtml(Color.Red);
+            AppSettings.TunerHexWindowModifiedColor = System.Drawing.ColorTranslator.ToHtml(Color.Yellow);
+            AppSettings.Save();
+            hexpanel.BackColor = Color.Black;
+            hexpanel.ColorHex = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowDataColor);
+            hexpanel.ColorModified = Color.Yellow;
+        }
+
+        private void applyEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ApplyHexEdit();
+        }
+
+        private void cancelEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TableCell tCell = (TableCell)dataGridView1.Rows[0].Cells[0].Tag;
+            ShowTdinHexWindow(tCell);
+
+        }
+
+        private void otherDataColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            Color oldColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerHexWindowOtherDataColor);
+            clrDialog.Color = oldColor;
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                hexpanel.ReplaceHighlightColor(oldColor, clrDialog.Color);
+                //save the colour that the user chose
+                AppSettings.TunerHexWindowOtherDataColor = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+                AppSettings.Save();
+                hexpanel.Invalidate();
+            }
+
+        }
+
+        private void ReloadTable(CompareFile selectedFile, TableData td)
+        {
+            try
+            {
+                List<TableData> tds = new List<TableData>();
+                tds.Add(td);
+                PrepareTable(selectedFile.pcm, td, tds, tuner.currentBin);
+                for (int l = 0; l < tuner.LoadedPcms.Count; l++)
+                {
+                    PcmFile cmpPcm = tuner.LoadedPcms[l];
+                    if (cmpPcm.FileName != selectedFile.pcm.FileName)
+                    {
+                        TableData cmpTd = FindTableData(td, cmpPcm.tableDatas);
+                        if (cmpTd != null)
+                        {
+                            AddCompareFiletoMenu(cmpPcm, tuner.FileLetters[l] + ":" + cmpPcm.FileName, selectedCompareBin);
+                            groupSelectCompare.Enabled = true;
+                        }
+                    }
+                }
+                LoadTable();
+                hexpanel.ScrollToBrackets();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+
+        }
+        private void numExtraOffset_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                AutoResizeTmpDisabled = true;
+                SaveOnExit();
+                CompareFile selectedFile = compareFiles[currentFile];
+                TableData td = selectedFile.tableInfos[0].td.ShallowCopy(false);
+                //TableData td = selectedFile.tableInfos[0].td;
+                CleanUp();
+                td.extraoffset = (int)numExtraOffset.Value;
+                tuner.RefreshGrid();
+                ReloadTable(selectedFile, td);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+            AutoResizeTmpDisabled = false;
+        }
+
+        private void btnApplyExtraOffset_Click(object sender, EventArgs e)
+        {
+            CompareFile selectedFile = compareFiles[currentFile];
+            TableData td = selectedFile.tableInfos[0].td;
+            td.extraoffset = (int)numExtraOffset.Value;
+        }
+
+        private void setExtraoffsetToPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int pos = hexpanel.SelectedStart;
+            if (pos < 0) return;
+            CompareFile selectedFile = compareFiles[currentFile];
+            TableData td = selectedFile.tableInfos[0].td;
+            numExtraOffset.Value = pos - td.StartAddressNoExtra();
+        }
+
+        private void scrollToTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hexpanel.ScrollToBrackets();
+        }
+
+        private void btnToggleHexview_Click(object sender, EventArgs e)
+        {
+            ToggleHexview();
+        }
+
     }
 }

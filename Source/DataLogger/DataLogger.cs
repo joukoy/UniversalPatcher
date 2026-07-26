@@ -232,8 +232,6 @@ namespace UniversalPatcher
                     case Elm327Device.DeviceType:
                         device = new Elm327Device(port);
                         break;
-                    case UPX_OBD.DeviceType:
-                        device = new UPX_OBD(port);
                         break;
                     default:
                         device = null;

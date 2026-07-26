@@ -34,15 +34,15 @@ namespace UniversalPatcher
             TunerShowUnitsUndefined = true;
             TunerShowUnitsImperial = true;
             TunerShowUnitsMetric = true;
+            TunerPreviewTablesMax = 10;
             TunerColorsMode = Upatcher.ConditionalColors.Values;
-            TunerColorsMin1 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(180, 245, 180));
-            TunerColorsMin2 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(220, 250, 170));
-            TunerColorsMid = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 255, 160));
-            TunerColorsMax1 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 210, 160));
-            TunerColorsMax2 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 160, 160));
+            TunerColorsMin = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(71, 206, 71));// lime green  (min)
+            TunerColorsMid1 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 255, 26));// yellow
+            TunerColorsMid2 = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 143, 26));// orange
+            TunerColorsMax = System.Drawing.ColorTranslator.ToHtml(Color.FromArgb(255, 160, 160));// deep red    (max)
 
             SplashShowTime = 4;
-            FlashApp = "PCMHammer\\pcmhammer.exe";
+            FlashApp = "PCMHammer\\PcmHammer\\PcmHammer.exe";
             FLashParams = "--writecalibration $file";
             LoggerUseIntegrated = true;
             LoggerResponseMode = "SendOnce";
@@ -62,10 +62,21 @@ namespace UniversalPatcher
             LoggerDecimalSeparator = ".";
             LoggerLastFilterOS = "";
             TunerShowTableCount = true;
-            TunerShowHexWindow = false;
-            TunerHexWindowExtraBytes = 4;
-            TunerHexWindowColumns = 8;
-            TunerHexWindowWidth = 400;
+            TunerHexWindowShow = false;
+            TunerHexWindowColumns = 16;
+            TunerHexWindowWidth = 300;
+            TunerHexWindowHighlightBackground = false;
+            TunerHexWindowHeaders = false;
+            TunerHexWindowOffsets = false;
+            TunerHexWindowAscii = false;
+            TunerHexWindowBackColor = System.Drawing.ColorTranslator.ToHtml(Color.Black);
+            TunerHexWindowDataColor = "#056017";
+            TunerHexWindowOtherDataColor = System.Drawing.ColorTranslator.ToHtml(Color.LightBlue);
+            TunerHexWindowSelectionColor = System.Drawing.ColorTranslator.ToHtml(Color.Red);
+            TunerHexWindowModifiedColor = System.Drawing.ColorTranslator.ToHtml(Color.Yellow);
+            TunerTreeUseMouseHover = true;
+            TableCellMouseHover = false;
+            TunerXYSwapWideTables = false;
             //TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
             //ConfigModeColumnWidth = "180,114,32,63,86,71,48,81,100,50,78,49,69,60,54,43,58,64,43,78,100,100,243,100,100";
             //TunerModeColumnWidth = "192,110,100,100,100,100,100,100,100,72,100,100,100,100,60,46,100,100,100,100,100,100,197,100,100";
@@ -145,7 +156,7 @@ namespace UniversalPatcher
             PatcherLogFont = new SerializableFont(new Font("Consolas", 8));
             DebugFont = new SerializableFont(new Font("Consolas", 8));
             LoggerConsoleFont = new SerializableFont(new Font("Consolas", 8));
-            HexViewFont = new SerializableFont(new Font("Consolas", 8));
+            TunerHexWindowFont = new SerializableFont(new Font("Consolas", 8));
         }
         public enum StartupUtil
         {
@@ -241,6 +252,8 @@ namespace UniversalPatcher
         public bool TunerShowUnitsImperial { get; set; }
         public bool TunerShowUnitsMetric { get; set; }
         public bool TunerUseSessionTabs { get; set; }
+        public bool TunerXYSwapWideTables { get; set; }
+        public int TunerPreviewTablesMax { get; set; }
         public int SplashShowTime { get; set; }
         //public Font PatcherLogFont { get; set; }
         //public Font DebugFont { get; set; }
@@ -354,16 +367,26 @@ namespace UniversalPatcher
         public string TunerColumnsAdvanced { get; set; }
         public bool TunerAutoresizeColumns { get; set; }
         public bool TunerAutoSaveColumns { get; set; }
-        public bool TunerShowHexWindow { get; set; }
-        public int TunerHexWindowExtraBytes { get; set; }
+        public bool TunerHexWindowShow { get; set; }
+        public bool TunerHexWindowHeaders { get; set; }
+        public bool TunerHexWindowOffsets { get; set; }
+        public bool TunerHexWindowAscii { get; set; }
+        public bool TunerHexWindowHighlightBackground { get; set; }
         public int TunerHexWindowWidth { get; set; }
         public int TunerHexWindowColumns { get; set; }
+        public string TunerHexWindowBackColor { get; set; }
+        public string TunerHexWindowDataColor { get; set; }
+        public string TunerHexWindowOtherDataColor { get; set; }
+        public string TunerHexWindowSelectionColor { get; set; }
+        public string TunerHexWindowModifiedColor { get; set; }
+        public bool TunerEnableExtraOffsetButtons { get; set; }
+        public bool TunerTreeUseMouseHover { get; set; }
+        public bool TableCellMouseHover { get; set; }
         public Upatcher.ConditionalColors TunerColorsMode { get; set; }
-        public string TunerColorsMin1 { get; set; }
-        public string TunerColorsMin2 { get; set; }
-        public string TunerColorsMid { get; set; }
-        public string TunerColorsMax1 { get; set; }
-        public string TunerColorsMax2 { get; set; }
+        public string TunerColorsMin { get; set; }
+        public string TunerColorsMid1 { get; set; }
+        public string TunerColorsMid2 { get; set; }
+        public string TunerColorsMax { get; set; }
         public Size DashboardWindowSize { get; set; }
         public FormWindowState DashboardWindowState { get; set; }
         public Point DashboardWindowLocation { get; set; }
@@ -403,6 +426,8 @@ namespace UniversalPatcher
         public bool WBSkipLeadingZero { get; set; }
         public int UpxLastBaudrate { get; set; }
         public bool IsoTpDebug { get; set; }
+
+        public string TunerTheme { get; set; }
         //public int TimeoutLoggingWrite { get; set; }
         //public int TimeoutJLoggingWrite { get; set; }
         //public int TimeoutJconsoleWrite { get; set; }
@@ -413,7 +438,7 @@ namespace UniversalPatcher
         public SerializableFont PatcherLogFont { get; set; }
         public SerializableFont DebugFont { get; set; }
         public SerializableFont LoggerConsoleFont { get; set; }
-        public SerializableFont HexViewFont { get; set; }
+        public SerializableFont TunerHexWindowFont { get; set; }
 
         public void Save()
         {

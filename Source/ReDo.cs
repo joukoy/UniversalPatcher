@@ -30,7 +30,8 @@ namespace UniversalPatcher
         {
             Add,
             Edit,
-            Delete
+            Delete,
+            Restore
         }
         public string Time { get; set; }
         public string Collection { get; set; }

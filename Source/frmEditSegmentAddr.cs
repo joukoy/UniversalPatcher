@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -44,6 +45,25 @@ namespace UniversalPatcher
                 radioStartRead.Checked = true;
             else
                 radioStartAbsolute.Checked = true;
+
+
+            if (OldAddr.Contains("["))
+            {
+                int pos1 = OldAddr.IndexOf("[");
+                int pos2 = OldAddr.IndexOf("]", pos1);
+                if (pos2 < -1) pos2 = OldAddr.Length + 1;
+                string extras = OldAddr.Substring(pos1 + 1, pos2 - pos1 - 1);
+                string[] eParts = extras.Split(new char[] { '*', '+' }, StringSplitOptions.RemoveEmptyEntries);
+                if (eParts.Length == 4)
+                {
+                    if (HexToInt(eParts[0], out int a)) numMultiplyStart.Value = a;
+                    if (HexToInt(eParts[1], out a)) txtPlusStart.Text = a.ToString("X");
+                    if (HexToInt(eParts[2], out a)) numMultiplyEnd.Value = a;
+                    if (HexToInt(eParts[3], out a)) txtPlusEnd.Text = a.ToString("X");
+                }
+                OldAddr = OldAddr.Substring(0, pos1);
+            }
+
             string[] Parts = OldAddr.Split('-');
             if (Parts[0].Contains("*"))
             {
@@ -128,7 +148,10 @@ namespace UniversalPatcher
                 BlockText += "@";
             }
             BlockText += txtStart.Text;
-            BlockText += ":" + numBytes.Value.ToString();
+            if (numBytes.Value != 4)
+            {
+                BlockText += ":" + numBytes.Value.ToString();
+            }
             if (numReadPairs.Value > 1)
             {
                 BlockText += "*" + numReadPairs.Value.ToString();
@@ -171,6 +194,12 @@ namespace UniversalPatcher
                 if (i > 0)
                     Result += ",";
                 Result += Blocks[i];
+            }
+            if (string.IsNullOrEmpty(txtPlusStart.Text)) txtPlusStart.Text = "0";
+            if (string.IsNullOrEmpty(txtPlusEnd.Text)) txtPlusEnd.Text = "0";
+            if (numMultiplyStart.Value > 1 || numMultiplyEnd.Value > 1 || txtPlusStart.Text != "0" || txtPlusEnd.Text != "0")
+            {
+                Result += "[*" + ((int)numMultiplyStart.Value).ToString("X") + "+" + txtPlusStart.Text + "*" + ((int)numMultiplyEnd.Value).ToString("X") + "+" + txtPlusEnd.Text + "]";
             }
             this.DialogResult = DialogResult.OK;
             this.Close();
@@ -270,6 +299,11 @@ namespace UniversalPatcher
         private void btnEndSeek_Click(object sender, EventArgs e)
         {
             EditSegmentSeek(txtEnd);
+        }
+
+        private void frmEditSegmentAddr_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -41,8 +41,9 @@ namespace UniversalPatcher
             this.dataGridView1.AllowDrop = true;
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(2, 3);
             this.dataGridView1.MultiSelect = false;
@@ -52,6 +53,7 @@ namespace UniversalPatcher
             // 
             // btnApply
             // 
+            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnApply.Location = new System.Drawing.Point(274, 401);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(85, 37);
@@ -62,6 +64,7 @@ namespace UniversalPatcher
             // 
             // chkSelectAll
             // 
+            this.chkSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSelectAll.AutoSize = true;
             this.chkSelectAll.Location = new System.Drawing.Point(280, 13);
             this.chkSelectAll.Name = "chkSelectAll";
@@ -73,6 +76,7 @@ namespace UniversalPatcher
             // 
             // btnSaveAs
             // 
+            this.btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveAs.Location = new System.Drawing.Point(274, 36);
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(85, 37);

@@ -27,5 +27,10 @@ namespace UniversalPatcher
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
+
+        private void frmExtraOffset_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

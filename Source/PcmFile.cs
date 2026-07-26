@@ -108,6 +108,7 @@ namespace UniversalPatcher
         public List<DtcCode> dtcCodes;
         public List<DtcCode> dtcCodes2;
         public Dictionary<byte, string> dtcValues;
+        public Guid LastListmodeTable;
 /*        public List<string> SelectedNodeCategory;
         public List<string> SelectedNodeDimension;
         public List<string> SelectedNodeMulti;
@@ -145,6 +146,7 @@ namespace UniversalPatcher
             }
         }
         public List<TableData> tableDatas;
+        public List<TableData> tableDataTrashBin;
         public bool dtcCombined = false;
         //public TableData selectedTable; //Required for Tuner/Compare
         //public int tableDataIndex; //Tuner tabledatalist id
@@ -301,6 +303,7 @@ namespace UniversalPatcher
             //dtcCodes = new List<DtcCode>();
             //dtcCodes2 = new List<DtcCode>();
             tableDatas = new List<TableData>();
+            tableDataTrashBin = new List<TableData>();
             foundTables = new List<FoundTable>();
             foundSegments = null;
             //tableCategories = new List<string>();
@@ -1853,8 +1856,12 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Segment address line: " + Line);
+                int MultiplyStart = 1;
+                int MultiplyEnd = 1;
+                int PlusStart = 0;
+                int PlusEnd = 0;
 
-                if (Line == null || Line == "")
+                if (string.IsNullOrEmpty(Line))
                 {
                     //It is ok to have empty address (for CS, not for segment)
                     Block B = new Block();
@@ -1862,6 +1869,24 @@ namespace UniversalPatcher
                     B.Start = 0;
                     Blocks.Add(B);
                     return true;
+                }
+
+                if (Line.Contains("["))
+                {
+                    int pos1 = Line.IndexOf("[");
+                    int pos2 = Line.IndexOf("]", pos1);
+                    if (pos2 < -1) pos2 = Line.Length + 1;
+                    string extras = Line.Substring(pos1 + 1, pos2 - pos1 -1);
+                    string[] eParts = extras.Split(new char[] { '*','+' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (eParts.Length == 4)
+                    {
+                        int a;
+                        if (HexToInt(eParts[0], out a)) MultiplyStart = a;
+                        if (HexToInt(eParts[1], out a)) PlusStart = a;
+                        if (HexToInt(eParts[2], out a)) MultiplyEnd = a;
+                        if (HexToInt(eParts[3], out a)) PlusEnd = a;
+                    }
+                    Line = Line.Substring(0, pos1);
                 }
                 string[] Parts = Line.Split(',');
                 int i = 0;
@@ -1874,14 +1899,15 @@ namespace UniversalPatcher
                     int EndOffset = 0;
                     bool isWord = false;
                     ushort Multiple = 1;
-
                     bool useLength = false;
+
+                    
+
                     if (StartEnd.Length > 1 && StartEnd[1].StartsWith("L"))
                     {
                         useLength = true;
                         StartEnd[1] = StartEnd[1].Replace("L", "");
                     }
-
                     if (StartEnd[0].ToLower().StartsWith("seek:"))
                     {
                         B.Start = SeekAddress(StartEnd[0]);
@@ -1890,15 +1916,6 @@ namespace UniversalPatcher
                     {
                         B.End = SeekAddress(StartEnd[1]);
                     }
-/*                    if (Part.Contains("seek:"))
-                    {
-                        if (B.Start < uint.MaxValue && B.End < uint.MaxValue)
-                        {
-                            Blocks.Add(B);
-                           
-                        }
-                    }
-*/
                     if (StartEnd[0].Contains(">"))
                     {
                         string[] SO = StartEnd[0].Split('>');
@@ -1917,8 +1934,6 @@ namespace UniversalPatcher
                             throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
                         Offset = (int)(-1 * x);
                     }
-
-
                     if (StartEnd[0].Contains("*"))
                     {
                         string[] SM = StartEnd[0].Split('*');
@@ -1972,6 +1987,8 @@ namespace UniversalPatcher
                                 // Have multiple start-end pairs
                                 B.Start += (uint)Offset;
                                 B.End += (uint)Offset;
+                                B.Start = (uint)(B.Start * MultiplyStart + PlusStart);
+                                B.End = (uint)(B.End * MultiplyEnd + PlusEnd);
                                 Blocks.Add(B);
                             }
                         }
@@ -2027,6 +2044,8 @@ namespace UniversalPatcher
                         {
                             B.End = B.Start -1 + B.End;
                         }
+                        B.Start = (uint)(B.Start * MultiplyStart + PlusStart);
+                        B.End = (uint)(B.End * MultiplyEnd + PlusEnd);
                         Blocks.Add(B);
                     }
                     i++;
@@ -2236,6 +2255,18 @@ namespace UniversalPatcher
                 Debug.WriteLine("Error, PcmFile line " + errline + ": " + ex.Message);
             }
             return headerTd;
+        }
+
+        public int GetTableConfigPosition(TableData td)
+        {
+            for (int p=0;p<tableDatas.Count;p++)
+            {
+                if (td.guid == tableDatas[p].guid)
+                {
+                    return p;
+                }
+            }
+            return -1;
         }
 
         public TableData GetConversiotableByMath(string mathStr)

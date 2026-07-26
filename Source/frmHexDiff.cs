@@ -337,15 +337,14 @@ namespace UniversalPatcher
                 {
                     TableData td = ((TableDiff)dataGridView1.Rows[e.RowIndex].DataBoundItem).td;
                     TableData td2 = ((TableDiff)dataGridView1.Rows[e.RowIndex].DataBoundItem).td2;
-                    frmTableEditor frmT = new frmTableEditor();
+                    frmTableEditor frmT = new frmTableEditor(tuner);
                     List<TableData> tableIds = new List<TableData>();
                     tableIds.Add(td);
                     //tableIds.Add(td2);
                     frmT.PrepareTable(pcm1, td, tableIds, "A");
-                    frmT.tuner = tuner;
-                    frmT.AddCompareFiletoMenu(pcm2, null, "B:" + pcm2.FileName,"B");
+                    frmT.AddCompareFiletoMenu(pcm2,  "B:" + pcm2.FileName,"B");
                     //frmT.AddCompareFiletoMenu(pcm2, td2, "B:" + pcm2.FileName, "B");
-                    frmT.tunerSelectedTables = tableIds;
+                    frmT.tunerFilteredTables = tableIds;
                     frmT.Show();
                     frmT.LoadTable();
                     frmT.radioSideBySide.Checked = true;
@@ -529,24 +528,19 @@ namespace UniversalPatcher
                     xpatch.XmlFile = pcm1.configFile;
                     xpatch.Segment = pcm1.GetSegmentName(pTd.addrInt);
                     xpatch.Description = Description;
-                    frmTableEditor frmTE = new frmTableEditor();
-                    frmTE.PrepareTable(pcm1, pTd, null, "A");
-                    frmTE.LoadTable();
-                    uint step = (uint)GetElementSize(pTd.DataType);
-                    uint elemStride = (uint)pTd.EffectiveElementStride((int)step);
+                    uint step = (uint)pTd.EffectiveElementStride();
                     uint addr = pTd.StartAddress();
                     if (pTd.RowMajor)
                     {
-                        int rowStride = pTd.EffectiveRowStride((int)elemStride);
                         for (int r = 0; r < pTd.Rows; r++)
                         {
                             uint rowStart = addr;
                             for (int c = 0; c < pTd.Columns; c++)
                             {
                                 xpatch.Data += GetValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
-                                addr += elemStride;
+                                addr += step;
                             }
-                            addr = rowStart + (uint)rowStride;
+                            addr += pTd.MajorStride;
                         }
                     }
                     else
@@ -556,7 +550,7 @@ namespace UniversalPatcher
                             for (int r = 0; r < pTd.Rows; r++)
                             {
                                 xpatch.Data += GetValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
-                                addr += elemStride;
+                                addr += step;
                             }
                         }
                     }

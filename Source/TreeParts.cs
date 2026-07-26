@@ -12,6 +12,8 @@ namespace UniversalPatcher
 {
     public static class TreeParts
     {
+        //Used for mirroring Segment addresses from another PCM
+        public static PcmFile SegmentPCM = null;
         public class Tnode
         {
             public Tnode(string NodeText, string NodeName, NType NodeType, string ico) 
@@ -167,6 +169,11 @@ namespace UniversalPatcher
                 nSb.Append("Path: " + PathStr());
                 return nSb.ToString();
             }
+            public Navi ShallowCopy()
+            {
+                Navi newNavi = (Navi)this.MemberwiseClone();
+                return newNavi;
+            }
         }
 
         public enum NType
@@ -284,7 +291,7 @@ namespace UniversalPatcher
                 {
                     if (!node.Nodes.ContainsKey(patch.Name))
                     {
-                        Tnode tn = new Tnode(patch.Name, patch.Name, NType.Patch, "patch.ico", node);
+                        Tnode tn = new Tnode(patch.Name, patch.Name, NType.Patch, "patch.png", node);
                         Debug.WriteLine("Patch: " + patch.Name);
                         tn.Patch = patch;
                     }
@@ -344,11 +351,11 @@ namespace UniversalPatcher
                 string txt = "All";
                 if (AppSettings.TunerShowTableCount)
                     txt += " [" + filteredtables.Count.ToString() + "]";
-                Tnode tn = new Tnode(txt, "All", NType.Root, "explorer.ico");
+                Tnode tn = new Tnode(txt, "All", NType.Root, "FolderClosed.png");
                 tn.filteredTds = filteredtables;
                 tn.Isroot = true; 
-                tn.Node.ImageKey = "explorer.ico";
-                tn.Node.SelectedImageKey = "explorer.ico";
+                tn.Node.ImageKey = "FolderClosed.png";
+                tn.Node.SelectedImageKey = "FolderOpen.png";
                 parent.Add(tn.Node);
 
                 AddDimensions(parent, filteredtables, AddRoot);
@@ -357,7 +364,7 @@ namespace UniversalPatcher
                 AddSegments(parent, pcm1, filteredtables, AddRoot);
 
 
-                Tnode tnP = new Tnode("", "Patches", NType.Patch, "patch.ico");
+                Tnode tnP = new Tnode("", "Patches", NType.Patch, "patch.png");
                 tnP.Isroot = true;
                 parent.Add(tnP.Node);
             }
@@ -381,7 +388,7 @@ namespace UniversalPatcher
                 if (filteredTableDatas == null)
                     return;
 
-                Tnode tnD = new Tnode("", "Dimensions", NType.Dimensions, "dimensions.ico");
+                Tnode tnD = new Tnode("", "Dimensions", NType.Dimensions, "dimensions.png");
                 //tnD.Isroot = true;
 
                 Dictionary<int, List<TableData>> dimensiontables = new Dictionary<int, List<TableData>>();
@@ -403,7 +410,7 @@ namespace UniversalPatcher
                         string txt = "";
                         if (AppSettings.TunerShowTableCount)
                             txt = " [" + dimensiontables[i].Count.ToString() + "]";
-                        Tnode tnode = new Tnode(txt, i.ToString() + "D", NType.Dimensions, i.ToString() + "d.ico", tnD.Node);
+                        Tnode tnode = new Tnode(txt, i.ToString() + "D", NType.Dimensions, i.ToString() + "d.png", tnD.Node);
                         tnode.filteredTds = dimensiontables[i];
                     }
                 }
@@ -450,7 +457,7 @@ namespace UniversalPatcher
                 if (filteredTableDatas == null)
                     return;
 
-                Tnode tnT = new Tnode("", "ValueTypes", NType.Valuetype, "valuetype.ico");
+                Tnode tnT = new Tnode("", "ValueTypes", NType.Valuetype, "valuetype.png");
                 //tnT.Isroot = true;
 
                 List<string> usedValueTypes = new List<string>();
@@ -472,7 +479,7 @@ namespace UniversalPatcher
                     string txt = "";
                     if (AppSettings.TunerShowTableCount)
                         txt += "[" + valueTypeTables[tabletype].Count.ToString() + "]";
-                    Tnode tnode = new Tnode(txt, tabletype, NType.Valuetype, tabletype + ".ico", tnT.Node);
+                    Tnode tnode = new Tnode(txt, tabletype, NType.Valuetype, tabletype + ".png", tnT.Node);
                     tnode.filteredTds = valueTypeTables[tabletype];
                 }
 
@@ -510,17 +517,19 @@ namespace UniversalPatcher
             }
         }
 
-        public static void AddSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas, bool AddRoot, bool OffsetTool = false)
+        public static void AddSegments(TreeNodeCollection parent, PcmFile pcm, List<TableData> filteredTableDatas, bool AddRoot, bool OffsetTool = false)
         {
             try
             {
+                //Use SegmentPCM if it's set => Mirror segments from other file
+                PcmFile PCM = (SegmentPCM ?? pcm);
                 if (filteredTableDatas == null || PCM == null || PCM.segmentinfos == null)
                     return;
 
-                string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+                string iconFolder = Path.Combine(Application.StartupPath, "Images");
                 string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
 
-                Tnode tnS = new Tnode("", "Segments", NType.Segment, "segments.ico");
+                Tnode tnS = new Tnode("", "Segments", NType.Segment, "segments.png");
                 if (OffsetTool)
                 {
                     tnS.Node.Name = "OffsetTool";
@@ -562,7 +571,7 @@ namespace UniversalPatcher
                     string txt = usedSegments[i];
                     if (AppSettings.TunerShowTableCount)
                         txt += " [" + segTables[seg].Count.ToString() + "]";
-                    segTn = new Tnode(txt, segName, NType.Segment, "segments.ico", tnS.Node);
+                    segTn = new Tnode(txt, segName, NType.Segment, "segments.png", tnS.Node);
                     segTn.filteredTds = segTables[seg];
 
                     bool found = false;
@@ -637,7 +646,7 @@ namespace UniversalPatcher
                     return;
                 Debug.WriteLine("Adding categories");
 
-                Tnode tnC = new Tnode("", "Categories",NType.Category, "category.ico");
+                Tnode tnC = new Tnode("", "Categories",NType.Category, "category.png");
                 //tnC.Isroot = true;
 
                 //Main categories
@@ -660,7 +669,7 @@ namespace UniversalPatcher
                     }
                     if (!tnC.Node.Nodes.ContainsKey(cat))
                     {
-                        _ = new Tnode(cat,cat,NType.Category, "category.ico", tnC.Node);
+                        _ = new Tnode(cat,cat,NType.Category, "category.png", tnC.Node);
                     }
                     Tnode subTn = (Tnode)tnC.Node.Nodes[cat].Tag;
                     subTn.filteredTds.Add(filteredTableDatas[i]);
@@ -672,7 +681,7 @@ namespace UniversalPatcher
                         sb.Append(" - " + mainCats[c]);
                         if (!subTn.Node.Nodes.ContainsKey(sb.ToString())) //&& !subTn.Nodes.ContainsKey(filteredTableDatas[i].ExtraCategories))
                         {
-                            _ = new Tnode(mainCats[c], sb.ToString(), NType.Category, "category.ico", subTn.Node);
+                            _ = new Tnode(mainCats[c], sb.ToString(), NType.Category, "category.png", subTn.Node);
 
                         }
                         subTn = (Tnode)subTn.Node.Nodes[sb.ToString()].Tag;
@@ -692,15 +701,15 @@ namespace UniversalPatcher
                 {
                     //Extra categories
                     filteredTableDatas = TableDatas.OrderBy(x => x.ExtraCategories).ToList();
-                    Tnode tnC2 = new Tnode("", "Categories2", NType.Category, "category3.ico");
+                    Tnode tnC2 = new Tnode("", "Categories2", NType.Category, "category3.png");
                     for (int i = 0; i < filteredTableDatas.Count; i++)
                     {
                         if (string.IsNullOrEmpty(filteredTableDatas[i].ExtraCategories))
                         {
                             if (!tnC2.Node.Nodes.ContainsKey(ExtraCategories))
-                                _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.ico", tnC2.Node);
+                                _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.png", tnC2.Node);
                             if (!tnC2.Node.Nodes.ContainsKey(EmptyCategories))
-                                _ = new Tnode(EmptyCategories, EmptyCategories, NType.Category, "category3.ico", tnC2.Node);
+                                _ = new Tnode(EmptyCategories, EmptyCategories, NType.Category, "category3.png", tnC2.Node);
                             Tnode subTn = (Tnode)tnC2.Node.Nodes[EmptyCategories].Tag;
                             subTn.ExtraCategory = true;
                             subTn.filteredTds.Add(filteredTableDatas[i]);
@@ -710,12 +719,12 @@ namespace UniversalPatcher
                         else
                         {
                             if (!tnC2.Node.Nodes.ContainsKey(ExtraCategories))
-                                _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.ico", tnC2.Node);
+                                _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.png", tnC2.Node);
 
                             string[] subCats = filteredTableDatas[i].SubCategories().ToArray();
                             if (!tnC2.Node.Nodes.ContainsKey(subCats[0]))
                             {
-                                _ = new Tnode(subCats[0], subCats[0], NType.Category, "category3.ico", tnC2.Node);
+                                _ = new Tnode(subCats[0], subCats[0], NType.Category, "category3.png", tnC2.Node);
                             }
                             Tnode subTn = (Tnode)tnC2.Node.Nodes[subCats[0]].Tag;
                             subTn.ExtraCategory = true;
@@ -728,7 +737,7 @@ namespace UniversalPatcher
                                 sb.Append(" - " + subCats[c]);
                                 if (!subTn.Node.Nodes.ContainsKey(sb.ToString())) //&& !subTn.Nodes.ContainsKey(filteredTableDatas[i].ExtraCategories))
                                 {
-                                    _ = new Tnode(subCats[c], sb.ToString(), NType.Category, "category3.ico", subTn.Node);
+                                    _ = new Tnode(subCats[c], sb.ToString(), NType.Category, "category3.png", subTn.Node);
                                 }
                                 subTn = (Tnode)subTn.Node.Nodes[sb.ToString()].Tag;
                                 subTn.ExtraCategory = true;
@@ -807,7 +816,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < tnode1.filteredTds.Count; i++)
                 {
                     TableData td = tnode1.filteredTds[i];
-                    string ico = td.ValueType().ToString().Replace("number", "") + td.Dimensions().ToString() + "d.ico";
+                    string ico = td.ValueType().ToString().Replace("number", "") + td.Dimensions().ToString() + "d.png";
                     string cat = td.Category;
                     if (tnode1.ExtraCategory)
                     {
@@ -829,7 +838,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < tnode1.filteredTds.Count; i++)
                 {
                     TableData td = tnode1.filteredTds[i];
-                    string ico = td.ValueType().ToString().Replace("number", "") + td.Dimensions().ToString()+ "d.ico";
+                    string ico = td.ValueType().ToString().Replace("number", "") + td.Dimensions().ToString()+ "d.png";
                     Tnode tTd = new Tnode(td.TableName, td.TableName, NType.Table, ico, Node);
                     tTd.Td = td;
                 }
@@ -853,35 +862,41 @@ namespace UniversalPatcher
                     dbgStr.Append(path[i] + ", ");
                 }
                 Debug.WriteLine(dbgStr.ToString());
-                if (!tv.Nodes.ContainsKey(path.Last()))
-                   return;
-                TreeNode node = tv.Nodes[path.Last()];
-                for (int i = path.Count - 2; i >= 0; i--)
+                TreeNode node = tv.Nodes[0];
+                if (tv.Nodes.ContainsKey(path.Last()))
                 {
-                    Tnode tnode1 = (Tnode)node.Tag;
-                    if (tv.Name == "treeView1")
+                    node = tv.Nodes[path.Last()];
+                    for (int i = path.Count - 2; i >= 0; i--)
                     {
-                        if (node.Name != "All" && node.Parent != null)
-                            TreeParts.AddChildNodes(node, PCM);
-                    }
-                    else
-                    {
-                        if (AppSettings.TableExplorerUseCategorySubfolder &&
-                            (node.Parent == null || tnode1.ParentTnode == null || tnode1.ParentTnode.Isroot))
+                        Tnode tnode1 = (Tnode)node.Tag;
+                        if (tv.Name == "treeView1")
                         {
-                            if (!IncludesCollection(node, NType.Category, false))
-                                AddCategories(node.Nodes, tnode1.filteredTds, false);
+                            if (node.Name != "All" && node.Parent != null)
+                                TreeParts.AddChildNodes(node, PCM);
                         }
-                        AddTablesToTree(node);
+                        else
+                        {
+                            if (AppSettings.TableExplorerUseCategorySubfolder &&
+                                (node.Parent == null || tnode1.ParentTnode == null || tnode1.ParentTnode.Isroot))
+                            {
+                                if (!IncludesCollection(node, NType.Category, false))
+                                    AddCategories(node.Nodes, tnode1.filteredTds, false);
+                            }
+                            AddTablesToTree(node);
+                        }
+                        if (!node.Nodes.ContainsKey(path[i]))
+                        {
+                            Debug.WriteLine("Node " + node.Name + " not contains key: " + path[i]);
+                            break;
+                        }
+                        node = node.Nodes[path[i]];
                     }
-                    if (!node.Nodes.ContainsKey(path[i]))
-                    {
-                        Debug.WriteLine("Node " + node.Name + " not contains key: " + path[i]);
-                        break;
-                    }
-                    node = node.Nodes[path[i]];
                 }
-                tv.SelectedNode = node;
+                //if (node.Name == path[0])
+                if(path.Contains(node.Name))
+                {
+                    tv.SelectedNode = node;
+                }
             }
             catch (Exception ex)
             {

@@ -115,6 +115,10 @@ namespace UniversalPatcher
                     {
                         SetValue(redo, redo.OldValue);
                     }
+                    else if (redo.Action == ReDo.RedoAction.Restore)
+                    {
+                        LoggerBold("Undo restore not implemented");
+                    }
                 }
             }
             catch (Exception ex)

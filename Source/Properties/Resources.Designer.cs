@@ -63,6 +63,16 @@ namespace UniversalPatcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Cancel {
+            get {
+                object obj = ResourceManager.GetObject("Cancel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap collapse {
             get {
                 object obj = ResourceManager.GetObject("collapse", resourceCulture);
@@ -86,6 +96,16 @@ namespace UniversalPatcher.Properties {
         internal static System.Drawing.Bitmap expand {
             get {
                 object obj = ResourceManager.GetObject("expand", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RunLiveUnitTest {
+            get {
+                object obj = ResourceManager.GetObject("RunLiveUnitTest", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -73,10 +73,10 @@ namespace UniversalPatcher
         /// </summary>
         public virtual bool Initialize()
         {
+            string response;
             // This is common across all ELM-based devices.
             this.SendRequest(""); // send a cr/lf to prevent the ATZ failing.
-            string response = this.SendRequest("AT Z").Data;  // reset
-            Debug.WriteLine(response);
+            Debug.WriteLine(response = this.SendRequest("AT Z").Data);  // reset
             if(string.IsNullOrWhiteSpace(response))
             {
                 LoggerBold($"No device found on {this.Port.ToString()}");

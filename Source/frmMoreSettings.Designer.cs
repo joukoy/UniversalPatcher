@@ -64,6 +64,14 @@ namespace UniversalPatcher
             this.chkUseIntegratedLogger = new System.Windows.Forms.CheckBox();
             this.chkConfirmExit = new System.Windows.Forms.CheckBox();
             this.chkUseTunerMain = new System.Windows.Forms.CheckBox();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.chkeShowCellInfo = new System.Windows.Forms.CheckBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.btnColorMid2 = new System.Windows.Forms.Button();
+            this.btnColorMid1 = new System.Windows.Forms.Button();
+            this.btnColorMax = new System.Windows.Forms.Button();
+            this.btnColorMin = new System.Windows.Forms.Button();
+            this.chkXySwapWideTables = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -74,6 +82,8 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numSplashTime)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
+            this.groupBox7.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // numTunerTableMinEquivalency
@@ -100,7 +110,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(528, 310);
+            this.btnOK.Location = new System.Drawing.Point(528, 450);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -177,7 +187,7 @@ namespace UniversalPatcher
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 156);
+            this.label2.Location = new System.Drawing.Point(6, 135);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(169, 13);
             this.label2.TabIndex = 10;
@@ -186,7 +196,7 @@ namespace UniversalPatcher
             // txtMultitableChars
             // 
             this.txtMultitableChars.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMultitableChars.Location = new System.Drawing.Point(188, 151);
+            this.txtMultitableChars.Location = new System.Drawing.Point(195, 131);
             this.txtMultitableChars.Name = "txtMultitableChars";
             this.txtMultitableChars.Size = new System.Drawing.Size(113, 23);
             this.txtMultitableChars.TabIndex = 11;
@@ -194,7 +204,7 @@ namespace UniversalPatcher
             // chkDisableAutoCS
             // 
             this.chkDisableAutoCS.AutoSize = true;
-            this.chkDisableAutoCS.Location = new System.Drawing.Point(8, 237);
+            this.chkDisableAutoCS.Location = new System.Drawing.Point(9, 42);
             this.chkDisableAutoCS.Name = "chkDisableAutoCS";
             this.chkDisableAutoCS.Size = new System.Drawing.Size(150, 17);
             this.chkDisableAutoCS.TabIndex = 12;
@@ -204,9 +214,9 @@ namespace UniversalPatcher
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.chkRequireValidVerForStock);
-            this.groupBox3.Location = new System.Drawing.Point(10, 180);
+            this.groupBox3.Location = new System.Drawing.Point(9, 154);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(292, 51);
+            this.groupBox3.Size = new System.Drawing.Size(303, 51);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Stock CVN Check";
@@ -226,7 +236,7 @@ namespace UniversalPatcher
             // chkAutoOpenImportedFile
             // 
             this.chkAutoOpenImportedFile.AutoSize = true;
-            this.chkAutoOpenImportedFile.Location = new System.Drawing.Point(168, 237);
+            this.chkAutoOpenImportedFile.Location = new System.Drawing.Point(195, 19);
             this.chkAutoOpenImportedFile.Name = "chkAutoOpenImportedFile";
             this.chkAutoOpenImportedFile.Size = new System.Drawing.Size(134, 17);
             this.chkAutoOpenImportedFile.TabIndex = 14;
@@ -238,9 +248,9 @@ namespace UniversalPatcher
             this.groupBox4.Controls.Add(this.chkDisplayMetric);
             this.groupBox4.Controls.Add(this.chkDisplayImperial);
             this.groupBox4.Controls.Add(this.chkDisplayUndefined);
-            this.groupBox4.Location = new System.Drawing.Point(9, 286);
+            this.groupBox4.Location = new System.Drawing.Point(9, 211);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(288, 48);
+            this.groupBox4.Size = new System.Drawing.Size(303, 67);
             this.groupBox4.TabIndex = 15;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Display units";
@@ -278,7 +288,7 @@ namespace UniversalPatcher
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(320, 237);
+            this.label5.Location = new System.Drawing.Point(6, 109);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(135, 13);
             this.label5.TabIndex = 16;
@@ -286,7 +296,7 @@ namespace UniversalPatcher
             // 
             // numSplashTime
             // 
-            this.numSplashTime.Location = new System.Drawing.Point(468, 235);
+            this.numSplashTime.Location = new System.Drawing.Point(195, 107);
             this.numSplashTime.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -299,12 +309,13 @@ namespace UniversalPatcher
             // chkXdfUseTableName
             // 
             this.chkXdfUseTableName.AutoSize = true;
-            this.chkXdfUseTableName.Location = new System.Drawing.Point(8, 260);
+            this.chkXdfUseTableName.Location = new System.Drawing.Point(195, 42);
             this.chkXdfUseTableName.Name = "chkXdfUseTableName";
             this.chkXdfUseTableName.Size = new System.Drawing.Size(228, 17);
             this.chkXdfUseTableName.TabIndex = 18;
             this.chkXdfUseTableName.Text = "XDF import: Link using tablename, not guid";
             this.chkXdfUseTableName.UseVisualStyleBackColor = true;
+            this.chkXdfUseTableName.CheckedChanged += new System.EventHandler(this.chkXdfUseTableName_CheckedChanged);
             // 
             // groupBox5
             // 
@@ -405,7 +416,7 @@ namespace UniversalPatcher
             // chkConfirmExit
             // 
             this.chkConfirmExit.AutoSize = true;
-            this.chkConfirmExit.Location = new System.Drawing.Point(324, 260);
+            this.chkConfirmExit.Location = new System.Drawing.Point(9, 64);
             this.chkConfirmExit.Name = "chkConfirmExit";
             this.chkConfirmExit.Size = new System.Drawing.Size(121, 17);
             this.chkConfirmExit.TabIndex = 21;
@@ -415,31 +426,114 @@ namespace UniversalPatcher
             // chkUseTunerMain
             // 
             this.chkUseTunerMain.AutoSize = true;
-            this.chkUseTunerMain.Location = new System.Drawing.Point(323, 283);
+            this.chkUseTunerMain.Location = new System.Drawing.Point(195, 64);
             this.chkUseTunerMain.Name = "chkUseTunerMain";
             this.chkUseTunerMain.Size = new System.Drawing.Size(150, 17);
             this.chkUseTunerMain.TabIndex = 22;
             this.chkUseTunerMain.Text = "Use Session tabs in Tuner";
             this.chkUseTunerMain.UseVisualStyleBackColor = true;
             // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.chkXySwapWideTables);
+            this.groupBox7.Controls.Add(this.chkeShowCellInfo);
+            this.groupBox7.Controls.Add(this.chkUseTunerMain);
+            this.groupBox7.Controls.Add(this.chkDisableAutoCS);
+            this.groupBox7.Controls.Add(this.chkConfirmExit);
+            this.groupBox7.Controls.Add(this.chkAutoOpenImportedFile);
+            this.groupBox7.Controls.Add(this.txtMultitableChars);
+            this.groupBox7.Controls.Add(this.label2);
+            this.groupBox7.Controls.Add(this.chkXdfUseTableName);
+            this.groupBox7.Controls.Add(this.label5);
+            this.groupBox7.Controls.Add(this.numSplashTime);
+            this.groupBox7.Location = new System.Drawing.Point(9, 284);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(594, 160);
+            this.groupBox7.TabIndex = 23;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Misc";
+            // 
+            // chkeShowCellInfo
+            // 
+            this.chkeShowCellInfo.AutoSize = true;
+            this.chkeShowCellInfo.Location = new System.Drawing.Point(9, 19);
+            this.chkeShowCellInfo.Name = "chkeShowCellInfo";
+            this.chkeShowCellInfo.Size = new System.Drawing.Size(170, 17);
+            this.chkeShowCellInfo.TabIndex = 1;
+            this.chkeShowCellInfo.Text = "Show cell info on mouse move";
+            this.chkeShowCellInfo.UseVisualStyleBackColor = true;
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.btnColorMid2);
+            this.groupBox8.Controls.Add(this.btnColorMid1);
+            this.groupBox8.Controls.Add(this.btnColorMax);
+            this.groupBox8.Controls.Add(this.btnColorMin);
+            this.groupBox8.Location = new System.Drawing.Point(318, 219);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(284, 59);
+            this.groupBox8.TabIndex = 35;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Table conditional formatting";
+            // 
+            // btnColorMid2
+            // 
+            this.btnColorMid2.Location = new System.Drawing.Point(86, 19);
+            this.btnColorMid2.Name = "btnColorMid2";
+            this.btnColorMid2.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMid2.TabIndex = 6;
+            this.btnColorMid2.UseVisualStyleBackColor = true;
+            this.btnColorMid2.Click += new System.EventHandler(this.btnColorMid2_Click);
+            // 
+            // btnColorMid1
+            // 
+            this.btnColorMid1.Location = new System.Drawing.Point(46, 19);
+            this.btnColorMid1.Name = "btnColorMid1";
+            this.btnColorMid1.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMid1.TabIndex = 5;
+            this.btnColorMid1.UseVisualStyleBackColor = true;
+            this.btnColorMid1.Click += new System.EventHandler(this.btnColorMid_Click);
+            // 
+            // btnColorMax
+            // 
+            this.btnColorMax.Location = new System.Drawing.Point(126, 19);
+            this.btnColorMax.Name = "btnColorMax";
+            this.btnColorMax.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMax.TabIndex = 3;
+            this.btnColorMax.UseVisualStyleBackColor = true;
+            this.btnColorMax.Click += new System.EventHandler(this.btnColorMax_Click);
+            // 
+            // btnColorMin
+            // 
+            this.btnColorMin.Location = new System.Drawing.Point(6, 19);
+            this.btnColorMin.Name = "btnColorMin";
+            this.btnColorMin.Size = new System.Drawing.Size(34, 26);
+            this.btnColorMin.TabIndex = 1;
+            this.btnColorMin.UseVisualStyleBackColor = true;
+            this.btnColorMin.Click += new System.EventHandler(this.btnColorMin_Click);
+            // 
+            // chkXySwapWideTables
+            // 
+            this.chkXySwapWideTables.AutoSize = true;
+            this.chkXySwapWideTables.Location = new System.Drawing.Point(9, 87);
+            this.chkXySwapWideTables.Name = "chkXySwapWideTables";
+            this.chkXySwapWideTables.Size = new System.Drawing.Size(124, 17);
+            this.chkXySwapWideTables.TabIndex = 23;
+            this.chkXySwapWideTables.Text = "XY swap wide tables";
+            this.chkXySwapWideTables.UseVisualStyleBackColor = true;
+            this.chkXySwapWideTables.CheckedChanged += new System.EventHandler(this.chkXySwapWideTables_CheckedChanged);
+            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(610, 345);
-            this.Controls.Add(this.chkUseTunerMain);
-            this.Controls.Add(this.chkConfirmExit);
+            this.ClientSize = new System.Drawing.Size(610, 478);
+            this.Controls.Add(this.groupBox8);
+            this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.chkXdfUseTableName);
-            this.Controls.Add(this.numSplashTime);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.chkAutoOpenImportedFile);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.chkDisableAutoCS);
-            this.Controls.Add(this.txtMultitableChars);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnOK);
@@ -463,8 +557,10 @@ namespace UniversalPatcher
             this.groupBox5.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
+            this.groupBox8.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -504,5 +600,13 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkUseIntegratedLogger;
         private System.Windows.Forms.CheckBox chkConfirmExit;
         private System.Windows.Forms.CheckBox chkUseTunerMain;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.CheckBox chkeShowCellInfo;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.Button btnColorMid1;
+        private System.Windows.Forms.Button btnColorMax;
+        private System.Windows.Forms.Button btnColorMin;
+        private System.Windows.Forms.Button btnColorMid2;
+        private System.Windows.Forms.CheckBox chkXySwapWideTables;
     }
 }

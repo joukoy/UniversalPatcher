@@ -163,23 +163,19 @@ namespace UniversalPatcher
 
         private void CopyTableData(TableData srcTd, TableData dstTd, ref PcmFile dstPCM)
         {
-            frmTableEditor srcTE = new frmTableEditor();
-            srcTE.PrepareTable(PCM, srcTd, null,"A");
-            //srcTE.loadTable();
-            frmTableEditor dstTE = new frmTableEditor();
-            dstTE.PrepareTable(dstPCM, dstTd, null,"A");
-            //dstTE.loadTable();
+            TableInfo tiSrc = new TableInfo(PCM, srcTd);
+            tiSrc.ParseTable(true, false, false);
+            TableInfo tiDst = new TableInfo(dstPCM, dstTd);
+            tiDst.ParseTable(true, false, false);
 
-            for (int cell = 0; cell < srcTE.compareFiles[0].tableInfos[0].tableCells.Count;cell++)
+            for (int cell = 0; cell < tiSrc.tableCells.Count;cell++)
             {
-                TableCell srcTc = srcTE.compareFiles[0].tableInfos[0].tableCells[cell];
-                TableCell dstTc = dstTE.compareFiles[0].tableInfos[0].tableCells[cell];
-                dstTc.SaveValue(Convert.ToDouble(srcTc.lastValue));
+                TableCell srcTc = tiSrc.tableCells[cell];
+                TableCell dstTc = tiDst.tableCells[cell];
+                dstTc.SetValue(Convert.ToDouble(srcTc.lastValue));
+                Array.Copy(dstTc.lastRawBytes, 0, dstPCM.buf, dstTc.addr, dstTc.lastRawBytes.Length);
             }
 
-            dstTE.SaveTable(false);
-            srcTE.Dispose();
-            dstTE.Dispose();
         }
 
         private void SearchTargetTables(PcmFile dstPCM, List<TableData> tableTds, bool execNow)

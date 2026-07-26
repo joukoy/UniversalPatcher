@@ -118,6 +118,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.TextBox1);
             this.Name = "frmExtraOffset";
             this.Text = "Extra offset range";
+            this.Load += new System.EventHandler(this.frmExtraOffset_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

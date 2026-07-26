@@ -4217,14 +4217,6 @@
     <compare>!=</compare>
   </DetectRule>
   <DetectRule>
-    <xml>e83b.xml</xml>
-    <group>2</group>
-    <grouplogic>And</grouplogic>
-    <address>fda2:2</address>
-    <data>99</data>
-    <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
     <xml>e82.xml</xml>
     <group>2</group>
     <grouplogic>And</grouplogic>
@@ -5481,5 +5473,120 @@
     <data>0</data>
     <compare>==</compare>
     <hexdata>FFFFFFFF00000000</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>e83b.xml</xml>
+    <group>1</group>
+    <grouplogic>Or</grouplogic>
+    <address>fda2:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>0063</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>e83b.xml</xml>
+    <group>1</group>
+    <grouplogic>Or</grouplogic>
+    <address>fda2:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>FFFF</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>e42.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>190000:16</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>55AAFFFFFFFFFFFFFFFFFFFFFFFFFFFF</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>e42.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>190012:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>0001</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>e42.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>10@:16</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>FFFFFFFFFFFFFFFFAA55FFFFFFFFFFFF</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>bcm_gmt800.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>2@:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>A5A5</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>bcm_gmt800.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>9ffe:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>A5A5</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>bcm_gmt800.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>a002:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>0001</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>bcm_gmt360-01-05.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>2@:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>A5A5</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>bcm_gmt360-01-05.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>9ffe:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>A5A5</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>bcm_gmt360-01-05.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>a002:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>0001</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>bcm_gmt360-01-05.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>filesize</address>
+    <data>98304</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>bcm_gmt800.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>filesize</address>
+    <data>131072</data>
+    <compare>==</compare>
   </DetectRule>
 </ArrayOfDetectRule>

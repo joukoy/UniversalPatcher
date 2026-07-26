@@ -3124,6 +3124,7 @@ namespace UniversalPatcher
                 if (radioVPW.Checked)
                 {
                     MainConn.LoggingProto = LoggingProtocol.VPW;
+                    MainConn.BaudRate = (int)BaudRate.J1850VPW_10400;
                     datalogger.CanDevice = new CANDevice(DeviceId.Pcm, LoggingProtocol.VPW);
                     jParams = new J2534InitParameters(true);
                     MainConn.Protocols.Add(jParams);
@@ -3904,11 +3905,6 @@ namespace UniversalPatcher
                 radioVPW.Checked = true;
                 comboBaudRate.Text = "57600";
             }
-            else if (comboSerialDeviceType.Text == UPX_OBD.DeviceType)
-            {
-                groupProtocol.Enabled = true;
-                groupCanParams.Enabled = true;
-            }
             else if (comboSerialDeviceType.Text == Elm327Device.DeviceType)
             {
                 groupProtocol.Enabled = true;
@@ -4468,7 +4464,7 @@ namespace UniversalPatcher
                     groupProtocol.Enabled = true;
                     j2534OptionsGroupBox.Enabled = true;
                 }
-                if (comboSerialDeviceType.Text.StartsWith(UPX_OBD.DeviceType) || comboSerialDeviceType.Text == Elm327Device.DeviceType)
+                if (comboSerialDeviceType.Text == Elm327Device.DeviceType)
                 {
                     groupProtocol.Enabled = true;
                 }

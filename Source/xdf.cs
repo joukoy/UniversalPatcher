@@ -168,6 +168,8 @@ namespace UniversalPatcher
             public XdfAxis()
             {
                 Addr = "";
+                Headers = "";
+                RowMajor = true;
             }
             public string Addr { get; set; }
             public string Units { get; set; }
@@ -185,6 +187,9 @@ namespace UniversalPatcher
             public bool RowMajor { get; set; }
             public double Min { get; set; }
             public double Max { get; set; }
+            public int mmedmajorstridebits { get; set; }
+            public int mmedminorstridebits { get; set; }
+
             public List<string> multiMath = new List<string>();
             public List<string> multiAddr = new List<string>();
             public List<TableLink> tableLinks = new List<TableLink>();
@@ -220,6 +225,10 @@ namespace UniversalPatcher
 
                     if (axle.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                         Addr = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
+                    if (axle.Element("EMBEDDEDDATA").Attribute("mmedmajorstridebits") != null)
+                        mmedmajorstridebits = Convert.ToInt32(axle.Element("EMBEDDEDDATA").Attribute("mmedmajorstridebits").Value.Trim());
+                    if (axle.Element("EMBEDDEDDATA").Attribute("mmedminorstridebits") != null)
+                        mmedminorstridebits = Convert.ToInt32(axle.Element("EMBEDDEDDATA").Attribute("mmedminorstridebits").Value.Trim());
                     string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
                     elementSize = (byte)(Convert.ToInt32(tmp) / 8);
                     if (axle.Element("MATH") == null || axle.Element("MATH").Attribute("equation") == null)
@@ -234,11 +243,13 @@ namespace UniversalPatcher
                     }
                     if (axle.Element("decimalpl") != null)
                         Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
-                    if (axle.Element("outputtype") != null)
+                    if (axle.Element("outputtype") == null)
+                        OutputType = OutDataType.Float;
+                    else
                         OutputType = (OutDataType)Convert.ToUInt16(axle.Element("outputtype").Value);
                     if (axle.Element("EMBEDDEDDATA") != null && axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
                     {
-                        ushort flags = Convert.ToUInt16(axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16);
+                        UInt32 flags = Convert.ToUInt32(axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16);
                         Signed = Convert.ToBoolean(flags & 1);
                         if ((flags & 0x10000) == 0x10000)
                             Floating = true;
@@ -249,9 +260,9 @@ namespace UniversalPatcher
                             ByteOrder = Byte_Order.LSB;
                         }
                         if ((flags & 4) == 4)
-                            RowMajor = true;
-                        else
                             RowMajor = false;
+                        else
+                            RowMajor = true;
                     }
                     InputType = ConvertToDataType(elementSize, Signed, Floating);
                     if (axle.Element("min") != null)
@@ -462,6 +473,15 @@ namespace UniversalPatcher
                             xdf.DataType = ax.InputType;
                             xdf.Min = ax.Min;
                             xdf.Max = ax.Max;
+                            if (ax.mmedmajorstridebits > 0)
+                            {
+                                xdf.MajorStride = (ushort)(ax.mmedmajorstridebits / 8);
+                            }
+                            if (ax.mmedminorstridebits > 0)
+                            {
+                                xdf.MinorStride = (ushort)(ax.mmedminorstridebits / 8);
+                            }
+
                             tableLinks.AddRange(ax.tableLinks);
                             tableTargets.AddRange(ax.tableTargets);
 
@@ -551,7 +571,7 @@ namespace UniversalPatcher
 
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
                     {
-                        byte flags = Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16);
+                        UInt32 flags = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value.Replace("0x",""), 16);
                         Signed = Convert.ToBoolean(flags & 1);
                         if ((flags & 0x10000) == 0x10000)
                             Floating = true;
@@ -695,7 +715,7 @@ namespace UniversalPatcher
                             PCM.tableCategories.Add(td.Categories[c]);
                     }
 */
-                    if (td.ColumnHeaders.StartsWith("TunerPro:"))
+                    if (!string.IsNullOrEmpty(td.ColumnHeaders) && td.ColumnHeaders.StartsWith("TunerPro:"))
                     {
                         string id = td.ColumnHeaders.Replace("TunerPro: ", "").Trim();
                         if (TpIdGuid.ContainsKey(id))
@@ -713,7 +733,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    if (td.RowHeaders.StartsWith("TunerPro:"))
+                    if (!string.IsNullOrEmpty(td.RowHeaders) && td.RowHeaders.StartsWith("TunerPro:"))
                     {
                         string id = td.RowHeaders.Replace("TunerPro: ", "").Trim();
                         if (TpIdGuid.ContainsKey(id))
@@ -1799,8 +1819,8 @@ namespace UniversalPatcher
                             xdfZaxisEmbed.SetAttributeValue("mmedelementsizebits", GetBits(td.DataType).ToString());
                             xdfZaxisEmbed.SetAttributeValue("mmedrowcount", td.Rows.ToString());
                             xdfZaxisEmbed.SetAttributeValue("mmedcolcount", td.Columns.ToString());
-                            xdfZaxisEmbed.SetAttributeValue("mmedmajorstridebits", "0");
-                            xdfZaxisEmbed.SetAttributeValue("mmedminorstridebits", "0");
+                            xdfZaxisEmbed.SetAttributeValue("mmedmajorstridebits", (td.MajorStride * 8).ToString());
+                            xdfZaxisEmbed.SetAttributeValue("mmedminorstridebits", (td.MinorStride *8).ToString());
                             xdfZaxis.Add(xdfZaxisEmbed);
                             xdfZaxis.SetElementValue("decimaplpl", td.Decimals.ToString());
                             xdfZaxis.SetElementValue("min", td.Min.ToString());

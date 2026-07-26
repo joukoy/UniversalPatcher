@@ -807,3 +807,27 @@
 0.23.5
 - Tuner: HEX window redesign
 - Fixed bug: Creating folders to wrong place in startup
+
+0.23.6 Beta
+- Tuner: HEX window improvements & bug fixes
+- Tuner: Bugfix: Current cell info not visible
+- Tuner: Extra offset tool improvements
+- Tuner: Added: Show table description for table under mouse cursor in treemode + settings to show/hide it
+- Tuner: Sync tuner table list with selected table in separate window
+- Offset visualizer: Custom control for showing HEX data
+- Tuner: If table description includes tablename, make it link for opening referenced table
+- Tuner: Table color selection moved from settings tab to menu: Settings -> More settings
+- Tuner: Added button to Show/hide tree
+- Logger: Bug fix: baudrate missing when VPW protocol selected
+- Tuner: New UI style
+Patches by antus / pcmhacking:
+- Add tunerpro compatible major stride and minor stride support
+- Antus/3d table colour gradients
+
+0.23.7
+- XDF import: Bug fixes
+- Tuner: new setting: XY swap wide tables (default: off)
+- Support for BCM addresses, for example "@A010:2[*2+0*2+1]", read address pair from A010, multiply start address by 2, add 0, multiply end address by 2, add 1
+- PCMHammer 2.0.0
+
+

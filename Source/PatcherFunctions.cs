@@ -42,6 +42,37 @@ public class Upatcher
         public int Width { get; set; }
     }
 
+    public enum ExtraOffsetFunction
+    {
+        None,
+        FindPrevious,
+        FindNext,
+        OffsetPlus,
+        OffsetMinus,
+        CopyFromTest,
+        CopyToTest,
+        TestOffsetPlus,
+        TestOffsetMinus,
+        TestOffset,
+        NextTable,
+        PreviousTable,
+        Apply,
+        Cancel,
+        EnableButtons,
+        DisableButtons,
+        OpenTable
+    }
+    public static List<ExtraOffsetKeymap> ExtraOffsetKeymaps;
+    public class ExtraOffsetKeymap
+    {
+        public Keys KeyCode { get; set; }
+        public ExtraOffsetFunction Function {get;set;}
+        public ExtraOffsetKeymap ShallowCopy()
+        {
+            return (ExtraOffsetKeymap)this.MemberwiseClone();
+        }
+
+    }
     public enum DisplayUnits
     {
         Undefined,
@@ -998,6 +1029,24 @@ public class Upatcher
                 file.Close();
             }
 
+            Logger(",extraoffsetbuttons", false);
+            ShowSplash("extraoffsetbuttons");
+            Application.DoEvents();
+
+            string extraoffsetmapfile = Path.Combine(Application.StartupPath, "XML", "ExtraOffsetButtons.xml");
+            if (File.Exists(extraoffsetmapfile))
+            {
+                Debug.WriteLine("Loading ExtraOffsetButtons.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<ExtraOffsetKeymap>));
+                System.IO.StreamReader file = new System.IO.StreamReader(extraoffsetmapfile);
+                ExtraOffsetKeymaps = (List<ExtraOffsetKeymap>)reader.Deserialize(file);
+                file.Close();
+            }
+            else
+            {
+                ExtraOffsetKeymaps = new List<ExtraOffsetKeymap>();
+            }
+
             Logger(",OBD2 Codes", false);
             ShowSplash("OBD2 Codes");
             Application.DoEvents();
@@ -1302,175 +1351,6 @@ public class Upatcher
         }
         return retVal;
     }
-    public static double GetValueByRowColumn(byte[] myBuffer, TableData mathTd, int offset, ushort row, ushort column, PcmFile PCM)
-    {
-        double retVal = 0;
-        try
-        {
-            bool msb = PCM.platformConfig.MSB;
-            switch (mathTd.ByteOrder)
-            {
-                case Byte_Order.PlatformOrder:
-                    msb = PCM.platformConfig.MSB;
-                    break;
-                case Byte_Order.MSB:
-                    msb = true;
-                    break;
-                case Byte_Order.LSB:
-                    msb = false;
-                    break;
-            }
-
-            uint addr = mathTd.StartAddress();
-            UInt32 bufAddr = (UInt32)(addr - offset);
-            uint elemSize = (uint)mathTd.ElementSize();
-            uint elemStride = (uint)mathTd.EffectiveElementStride((int)elemSize);
-            byte byteMask = 0x80;
-            if (mathTd.RowMajor)
-            {
-                int rowStride = mathTd.EffectiveRowStride((int)elemStride);
-                for (int r = 0; r < mathTd.Rows; r++)
-                {
-                    if (r > row) break;
-                    UInt32 rowBufStart = bufAddr;
-                    bool reachedTarget = false;
-                    for (int c = 0; c < mathTd.Columns; c++)
-                    {
-                        if (mathTd.OutputType == OutDataType.Bitmap)
-                        {
-
-                            if (byteMask == 1)
-                            {
-                                byteMask = 0x80;
-                                bufAddr++;
-                            }
-                            else
-                            {
-                                byteMask = (byte)(byteMask >> 1);
-                            }
-                        }
-                        else
-                        {
-                            bufAddr += elemStride;
-                        }
-                        if (r == row && c == column) { reachedTarget = true; break; }
-                    }
-                    if (!reachedTarget && mathTd.OutputType != OutDataType.Bitmap)
-                        bufAddr = rowBufStart + (UInt32)rowStride;
-                }
-            }
-            else
-            {
-                for (int c = 0; c < mathTd.Columns; c++)
-                {
-                    if (c > column) break;
-                    for (int r = 0; r < mathTd.Rows; r++)
-                    {
-                        if (mathTd.OutputType == OutDataType.Bitmap)
-                        {
-
-                            if (byteMask == 1)
-                            {
-                                byteMask = 0x80;
-                                bufAddr++;
-                            }
-                            else
-                            {
-                                byteMask = (byte)(byteMask >> 1);
-                            }
-                        }
-                        else
-                        {
-                            bufAddr += elemStride;
-                        }
-                        if (r == row && c == column) break;
-                    }
-                }
-            }
-
-            if (mathTd.Math.StartsWith("DTC"))
-            {
-                int codeIndex = (int)(addr - mathTd.addrInt);
-                switch (mathTd.Math.Substring(4))
-                {
-                    case "DTC_Enable":
-                        return PCM.dtcCodes[codeIndex].Status;
-                    case "MIL_Enable":
-                        return PCM.dtcCodes[codeIndex].MilStatus;
-                    case "Type":
-                        return PCM.dtcCodes[codeIndex].Type;
-                    default:
-                        throw new Exception("Unknown Math: " + mathTd.Math);
-                }
-            }
-
-            if (mathTd.OutputType == OutDataType.Bitmap)
-            {
-                if ((myBuffer[bufAddr] & byteMask) == byteMask)
-                    return 1;
-                else
-                    return 0;
-            }
-
-            if (mathTd.OutputType == OutDataType.Flag && !string.IsNullOrEmpty(mathTd.BitMask))
-            {
-                UInt64 mask;
-                mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
-                UInt64 rawVal = (UInt64)GetRawValue(myBuffer, bufAddr, mathTd, offset, PCM.platformConfig.MSB);
-                if (((UInt64)rawVal & mask) == mask)
-                    return 1;
-                else
-                    return 0;
-            }
-
-
-            if (mathTd.DataType == InDataType.SBYTE)
-                retVal = (sbyte)myBuffer[bufAddr];
-            if (mathTd.DataType == InDataType.UBYTE)
-                retVal = myBuffer[bufAddr];
-            if (mathTd.DataType == InDataType.SWORD)
-                retVal = ReadInt16(myBuffer, bufAddr, msb);
-            if (mathTd.DataType == InDataType.UWORD)
-                retVal = ReadUint16(myBuffer, bufAddr, msb);
-            if (mathTd.DataType == InDataType.INT32)
-                retVal = ReadInt32(myBuffer, bufAddr, msb);
-            if (mathTd.DataType == InDataType.UINT32)
-                retVal = ReadUint32(myBuffer, bufAddr, msb);
-            if (mathTd.DataType == InDataType.INT64)
-                retVal = ReadInt64(myBuffer, bufAddr, msb);
-            if (mathTd.DataType == InDataType.UINT64)
-                retVal = ReadUint64(myBuffer, bufAddr, msb);
-            if (mathTd.DataType == InDataType.FLOAT32)
-                retVal = ReadFloat32(myBuffer, bufAddr, msb);
-            if (mathTd.DataType == InDataType.FLOAT64)
-                retVal = ReadFloat64(myBuffer, bufAddr, msb);
-
-            if (string.IsNullOrEmpty(mathTd.Math))
-                mathTd.Math = "X";
-            string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
-            if (mathStr.Contains("table:"))
-            {
-                mathStr = ReadConversionTable(mathStr, PCM);
-            }
-            if (mathStr.Contains("raw:"))
-            {
-                mathStr = ReadConversionRaw(mathStr, PCM);
-            }
-            retVal = parser.Parse(mathStr, false);
-            //Debug.WriteLine(mathStr);
-        }
-        catch (Exception ex)
-        {
-            var st = new StackTrace(ex, true);
-            // Get the top stack frame
-            var frame = st.GetFrame(st.FrameCount - 1);
-            // Get the line number from the stack frame
-            var line = frame.GetFileLineNumber();
-            Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
-        }
-        return retVal;
-    }
-
 
     //
     //Get value from defined table, using defined math functions.
@@ -1695,6 +1575,65 @@ public class Upatcher
         return retVal;
     }
 
+    public static int GetColumnsFromTable(TableData tData, PcmFile pcm)
+    {
+        int cols = tData.Columns;
+        try
+        {
+
+            string yTbName = tData.TableName.Replace(".Data", ".xVal");
+            for (int y = 0; y < pcm.tableDatas.Count; y++)
+            {
+                if (pcm.tableDatas[y].TableName == yTbName)
+                {
+                    TableData ytb = pcm.tableDatas[y];
+                    uint xaddr = ytb.StartAddress();
+                    cols = (int)GetValue(pcm.buf, xaddr, ytb, 0, pcm);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+        }
+        return cols;
+    }
+
+    public static int GetRowCountFromTable(TableData tData, PcmFile pcm)
+    {
+        int rows = tData.Rows;
+        try
+        {
+
+            for (int x = 0; x < pcm.tableDatas.Count; x++)
+            {
+                if (pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".Size") || pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".yVal"))
+                {
+                    uint addr = pcm.tableDatas[x].StartAddress();
+                    rows = (int)GetValue(pcm.buf, addr, pcm.tableDatas[x], 0, pcm);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+        }
+        return rows;
+    }
+
+
     public static uint CheckPatchCompatibility(XmlPatch xpatch, PcmFile basefile, bool newline = true)
     {
         uint retVal = uint.MaxValue;
@@ -1829,29 +1768,26 @@ public class Upatcher
         }
         return retVal;
     }
-
     public static uint ApplyTablePatch(ref PcmFile basefile, XmlPatch xpatch, int tdId)
     {
         int diffCount = 0;
-        frmTableEditor frmTE = new frmTableEditor();
         TableData pTd = basefile.tableDatas[tdId];
-        frmTE.PrepareTable(basefile, pTd, null, "A");
-        //frmTE.loadTable();
+
+        TableInfo tInfo = new TableInfo(basefile, pTd);
+        tInfo.ParseTable(true,false,false);
         uint addr = pTd.StartAddress();
-        uint step = (uint)GetElementSize(pTd.DataType);
+        uint step = (uint)pTd.EffectiveElementStride();
         try
         {
-            string[] dataParts = xpatch.Data.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-            for (int cell = 0; cell < frmTE.compareFiles[0].tableInfos[0].tableCells.Count; cell++)
+            string[] dataParts = xpatch.Data.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int cell = 0; cell < tInfo.tableCells.Count; cell++)
             {
-                TableCell tCell = frmTE.compareFiles[0].tableInfos[0].tableCells[cell];
+                TableCell tCell = tInfo.tableCells[cell];
                 double val = Convert.ToDouble(dataParts[cell].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                if (tCell.SaveValue(val))
+                if (tCell.SetValue(val))
                     diffCount++;
             }
-            //frmTE.saveTable(false);
-            Array.Copy(frmTE.compareFiles[0].buf, 0, basefile.buf, frmTE.compareFiles[0].tableBufferOffset, frmTE.compareFiles[0].buf.Length);
-            frmTE.Dispose();
+            tInfo.SaveCellsToPcmBuffer();
         }
         catch (Exception ex)
         {
@@ -2094,11 +2030,9 @@ public class Upatcher
             return false;
         List<double> tableValues = new List<double>();
         uint addr = td1.StartAddress();
-        uint step = (uint)GetElementSize(td1.DataType);
-        uint es1 = (uint)td1.EffectiveElementStride((int)step);
+        uint step = (uint)td1.EffectiveElementStride();
         if (td1.RowMajor)
         {
-            int rowStride1 = td1.EffectiveRowStride((int)es1);
             for (int r = 0; r < td1.Rows; r++)
             {
                 uint rowStart = addr;
@@ -2106,9 +2040,9 @@ public class Upatcher
                 {
                     double val = GetValue(pcm1.buf,addr,td1,0,pcm1);
                     tableValues.Add(val);
-                    addr += es1;
+                    addr += step;
                 }
-                addr = rowStart + (uint)rowStride1;
+                addr += td1.MajorStride;
             }
         }
         else
@@ -2119,21 +2053,18 @@ public class Upatcher
                 {
                     double val = GetValue(pcm1.buf, addr, td1, 0, pcm1);
                     tableValues.Add(val);
-                    addr += es1;
+                    addr += step;
                 }
             }
         }
 
         addr = td2.StartAddress();
-        step = (uint)GetElementSize(td2.DataType);
-        uint es2 = (uint)td2.EffectiveElementStride((int)step);
+        uint step2 = (uint)td2.EffectiveElementStride();
         int i = 0;
         if (td2.RowMajor)
         {
-            int rowStride2 = td2.EffectiveRowStride((int)es2);
-            for (int r = 0; r < td2.Rows; r++)
+            for (int r = 0; r < td2.Rows && match; r++)
             {
-                uint rowStart = addr;
                 for (int c = 0; c < td2.Columns; c++)
                 {
                     double val = GetValue(pcm2.buf, addr, td2, 0,pcm2);
@@ -2142,15 +2073,15 @@ public class Upatcher
                         match = false;
                         break;
                     }
-                    addr += es2;
+                    addr += step2;
                     i++;
                 }
-                addr = rowStart + (uint)rowStride2;
+                addr += td2.MajorStride;
             }
         }
         else
         {
-            for (int c = 0; c < td2.Columns; c++)
+            for (int c = 0; c < td2.Columns && match; c++)
             {
                 for (int r = 0; r < td2.Rows; r++)
                 {
@@ -2160,7 +2091,7 @@ public class Upatcher
                         match = false;
                         break;
                     }
-                    addr += es2;
+                    addr += step2;
                     i++;
                 }
             }
@@ -2942,62 +2873,6 @@ public class Upatcher
         return null;
     }
 
-/*    public static void Logger(string LogText, Boolean NewLine = true)
-    {
-        try
-        {
-            Debug.WriteLine(LogText);
-            for (int l = LogReceivers.Count - 1; l >= 0;  l--)
-            {
-                if (LogReceivers[l].IsDisposed)
-                    LogReceivers.RemoveAt(l);
-            }
-            for (int l=0; l< LogReceivers.Count; l++)
-            {
-                RichTextBox rtb = LogReceivers[l];
-                rtb.Parent.Invoke((MethodInvoker)delegate ()
-                {
-                    rtb.AppendText(LogText);
-                    if (NewLine)
-                        rtb.AppendText(Environment.NewLine);
-                });
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex.InnerException);
-        }
-    }
-
-    public static void LoggerBold(string LogText, Boolean NewLine = true)
-    {
-        try
-        {
-            Debug.WriteLine(LogText);
-            for (int l = LogReceivers.Count - 1; l >= 0; l--)
-            {
-                if (LogReceivers[l].IsDisposed)
-                    LogReceivers.RemoveAt(l);
-            }
-            for (int l = 0; l < LogReceivers.Count; l++)
-            {
-                RichTextBox rtb = LogReceivers[l];
-                rtb.Parent.Invoke((MethodInvoker)delegate ()
-                {
-                    rtb.SelectionFont = new Font(rtb.Font, FontStyle.Bold);
-                    rtb.AppendText(LogText);
-                    rtb.SelectionFont = new Font(rtb.Font, FontStyle.Regular);
-                    if (NewLine)
-                        rtb.AppendText(Environment.NewLine);
-                });
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex.InnerException);
-        }
-    }
-*/
     public static List<XmlPatch> LoadPatchFile(string fileName)
     {
         System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));

@@ -1000,7 +1000,7 @@ namespace UniversalPatcher
                 vis.hexDatas[tdAddr].TableText += "+" + vis.ExtraOffset;
                 vis.hexDatas[tdAddr].TableText += " - " + (vis.td.EndAddressNoExtra() + vis.ExtraOffset).ToString("X8");
                 vis.hexDatas[tdAddr].Prefix = '[';
-                int tdEnd = (int)(vis.td.StartAddressNoExtra() + vis.ExtraOffset - vis.buffOffset);
+                int tdEnd = (int)(vis.td.EndAddressNoExtra() + vis.ExtraOffset - vis.buffOffset);
                 vis.hexDatas[tdEnd].Suffix = ']';
                 Debug.WriteLine("Table start: " + tdAddr.ToString("X"));
                 Debug.WriteLine("Table End: " + tdEnd.ToString("X"));
@@ -1068,6 +1068,27 @@ namespace UniversalPatcher
             try
             {
                 this.Text = "Table data visualizer [" + vis1.td.TableName + "]";
+
+                dataGridView1.ColumnHeaderMouseClick -= DataGridView1_ColumnHeaderMouseClick;
+                dataGridView2.ColumnHeaderMouseClick -= DataGridView2_ColumnHeaderMouseClick;
+                dataGridView1.CellPainting -= DataGridView1_CellPainting;
+                dataGridView2.CellPainting -= DataGridView2_CellPainting;
+                dataGridView1.CellValueNeeded -= DataGridView1_CellValueNeeded;
+                dataGridView2.CellValueNeeded -= DataGridView2_CellValueNeeded;
+                dataGridView1.MouseUp -= DataGridView1_MouseUp;
+                dataGridView2.MouseUp -= DataGridView2_MouseUp;
+                dataGridView1.CellMouseUp -= DataGridView1_CellMouseUp;
+                dataGridView1.CellMouseDown -= DataGridView1_CellMouseDown;
+                dataGridView2.CellMouseUp -= DataGridView2_CellMouseUp;
+                dataGridView2.CellMouseDown -= DataGridView2_CellMouseDown;
+                dataGridView1.KeyUp -= DataGridView1_KeyUp;
+                dataGridView2.KeyUp -= DataGridView2_KeyUp;
+
+                numExtraOffset2.ValueChanged -= numExtraOffset2_ValueChanged;
+                dataGridView1.Scroll -= DataGridView1_Scroll;
+                dataGridView2.Scroll -= DataGridView2_Scroll;
+                dataGridView2.SelectionChanged -= DataGridView2_SelectionChanged;
+
                 numExtraOffset1.Value = vis1.td.extraoffset;
                 numExtraOffset1.Minimum = -1 * (vis1.td.StartAddressNoExtra());
                 numExtraOffset1.Maximum = vis1.PCM.buf.Length - vis1.td.EndAddressNoExtra() -1 ;
@@ -1085,6 +1106,7 @@ namespace UniversalPatcher
                     dataGridView2.Scroll += DataGridView2_Scroll;
                     dataGridView2.SelectionChanged += DataGridView2_SelectionChanged;
                 }
+
                 dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
                 dataGridView2.ColumnHeaderMouseClick += DataGridView2_ColumnHeaderMouseClick;
                 dataGridView1.CellPainting += DataGridView1_CellPainting;
@@ -1132,7 +1154,7 @@ namespace UniversalPatcher
         private void DataGridView2_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             vis2.mouseDownCell = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            Debug.WriteLine("Vis2 Mouse down in " + vis1.mouseDownCell.RowIndex.ToString() + ", " + vis1.mouseDownCell.ColumnIndex.ToString());
+            Debug.WriteLine("Vis2 Mouse down in " + vis2.mouseDownCell.RowIndex.ToString() + ", " + vis2.mouseDownCell.ColumnIndex.ToString());
         }
 
         private void DataGridView2_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)

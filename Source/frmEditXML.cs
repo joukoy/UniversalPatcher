@@ -46,7 +46,8 @@ namespace UniversalPatcher
             RealtimeControl,
             XdfPlugins,
             OldPidProfile,
-            RedoLog
+            RedoLog,
+            ExtraOffsetButtons
         }
 
         private XMLTYPE xmlType = XMLTYPE.Autodetect;
@@ -74,11 +75,12 @@ namespace UniversalPatcher
         private List<IdName> funcnames;
         private List<CANDevice> canmods;
         private List<XDF.XdfPlugin> xdfplugins;
+        private List<ReDo> redoLog = new List<ReDo>();
+        private List<ExtraOffsetKeymap> extraoffsetmap;
         private object currentObj;
         private object currentList;
         private Type currentType;
         public object SelectedObject;
-        private List<ReDo> redoLog = new List<ReDo>();
 
         private void frmEditXML_Load(object sender, EventArgs e)
         {
@@ -195,6 +197,29 @@ namespace UniversalPatcher
             }
             bindingSource.DataSource = null;
             bindingSource.DataSource = sCVN;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            UseComboBoxForEnums(dataGridView1);
+            FillFilterBy();
+        }
+        public void LoadExtraOffsetMapping()
+        {
+            xmlType = XMLTYPE.ExtraOffsetButtons;
+            this.Text = "Edit Extra offset button mapping";
+            extraoffsetmap = new List<ExtraOffsetKeymap>();
+            currentList = extraoffsetmap;
+            currentObj = new ExtraOffsetKeymap();
+            currentType = typeof(ExtraOffsetKeymap);
+            if (ExtraOffsetKeymaps != null && ExtraOffsetKeymaps.Count > 0)
+            {
+                for (int i = 0; i < ExtraOffsetKeymaps.Count; i++)
+                {
+                    ExtraOffsetKeymap eok = ExtraOffsetKeymaps[i].ShallowCopy();
+                    extraoffsetmap.Add(eok);
+                }
+            }
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = extraoffsetmap;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
@@ -967,6 +992,19 @@ namespace UniversalPatcher
                         break;
                     case XMLTYPE.RedoLog:
                         Logger("Saving not implemented for RedoLog");
+                        break;
+                    case XMLTYPE.ExtraOffsetButtons:
+                        if (fName.Length == 0)
+                            fName = Path.Combine(Application.StartupPath, "XML", "ExtraOffsetButtons.xml");
+                        Logger("Saving file " + fName, false);
+                        using (FileStream stream = new FileStream(fName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<ExtraOffsetKeymap>));
+                            writer.Serialize(stream, extraoffsetmap);
+                            stream.Close();
+                        }
+                        ExtraOffsetKeymaps = extraoffsetmap;
+                        Logger(" [OK]");
                         break;
                     default:
                         Logger("Saving file autodetect.xml", false);

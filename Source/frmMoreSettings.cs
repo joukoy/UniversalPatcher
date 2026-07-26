@@ -38,6 +38,9 @@ namespace UniversalPatcher
             AppSettings.LoggerExternalApp = txtExternalLogger.Text;
             AppSettings.ConfirmProgramExit = chkConfirmExit.Checked;
             AppSettings.TunerUseSessionTabs = chkUseTunerMain.Checked;
+            AppSettings.TableCellMouseHover = chkeShowCellInfo.Checked;
+            AppSettings.TunerXYSwapWideTables = chkXySwapWideTables.Checked;
+
             //AppSettings.startPatcher = chkStartPatcher.Checked;
             AppSettings.Save();
             this.Close();
@@ -62,6 +65,13 @@ namespace UniversalPatcher
             txtExternalLogger.Text = AppSettings.LoggerExternalApp;
             chkConfirmExit.Checked = AppSettings.ConfirmProgramExit;
             chkUseTunerMain.Checked = AppSettings.TunerUseSessionTabs;
+            chkeShowCellInfo.Checked = AppSettings.TableCellMouseHover;
+            chkXySwapWideTables.Checked = AppSettings.TunerXYSwapWideTables;
+            btnColorMin.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin);
+            btnColorMid1.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid1);
+            btnColorMid2.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid2);
+            btnColorMax.BackColor = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax);
+
             //chkStartPatcher.Checked = AppSettings.startPatcher;
         }
 
@@ -72,6 +82,70 @@ namespace UniversalPatcher
             if (fName.Length == 0)
                 return;
             txtFlashApp.Text = fName;
+        }
+
+        private void chkXdfUseTableName_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnColorMin_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMin);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMin.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMin = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+                AppSettings.Save();
+            }
+
+        }
+
+        private void btnColorMid_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid1);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMid1.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMid1 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+                AppSettings.Save();
+            }
+
+        }
+        private void btnColorMid2_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMid2);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMid1.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMid2 = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+                AppSettings.Save();
+            }
+
+        }
+
+        private void btnColorMax_Click(object sender, EventArgs e)
+        {
+            ColorDialog clrDialog = new ColorDialog();
+            clrDialog.Color = System.Drawing.ColorTranslator.FromHtml(AppSettings.TunerColorsMax);
+            if (clrDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the colour that the user chose
+                btnColorMax.BackColor = clrDialog.Color;
+                AppSettings.TunerColorsMax = System.Drawing.ColorTranslator.ToHtml(clrDialog.Color);
+                AppSettings.Save();
+            }
+
+        }
+
+        private void chkXySwapWideTables_CheckedChanged(object sender, EventArgs e)
+        {
         }
     }
 }
