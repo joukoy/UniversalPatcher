@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<PcmPlatform xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <MSB>true</MSB>
+  <SegmentFile>e38.xml</SegmentFile>
+  <TableSeekFile>TableSeek-e38.xml</TableSeekFile>
+  <SegmentSeekFile>SegmentSeek-e38.xml</SegmentSeekFile>
+  <PidSearchStep>0</PidSearchStep>
+  <XdfPluginId>cbebdc26-cd53-460b-8d61-898d18dca53f</XdfPluginId>
+</PcmPlatform>

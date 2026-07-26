@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MathParameters>
+  <MathParameter
+      id="MathLoadFromPids"
+      name="Load (from RPM and MAF)"
+      description=""
+      xParameterId="MAFSensor"
+      xParameterConversion="g/s"
+      yParameterId="EngineSpeed"
+      yParameterConversion="RPM">
+    <Conversion units="g/cyl" expression="x*15.0/y" format="0.00" />
+  </MathParameter>
+ <MathParameter
+      id="MathIdcBank1"
+      name="IDC Bank 1"
+      description=""
+      xParameterId="EngineSpeed"
+      xParameterConversion="RPM"
+      yParameterId="InjectorPWMLeftBankAverage"
+      yParameterConversion="ms">
+    <Conversion units="%" expression="(x*y)/1200" format="0.00" />
+  </MathParameter>
+  <MathParameter
+      id="MathIdcBank2"
+      name="IDC Bank 2"
+      description=""
+      xParameterId="EngineSpeed"
+      xParameterConversion="RPM"
+      yParameterId="InjectorPWMRightBankAverage"
+      yParameterConversion="ms">
+    <Conversion units="%" expression="(x*y)/1200" format="0.00" />
+  </MathParameter>
+  <!-- 
+    <MathParameter
+        id="MathTestParameter"
+        name="Math Test - Do Not Use"
+        description=""
+        xParameterId="DesiredIdleSpeed"
+        xParameterConversion="RPM"
+        yParameterId="DesiredIACAirflow"
+        yParameterConversion="g/s">
+      <Conversion units="%" expression="x/y" format="0.00" />
+    </MathParameter>
+  -->
+</MathParameters>

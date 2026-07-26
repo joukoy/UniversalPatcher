@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version>1</Version>
+    <Addresses>@A010:2[*2+0*2+1]</Addresses>
+    <SwapAddress>@A010:2[*2+0*2+40]</SwapAddress>
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@A010:2[*2+0*2+1]</CS1Blocks>
+    <CS2Blocks>@A010:2[*2+0*2+1]</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:INT</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>System</Name>
+    <Version />
+    <Addresses>@A016:2[*2+0*2+1]</Addresses>
+    <SwapAddress>@A016:2[*2+0*2+1]</SwapAddress>
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@A016:2[*2+0*2+1]</CS1Blocks>
+    <CS2Blocks>@A016:2[*2+0*2+1]</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:INT</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Lighting</Name>
+    <Version />
+    <Addresses>@A01C:2[*2+0*2+1]</Addresses>
+    <SwapAddress>@A01C:2[*2+0*2+1]</SwapAddress>
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@A01C:2[*2+0*2+1]</CS1Blocks>
+    <CS2Blocks>@A01C:2[*2+0*2+1]</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:INT</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Theft</Name>
+    <Version />
+    <Addresses>@A022:2[*2+0*2+1]</Addresses>
+    <SwapAddress>@A022:2[*2+0*2+1]</SwapAddress>
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@A022:2[*2+0*2+1]</CS1Blocks>
+    <CS2Blocks>@A022:2[*2+0*2+1]</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:INT</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Locking</Name>
+    <Version />
+    <Addresses>@A028:2[*2+0*2+1]</Addresses>
+    <SwapAddress>@A028:2[*2+0*2+1]</SwapAddress>
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@A028:2[*2+0*2+1]</CS1Blocks>
+    <CS2Blocks>@A028:2[*2+0*2+1]</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:INT</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Accessory</Name>
+    <Version />
+    <Addresses>@A02E:2[*2+0*2+1]</Addresses>
+    <SwapAddress>@A02E:2[*2+0*2+1]</SwapAddress>
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@A02E:2[*2+0*2+1]</CS1Blocks>
+    <CS2Blocks>@A02E:2[*2+0*2+1]</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:INT</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EEPROMdata</Name>
+    <Version />
+    <Addresses />
+    <SwapAddress />
+    <CS1Address />
+    <CS2Address />
+    <Checksum1Method>None</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks />
+    <CS2Blocks />
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo>vin:20A1:17:text,bcc:2072:4:text,serial:2061:15:text,pin????:207e:4:text,hardware:2076:4:int</ExtraInfo>
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>
