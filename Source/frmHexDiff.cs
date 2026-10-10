@@ -91,10 +91,7 @@ namespace UniversalPatcher
                     TableData td = tdList[t];
                     TableData td2 = tdList2[t];
                     uint step = (uint)GetElementSize(td.DataType);
-                    uint step2 = (uint)GetElementSize(td2.DataType);
                     int count = td.Rows * td.Columns;
-                    uint addr = td.StartAddress();
-                    uint addr2 = td2.StartAddress();
                     string data1 = "";
                     string data2 = "";
                     string formatStr = "";
@@ -102,6 +99,8 @@ namespace UniversalPatcher
                         formatStr = "X" + (step * 2).ToString();
                     for (int a = 0; a < count; a++)
                     {
+                        uint addr = td.CellAddress(a);
+                        uint addr2 = td2.CellAddress(a);
                         if (showAsHex)
                         {
                             data1 += ((UInt64)GetRawValue(pcm1.buf, addr, td, 0,pcm1.platformConfig.MSB)).ToString(formatStr) + " ";
@@ -112,8 +111,6 @@ namespace UniversalPatcher
                             data1 += GetValue(pcm1.buf, addr, td, 0, pcm1).ToString(formatStr) + " ";
                             data2 += GetValue(pcm2.buf, addr2, td2, 0, pcm2).ToString(formatStr) + " ";
                         }
-                        addr += step;
-                        addr2 += step2;
                     }
 
                     TableDiff tDiff = new TableDiff();
@@ -528,31 +525,9 @@ namespace UniversalPatcher
                     xpatch.XmlFile = pcm1.configFile;
                     xpatch.Segment = pcm1.GetSegmentName(pTd.addrInt);
                     xpatch.Description = Description;
-                    uint step = (uint)pTd.EffectiveElementStride();
-                    uint addr = pTd.StartAddress();
-                    if (pTd.RowMajor)
+                    for (int cell = 0; cell < pTd.Elements(); cell++)
                     {
-                        for (int r = 0; r < pTd.Rows; r++)
-                        {
-                            uint rowStart = addr;
-                            for (int c = 0; c < pTd.Columns; c++)
-                            {
-                                xpatch.Data += GetValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
-                                addr += step;
-                            }
-                            addr += pTd.MajorStride;
-                        }
-                    }
-                    else
-                    {
-                        for (int c = 0; c < pTd.Columns; c++)
-                        {
-                            for (int r = 0; r < pTd.Rows; r++)
-                            {
-                                xpatch.Data += GetValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
-                                addr += step;
-                            }
-                        }
+                        xpatch.Data += GetValue(pcm1.buf, pTd.CellAddress(cell), pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
                     }
                     newPatch.Add(xpatch);
                 }

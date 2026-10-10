@@ -2680,54 +2680,22 @@ namespace UniversalPatcher
                     StringBuilder tblData = new StringBuilder("Current values: " + minMax + Environment.NewLine);
                     uint addr = mapTd.StartAddress();
                     double firstVal = GetValue(mapPCM.buf, addr, mapTd, 0, mapPCM);
-                    uint step = (uint)mapTd.EffectiveElementStride();
-                    if (mapTd.RowMajor)
+                    for (int r = 0; r < mapTd.Rows; r++)
                     {
-                        for (int r = 0; r < mapTd.Rows; r++)
-                        {
-                            uint rowStart = addr;
-                            for (int c = 0; c < mapTd.Columns; c++)
-                            {
-                                double curVal = GetValue(mapPCM.buf, addr, mapTd, 0, mapPCM);
-                                addr += step;
-                                tblData.Append("[" + curVal.ToString("#0.0") + "]");
-                                if (!ShowMinMax)
-                                {
-                                    if (curVal > mapTd.Max || curVal < mapTd.Min)
-                                    {
-                                        Debug.WriteLine("Value out of range: " + curVal.ToString());
-                                        return;
-                                    }
-                                }
-                            }
-                            tblData.Append(Environment.NewLine);
-                            addr += mapTd.MajorStride;
-                        }
-                    }
-                    else
-                    {
-                        List<string> tblRows = new List<string>();
-                        for (int r = 0; r < mapTd.Rows; r++)
-                            tblRows.Add("");
                         for (int c = 0; c < mapTd.Columns; c++)
                         {
-                            for (int r = 0; r < mapTd.Rows; r++)
+                            double curVal = GetValue(mapPCM.buf, mapTd.CellAddress(r, c), mapTd, 0, mapPCM);
+                            tblData.Append("[" + curVal.ToString("#0.0") + "]");
+                            if (!ShowMinMax)
                             {
-                                double curVal = GetValue(mapPCM.buf, addr, mapTd, 0, mapPCM);
-                                addr += step;
-                                tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
-                                if (!ShowMinMax)
+                                if (curVal > mapTd.Max || curVal < mapTd.Min)
                                 {
-                                    if (curVal > mapTd.Max || curVal < mapTd.Min)
-                                    {
-                                        Debug.WriteLine("Value out of range: " + curVal.ToString());
-                                        return;
-                                    }
+                                    Debug.WriteLine("Value out of range: " + curVal.ToString());
+                                    return;
                                 }
                             }
                         }
-                        for (int r = 0; r < mapTd.Rows; r++)
-                            tblData.Append(tblRows[r] + Environment.NewLine);
+                        tblData.Append(Environment.NewLine);
                     }
                     txtDescription2.AppendText(tblData.ToString());
                 }
@@ -4251,31 +4219,9 @@ namespace UniversalPatcher
                     xpatch.XmlFile = PCM.configFile;
                     xpatch.Segment = PCM.GetSegmentName(pTd.addrInt);
                     xpatch.Description = Description;
-                    uint step = (uint)pTd.EffectiveElementStride();
-                    uint addr = pTd.StartAddress();
-                    if (pTd.RowMajor)
+                    for (int cell = 0; cell < pTd.Elements(); cell++)
                     {
-                        for (int r = 0; r < pTd.Rows; r++)
-                        {
-                            uint rowStart = addr;
-                            for (int c = 0; c < pTd.Columns; c++)
-                            {
-                                xpatch.Data += GetValue(PCM.buf, addr, pTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += step;
-                            }
-                            addr += pTd.MajorStride;
-                        }
-                    }
-                    else
-                    {
-                        for (int c = 0; c < pTd.Columns; c++)
-                        {
-                            for (int r = 0; r < pTd.Rows; r++)
-                            {
-                                xpatch.Data += GetValue(PCM.buf, addr, pTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += step;
-                            }
-                        }
+                        xpatch.Data += GetValue(PCM.buf, pTd.CellAddress(cell), pTd, 0, PCM).ToString().Replace(",", ".") + " ";
                     }
                     newPatch.Add(xpatch);
                 }
@@ -4323,32 +4269,10 @@ namespace UniversalPatcher
                     patchTd.AddCategory(srcTd.ExtraCategories);
                     patchTd.OS = srcTd.OS;
                     patchTd.CompatibleOS = "Table:" + srcTd.TableName + ",columns:" + srcTd.Columns.ToString() + ",rows:" + srcTd.Rows.ToString();
-                    uint step = (uint)srcTd.EffectiveElementStride();
-                    uint addr = srcTd.StartAddress();
                     patchTd.Values = "TablePatch: ";
-                    if (srcTd.RowMajor)
+                    for (int cell = 0; cell < srcTd.Elements(); cell++)
                     {
-                        for (int r = 0; r < srcTd.Rows; r++)
-                        {
-                            uint rowStart = addr;
-                            for (int c = 0; c < srcTd.Columns; c++)
-                            {
-                                patchTd.Values += GetValue(PCM.buf, addr, srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += step;
-                            }
-                            addr += patchTd.MajorStride;
-                        }
-                    }
-                    else
-                    {
-                        for (int c = 0; c < srcTd.Columns; c++)
-                        {
-                            for (int r = 0; r < srcTd.Rows; r++)
-                            {
-                                patchTd.Values += GetValue(PCM.buf, addr, srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
-                                addr += step;
-                            }
-                        }
+                        patchTd.Values += GetValue(PCM.buf, srcTd.CellAddress(cell), srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
                     }
                     PCM.tableDatas.Add(patchTd);
                 }
@@ -6577,10 +6501,10 @@ namespace UniversalPatcher
                         break;
                     }
                     tdTmp.extraoffset = eo;
-                    uint cmpAddr = (uint)(compTd.addrInt + compTd.Offset);
-                    uint addr = (uint)(tdTmp.addrInt + tdTmp.Offset + eo);
                     for (int r=0; r<tdTmp.Elements(); r++)
                     {
+                        uint cmpAddr = (uint)(compTd.addrInt + compTd.Offset + compTd.CellOffset(r));
+                        uint addr = (uint)(tdTmp.addrInt + tdTmp.Offset + eo + tdTmp.CellOffset(r));
                         if ((addr + tdTmp.ElementSize()) > PCM.fsize || addr <= 0)
                         {
                             hits=0;
@@ -6595,8 +6519,6 @@ namespace UniversalPatcher
                             hits = 0;
                             break;
                         }
-                        addr += (uint)tdTmp.ElementSize();
-                        cmpAddr += (uint)compTd.ElementSize();
                     }
                     if (hits == tdTmp.Elements())
                     {
