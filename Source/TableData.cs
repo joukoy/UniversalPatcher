@@ -161,8 +161,8 @@ namespace UniversalPatcher
         //public bool Floating;
         public ushort Columns { get; set; }
         public ushort Rows { get; set; }
-        public ushort MajorStride { get; set; }
-        public ushort MinorStride { get; set; }
+        public short MajorStride { get; set; }
+        public short MinorStride { get; set; }
         public Byte_Order ByteOrder { get; set; }
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
@@ -296,35 +296,61 @@ namespace UniversalPatcher
             return (uint)(addrInt + Offset + Size() - 1);
         }
 
-        // Returns the per-element step in bytes (TunerPro major stride).
-        public int EffectiveElementStride()
+        // Byte offset of cell (row, col) from the table start, compatible with TunerPro XDF embedded data.
+        // A "line" is a row if RowMajor, otherwise a column.
+        // MajorStride: step between elements in a line (0 = element size). Negative reverses the order within each line.
+        // MinorStride: distance from the start of the last element of a line to the start of the next line
+        //   (0 or element size = no gap). Negative reverses the line order.
+        public int CellOffset(int row, int col)
         {
-            return MajorStride > ElementSize() ? MajorStride : ElementSize();
+            int elemSize = ElementSize();
+            int major = MajorStride == 0 ? elemSize : System.Math.Abs((int)MajorStride);
+            int lineLen = RowMajor ? Columns : Rows;
+            int lines = RowMajor ? Rows : Columns;
+            int line = RowMajor ? row : col;
+            int pos = RowMajor ? col : row;
+            if (MajorStride < 0)
+                pos = lineLen - 1 - pos;
+            if (MinorStride < 0)
+                line = lines - 1 - line;
+            int gap = System.Math.Abs(MinorStride - elemSize);
+            if (System.Math.Abs((int)MinorStride) < gap)
+                gap = System.Math.Abs((int)MinorStride);
+            return line * ((lineLen - 1) * major + elemSize + gap) + pos * major;
         }
 
-        //Extra bytes after every column (if columnmajor) or after every row (if rowmajor)
-        public int EffectiveMinorStride()
+        // Byte offset of the index'th cell in storage order (row by row if RowMajor, otherwise column by column).
+        // This is the order TableInfo builds its cell list in, and the order patch data is stored in.
+        public int CellOffset(int index)
         {
-            if (MinorStride < EffectiveElementStride())
-            {
-                return 0;
-            }
+            int lineLen = RowMajor ? Columns : Rows;
+            if (lineLen < 1)
+                lineLen = 1;
+            if (RowMajor)
+                return CellOffset(index / lineLen, index % lineLen);
             else
-            {
-                return MinorStride - EffectiveElementStride();
-            }
+                return CellOffset(index % lineLen, index / lineLen);
         }
+
+        public uint CellAddress(int row, int col)
+        {
+            return (uint)(StartAddress() + CellOffset(row, col));
+        }
+
+        public uint CellAddress(int index)
+        {
+            return (uint)(StartAddress() + CellOffset(index));
+        }
+
+        // Bytes from the table start to the end of its furthest cell.
         public int Size()
         {
-            //return Rows * Columns * ElementSize();
-            if (RowMajor)
-            {
-                return (Rows * EffectiveElementStride() + MinorStride) * Columns;
-            }
-            else
-            {
-                return (Columns * EffectiveElementStride() + MinorStride) * Rows;
-            }
+            if (Rows < 1 || Columns < 1)
+                return 0;
+            int maxOffset = System.Math.Max(
+                System.Math.Max(CellOffset(0, 0), CellOffset(Rows - 1, 0)),
+                System.Math.Max(CellOffset(0, Columns - 1), CellOffset(Rows - 1, Columns - 1)));
+            return maxOffset + ElementSize();
         }
         
         public int ElementSize()

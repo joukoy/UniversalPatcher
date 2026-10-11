@@ -538,22 +538,16 @@ namespace UniversalPatcher
                 {
                     td.DataType = InDataType.UBYTE;
                 }
-                uint addr = td.StartAddress();
-                uint step = (uint)td.EffectiveElementStride();
-                int minorbytes = td.EffectiveMinorStride();
-
                 if (td.RowMajor)
                 {
                     for (int r = 0; r < td.Rows; r++)
                     {
                         for (int c = 0; c < td.Columns; c++)
                         {
-                            TableCell tc = new TableCell(td, this, addr, c, r, rowHeaders[r], colHeaders[c]);
+                            TableCell tc = new TableCell(td, this, td.CellAddress(r, c), c, r, rowHeaders[r], colHeaders[c]);
                             tableCells.Add(tc);
                             tableCellArray[r, c] = tc;
-                            addr += step;
                         }
-                        addr += (uint)minorbytes;
                     }
                 }
                 else
@@ -563,12 +557,10 @@ namespace UniversalPatcher
                     {
                         for (int r = 0; r < td.Rows; r++)
                         {
-                            TableCell tc = new TableCell(td, this, addr, c, r, rowHeaders[r], colHeaders[c]);
-                            addr += step;
+                            TableCell tc = new TableCell(td, this, td.CellAddress(r, c), c, r, rowHeaders[r], colHeaders[c]);
                             this.tableCells.Add(tc);
                             tableCellArray[r, c] = tc;
                         }
-                        addr += (uint)minorbytes;
                     }
                 }
             }

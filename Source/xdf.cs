@@ -138,13 +138,30 @@ namespace UniversalPatcher
             Years = 80
         }
 
-        private TableData CreateTableFromAxis(XdfAxis ax)
+        // TunerPro strides are in bits, TableData strides are in bytes
+        private static short StrideBitsToBytes(int bits, string tableName)
+        {
+            if (bits % 8 != 0)
+                Logger("XDF import: " + tableName + ": stride of " + bits.ToString() + " bits is not a whole number of bytes, using " + (bits / 8).ToString() + " bytes");
+            return (short)(bits / 8);
+        }
+
+        private TableData CreateTableFromAxis(XdfAxis ax, string tableName)
         {
             TableData td = new TableData();
+            td.TableName = tableName;
             td.Address = ax.Addr;
             td.ByteOrder = ax.ByteOrder;
             td.Columns = 1;
             td.Rows = ax.IndexCount;
+            // TunerPro steps axis values by the major stride (negative = reversed order).
+            // With a single column, column-major makes that the step between rows.
+            td.RowMajor = false;
+            td.MajorStride = StrideBitsToBytes(ax.mmedmajorstridebits, tableName);
+            // TunerPro reads an axis as a single line, so the minor stride has no effect, except that a
+            // negative one makes TunerPro read the whole axis one line before its address. Not replicated.
+            if (ax.mmedminorstridebits < 0)
+                Logger("XDF import: " + tableName + ": negative minor stride on axis ignored (TunerPro would read it from before the axis address)");
             td.DataType = ax.InputType;
             td.OutputType = ax.OutputType;
             td.Decimals = ax.Decimals;
@@ -432,8 +449,7 @@ namespace UniversalPatcher
                             }
                             else if (ax.Addr != null && ax.Addr.Length > 0)
                             {
-                                TableData tdNew = CreateTableFromAxis(ax);
-                                tdNew.TableName = xdf.TableName + "-X";
+                                TableData tdNew = CreateTableFromAxis(ax, xdf.TableName + "-X");
                                 tdList.Add(tdNew);
                                 xdf.ColumnHeaders = "Table: " + tdNew.TableName;
                             }
@@ -451,8 +467,7 @@ namespace UniversalPatcher
                             }
                             else if (ax.Addr != null && ax.Addr.Length > 0)
                             {
-                                TableData tdNew = CreateTableFromAxis(ax);
-                                tdNew.TableName = xdf.TableName + "-Y";
+                                TableData tdNew = CreateTableFromAxis(ax, xdf.TableName + "-Y");
                                 tdList.Add(tdNew);
                                 xdf.RowHeaders = "Table: " + tdNew.TableName;
                             }
@@ -473,14 +488,9 @@ namespace UniversalPatcher
                             xdf.DataType = ax.InputType;
                             xdf.Min = ax.Min;
                             xdf.Max = ax.Max;
-                            if (ax.mmedmajorstridebits > 0)
-                            {
-                                xdf.MajorStride = (ushort)(ax.mmedmajorstridebits / 8);
-                            }
-                            if (ax.mmedminorstridebits > 0)
-                            {
-                                xdf.MinorStride = (ushort)(ax.mmedminorstridebits / 8);
-                            }
+                            // Negative strides are kept: TunerPro uses them to reverse the cell order
+                            xdf.MajorStride = StrideBitsToBytes(ax.mmedmajorstridebits, xdf.TableName);
+                            xdf.MinorStride = StrideBitsToBytes(ax.mmedminorstridebits, xdf.TableName);
 
                             tableLinks.AddRange(ax.tableLinks);
                             tableTargets.AddRange(ax.tableTargets);
@@ -1807,9 +1817,9 @@ namespace UniversalPatcher
                             {
                                 tableFlags += 2;
                             }
-                            if (td.RowMajor == true)
+                            if (td.RowMajor == false)
                             {
-                                tableFlags += 4;
+                                tableFlags += 4;    // TunerPro flag 4 = column-major
                             }
                             if (tableFlags > 0)
                             {

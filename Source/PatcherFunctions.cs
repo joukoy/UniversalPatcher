@@ -1306,11 +1306,10 @@ public class Upatcher
             if (headerTd == null)
                 return new string[0];
 
-            uint step = (uint)(GetBits(headerTd.DataType) / 8);
-            uint addr = headerTd.StartAddress();
             string[] retVal = new string[count];
             for (int a = 0; a < count; a++)
             {
+                uint addr = headerTd.CellAddress(a);
                 string formatStr = "0.####";
                 if (headerTd.Units.Contains("%"))
                     formatStr = "0";
@@ -1319,7 +1318,6 @@ public class Upatcher
                     header = headerTd.Units.Trim() + " ";
                 header += GetValue(pcm.buf, addr, headerTd, 0, pcm).ToString(formatStr).Replace(",", ".");
                 retVal[a] = header;
-                addr += step;
             }
             return retVal;
         }
@@ -1340,14 +1338,11 @@ public class Upatcher
         if (headerTd == null)
             return null;
 
-        uint step = (uint)(GetBits(headerTd.DataType) / 8);
-        uint addr = headerTd.StartAddress();
         double[] retVal = new double[count];
         for (int a = 0; a < count; a++)
         {
-            double val = GetValue(pcm.buf, addr, headerTd, 0, pcm);
+            double val = GetValue(pcm.buf, headerTd.CellAddress(a), headerTd, 0, pcm);
             retVal[a] = val;
-            addr += step;
         }
         return retVal;
     }
@@ -1775,8 +1770,7 @@ public class Upatcher
 
         TableInfo tInfo = new TableInfo(basefile, pTd);
         tInfo.ParseTable(true,false,false);
-        uint addr = pTd.StartAddress();
-        uint step = (uint)pTd.EffectiveElementStride();
+        uint step = (uint)pTd.ElementSize();
         try
         {
             string[] dataParts = xpatch.Data.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -2028,73 +2022,13 @@ public class Upatcher
 
         if ((td1.Rows * td1.Columns) != (td2.Rows * td2.Columns))
             return false;
-        List<double> tableValues = new List<double>();
-        uint addr = td1.StartAddress();
-        uint step = (uint)td1.EffectiveElementStride();
-        if (td1.RowMajor)
+        int count = td1.Rows * td1.Columns;
+        for (int i = 0; i < count && match; i++)
         {
-            for (int r = 0; r < td1.Rows; r++)
-            {
-                uint rowStart = addr;
-                for (int c = 0; c < td1.Columns; c++)
-                {
-                    double val = GetValue(pcm1.buf,addr,td1,0,pcm1);
-                    tableValues.Add(val);
-                    addr += step;
-                }
-                addr += td1.MajorStride;
-            }
-        }
-        else
-        {
-            for (int c = 0; c < td1.Columns; c++)
-            {
-                for (int r = 0; r < td1.Rows; r++)
-                {
-                    double val = GetValue(pcm1.buf, addr, td1, 0, pcm1);
-                    tableValues.Add(val);
-                    addr += step;
-                }
-            }
-        }
-
-        addr = td2.StartAddress();
-        uint step2 = (uint)td2.EffectiveElementStride();
-        int i = 0;
-        if (td2.RowMajor)
-        {
-            for (int r = 0; r < td2.Rows && match; r++)
-            {
-                for (int c = 0; c < td2.Columns; c++)
-                {
-                    double val = GetValue(pcm2.buf, addr, td2, 0,pcm2);
-                    if (val != tableValues[i])
-                    {
-                        match = false;
-                        break;
-                    }
-                    addr += step2;
-                    i++;
-                }
-                addr += td2.MajorStride;
-            }
-        }
-        else
-        {
-            for (int c = 0; c < td2.Columns && match; c++)
-            {
-                for (int r = 0; r < td2.Rows; r++)
-                {
-                    double val = GetValue(pcm2.buf, addr, td2, 0, pcm2);
-                    if (val != tableValues[i])
-                    {
-                        match = false;
-                        break;
-                    }
-                    addr += step2;
-                    i++;
-                }
-            }
+            double val1 = GetValue(pcm1.buf, td1.CellAddress(i), td1, 0, pcm1);
+            double val2 = GetValue(pcm2.buf, td2.CellAddress(i), td2, 0, pcm2);
+            if (val1 != val2)
+                match = false;
         }
         return match;
     }
