@@ -1694,7 +1694,8 @@
     <Decimals>0</Decimals>
     <Columns>9</Columns>
     <Rows>17</Rows>
-    <RowStride>10</RowStride>
+    <MajorStride>0</MajorStride>
+    <MinorStride>2</MinorStride>
     <ByteOrder>PlatformOrder</ByteOrder>
     <BitMask />
     <RowMajor>true</RowMajor>
@@ -2749,7 +2750,8 @@
     <Decimals>2</Decimals>
     <Columns>11</Columns>
     <Rows>4</Rows>
-    <RowStride>12</RowStride>
+    <MajorStride>0</MajorStride>
+    <MinorStride>2</MinorStride>
     <ByteOrder>PlatformOrder</ByteOrder>
     <BitMask />
     <RowMajor>true</RowMajor>
@@ -3029,7 +3031,8 @@
     <Decimals>2</Decimals>
     <Columns>19</Columns>
     <Rows>16</Rows>
-    <RowStride>20</RowStride>
+    <MajorStride>0</MajorStride>
+    <MinorStride>2</MinorStride>
     <ByteOrder>PlatformOrder</ByteOrder>
     <BitMask />
     <RowMajor>true</RowMajor>
@@ -3061,7 +3064,8 @@
     <Decimals>2</Decimals>
     <Columns>19</Columns>
     <Rows>16</Rows>
-    <RowStride>20</RowStride>
+    <MajorStride>0</MajorStride>
+    <MinorStride>2</MinorStride>
     <ByteOrder>PlatformOrder</ByteOrder>
     <BitMask />
     <RowMajor>true</RowMajor>
@@ -3434,7 +3438,8 @@
     <Decimals>2</Decimals>
     <Columns>21</Columns>
     <Rows>15</Rows>
-    <RowStride>22</RowStride>
+    <MajorStride>0</MajorStride>
+    <MinorStride>2</MinorStride>
     <ByteOrder>PlatformOrder</ByteOrder>
     <BitMask />
     <RowMajor>true</RowMajor>
@@ -3621,7 +3626,8 @@
     <Decimals>2</Decimals>
     <Columns>7</Columns>
     <Rows>15</Rows>
-    <RowStride>8</RowStride>
+    <MajorStride>0</MajorStride>
+    <MinorStride>2</MinorStride>
     <ByteOrder>PlatformOrder</ByteOrder>
     <BitMask />
     <RowMajor>true</RowMajor>
